@@ -83,10 +83,15 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
         {/* Body sections with page-style headers */}
         {theory.sections?.map((section, i) => (
           <div key={i} className="th-body-section">
-            <div className="th-section-header">
-              <div className="th-body-heading">{section.heading}</div>
+            <div className="th-page-header">
+              <div className="th-page-header-left">
+                <span className="th-page-header-title">Theory of Relational Design</span>
+                <span className="th-page-header-sep">/</span>
+                <span className="th-page-header-sub">Field-Centered Framework</span>
+              </div>
               {section.page && <div className="th-section-page">{section.page}</div>}
             </div>
+            <div className="th-body-heading">{section.heading}</div>
             <div className="th-body-text">
               {section.body.split("\n\n").map((para, j) => <p key={j}>{para}</p>)}
             </div>
@@ -104,10 +109,15 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
         {/* Principles */}
         {theory.principles?.length > 0 && (
           <div className="th-principles">
-            <div className="th-section-header">
-              <div className="th-section-label">Principles of Relational Design</div>
+            <div className="th-page-header">
+              <div className="th-page-header-left">
+                <span className="th-page-header-title">Theory of Relational Design</span>
+                <span className="th-page-header-sep">/</span>
+                <span className="th-page-header-sub">Field-Centered Framework</span>
+              </div>
               <div className="th-section-page">9</div>
             </div>
+            <div className="th-body-heading">Principles of Relational Design</div>
             <div className="th-principles-grid">
               {theory.principles.map((p, i) => (
                 <div key={i} className="th-principle">
@@ -123,10 +133,15 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
         {/* Lineages — structured per PDF page 11 */}
         {theory.lineages?.length > 0 && (
           <div className="th-lineages">
-            <div className="th-section-header">
-              <div className="th-section-label">Lineages of Relational Design</div>
+            <div className="th-page-header">
+              <div className="th-page-header-left">
+                <span className="th-page-header-title">Theory of Relational Design</span>
+                <span className="th-page-header-sep">/</span>
+                <span className="th-page-header-sub">Field-Centered Framework</span>
+              </div>
               <div className="th-section-page">11</div>
             </div>
+            <div className="th-body-heading">Lineages of Relational Design</div>
             <div className="th-lineages-grid">
               {theory.lineages.map((l, i) => (
                 <div key={i} className={`th-lineage-item${l.heading === "Convergence" ? " convergence" : ""}`}>
