@@ -1,12 +1,12 @@
 import React, { useCallback } from "react";
 import { VIS } from "../../data/seed";
 
-/* Relational Design icon — three concentric rounded rectangles (official mark) */
-function RDIcon({ color = "currentColor", size = 64 }) {
+/* Relational Design icon — official mark (Illustrator 29.5.1 export) */
+function RDIcon({ color = "currentColor", size = 36 }) {
   return (
     <svg viewBox="0 0 96 101" width={size} height={size} fill="none" stroke={color} strokeMiterlimit="10">
-      <rect x="8.89" y="10.89" width="78.21" height="78.21" rx="7.2" ry="7.2" />
       <rect x="17.29" y="22.15" width="61.42" height="61.42" rx="5.67" ry="5.67" />
+      <rect x="8.89" y="10.89" width="78.21" height="78.21" rx="7.2" ry="7.2" />
       <rect x="32.72" y="46.99" width="30.71" height="30.71" rx="2.83" ry="2.83" />
     </svg>
   );
@@ -23,7 +23,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
         {/* Title block with icon */}
         <div className="th-head">
           <div className="th-icon">
-            <RDIcon color={fg} size={72} />
+            <RDIcon color={fg} size={36} />
           </div>
           <div className="th-badge">Theory</div>
           <h1 className="th-title">Theory of {item.title}</h1>
@@ -189,7 +189,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
         {/* Colophon footer */}
         <div className="th-footer">
           <div className="th-footer-icon">
-            <RDIcon color={fg} size={48} />
+            <RDIcon color={fg} size={28} />
           </div>
           <div className="th-footer-line">Relational Design</div>
           <div className="th-footer-line">Written & Researched by {theory.colophon?.author}</div>
