@@ -52,32 +52,43 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
               </div>
             )}
 
-            {/* Writing — Editorial contents page */}
+            {/* Writing — Editorial contents grid (5 rows, multi-column) */}
             {(showAll || filter === "Writing" || relFilter) && (essays.length > 0 || notes.length > 0) && (
               <div className="wr-section en">
                 <div className="wr-section-h">Writing</div>
-                <div className="wr-toc">
-                  {[...essays, ...notes].map((item, i) => {
-                    const isMemo = item.writeType === "memo";
-                    return (
-                      <div key={item.id} className="wr-toc-row en" style={{animationDelay:`${0.05+i*0.04}s`}} onClick={()=>onOpen(item)}>
-                        <div className="wr-toc-num">{String(i+1).padStart(2,"0")}</div>
-                        <div className="wr-toc-body">
-                          <div className="wr-toc-type">
-                            {isMemo && item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}
-                            {item.subtitle && <span className="wr-toc-sub"> — {item.subtitle}</span>}
-                          </div>
-                          <div className="wr-toc-title">{item.title}</div>
-                          <div className="wr-toc-desc">{item.desc}</div>
-                        </div>
-                        <div className="wr-toc-meta">
-                          <span>{item.year}</span>
-                          {item.readMin && <span>{item.readMin} min</span>}
-                          {item.audioDur && <span className="wr-toc-audio">▶ {item.audioDur}</span>}
-                        </div>
+                <div className="wr-toc-grid">
+                  {(() => {
+                    const all = [...essays, ...notes];
+                    const rows = 5;
+                    const cols = Math.ceil(all.length / rows);
+                    const columns = [];
+                    for (let c = 0; c < cols; c++) {
+                      columns.push(all.slice(c * rows, c * rows + rows));
+                    }
+                    return columns.map((col, ci) => (
+                      <div key={ci} className="wr-toc-col">
+                        {col.map((item, ri) => {
+                          const i = ci * rows + ri;
+                          const isMemo = item.writeType === "memo";
+                          return (
+                            <div key={item.id} className="wr-toc-row en" style={{animationDelay:`${0.03+i*0.03}s`}} onClick={()=>onOpen(item)}>
+                              <div className="wr-toc-num">{String(i+1).padStart(2,"0")}</div>
+                              <div className="wr-toc-body">
+                                <div className="wr-toc-type">
+                                  {isMemo && item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}
+                                </div>
+                                <div className="wr-toc-title">{item.title}</div>
+                              </div>
+                              <div className="wr-toc-meta">
+                                {item.readMin && <span>{item.readMin}m</span>}
+                                {item.audioDur && <span className="wr-toc-audio">▶</span>}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-                    );
-                  })}
+                    ));
+                  })()}
                 </div>
               </div>
             )}

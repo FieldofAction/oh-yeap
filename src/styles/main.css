@@ -237,23 +237,26 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .cs-deliv-h{font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ff);margin-bottom:16px}
 .cs-deliv-list{display:flex;gap:6px;flex-wrap:wrap}
 
-/* ── Writing: Editorial Contents ── */
-.wr-toc{display:flex;flex-direction:column}
-.wr-toc-row{display:grid;grid-template-columns:48px 1fr auto;gap:0 24px;align-items:baseline;padding:20px 0;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .2s}
+/* ── Writing: Editorial Contents Grid ── */
+.wr-toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 32px}
+.wr-toc-col{display:flex;flex-direction:column}
+.wr-toc-col:not(:first-child){border-left:1px solid var(--bd);padding-left:32px}
+.wr-toc-row{display:grid;grid-template-columns:32px 1fr auto;gap:0 10px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .15s}
 .wr-toc-row:first-child{border-top:1px solid var(--bd)}
-.wr-toc-row:hover{background:var(--sf);margin:0 -16px;padding:20px 16px;border-radius:4px}
-.wr-toc-num{font-family:var(--display);font-size:13px;font-weight:400;color:var(--ff);letter-spacing:-.01em;padding-top:3px;font-style:italic}
+.wr-toc-row:hover{background:var(--sf);margin:0 -8px;padding:14px 8px;border-radius:3px}
+.wr-toc-num{font-family:var(--display);font-size:11px;font-weight:400;color:var(--ff);letter-spacing:-.01em;font-style:italic}
 .wr-toc-body{min-width:0}
-.wr-toc-type{font-size:8px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ff);margin-bottom:5px}
-.wr-toc-sub{font-style:italic;letter-spacing:.04em;text-transform:none;font-weight:400}
-.wr-toc-title{font-family:var(--display);font-size:clamp(18px,2vw,24px);font-weight:400;letter-spacing:-0.02em;line-height:1.25;margin-bottom:4px}
-.wr-toc-desc{font-size:11px;font-weight:300;color:var(--fm);line-height:1.5;max-width:560px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
-.wr-toc-meta{display:flex;flex-direction:column;align-items:flex-end;gap:3px;font-size:10px;color:var(--ff);letter-spacing:.04em;white-space:nowrap;padding-top:3px}
-.wr-toc-audio{font-size:9px;color:var(--fm);letter-spacing:.02em}
-@media(max-width:768px){
-  .wr-toc-row{grid-template-columns:36px 1fr;gap:0 14px}
-  .wr-toc-meta{grid-column:2;flex-direction:row;align-items:center;gap:8px;margin-top:8px}
-  .wr-toc-desc{-webkit-line-clamp:2}
+.wr-toc-type{font-size:7px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);margin-bottom:2px}
+.wr-toc-title{font-family:var(--display);font-size:15px;font-weight:400;letter-spacing:-0.01em;line-height:1.3}
+.wr-toc-meta{display:flex;align-items:center;gap:6px;font-size:9px;color:var(--ff);letter-spacing:.03em;white-space:nowrap}
+.wr-toc-audio{color:var(--fm)}
+@media(max-width:900px){
+  .wr-toc-grid{grid-template-columns:repeat(2,1fr);gap:0 24px}
+  .wr-toc-col:nth-child(3){border-left:none;padding-left:0}
+}
+@media(max-width:600px){
+  .wr-toc-grid{grid-template-columns:1fr}
+  .wr-toc-col{border-left:none!important;padding-left:0!important}
 }
 
 /* ── Exploration: Pinboard / Sticky Notes ── */
