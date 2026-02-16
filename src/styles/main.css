@@ -232,7 +232,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .cs-meta-val{font-size:13px;font-weight:300;color:var(--fm);line-height:1.4;max-width:280px}
 
 /* Hero — full bleed */
-.cs-hero{width:calc(100% + 80px);margin-left:-40px;aspect-ratio:16/9;background:var(--sf);margin-top:48px;margin-bottom:72px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.cs-hero{width:calc(100% + 80px);margin-left:-40px;aspect-ratio:3/2;background:var(--sf);margin-top:48px;margin-bottom:72px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
 @media(max-width:768px){.cs-hero{width:calc(100% + 40px);margin-left:-20px}}
 .cs-hero svg{width:100%;height:100%}
 .cs-hero-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(200,170,100,0.04) 0%,transparent 70%);pointer-events:none}
@@ -259,10 +259,10 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 /* Pull quotes — full width, big type */
 .cs-pullquote{font-family:var(--display);font-size:clamp(28px,4.5vw,44px);font-weight:400;font-style:italic;color:#D4CFC6;line-height:1.15;letter-spacing:-0.02em;padding:64px 0;text-align:center}
 
-/* Figures — full bleed with generous spacing */
-.cs-fig{margin:56px 0}
-.cs-full-img{width:calc(100% + 80px);margin-left:-40px;aspect-ratio:16/9;background:var(--sf);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
-@media(max-width:768px){.cs-full-img{width:calc(100% + 40px);margin-left:-20px}}
+/* Figures — full bleed, tall, immersive */
+.cs-fig{margin:72px 0}
+.cs-full-img{width:calc(100% + 80px);margin-left:-40px;aspect-ratio:3/2;background:var(--sf);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+@media(max-width:768px){.cs-full-img{width:calc(100% + 40px);margin-left:-20px;aspect-ratio:4/3}}
 .cs-full-img svg{width:100%;height:100%}
 .cs-full-img-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(200,170,100,0.03) 0%,transparent 60%);pointer-events:none}
 .cs-fig-cap{font-size:11px;font-style:italic;color:var(--ff);margin-top:12px;line-height:1.5}
