@@ -10,6 +10,7 @@ import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
 import SketchbookDetail from "./components/details/Sketchbook";
 import SpecSheetDetail from "./components/details/SpecSheet";
+import TheoryDetail from "./components/details/TheoryDetail";
 
 function cv(t) {
   return {
@@ -69,7 +70,7 @@ export default function App() {
     setFilter(f);
   }, []);
   const openItem = useCallback((item) => {
-    if (item.body || item.caseStudy || item.sketch || item.spec) {
+    if (item.body || item.caseStudy || item.sketch || item.spec || item.theory) {
       setActiveItem(item);
       window.scrollTo(0, 0);
     }
@@ -111,8 +112,11 @@ export default function App() {
       {/* Exploration sketchbook overlay */}
       {activeItem && activeItem.sketch && <SketchbookDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} fg={theme.fg} />}
 
+      {/* Theory detail overlay */}
+      {activeItem && activeItem.theory && <TheoryDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} onRelation={handleRelation} fg={theme.fg} />}
+
       {/* Artifact spec sheet overlay */}
-      {activeItem && activeItem.spec && !activeItem.sketch && <SpecSheetDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} fg={theme.fg} />}
+      {activeItem && activeItem.spec && !activeItem.sketch && !activeItem.theory && <SpecSheetDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} fg={theme.fg} />}
 
       {/* Easter egg overlay — press ? to toggle */}
       {egg && (
