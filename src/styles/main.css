@@ -409,6 +409,12 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .sp-meta-row strong{color:var(--fm);font-weight:500}
 .sp-section{margin-bottom:48px}
 .sp-section-label{font-size:9px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--ff);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
+.sp-prompt-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sp-prompt-header .sp-section-label{margin-bottom:0;padding-bottom:0;border-bottom:none}
+.sp-copy-btn{font-family:var(--sans);font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--fm);background:var(--sf);border:1px solid var(--bd);border-radius:4px;padding:6px 14px;cursor:pointer;transition:all .2s}
+.sp-copy-btn:hover{color:var(--fg);border-color:var(--fm)}
+.sp-prompt-block{background:var(--sf);border:1px solid var(--bd);border-radius:8px;padding:28px;position:relative;overflow:hidden}
+.sp-prompt-code{font-family:'IBM Plex Mono',monospace,var(--sans);font-size:13px;line-height:1.9;color:var(--fg);white-space:pre-wrap;word-wrap:break-word;margin:0}
 .sp-preview-visual{width:100%;aspect-ratio:16/9;background:var(--sf);border:1px solid var(--bd);border-radius:12px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;margin-bottom:8px}
 .sp-preview-visual svg{width:100%;height:100%}
 .sp-preview-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(200,170,100,0.03) 0%,transparent 60%);pointer-events:none}
