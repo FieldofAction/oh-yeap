@@ -131,11 +131,11 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 /* ── Writing Detail ── */
 @keyframes rdOpen{from{opacity:0;transform:translateY(40px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes rdClose{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(20px)}}
-.rd-overlay{position:fixed;inset:0;z-index:150;background:#5C5C5C;overflow-y:auto;animation:rdOpen .5s cubic-bezier(.16,1,.3,1) both}
+.rd-overlay{position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;animation:rdOpen .5s cubic-bezier(.16,1,.3,1) both}
 .rd-overlay.closing{animation:rdClose .3s ease both}
 .rd-inner{max-width:640px;margin:0 auto;padding:120px 32px 160px}
 @media(max-width:768px){.rd-inner{padding:100px 20px 120px}}
-.rd-back{position:sticky;top:16px;z-index:160;font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--fm);cursor:pointer;background:color-mix(in srgb,#5C5C5C 80%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:8px 16px;border:1px solid var(--bd);transition:all .2s;font-family:var(--sans);display:inline-flex;align-items:center;gap:6px;margin:16px 0 -48px 40px;width:fit-content}
+.rd-back{position:sticky;top:16px;z-index:160;font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--fm);cursor:pointer;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:8px 16px;border:1px solid var(--bd);transition:all .2s;font-family:var(--sans);display:inline-flex;align-items:center;gap:6px;margin:16px 0 -48px 40px;width:fit-content}
 @media(max-width:768px){.rd-back{margin-left:20px}}
 .rd-back:hover{color:var(--fg);border-color:var(--fm)}
 .rd-meta{display:flex;align-items:center;gap:12px;margin-bottom:24px;font-size:11px;letter-spacing:.06em;color:var(--ff);font-family:var(--sans)}
@@ -216,7 +216,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .prow-section-h{font-size:9px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--ff);padding:40px 0 16px;border-top:1px solid var(--bd);margin-top:8px}
 
 /* ── Case Study Detail ── */
-.cs-overlay{position:fixed;inset:0;z-index:150;background:#5C5C5C;overflow-y:auto;animation:rdOpen .5s cubic-bezier(.16,1,.3,1) both}
+.cs-overlay{position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;animation:rdOpen .5s cubic-bezier(.16,1,.3,1) both}
 .cs-overlay.closing{animation:rdClose .3s ease both}
 .cs-inner{max-width:1200px;margin:0 auto;padding:100px 40px 160px}
 @media(max-width:768px){.cs-inner{padding:80px 20px 120px}}
@@ -302,7 +302,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .af-row-status{font-size:8px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);white-space:nowrap}
 
 /* ── Exploration Sketchbook Detail ── */
-.sk-overlay{position:fixed;inset:0;z-index:150;background:#5C5C5C;overflow-y:auto;animation:rdOpen .5s cubic-bezier(.16,1,.3,1) both}
+.sk-overlay{position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;animation:rdOpen .5s cubic-bezier(.16,1,.3,1) both}
 .sk-overlay.closing{animation:rdClose .3s ease both}
 .sk-inner{max-width:1000px;margin:0 auto;padding:100px 40px 160px}
 @media(max-width:768px){.sk-inner{padding:80px 20px 120px}}
@@ -338,7 +338,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .sk-conn-why{font-size:12px;font-weight:300;color:var(--fm);line-height:1.5}
 
 /* ── Artifact Spec Sheet Detail ── */
-.sp-overlay{position:fixed;inset:0;z-index:150;background:#5C5C5C;overflow-y:auto;animation:rdOpen .5s cubic-bezier(.16,1,.3,1) both}
+.sp-overlay{position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;animation:rdOpen .5s cubic-bezier(.16,1,.3,1) both}
 .sp-overlay.closing{animation:rdClose .3s ease both}
 .sp-inner{max-width:860px;margin:0 auto;padding:100px 40px 160px}
 @media(max-width:768px){.sp-inner{padding:80px 20px 120px}}
@@ -372,7 +372,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .sp-source-why{font-size:11px;font-weight:300;color:var(--fm);line-height:1.5}
 
 /* ── Theory Detail ── */
-.th-overlay{position:fixed;inset:0;z-index:150;background:#5C5C5C;overflow-y:auto;animation:rdOpen .5s cubic-bezier(.16,1,.3,1) both}
+.th-overlay{position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;animation:rdOpen .5s cubic-bezier(.16,1,.3,1) both}
 .th-overlay.closing{animation:rdClose .3s ease both}
 .th-inner{max-width:720px;margin:0 auto;padding:120px 32px 160px}
 @media(max-width:768px){.th-inner{padding:100px 20px 120px}}
