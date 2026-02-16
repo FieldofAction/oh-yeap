@@ -1,13 +1,13 @@
 import React, { useCallback } from "react";
 import { VIS } from "../../data/seed";
 
-/* Relational Design icon — three concentric rounded rectangles from PDF p.2 */
+/* Relational Design icon — three concentric rounded rectangles (official mark) */
 function RDIcon({ color = "currentColor", size = 64 }) {
   return (
-    <svg viewBox="0 0 100 100" width={size} height={size} fill="none" stroke={color} strokeWidth="1.2">
-      <rect x="10" y="10" width="80" height="80" rx="10" opacity=".35" />
-      <rect x="20" y="20" width="60" height="60" rx="7" opacity=".5" />
-      <rect x="32" y="32" width="36" height="36" rx="4" opacity=".7" />
+    <svg viewBox="0 0 96 101" width={size} height={size} fill="none" stroke={color} strokeMiterlimit="10">
+      <rect x="8.89" y="10.89" width="78.21" height="78.21" rx="7.2" ry="7.2" />
+      <rect x="17.29" y="22.15" width="61.42" height="61.42" rx="5.67" ry="5.67" />
+      <rect x="32.72" y="46.99" width="30.71" height="30.71" rx="2.83" ry="2.83" />
     </svg>
   );
 }
