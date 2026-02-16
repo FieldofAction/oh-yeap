@@ -238,12 +238,13 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .cs-deliv-list{display:flex;gap:6px;flex-wrap:wrap}
 
 /* ── Writing: Editorial Contents Grid ── */
-.wr-toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 32px}
-.wr-toc-col{display:flex;flex-direction:column}
-.wr-toc-col:not(:first-child){border-left:1px solid var(--bd);padding-left:32px}
-.wr-toc-row{display:grid;grid-template-columns:32px 1fr auto;gap:0 10px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .15s}
-.wr-toc-row:first-child{border-top:1px solid var(--bd)}
-.wr-toc-row:hover{background:var(--sf);margin:0 -8px;padding:14px 8px;border-radius:3px}
+.wr-section{max-width:1200px;margin:0 auto;padding:0 40px}
+@media(max-width:768px){.wr-section{padding:0 20px}}
+.wr-section-h{font-size:9px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--ff);padding:48px 0 20px}
+.wr-toc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.wr-toc-col{display:flex;flex-direction:column;gap:6px}
+.wr-toc-row{display:grid;grid-template-columns:32px 1fr auto;gap:0 10px;align-items:baseline;padding:12px 14px;border:1px solid var(--bd);border-radius:6px;cursor:pointer;transition:all .2s}
+.wr-toc-row:hover{background:var(--sf);border-color:var(--fm)}
 .wr-toc-num{font-family:var(--display);font-size:11px;font-weight:400;color:var(--ff);letter-spacing:-.01em;font-style:italic}
 .wr-toc-body{min-width:0}
 .wr-toc-type{font-size:7px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);margin-bottom:2px}
@@ -251,12 +252,10 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .wr-toc-meta{display:flex;align-items:center;gap:6px;font-size:9px;color:var(--ff);letter-spacing:.03em;white-space:nowrap}
 .wr-toc-audio{color:var(--fm)}
 @media(max-width:900px){
-  .wr-toc-grid{grid-template-columns:repeat(2,1fr);gap:0 24px}
-  .wr-toc-col:nth-child(3){border-left:none;padding-left:0}
+  .wr-toc-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:600px){
   .wr-toc-grid{grid-template-columns:1fr}
-  .wr-toc-col{border-left:none!important;padding-left:0!important}
 }
 
 /* ── Exploration: Pinboard / Sticky Notes ── */
