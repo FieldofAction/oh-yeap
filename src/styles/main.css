@@ -29,9 +29,9 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .nowbar em{font-family:var(--display);font-style:italic;color:var(--fm);font-size:10px}
 .nowbar span{white-space:nowrap}
 
-.filters{display:flex;gap:16px;padding:28px 40px 20px;flex-wrap:wrap;max-width:1200px;margin:0 auto}
-@media(max-width:768px){.filters{padding:20px 20px 14px;gap:12px}}
-.fc{font-size:10px;font-weight:400;letter-spacing:.06em;text-transform:uppercase;color:var(--ff);padding:4px 0;cursor:pointer;transition:color .2s;background:none;border:none;font-family:var(--sans);position:relative}
+.filters{display:flex;gap:20px;padding:28px 40px 20px;flex-wrap:wrap;max-width:1200px;margin:0 auto}
+@media(max-width:768px){.filters{padding:20px 20px 14px;gap:14px}}
+.fc{font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--ff);padding:4px 0;cursor:pointer;transition:color .2s;background:none;border:none;font-family:var(--sans);position:relative}
 .fc::after{content:'';position:absolute;bottom:2px;left:0;right:0;height:1px;background:var(--fg);transform:scaleX(0);transition:transform .2s}
 .fc:hover{color:var(--fg)}
 .fc.on{color:var(--fg);font-weight:500}.fc.on::after{transform:scaleX(1)}
