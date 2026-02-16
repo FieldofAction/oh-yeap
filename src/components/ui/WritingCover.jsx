@@ -15,7 +15,11 @@ export default function WritingCover({ item, delay, fg, onOpen }) {
           {isMemo && item.memoNum && <span className="wr-cover-memo-num">Memo {item.memoNum} · </span>}
           {item.subtitle || "Essay"}
         </div>
-        {item.audioDur && <div className="wr-cover-audio">{item.audioDur}</div>}
+        {item.audioDur && item.substackUrl && (
+          <div className="wr-cover-audio" onClick={(e) => { e.stopPropagation(); window.open(item.substackUrl, "_blank", "noopener"); }}>
+            ▶ {item.audioDur}
+          </div>
+        )}
         <div className="wr-cover-inner">
           <div className="wr-cover-title">{item.title}</div>
           <div className="wr-cover-desc">{item.desc}</div>

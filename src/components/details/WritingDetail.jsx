@@ -37,14 +37,14 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
           {item.readMin && <><div className="rd-meta-sep" /><span>{item.readMin} min read</span></>}
         </div>
         <p className={`rd-desc${fn}`}>{item.desc}</p>
-        {item.audioDur && (
-          <div className="rd-audio-bar">
+        {item.audioDur && item.substackUrl && (
+          <a href={item.substackUrl} target="_blank" rel="noopener noreferrer" className="rd-audio-bar" style={{textDecoration:"none",color:"inherit",cursor:"pointer"}}>
             <div className="rd-audio-dot" />
             <div className="rd-audio-wave">
               {[4,7,10,6,9,5,8,11,7,4,6,9,5,8,10,6].map((h,i) => <span key={i} style={{height:h}} />)}
             </div>
-            <span>Audio · {item.audioDur}</span>
-          </div>
+            <span>Listen on Substack · {item.audioDur}</span>
+          </a>
         )}
         <div className="rd-hr" />
         <div className="rd-hero-art">
