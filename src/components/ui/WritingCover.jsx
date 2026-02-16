@@ -8,22 +8,24 @@ export default function WritingCover({ item, delay, fg, onOpen }) {
     <div className="wr-cover en" style={{animationDelay:`${0.1+delay*0.08}s`}} onClick={()=>onOpen(item)}>
       <div className="wr-cover-art">
         <div className={`wr-cover-stripe ${isMemo?"memo":"fn"}`} />
-        {item.coverImg ? (
-          <img src={item.coverImg} alt={item.title} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }} />
-        ) : (
-          <div dangerouslySetInnerHTML={{ __html: vi }} style={{ position:"absolute", inset:0, width:"100%", height:"100%" }} />
-        )}
-        <div className="wr-cover-grad" />
-        <div className="wr-cover-glow" />
-        <div className="wr-cover-type">
-          {isMemo && item.memoNum && <span className="wr-cover-memo-num">Memo {item.memoNum} · </span>}
-          {item.subtitle || "Essay"}
-        </div>
-        {item.audioDur && item.substackUrl && (
-          <div className="wr-cover-audio" onClick={(e) => { e.stopPropagation(); window.open(item.substackUrl, "_blank", "noopener"); }}>
-            ▶ {item.audioDur}
+        <div className="wr-cover-img-zone">
+          {item.coverImg ? (
+            <img src={item.coverImg} alt={item.title} className="wr-cover-img" />
+          ) : (
+            <div dangerouslySetInnerHTML={{ __html: vi }} className="wr-cover-vis" />
+          )}
+          <div className="wr-cover-img-fade" />
+          <div className="wr-cover-type">
+            {isMemo && item.memoNum && <span className="wr-cover-memo-num">Memo {item.memoNum} · </span>}
+            {item.subtitle || "Essay"}
           </div>
-        )}
+          {item.audioDur && item.substackUrl && (
+            <div className="wr-cover-audio" onClick={(e) => { e.stopPropagation(); window.open(item.substackUrl, "_blank", "noopener"); }}>
+              ▶ {item.audioDur}
+            </div>
+          )}
+        </div>
+        <div className="wr-cover-glow" />
         <div className="wr-cover-inner">
           <div className="wr-cover-title">{item.title}</div>
           <div className="wr-cover-desc">{item.desc}</div>
