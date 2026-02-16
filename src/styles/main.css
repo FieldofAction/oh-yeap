@@ -135,7 +135,8 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .rd-overlay.closing{animation:rdClose .3s ease both}
 .rd-inner{max-width:640px;margin:0 auto;padding:120px 32px 160px}
 @media(max-width:768px){.rd-inner{padding:100px 20px 120px}}
-.rd-back{position:fixed;top:16px;left:40px;z-index:160;font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--fm);cursor:pointer;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:8px 16px;border:1px solid var(--bd);transition:all .2s;font-family:var(--sans);display:inline-flex;align-items:center;gap:6px}
+.rd-back{position:sticky;top:16px;z-index:160;font-size:11px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--fm);cursor:pointer;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:8px 16px;border:1px solid var(--bd);transition:all .2s;font-family:var(--sans);display:inline-flex;align-items:center;gap:6px;margin:16px 0 -48px 40px;width:fit-content}
+@media(max-width:768px){.rd-back{margin-left:20px}}
 .rd-back:hover{color:var(--fg);border-color:var(--fm)}
 .rd-meta{display:flex;align-items:center;gap:12px;margin-bottom:24px;font-size:11px;letter-spacing:.06em;color:var(--ff);font-family:var(--sans)}
 .rd-meta-sep{width:1px;height:10px;background:var(--bd)}
