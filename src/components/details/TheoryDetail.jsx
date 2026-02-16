@@ -118,6 +118,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
         {theory.lineages?.length > 0 && (
           <div className="th-lineages">
             <div className="th-body-heading">Lineages of Relational Design</div>
+            <div className="th-body-text"><p>Relational Design grows from a lineage of movements that expanded the purpose and material of design.</p></div>
             <div className="th-lineages-grid">
               {theory.lineages.map((l, i) => (
                 <div key={i} className={`th-lineage-item${l.heading === "Convergence" ? " convergence" : ""}`}>
