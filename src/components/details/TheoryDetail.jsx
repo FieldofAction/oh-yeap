@@ -88,7 +88,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
               {section.body.split("\n\n").map((para, j) => <p key={j}>{para}</p>)}
             </div>
             {/* Interstitial visual between sections */}
-            {i < theory.sections.length - 1 && i !== 3 && (
+            {i < theory.sections.length - 1 && (
               <div className="th-interstitial">
                 <div dangerouslySetInnerHTML={{ __html: artVi(i + 1) }} style={{ width: "100%", height: "100%" }} />
                 <div className="th-hero-glow" />
