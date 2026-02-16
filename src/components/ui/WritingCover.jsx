@@ -8,7 +8,11 @@ export default function WritingCover({ item, delay, fg, onOpen }) {
     <div className="wr-cover en" style={{animationDelay:`${0.1+delay*0.08}s`}} onClick={()=>onOpen(item)}>
       <div className="wr-cover-art">
         <div className={`wr-cover-stripe ${isMemo?"memo":"fn"}`} />
-        <div dangerouslySetInnerHTML={{ __html: vi }} style={{ position:"absolute", inset:0, width:"100%", height:"100%" }} />
+        {item.coverImg ? (
+          <img src={item.coverImg} alt={item.title} style={{ position:"absolute", inset:0, width:"100%", height:"100%", objectFit:"cover" }} />
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: vi }} style={{ position:"absolute", inset:0, width:"100%", height:"100%" }} />
+        )}
         <div className="wr-cover-grad" />
         <div className="wr-cover-glow" />
         <div className="wr-cover-type">
