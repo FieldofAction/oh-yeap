@@ -84,6 +84,102 @@ const MODELS = [
   { value:"claude-opus-4-20250514", label:"Opus 4" },
 ];
 
+const SEQ_PROMPTS = {
+  v1: `ASU — Deterministic Sequence
+Treat the following as a live signal.
+Run agents in this exact order:
+1. Field Intelligence — sense and clarify the signal.
+2. Works in Progress — structure it into a model or framework.
+3. Cache — name it (title + thesis).
+4. Field of Action — translate it into a system or interface.
+5. Hotel — embody it as ritual or object.
+6. Art Practice — express its emotional or visual form.
+7. CLSSM — distill the governing principle.
+8. Freedom Embassy — decide one clear next move.
+Rules:
+• Each agent must build on the previous layer.
+• Keep outputs concise and non-redundant.
+• Do not skip stages.
+• End with exactly one recommended action.
+Signal:`,
+  v2: `ASU — Deterministic Sequence 2.0
+Treat the following as a live signal inside a dynamic field.
+Phase 0 — Field Intelligence
+• Clarify the signal.
+• Identify environmental, personal, and systemic context.
+• Surface hidden tensions or weak signals.
+• Define the real question underneath the signal.
+Then run agents in this exact order:
+1. Works in Progress
+   Structure the signal into a model, map, or index.
+2. Cache
+   Name it: title + thesis + 3 claims.
+3. Field of Action
+   Translate it into a system, interface, or behavioral pattern.
+4. Hotel
+   Embody it as a ritual, object, or practice.
+5. Art Practice
+   Express its emotional or visual resonance.
+6. CLSSM
+   Distill the governing principle or law.
+7. Freedom Embassy
+   Decide:
+   • What moves forward?
+   • What pauses?
+   • What archives?
+   End with exactly one recommended next action.
+Rules:
+• Each layer must build on the previous one.
+• No repetition across agents.
+• Be concise but not shallow.
+• Prefer structural clarity over poetic excess.
+• Close the loop with a clear move.
+Signal:`,
+  v3: `ASU — Deterministic Sequence 3.0
+Treat the following as a live signal inside a dynamic field.
+Phase -1 — Necessity Check
+Before creating anything:
+• Is this signal worthy of generation?
+• Is it noise, avoidance, repetition, or real movement?
+• Does it require action, reflection, or release?
+If the signal does not require generation, say so clearly and stop.
+If it does, continue.
+Phase 0 — Field Intelligence
+• Clarify the signal.
+• Identify context (personal, environmental, systemic).
+• Surface hidden tension.
+• Define the real underlying question.
+Then run agents in order:
+1. Works in Progress
+   Structure into model / index / map.
+2. Cache
+   Name it: title + thesis + 3 claims.
+3. Field of Action
+   Translate into system or interface pattern.
+4. Hotel
+   Embody as ritual, object, or behavioral practice.
+5. Art Practice
+   Express emotional / visual dimension.
+6. CLSSM
+   Distill governing law.
+7. Freedom Embassy
+   Decide:
+   • Move forward
+   • Pause
+   • Archive
+   • Re-run at deeper level
+End with exactly ONE:
+• concrete action OR
+• deliberate non-action
+Rules:
+• Build layer by layer.
+• No redundancy.
+• Prefer clarity over volume.
+• Stop if momentum becomes performative.
+• If tension remains unresolved, optionally trigger one recursive cycle.
+Signal:`,
+};
+
 export default function Backstage({ content, themeKey, onThemeChange, onPublish, asu }) {
   const ideas = asu.get_ideas();
   const am = asu.get_agent_mask();
@@ -99,6 +195,8 @@ export default function Backstage({ content, themeKey, onThemeChange, onPublish,
   const [bsSynthesis, setBsSynthesis] = useState(null);
   const [bsSyncing, setBsSyncing] = useState(false);
   const [pipeMode, setPipeMode] = useState("v1");
+  const [showPrompt, setShowPrompt] = useState(false);
+  const [promptCopied, setPromptCopied] = useState(false);
 
   const PIPE_MODES = useMemo(() => ({
     v1: { label:"v1.0", desc:"Linear pipeline with signal clarity check",
@@ -271,6 +369,15 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
               <div style={{marginTop:8,fontSize:9,color:"var(--ff)"}}>
                 Sequence: {activePipe.sequence?.map(k => AGENTS.find(a=>a.key===k)?.name).filter(Boolean).join(" → ")}
               </div>
+            )}
+            {pipeMode !== "free" && (
+              <div style={{marginTop:8,display:"flex",gap:4}}>
+                <button className="btn gh" style={{fontSize:8,padding:"3px 8px"}} onClick={()=>{setShowPrompt(p=>!p);setPromptCopied(false)}}>{showPrompt?"Hide":"View"} Prompt</button>
+                <button className="btn gh" style={{fontSize:8,padding:"3px 8px"}} onClick={()=>{navigator.clipboard?.writeText(SEQ_PROMPTS[pipeMode]);setPromptCopied(true);setTimeout(()=>setPromptCopied(false),2000)}}>{promptCopied?"Copied":"Copy"}</button>
+              </div>
+            )}
+            {showPrompt && pipeMode !== "free" && SEQ_PROMPTS[pipeMode] && (
+              <pre style={{marginTop:8,padding:10,background:"var(--bg)",border:"1px solid var(--bd)",fontSize:10,lineHeight:1.6,color:"var(--fm)",whiteSpace:"pre-wrap",wordBreak:"break-word",maxHeight:320,overflow:"auto",fontFamily:"var(--sans)"}}>{SEQ_PROMPTS[pipeMode]}</pre>
             )}
           </div>
           <div className="bsc">
