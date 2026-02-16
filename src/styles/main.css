@@ -237,48 +237,24 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .cs-deliv-h{font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ff);margin-bottom:16px}
 .cs-deliv-list{display:flex;gap:6px;flex-wrap:wrap}
 
-/* ── Writing: Horizontal Scroll of Essay Covers ── */
-.wr-section{max-width:1200px;margin:0 auto;padding:0 40px}
-@media(max-width:768px){.wr-section{padding:0 20px}}
-.wr-section-h{font-size:9px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--ff);padding:48px 0 20px}
-.wr-scroll{display:flex;gap:16px;overflow-x:auto;padding-bottom:20px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.wr-scroll::-webkit-scrollbar{display:none}
-.wr-cover{flex-shrink:0;width:340px;scroll-snap-align:start;cursor:pointer;transition:transform .3s;position:relative}
-@media(max-width:768px){.wr-cover{width:280px}}
-.wr-cover:hover{transform:translateY(-4px)}
-.wr-cover-art{width:100%;aspect-ratio:2/3;background:var(--sf);position:relative;overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--bd);transition:border-color .3s;border-radius:12px}
-.wr-cover:hover .wr-cover-art{border-color:var(--fm)}
-.wr-cover-art svg{position:absolute;inset:0;width:100%;height:100%}
-.wr-cover-img-zone{position:relative;flex:1 1 55%;min-height:0;overflow:hidden}
-.wr-cover-img{width:100%;height:100%;object-fit:cover;display:block}
-.wr-cover-vis{position:absolute;inset:0;width:100%;height:100%}
-.wr-cover-vis svg{width:100%;height:100%}
-.wr-cover-img-fade{position:absolute;bottom:0;left:0;right:0;height:48px;background:linear-gradient(to top,var(--sf) 0%,transparent 100%);pointer-events:none}
-.wr-cover-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,rgba(200,170,100,0.04) 0%,transparent 60%);pointer-events:none;opacity:0;transition:opacity .5s}
-.wr-cover:hover .wr-cover-glow{opacity:1}
-.wr-cover-type{position:absolute;top:12px;left:16px;font-size:8px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ff);background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:blur(8px);padding:4px 8px;z-index:2;border-radius:3px}
-.wr-cover-stripe{position:absolute;top:0;left:0;right:0;height:3px;z-index:3;border-radius:12px 12px 0 0}
-.wr-cover-stripe.memo{background:linear-gradient(90deg,#a3896b,#c4a882)}
-.wr-cover-stripe.fn{background:linear-gradient(90deg,#6b8fa3,#8bb0c4)}
-.wr-cover-audio{position:absolute;top:12px;right:16px;font-size:7px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ff);background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:blur(8px);padding:3px 8px;z-index:2;display:flex;align-items:center;gap:4px;border-radius:3px}
-.wr-cover-audio::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;border:1.5px solid var(--ff);position:relative}
-.wr-cover-memo-num{font-size:9px;font-weight:400;letter-spacing:.06em;color:var(--ff);font-family:var(--display);font-style:italic}
-.wr-cover-inner{position:relative;z-index:2;display:flex;flex-direction:column;gap:8px;padding:16px 20px 20px;flex:0 0 auto}
-.wr-cover-title{font-family:var(--display);font-size:clamp(20px,2.2vw,26px);font-weight:400;letter-spacing:-0.02em;line-height:1.2}
-.wr-cover-desc{font-size:11px;font-weight:300;color:var(--fm);line-height:1.5;max-width:280px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.wr-cover-meta{display:flex;gap:8px;align-items:center;font-size:10px;color:var(--ff);letter-spacing:.04em}
-.wr-cover-meta span{opacity:.7}
-.wr-cover-tags{display:flex;gap:3px;flex-wrap:wrap}
-.wr-hint{font-size:10px;color:var(--ff);margin-top:8px;font-style:italic;opacity:.5}
-
-/* ── Writing: Field Notes (compact within scroll) ── */
-.wr-note{flex-shrink:0;width:220px;scroll-snap-align:start;cursor:pointer;background:var(--cbg);border:1px solid var(--bd);padding:24px 20px;display:flex;flex-direction:column;justify-content:space-between;transition:all .3s;position:relative;border-radius:12px}
-@media(max-width:768px){.wr-note{width:180px;padding:18px 14px}}
-.wr-note:hover{background:var(--ch);transform:translateY(-2px)}
-.wr-note-type{font-size:8px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ff);margin-bottom:12px}
-.wr-note-t{font-family:var(--display);font-size:16px;font-weight:400;line-height:1.3;margin-bottom:8px}
-.wr-note-d{font-size:11px;font-weight:300;color:var(--fm);line-height:1.5;flex:1}
-.wr-note-yr{font-size:9px;color:var(--ff);margin-top:12px;letter-spacing:.06em}
+/* ── Writing: Editorial Contents ── */
+.wr-toc{display:flex;flex-direction:column}
+.wr-toc-row{display:grid;grid-template-columns:48px 1fr auto;gap:0 24px;align-items:baseline;padding:20px 0;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .2s}
+.wr-toc-row:first-child{border-top:1px solid var(--bd)}
+.wr-toc-row:hover{background:var(--sf);margin:0 -16px;padding:20px 16px;border-radius:4px}
+.wr-toc-num{font-family:var(--display);font-size:13px;font-weight:400;color:var(--ff);letter-spacing:-.01em;padding-top:3px;font-style:italic}
+.wr-toc-body{min-width:0}
+.wr-toc-type{font-size:8px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--ff);margin-bottom:5px}
+.wr-toc-sub{font-style:italic;letter-spacing:.04em;text-transform:none;font-weight:400}
+.wr-toc-title{font-family:var(--display);font-size:clamp(18px,2vw,24px);font-weight:400;letter-spacing:-0.02em;line-height:1.25;margin-bottom:4px}
+.wr-toc-desc{font-size:11px;font-weight:300;color:var(--fm);line-height:1.5;max-width:560px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.wr-toc-meta{display:flex;flex-direction:column;align-items:flex-end;gap:3px;font-size:10px;color:var(--ff);letter-spacing:.04em;white-space:nowrap;padding-top:3px}
+.wr-toc-audio{font-size:9px;color:var(--fm);letter-spacing:.02em}
+@media(max-width:768px){
+  .wr-toc-row{grid-template-columns:36px 1fr;gap:0 14px}
+  .wr-toc-meta{grid-column:2;flex-direction:row;align-items:center;gap:8px;margin-top:8px}
+  .wr-toc-desc{-webkit-line-clamp:2}
+}
 
 /* ── Exploration: Pinboard / Sticky Notes ── */
 .ex-section{max-width:1200px;margin:0 auto;padding:0 40px}

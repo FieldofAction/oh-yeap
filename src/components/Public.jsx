@@ -1,7 +1,6 @@
 import React from "react";
 import { FILTERS } from "../data/playbook-data";
 import PracticeRow from "./ui/PracticeRow";
-import WritingCover from "./ui/WritingCover";
 
 export default function Public({ items, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen }) {
   return (
@@ -53,26 +52,33 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
               </div>
             )}
 
-            {/* Writing — Horizontal scroll of essay covers + notes */}
+            {/* Writing — Editorial contents page */}
             {(showAll || filter === "Writing" || relFilter) && (essays.length > 0 || notes.length > 0) && (
               <div className="wr-section en">
                 <div className="wr-section-h">Writing</div>
-                <div className="wr-scroll">
-                  {essays.map((item, i) => (
-                    <WritingCover key={item.id} item={item} delay={i} fg={theme.fg} onOpen={onOpen} />
-                  ))}
-                  {notes.map((item, i) => (
-                    <div key={item.id} className="wr-note en" style={{animationDelay:`${0.1+(essays.length+i)*0.06}s`}} onClick={()=>onOpen(item)}>
-                      <div>
-                        <div className="wr-note-type">Field Note</div>
-                        <div className="wr-note-t">{item.title}</div>
-                        <div className="wr-note-d">{item.desc}</div>
+                <div className="wr-toc">
+                  {[...essays, ...notes].map((item, i) => {
+                    const isMemo = item.writeType === "memo";
+                    return (
+                      <div key={item.id} className="wr-toc-row en" style={{animationDelay:`${0.05+i*0.04}s`}} onClick={()=>onOpen(item)}>
+                        <div className="wr-toc-num">{String(i+1).padStart(2,"0")}</div>
+                        <div className="wr-toc-body">
+                          <div className="wr-toc-type">
+                            {isMemo && item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}
+                            {item.subtitle && <span className="wr-toc-sub"> — {item.subtitle}</span>}
+                          </div>
+                          <div className="wr-toc-title">{item.title}</div>
+                          <div className="wr-toc-desc">{item.desc}</div>
+                        </div>
+                        <div className="wr-toc-meta">
+                          <span>{item.year}</span>
+                          {item.readMin && <span>{item.readMin} min</span>}
+                          {item.audioDur && <span className="wr-toc-audio">▶ {item.audioDur}</span>}
+                        </div>
                       </div>
-                      <div className="wr-note-yr">{item.year}</div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
-                <div className="wr-hint">Scroll →</div>
               </div>
             )}
 
