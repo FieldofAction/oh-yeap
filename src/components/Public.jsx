@@ -15,8 +15,8 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
         </div>
       </div>
       <div className="nowbar en d4">
-        <span>Currently at <em>{nowState.working}</em></span><span>·</span>
-        <span>Reading <em>{nowState.reading}</em></span><span>·</span>
+        <span>Currently at <em>{nowState.working}</em></span><span>/</span>
+        <span>Reading <em>{nowState.reading}</em></span><span>/</span>
         <span>Building <em>{nowState.building}</em></span>
       </div>
 
