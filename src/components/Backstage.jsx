@@ -78,9 +78,16 @@ function PillarDiagnostic() {
   );
 }
 
+const MODELS = [
+  { value:"claude-sonnet-4-20250514", label:"Sonnet 4" },
+  { value:"claude-haiku-4-20250414", label:"Haiku 4" },
+  { value:"claude-opus-4-20250514", label:"Opus 4" },
+];
+
 export default function Backstage({ content, themeKey, onThemeChange, onPublish, asu }) {
   const ideas = asu.get_ideas();
   const am = asu.get_agent_mask();
+  const settings = asu.get_settings();
   const [aid, setAid] = useState(ideas[0]?.id);
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -161,8 +168,8 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
     const msg = `Idea: "${data.title}"${data.desc?`\n\nDescription: ${data.desc}`:""}${data.tags?.length?`\n\nTags: ${data.tags.join(", ")}`:""}\n${pbCtx}${seqSystem}${seqInstruction}${prevOutputs}\n\nRespond in this exact JSON format only, no markdown fences, no preamble:\n{"expansion":"your 2-3 sentence expansion","steps":["step 1","step 2","step 3"],"tasks":[{"label":"task description","status":"todo"},{"label":"task description","status":"todo"}]}`;
     try {
       const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method:"POST", headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:1000, system:agent.prompt, messages:[{role:"user",content:msg}] }),
+        method:"POST", headers:{"Content-Type":"application/json","x-api-key":settings.apiKey,"anthropic-version":settings.anthropicVersion,"anthropic-dangerous-direct-browser-access":"true"},
+        body:JSON.stringify({ model:settings.model, max_tokens:1000, system:agent.prompt, messages:[{role:"user",content:msg}] }),
       });
       if (!res.ok) throw new Error(`${res.status}`);
       const d = await res.json();
@@ -282,6 +289,30 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
             </div>
           </div>
           <PillarDiagnostic />
+          <div className="bsc">
+            <h4>Settings</h4>
+            <div style={{display:"grid",gap:8}}>
+              <div>
+                <div style={{fontSize:9,letterSpacing:".08em",textTransform:"uppercase",color:"var(--ff)",marginBottom:4}}>Anthropic API Key</div>
+                <input className="bsi" type="password" placeholder="sk-ant-..." value={settings.apiKey} onChange={e=>asu.set_settings({apiKey:e.target.value})} style={{fontSize:11,padding:"6px 8px"}} />
+              </div>
+              <div>
+                <div style={{fontSize:9,letterSpacing:".08em",textTransform:"uppercase",color:"var(--ff)",marginBottom:4}}>Model</div>
+                <div style={{display:"flex",flexWrap:"wrap",gap:2}}>
+                  {MODELS.map(m=>(
+                    <button key={m.value} className={`pb-emo-btn ${settings.model===m.value?"on":""}`} onClick={()=>asu.set_settings({model:m.value})} style={{fontSize:8,padding:"4px 10px"}}>
+                      {m.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <div style={{fontSize:9,letterSpacing:".08em",textTransform:"uppercase",color:"var(--ff)",marginBottom:4}}>API Version</div>
+                <input className="bsi" value={settings.anthropicVersion} onChange={e=>asu.set_settings({anthropicVersion:e.target.value})} style={{fontSize:11,padding:"6px 8px"}} />
+              </div>
+              {!settings.apiKey && <div style={{fontSize:9,color:"#c44",fontStyle:"italic"}}>API key required for agent pipeline and synthesis</div>}
+            </div>
+          </div>
         </div>
         <div>
           <div className="bsc">
@@ -370,8 +401,8 @@ Be specific to the outputs. Write 4-5 sentences in prose. No bullet points.
 Respond with ONLY the synthesis text, no preamble.`;
                   try {
                     const res = await fetch("https://api.anthropic.com/v1/messages", {
-                      method:"POST",headers:{"Content-Type":"application/json"},
-                      body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:600,messages:[{role:"user",content:prompt}]}),
+                      method:"POST",headers:{"Content-Type":"application/json","x-api-key":settings.apiKey,"anthropic-version":settings.anthropicVersion,"anthropic-dangerous-direct-browser-access":"true"},
+                      body:JSON.stringify({model:settings.model,max_tokens:600,messages:[{role:"user",content:prompt}]}),
                     });
                     if(!res.ok) throw new Error(`${res.status}`);
                     const d = await res.json();

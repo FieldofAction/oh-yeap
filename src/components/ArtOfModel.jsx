@@ -3,6 +3,7 @@ import { AOM_VERSIONS } from "../data/aom-versions";
 import { PILLARS } from "../data/playbook-data";
 
 export default function ArtOfModel({ asu }) {
+  const settings = asu.get_settings();
   const aomState = asu.get_art_of_model();
   const ver = aomState.activeVersion || "v3";
   const responses = aomState.responses;
@@ -41,8 +42,8 @@ Be direct, specific to their answers, and avoid generic advice. Write 3-4 senten
 Respond with ONLY the synthesis text, no preamble.`;
     try {
       const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method:"POST", headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({ model:"claude-sonnet-4-20250514", max_tokens:500, messages:[{role:"user",content:prompt}] }),
+        method:"POST", headers:{"Content-Type":"application/json","x-api-key":settings.apiKey,"anthropic-version":settings.anthropicVersion,"anthropic-dangerous-direct-browser-access":"true"},
+        body:JSON.stringify({ model:settings.model, max_tokens:500, messages:[{role:"user",content:prompt}] }),
       });
       if (!res.ok) throw new Error(`${res.status}`);
       const d = await res.json();

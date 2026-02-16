@@ -8,6 +8,12 @@ import { uid } from "../data/seed";
 // Each method maps 1:1 to a future MCP tool endpoint.
 // Store shape mirrors the MCP server spec: tools read/write from this.
 const INITIAL_STORE = {
+  // Settings
+  settings: {
+    apiKey: "",
+    model: "claude-sonnet-4-20250514",
+    anthropicVersion: "2023-06-01",
+  },
   // Playbook
   playbook: {
     project: { name:"", client:"", brief:"", status:"active", createdAt:new Date().toLocaleDateString() },
@@ -111,6 +117,10 @@ function useASUStore() {
       }
       return ctx;
     },
+
+    // ── Settings Tools ──
+    get_settings: () => store.settings,
+    set_settings: (updates) => setStore(s => ({...s, settings:{...s.settings, ...updates}})),
 
     // Raw store access (for components that need full state)
     store,
