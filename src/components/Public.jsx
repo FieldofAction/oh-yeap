@@ -93,36 +93,43 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
               </div>
             )}
 
-            {/* Exploration — Pinboard */}
+            {/* Exploration — Research Threads */}
             {(showAll || filter === "Exploration" || relFilter) && exploration.length > 0 && (
               <div className="ex-section en">
                 <div className="ex-section-h">Exploration</div>
-                <div className="ex-board">
+                <div className="ex-list">
                   {exploration.map((item, i) => (
-                    <div key={item.id} className="ex-pin en" style={{animationDelay:`${0.1+i*0.08}s`}} onClick={()=>onOpen(item)}>
-                      <div className="ex-pin-status"><span className={`ex-pin-dot ${item.status}`} />{item.status === "wip" ? "In Progress" : item.status}</div>
-                      <div className="ex-pin-t">{item.title}</div>
-                      <div className="ex-pin-sub">{item.subtitle}</div>
-                      <div className="ex-pin-d">{item.desc}</div>
-                      <div className="ex-pin-tags">
-                        {item.tags?.map(t => <span key={t} className="card-tg">{t}</span>)}
-                        {item.relations?.map(r => <span key={r} className="card-tg rel" onClick={(e)=>{e.stopPropagation();onRelation(r)}} style={{cursor:"pointer"}}>→ {r}</span>)}
+                    <div key={item.id} className="ex-row en" style={{animationDelay:`${0.05+i*0.04}s`}} onClick={()=>onOpen(item)}>
+                      <div className="ex-row-left">
+                        <span className={`ex-row-dot ${item.status}`} />
+                        <span className="ex-row-status">{item.status === "wip" ? "In Progress" : item.status}</span>
                       </div>
-                      <span className="ex-pin-corner">↗</span>
+                      <div className="ex-row-body">
+                        <div className="ex-row-t">{item.title}</div>
+                        <div className="ex-row-sub">{item.subtitle}</div>
+                        <div className="ex-row-d">{item.desc}</div>
+                      </div>
+                      <div className="ex-row-right">
+                        <div className="ex-row-tags">
+                          {item.tags?.map(t => <span key={t} className="card-tg">{t}</span>)}
+                          {item.relations?.map(r => <span key={r} className="card-tg rel" onClick={(e)=>{e.stopPropagation();onRelation(r)}} style={{cursor:"pointer"}}>→ {r}</span>)}
+                        </div>
+                        <span className="ex-row-arrow">↗</span>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
             )}
 
-            {/* Artifacts — Compact tile grid */}
+            {/* Artifacts — Index Rows */}
             {(showAll || filter === "Artifacts" || relFilter) && artifacts.length > 0 && (
               <div className="af-section en">
                 <div className="af-section-h">Artifacts</div>
-                <div className="af-grid">
+                <div className="af-list">
                   {artifacts.map((item, i) => (
-                    <div key={item.id} className="af-tile en" style={{animationDelay:`${0.1+i*0.06}s`}} onClick={()=>onOpen(item)}>
-                      <div className="af-tile-icon">
+                    <div key={item.id} className="af-row en" style={{animationDelay:`${0.05+i*0.04}s`}} onClick={()=>onOpen(item)}>
+                      <div className="af-row-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                           {item.tags?.includes("Visual")
                             ? <><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/></>
@@ -130,9 +137,11 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
                           }
                         </svg>
                       </div>
-                      <div className="af-tile-t">{item.title}</div>
-                      <div className="af-tile-d">{item.desc}</div>
-                      <div className="af-tile-status">{item.status}</div>
+                      <div className="af-row-body">
+                        <div className="af-row-t">{item.title}</div>
+                        <div className="af-row-d">{item.desc}</div>
+                      </div>
+                      <div className="af-row-status">{item.status}</div>
                     </div>
                   ))}
                 </div>
