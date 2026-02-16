@@ -1,6 +1,17 @@
 import React, { useCallback } from "react";
 import { VIS } from "../../data/seed";
 
+/* Relational Design icon — three concentric rounded rectangles from PDF p.2 */
+function RDIcon({ color = "currentColor", size = 64 }) {
+  return (
+    <svg viewBox="0 0 100 100" width={size} height={size} fill="none" stroke={color} strokeWidth="1.2">
+      <rect x="10" y="10" width="80" height="80" rx="10" opacity=".35" />
+      <rect x="20" y="20" width="60" height="60" rx="7" opacity=".5" />
+      <rect x="32" y="32" width="36" height="36" rx="4" opacity=".7" />
+    </svg>
+  );
+}
+
 export default function TheoryDetail({ item, allItems, closing, onClose, onOpen, onRelation, fg }) {
   const artVi = useCallback((i) => VIS[(Math.abs(item.title.charCodeAt(0)) + i) % VIS.length](fg), [item.title, fg]);
   const theory = item.theory;
@@ -9,10 +20,13 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
     <div className={`th-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>← Back</button>
       <div className="th-inner">
-        {/* Title block */}
+        {/* Title block with icon */}
         <div className="th-head">
+          <div className="th-icon">
+            <RDIcon color={fg} size={72} />
+          </div>
           <div className="th-badge">Theory</div>
-          <h1 className="th-title">{item.title}</h1>
+          <h1 className="th-title">Theory of {item.title}</h1>
           <div className="th-subtitle">{item.subtitle}</div>
           <div className="th-colophon">
             {theory.colophon && (
@@ -21,24 +35,23 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
                 <span className="th-colophon-sep" />
                 <span>Contained by {theory.colophon.org}</span>
                 <span className="th-colophon-sep" />
-                <span>{theory.colophon.location} · {theory.colophon.period}</span>
+                <span>Developed in {theory.colophon.location} · {theory.colophon.period}</span>
               </>
             )}
           </div>
         </div>
 
-        {/* Abstract */}
-        {theory.abstract && (
-          <div className="th-abstract">
-            <div className="th-section-label">Abstract</div>
-            <p className="th-abstract-text">{theory.abstract}</p>
+        {/* Intro — page 1 framing */}
+        {theory.intro && (
+          <div className="th-intro">
+            <p>{theory.intro}</p>
           </div>
         )}
 
         {/* Process diagram */}
         {theory.processDiagram?.length > 0 && (
           <div className="th-process">
-            <div className="th-section-label">Process</div>
+            <div className="th-section-label">Relational Design Process Diagram</div>
             <div className="th-process-ring">
               {theory.processDiagram.map((step, i) => (
                 <div key={i} className="th-process-step">
@@ -50,22 +63,36 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
           </div>
         )}
 
+        {/* Abstract */}
+        {theory.abstract && (
+          <div className="th-abstract">
+            <div className="th-section-header">
+              <div className="th-section-label">Abstract</div>
+              <div className="th-section-page">3</div>
+            </div>
+            <p className="th-abstract-text">{theory.abstract}</p>
+          </div>
+        )}
+
         {/* Hero visual */}
         <div className="th-hero-visual">
           <div dangerouslySetInnerHTML={{ __html: artVi(0) }} style={{ width: "100%", height: "100%" }} />
           <div className="th-hero-glow" />
         </div>
 
-        {/* Body sections */}
+        {/* Body sections with page-style headers */}
         {theory.sections?.map((section, i) => (
           <div key={i} className="th-body-section">
-            <div className="th-body-heading">{section.heading}</div>
+            <div className="th-section-header">
+              <div className="th-body-heading">{section.heading}</div>
+              {section.page && <div className="th-section-page">{section.page}</div>}
+            </div>
             <div className="th-body-text">
               {section.body.split("\n\n").map((para, j) => <p key={j}>{para}</p>)}
             </div>
             {section.caption && <div className="th-body-caption">{section.caption}</div>}
             {/* Interstitial visual between sections */}
-            {i < theory.sections.length - 1 && (
+            {i < theory.sections.length - 1 && i !== 3 && (
               <div className="th-interstitial">
                 <div dangerouslySetInnerHTML={{ __html: artVi(i + 1) }} style={{ width: "100%", height: "100%" }} />
                 <div className="th-hero-glow" />
@@ -77,10 +104,14 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
         {/* Principles */}
         {theory.principles?.length > 0 && (
           <div className="th-principles">
-            <div className="th-section-label">Principles of Relational Design</div>
+            <div className="th-section-header">
+              <div className="th-section-label">Principles of Relational Design</div>
+              <div className="th-section-page">9</div>
+            </div>
             <div className="th-principles-grid">
               {theory.principles.map((p, i) => (
                 <div key={i} className="th-principle">
+                  <div className="th-principle-num">{String(i + 1).padStart(2, "0")}</div>
                   <div className="th-principle-title">{p.title}</div>
                   <div className="th-principle-desc">{p.desc}</div>
                 </div>
@@ -89,12 +120,20 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
           </div>
         )}
 
-        {/* Lineages */}
-        {theory.lineages && (
+        {/* Lineages — structured per PDF page 11 */}
+        {theory.lineages?.length > 0 && (
           <div className="th-lineages">
-            <div className="th-section-label">Lineages of Relational Design</div>
-            <div className="th-lineages-text">
-              {theory.lineages.split("\n\n").map((para, j) => <p key={j}>{para}</p>)}
+            <div className="th-section-header">
+              <div className="th-section-label">Lineages of Relational Design</div>
+              <div className="th-section-page">11</div>
+            </div>
+            <div className="th-lineages-grid">
+              {theory.lineages.map((l, i) => (
+                <div key={i} className={`th-lineage-item${l.heading === "Convergence" ? " convergence" : ""}`}>
+                  <div className="th-lineage-heading">{l.heading}</div>
+                  <div className="th-lineage-body">{l.body}</div>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -102,7 +141,10 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
         {/* Works Cited */}
         {theory.worksCited?.length > 0 && (
           <div className="th-works-cited">
-            <div className="th-section-label">Works Cited</div>
+            <div className="th-section-header">
+              <div className="th-section-label">Works Cited</div>
+              <div className="th-section-page">12</div>
+            </div>
             <div className="th-works-list">
               {theory.worksCited.map((w, i) => (
                 <div key={i} className="th-work-item">{w}</div>
@@ -146,10 +188,16 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
 
         {/* Colophon footer */}
         <div className="th-footer">
+          <div className="th-footer-icon">
+            <RDIcon color={fg} size={48} />
+          </div>
           <div className="th-footer-line">Relational Design</div>
           <div className="th-footer-line">Written & Researched by {theory.colophon?.author}</div>
           <div className="th-footer-line">{theory.colophon?.location}</div>
           <div className="th-footer-line">{theory.colophon?.period}</div>
+          {theory.colophon?.contribution && (
+            <div className="th-footer-contrib">{theory.colophon.contribution}</div>
+          )}
           <div className="th-footer-org">{theory.colophon?.org}</div>
         </div>
       </div>

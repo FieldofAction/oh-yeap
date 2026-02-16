@@ -377,13 +377,18 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .th-inner{max-width:720px;margin:0 auto;padding:120px 32px 160px}
 @media(max-width:768px){.th-inner{padding:100px 20px 120px}}
 .th-head{margin-bottom:56px}
+.th-icon{margin-bottom:24px;opacity:.6}
 .th-badge{display:inline-flex;align-items:center;font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--bg);background:var(--fg);padding:4px 10px;border-radius:4px;margin-bottom:20px}
 .th-title{font-family:var(--display);font-size:clamp(36px,6vw,56px);font-weight:400;letter-spacing:-0.03em;line-height:1.08;margin-bottom:8px}
 .th-subtitle{font-family:var(--display);font-size:clamp(18px,2.5vw,24px);font-weight:400;color:var(--fm);line-height:1.3;margin-bottom:24px;font-style:italic}
 .th-colophon{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:10px;letter-spacing:.06em;color:var(--ff)}
 .th-colophon-sep{width:1px;height:10px;background:var(--bd)}
+.th-intro{margin-bottom:48px;font-size:15px;font-weight:300;line-height:1.8;color:var(--fm);max-width:600px;padding:24px 0;border-top:1px solid var(--bd)}
+.th-intro p{margin:0}
+.th-section-header{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:16px}
+.th-section-page{font-family:var(--display);font-size:11px;font-style:italic;color:var(--ff);opacity:.5;flex-shrink:0}
 .th-abstract{margin-bottom:56px;padding:32px 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
-.th-section-label{font-size:9px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--ff);margin-bottom:16px}
+.th-section-label{font-size:9px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--ff)}
 .th-abstract-text{font-family:var(--display);font-size:18px;font-weight:400;line-height:1.7;color:var(--fm);font-style:italic}
 .th-process{margin-bottom:56px}
 .th-process-ring{display:flex;align-items:center;gap:0;justify-content:center;padding:24px 0}
@@ -395,7 +400,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .th-hero-visual svg{width:100%;height:100%}
 .th-hero-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(200,170,100,0.03) 0%,transparent 60%);pointer-events:none}
 .th-body-section{margin-bottom:16px}
-.th-body-heading{font-family:var(--display);font-size:clamp(22px,3vw,30px);font-weight:400;letter-spacing:-0.02em;line-height:1.2;margin-bottom:16px}
+.th-body-heading{font-family:var(--display);font-size:clamp(22px,3vw,30px);font-weight:400;letter-spacing:-0.02em;line-height:1.2}
 .th-body-text{font-size:17px;font-weight:300;line-height:1.9;color:color-mix(in srgb,var(--fg) 85%,var(--fm));margin-bottom:16px}
 .th-body-text p{margin-bottom:20px}
 .th-body-text p:last-child{margin-bottom:0}
@@ -405,18 +410,25 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .th-principles{margin-top:56px;padding-top:40px;border-top:1px solid var(--bd);margin-bottom:56px}
 .th-principles-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
 @media(max-width:600px){.th-principles-grid{grid-template-columns:1fr}}
-.th-principle{background:var(--sf);padding:20px;border-radius:8px}
+.th-principle{background:var(--sf);padding:20px;border-radius:8px;position:relative}
+.th-principle-num{font-family:var(--display);font-size:10px;font-style:italic;color:var(--ff);opacity:.5;margin-bottom:6px}
 .th-principle-title{font-family:var(--display);font-size:15px;font-weight:400;font-style:italic;line-height:1.4;margin-bottom:6px;color:var(--fg)}
 .th-principle-desc{font-size:12px;font-weight:300;color:var(--fm);line-height:1.6}
 .th-lineages{margin-bottom:56px;padding-top:40px;border-top:1px solid var(--bd)}
-.th-lineages-text{font-size:14px;font-weight:300;line-height:1.85;color:var(--fm)}
-.th-lineages-text p{margin-bottom:16px}
-.th-lineages-text p:last-child{margin-bottom:0}
+.th-lineages-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+@media(max-width:768px){.th-lineages-grid{grid-template-columns:1fr}}
+.th-lineage-item{background:var(--sf);padding:20px;border-radius:8px}
+.th-lineage-item.convergence{grid-column:1/-1;background:transparent;border-top:1px solid var(--bd);border-radius:0;padding:20px 0}
+.th-lineage-heading{font-size:11px;font-weight:600;letter-spacing:.04em;margin-bottom:8px}
+.th-lineage-body{font-size:12px;font-weight:300;color:var(--fm);line-height:1.7}
 .th-works-cited{margin-bottom:56px;padding-top:40px;border-top:1px solid var(--bd)}
-.th-works-list{display:flex;flex-direction:column;gap:6px}
+.th-works-list{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px}
+@media(max-width:600px){.th-works-list{grid-template-columns:1fr}}
 .th-work-item{font-size:11px;color:var(--ff);line-height:1.6;padding-left:12px;border-left:1px solid var(--bd)}
 .th-footer{margin-top:64px;padding-top:40px;border-top:1px solid var(--bd);text-align:center}
+.th-footer-icon{margin-bottom:16px;opacity:.4;display:flex;justify-content:center}
 .th-footer-line{font-size:10px;letter-spacing:.06em;color:var(--ff);line-height:2}
+.th-footer-contrib{font-size:10px;font-style:italic;color:var(--ff);line-height:1.7;max-width:360px;margin:12px auto;opacity:.6}
 .th-footer-org{font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--fm);margin-top:12px}
 
 /* ── Four-Pillar Diagnostic ── */
