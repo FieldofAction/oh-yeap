@@ -1,7 +1,7 @@
 export const uid = () => Math.random().toString(36).slice(2, 10);
 
 export const SEED = [
-  { id:uid(), section:"practice", title:"Apple Music", subtitle:"Product Design", desc:"Design systems and product surfaces for the music streaming platform.", year:"2023–", status:"live", tags:["Product","Systems","Music"], relations:[], hasVisual:true, role:"Senior Product Designer", deliverables:["Product Design","Design Systems","Visual Language","Feature Design"], caseStudy:[
+  { id:uid(), section:"practice", title:"Apple Music", subtitle:"Product Design", desc:"Design systems and product surfaces for the music streaming platform.", year:"2023–", status:"live", tags:["Product","Systems","Music"], relations:[], hasVisual:true, role:"Creative Lead", deliverables:["Product Design","Design Systems","Visual Language","Feature Design"], caseStudy:[
     {type:"hero"},
     {type:"text",content:"Apple Music had a pluralist design system. Every content type — playlists, radio, stations, albums, artist pages — was rendered through the same visual grammar. The system treated everything equally, which sounds democratic until you realize it made everything indistinguishable. A listener couldn't tell at a glance whether they were looking at a curated playlist, an algorithmically generated station, or an editorial feature."},
     {type:"image",caption:"Product surfaces — system-level design across experiences"},
@@ -9,7 +9,7 @@ export const SEED = [
     {type:"image",caption:"Design system — component architecture and token structure"},
     {type:"text",content:"The shift was from treating design as surface consistency to treating it as spatial intelligence. When a listener scrolls through Apple Music, they're navigating a space. The design system became the map — typographic hierarchy, layout density, color logic, and component behavior all working together to signal where you are and what kind of experience you're about to enter.\n\nDesigning at this scale taught me that the best systems don't impose uniformity. They create orientation."},
   ]},
-  { id:uid(), section:"practice", title:"Google Cloud", subtitle:"Design Leadership", desc:"Creative direction and design strategy for cloud infrastructure products.", year:"2021–2023", status:"live", tags:["Leadership","Strategy","Enterprise"], relations:[], hasVisual:true, role:"Design Director", deliverables:["Creative Direction","Design Systems","Team Leadership","Product Strategy"], caseStudy:[
+  { id:uid(), section:"practice", title:"Google Cloud", subtitle:"Design Leadership", desc:"Creative direction and design strategy for cloud infrastructure products.", year:"2021–2023", status:"live", tags:["Leadership","Strategy","Enterprise"], relations:[], hasVisual:true, role:"Design Lead", deliverables:["Creative Direction","Design Systems","Team Leadership","Product Strategy"], caseStudy:[
     {type:"hero"},
     {type:"text",content:"Google Cloud had a framework brand design system — functional, systematic, built to scale infrastructure products across an enormous surface area. It worked. But it didn't move. The design language was an organizational tool, not a creative one. It kept things consistent without expressing what Cloud actually stood for."},
     {type:"image",caption:"Design system architecture — component hierarchy and token structure"},
@@ -25,7 +25,7 @@ export const SEED = [
     {type:"image",caption:"Product design — cross-platform experience"},
     {type:"text",content:"The identity system was rebuilt around that discipline. A single mark, a systematic color language, typographic rules that worked on a phone screen and a Times Square billboard. But the restraint was the point. The brand got quieter so the music could get louder.\n\nDesigning for platforms you don't own requires a different kind of rigor — the system carries the brand when the environment can't. What made this period formative was learning that the most powerful brand move is sometimes disappearing in service of someone else's work."},
   ]},
-  { id:uid(), section:"practice", title:"Tribeca Festival", subtitle:"Experience Design", desc:"Experience design and visual identity for the cultural festival.", year:"2014–2016", status:"archived", tags:["Experience","Identity","Culture"], relations:[], hasVisual:true, role:"Designer", deliverables:["Experience Design","Visual Identity","Environmental Graphics","Digital Design"], caseStudy:[
+  { id:uid(), section:"practice", title:"Tribeca Festival", subtitle:"Experience Design", desc:"Experience design and visual identity for the cultural festival.", year:"2014–2016", status:"archived", tags:["Experience","Identity","Culture"], relations:[], hasVisual:true, role:"Creative Director", deliverables:["Experience Design","Visual Identity","Environmental Graphics","Digital Design"], caseStudy:[
     {type:"hero"},
     {type:"text",content:"Tribeca was a film institution. Prestigious, founder-driven, anchored in the gravity of post-9/11 Lower Manhattan. But by the time I joined, the festival was facing a question most cultural institutions avoid: how do you stay relevant when the culture you helped define has moved on?"},
     {type:"image",caption:"Festival identity — visual system across touchpoints"},
