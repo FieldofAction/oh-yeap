@@ -87,7 +87,6 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
             <div className="th-body-text">
               {section.body.split("\n\n").map((para, j) => <p key={j}>{para}</p>)}
             </div>
-            {section.caption && <div className="th-body-caption">{section.caption}</div>}
             {/* Interstitial visual between sections */}
             {i < theory.sections.length - 1 && i !== 3 && (
               <div className="th-interstitial">
@@ -95,6 +94,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
                 <div className="th-hero-glow" />
               </div>
             )}
+            {section.caption && <div className="th-body-caption">{section.caption}</div>}
           </div>
         ))}
 
