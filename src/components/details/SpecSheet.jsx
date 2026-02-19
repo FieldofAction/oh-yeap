@@ -52,7 +52,11 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
             {item.spec.preview.type === "visual" && (
               <>
                 <div className="sp-preview-visual">
-                  <div dangerouslySetInnerHTML={{ __html: artVi(0) }} style={{ width:"100%", height:"100%" }} />
+                  {item.spec.preview.src ? (
+                    <img src={item.spec.preview.src} alt={item.spec.preview.caption || item.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+                  ) : (
+                    <div dangerouslySetInnerHTML={{ __html: artVi(0) }} style={{ width:"100%", height:"100%" }} />
+                  )}
                   <div className="sp-preview-glow" />
                 </div>
                 {item.spec.preview.caption && <div className="sp-preview-cap">{item.spec.preview.caption}</div>}

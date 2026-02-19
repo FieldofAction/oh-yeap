@@ -7,11 +7,16 @@ export default function CaseStudyDetail({ item, closing, onClose, fg }) {
 
   const cs = item.caseStudy;
   if (!cs) return null;
+  const imgs = cs.images || {};
 
   const Img = ({ idx, caption }) => (
     <div className="cs-fig">
       <div className="cs-full-img">
-        <div dangerouslySetInnerHTML={{ __html: artVi(idx) }} style={{ width:"100%", height:"100%" }} />
+        {imgs[`fig${idx}`] ? (
+          <img src={imgs[`fig${idx}`]} alt={caption || `${item.title} figure ${idx}`} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: artVi(idx) }} style={{ width:"100%", height:"100%" }} />
+        )}
         <div className="cs-full-img-glow" />
       </div>
       {caption && <div className="cs-fig-cap">{caption}</div>}
@@ -36,7 +41,11 @@ export default function CaseStudyDetail({ item, closing, onClose, fg }) {
 
         {/* ── Hero ── */}
         <div className="cs-hero">
-          <div dangerouslySetInnerHTML={{ __html: heroVi }} style={{ width:"100%", height:"100%" }} />
+          {imgs.hero ? (
+            <img src={imgs.hero} alt={item.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+          ) : (
+            <div dangerouslySetInnerHTML={{ __html: heroVi }} style={{ width:"100%", height:"100%" }} />
+          )}
           <div className="cs-hero-glow" />
         </div>
 

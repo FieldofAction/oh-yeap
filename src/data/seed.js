@@ -28,6 +28,14 @@ export const SEED = [
       closing:"The system began to guide.",
     },
     insight:["Plural systems require visible structure.","Orientation is not utility. It is respect.","Clarity becomes emotional at scale."],
+    images:{
+      // hero:"/images/case-studies/apple-music-hero.jpg",
+      // fig1:"/images/case-studies/apple-music-fig-1.jpg",
+      // fig2:"/images/case-studies/apple-music-fig-2.jpg",
+      // fig3:"/images/case-studies/apple-music-fig-3.jpg",
+      // fig4:"/images/case-studies/apple-music-fig-4.jpg",
+      // fig5:"/images/case-studies/apple-music-fig-5.jpg",
+    },
   }},
   { id:uid(), section:"practice", title:"Google Cloud", subtitle:"Embodying Progress Within a Framework Brand", desc:"Creative direction and design strategy for cloud infrastructure products.", year:"2021–2023", status:"live", tags:["Leadership","Strategy","Enterprise"], relations:[], hasVisual:true, role:"Design Lead", deliverables:["Creative Direction","Design Systems","Team Leadership","Product Strategy"], caseStudy:{
     snapshot:{
@@ -56,6 +64,14 @@ export const SEED = [
       closing:"Cloud began to feel like movement — not just structure.",
     },
     insight:["Framework brands win on discipline.","But discipline must allow signal.","Expression is not decoration. It is strategic amplification."],
+    images:{
+      // hero:"/images/case-studies/google-cloud-hero.jpg",
+      // fig1:"/images/case-studies/google-cloud-fig-1.jpg",
+      // fig2:"/images/case-studies/google-cloud-fig-2.jpg",
+      // fig3:"/images/case-studies/google-cloud-fig-3.jpg",
+      // fig4:"/images/case-studies/google-cloud-fig-4.jpg",
+      // fig5:"/images/case-studies/google-cloud-fig-5.jpg",
+    },
   }},
   { id:uid(), section:"practice", title:"Vevo", subtitle:"Designing in Service of the Artist", desc:"Brand identity, product design, and creative direction for the world's largest music video platform.", year:"2016–2021", status:"live", tags:["Brand","Product","Music"], relations:[], hasVisual:true, role:"Creative Director", deliverables:["Brand Identity","Product Design","Creative Direction","Design Systems"], caseStudy:{
     snapshot:{
@@ -84,6 +100,14 @@ export const SEED = [
       closing:"Restraint became authority.",
     },
     insight:["In culture-driven ecosystems, service builds power.","Removing ego strengthens identity.","The strongest brands know when to step back."],
+    images:{
+      // hero:"/images/case-studies/vevo-hero.jpg",
+      // fig1:"/images/case-studies/vevo-fig-1.jpg",
+      // fig2:"/images/case-studies/vevo-fig-2.jpg",
+      // fig3:"/images/case-studies/vevo-fig-3.jpg",
+      // fig4:"/images/case-studies/vevo-fig-4.jpg",
+      // fig5:"/images/case-studies/vevo-fig-5.jpg",
+    },
   }},
   { id:uid(), section:"practice", title:"Tribeca Festival", subtitle:"From Event Institution to Editorial Organism", desc:"Experience design and visual identity for the cultural festival.", year:"2014–2016", status:"archived", tags:["Experience","Identity","Culture"], relations:[], hasVisual:true, role:"Creative Director", deliverables:["Experience Design","Visual Identity","Environmental Graphics","Digital Design"], caseStudy:{
     snapshot:{
@@ -112,6 +136,14 @@ export const SEED = [
       closing:"Tribeca became less episodic. More alive.",
     },
     insight:["Institutions risk calcifying when tied to singular moments.","Editorial thinking creates elasticity.","Continuity builds relevance."],
+    images:{
+      // hero:"/images/case-studies/tribeca-hero.jpg",
+      // fig1:"/images/case-studies/tribeca-fig-1.jpg",
+      // fig2:"/images/case-studies/tribeca-fig-2.jpg",
+      // fig3:"/images/case-studies/tribeca-fig-3.jpg",
+      // fig4:"/images/case-studies/tribeca-fig-4.jpg",
+      // fig5:"/images/case-studies/tribeca-fig-5.jpg",
+    },
   }},
   { id:uid(), section:"writing", writeType:"memo", memoNum:1, title:"Beyond Productivity", coverImg:"https://substackcdn.com/image/fetch/w_1200,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa205171e-cfc6-4a70-90ee-06c5245bf627_4501x4501.heic", subtitle:"Art of Emergence", desc:"Identity, emergence, and the collapse of work as meaning.", year:"2025", status:"live", tags:["Identity","Emergence","Work"], relations:["Way of the Wave","Reshaping Players"], hasVisual:false, readMin:25, substackUrl:"https://adickson.substack.com/p/beyond-productivity", body:[
     {type:"text",content:"I didn't set out to write about identity unraveling, the collapse of work, or the shifting nature of meaning. It started with a feeling, one I couldn't name at first.\n\nFor years, work was a mirror. Creating, building, refining. I saw myself in the process. But slowly, that reflection faded. The work still had value, but it no longer anchored my sense of self. At first, I thought it was burnout, a phase to push through. But looking around, I saw the same disorientation everywhere.\n\nIt wasn't just personal. It was structural."},
@@ -313,6 +345,15 @@ export const SEED = [
       "Varela, Francisco J., Evan Thompson, and Eleanor Rosch. The Embodied Mind: Cognitive Science and Human Experience. Cambridge, MA: MIT Press, 1991.",
       "Winograd, Terry, and Fernando Flores. Understanding Computers and Cognition: A New Foundation for Design. Reading, MA: Addison-Wesley, 1986.",
     ],
+    images:{
+      // hero:"/images/theory/relational-design-hero.jpg",
+      // inter1:"/images/theory/relational-design-inter-1.jpg",
+      // inter2:"/images/theory/relational-design-inter-2.jpg",
+      // inter3:"/images/theory/relational-design-inter-3.jpg",
+      // inter4:"/images/theory/relational-design-inter-4.jpg",
+      // inter5:"/images/theory/relational-design-inter-5.jpg",
+      // inter6:"/images/theory/relational-design-inter-6.jpg",
+    },
     colophon:{author:"Alfred Daniel Dickson II",org:"Action Systems Universal",location:"Los Angeles, CA",period:"2024–2026",contribution:"With contributions in theory, diagrams, and methodology from ongoing work within Action Systems Universal"},
   }},
   { id:uid(), section:"exploration", title:"GSL", subtitle:"Generative Simulation Layer", desc:"Condition-first design experiments. Procedural logic meets visual systems.", year:"Active", status:"wip", tags:["Procedural","Simulation"], relations:["Relational Design"], hasVisual:true, sketch:{

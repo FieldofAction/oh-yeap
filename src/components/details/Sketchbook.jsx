@@ -29,7 +29,11 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
                   return (
                     <React.Fragment key={i}>
                       <div className="sk-frag-visual">
-                        <div dangerouslySetInnerHTML={{ __html: artVi(i) }} style={{ width:"100%", height:"100%" }} />
+                        {frag.src ? (
+                          <img src={frag.src} alt={frag.caption || `${item.title} fragment ${i}`} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+                        ) : (
+                          <div dangerouslySetInnerHTML={{ __html: artVi(i) }} style={{ width:"100%", height:"100%" }} />
+                        )}
                         <div className="sk-frag-visual-glow" />
                       </div>
                       {frag.caption && <div className="sk-frag-cap">{frag.caption}</div>}

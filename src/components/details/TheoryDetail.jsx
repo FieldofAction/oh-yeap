@@ -15,6 +15,7 @@ function RDIcon({ color = "currentColor", size = 36 }) {
 export default function TheoryDetail({ item, allItems, closing, onClose, onOpen, onRelation, fg }) {
   const artVi = useCallback((i) => VIS[(Math.abs(item.title.charCodeAt(0)) + i) % VIS.length](fg), [item.title, fg]);
   const theory = item.theory;
+  const imgs = theory?.images || {};
 
   return (
     <div className={`th-overlay ${closing ? "closing" : ""}`}>
@@ -76,7 +77,11 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
 
         {/* Hero visual */}
         <div className="th-hero-visual">
-          <div dangerouslySetInnerHTML={{ __html: artVi(0) }} style={{ width: "100%", height: "100%" }} />
+          {imgs.hero ? (
+            <img src={imgs.hero} alt={item.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+          ) : (
+            <div dangerouslySetInnerHTML={{ __html: artVi(0) }} style={{ width: "100%", height: "100%" }} />
+          )}
           <div className="th-hero-glow" />
         </div>
 
@@ -90,7 +95,11 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
             {/* Interstitial visual between sections */}
             {i < theory.sections.length - 1 && (
               <div className="th-interstitial">
-                <div dangerouslySetInnerHTML={{ __html: artVi(i + 1) }} style={{ width: "100%", height: "100%" }} />
+                {imgs[`inter${i + 1}`] ? (
+                  <img src={imgs[`inter${i + 1}`]} alt={`${section.heading} visual`} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+                ) : (
+                  <div dangerouslySetInnerHTML={{ __html: artVi(i + 1) }} style={{ width: "100%", height: "100%" }} />
+                )}
                 <div className="th-hero-glow" />
               </div>
             )}
