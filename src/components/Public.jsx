@@ -9,9 +9,9 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
         {/* Presence of Light — subtle radial glow behind hero */}
         <div style={{position:"absolute",top:"30%",left:"20%",width:"50vw",height:"50vw",borderRadius:"50%",background:`radial-gradient(circle,${theme.bg === "#0a0a09" ? "rgba(200,180,140,0.03)" : "rgba(0,0,0,0.02)"} 0%,transparent 70%)`,pointerEvents:"none",zIndex:0}} />
         <div style={{position:"relative",zIndex:1}}>
-          <div className="hero-pre en d1">Field Intelligence</div>
-          <h1 className="hero-h en d2">Applied intelligence<br/>in live <em>systems</em></h1>
-          <p className="hero-sub en d3">Translating complexity into coherent action — through design leadership, systems thinking, and relational infrastructure. Building conditions under which alignment can appear.</p>
+          <div className="hero-pre en d1">Field of Action</div>
+          <h1 className="hero-h en d2">Applied awareness<br/>in live <em>systems</em></h1>
+          <p className="hero-sub en d3">Where awareness becomes action — through design leadership, systems thinking, and relational infrastructure. Building conditions under which alignment can appear.</p>
         </div>
       </div>
       <div className="nowbar en d4">
@@ -160,7 +160,7 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
           A creative director working at the intersection of design systems, relational theory, and emerging technology — building conditions for coherence across brand, product, and culture.
         </p>
         <p style={{fontSize:13,fontWeight:300,lineHeight:1.7,color:"var(--fm)",maxWidth:520,marginTop:20}}>
-          The work moves between applied design leadership and theoretical research. Current focus: how relational intelligence reshapes what design can be — from outputs to field conditions.
+          The work moves between applied design leadership and theoretical research. Current focus: how relational awareness reshapes what design can be — from outputs to field conditions.
         </p>
       </div>
 
@@ -181,10 +181,10 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
         </div>
       </div>
       <div className="cta">
-        <p className="cta-p">Field Intelligence engages where a real system exists, a real constraint is present, and responsibility is held.</p>
+        <p className="cta-p">Field of Action engages where a real system exists, a real constraint is present, and responsibility is held.</p>
         <a href="#" className="cta-a">Begin a conversation →</a>
       </div>
-      <footer className="foot"><span>Field Intelligence</span><span>2025</span></footer>
+      <footer className="foot"><span>Field of Action</span><span>2026</span></footer>
     </>
   );
 }

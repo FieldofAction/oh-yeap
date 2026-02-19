@@ -90,7 +90,7 @@ export default function App() {
   return (
     <div style={cv(theme)}>
       <nav className="nav">
-        <span className="nav-m" onClick={() => { setView("public"); setRelFilter(null); }}>Field Intelligence</span>
+        <span className="nav-m" onClick={() => { setView("public"); setRelFilter(null); }}>Field of Action</span>
         <div className="nav-r">
           <button className={`nl ${view === "public" ? "on" : ""}`} onClick={() => setView("public")}>Work</button>
           <button className={`nl ${view === "model" ? "on" : ""}`} onClick={() => setView("model")}>Art of Model</button>

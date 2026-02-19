@@ -25,10 +25,10 @@ export const AOM_VERSIONS = {
   v3: {
     label:"v3", title:"The Art of Model", subtitle:"Operating System for Generative Identity.", shift:"From authorship → infrastructure",
     steps: [
-      {n:"0",title:"Observe",question:"What is happening?",body:"Stabilize perception. What patterns are repeating? What energy is rising or collapsing?",layer:"Input",mapped:"Field Intelligence / Cache",ph:"What are you observing?"},
+      {n:"0",title:"Observe",question:"What is happening?",body:"Stabilize perception. What patterns are repeating? What energy is rising or collapsing?",layer:"Input",mapped:"Field of Action / Cache",ph:"What are you observing?"},
       {n:"1",title:"Synthesize",question:"What is the underlying relational dynamic?",body:"Detect field structure. What tension is unresolved? What wants coherence?",layer:"Pattern extraction",mapped:"Works in Progress",ph:"What pattern or tension are you detecting?"},
       {n:"2",title:"Train",question:"What quality do I want to cultivate?",body:"Select quality. What behavior does this system reinforce? What muscle is being built?",layer:"Identity shaping",mapped:"Soul / Personal Practice",ph:"What quality is being trained?"},
-      {n:"3",title:"Emit",question:"What signal enters the market?",body:"Shape signal. What ecosystem does this attract? Is this aligned with 10-year authorship?",layer:"Externalization",mapped:"Field of Action / Brand Expression",ph:"What signal are you emitting?"},
+      {n:"3",title:"Emit",question:"What signal enters the market?",body:"Shape signal. What ecosystem does this attract? Is this aligned with 10-year authorship?",layer:"Externalization",mapped:"Action / Brand Expression",ph:"What signal are you emitting?"},
       {n:"4",title:"Scope",question:"What constraint stabilizes this?",body:"Govern energy. What do I refuse? What scale is correct?",layer:"Boundary setting",mapped:"Governance / Executive Agent",ph:"What boundary or refusal stabilizes this?"},
       {n:"5",title:"Evolve",question:"What feedback emerges?",body:"Let the system adapt. What is compounding? What should be pruned?",layer:"Recursion",mapped:"ASU as Living Infrastructure",ph:"What is compounding? What should be pruned?"},
       {n:"6",title:"Be",question:null,body:"Integration. No forcing. No output chasing. System runs. Signal flows. Energy stabilizes.",layer:"Embodiment",ph:null},

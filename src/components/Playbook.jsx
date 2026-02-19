@@ -71,7 +71,7 @@ export default function Playbook({ asu }) {
           <div style={{fontSize:11,color:"var(--fm)",lineHeight:1.6,marginBottom:16}}>Each agent is a pavilion inside the larger ecosystem. They don't just hold an identity — they act on inputs and expand them. Inputs are never static — they are constantly acted upon, reframed, and elevated.</div>
           <div className="pb-agents-h">Agent → Input → Action</div>
           {[
-            {name:"Field of Action",input:"Raw ideas, briefs",action:"Transforms into bold, dramatic design expressions"},
+            {name:"Action",input:"Raw ideas, briefs",action:"Transforms into bold, dramatic design expressions"},
             {name:"Cache",input:"Documentation, narrative",action:"Reframes as publishing, memory, or cultural artifact"},
             {name:"Hotel",input:"Lifestyle cues, objects",action:"Expands into spaces of sensuality and play"},
             {name:"A.R.T.",input:"Concepts, provocations",action:"Challenges and reframes through artistic intervention"},
@@ -88,7 +88,7 @@ export default function Playbook({ asu }) {
           ))}
           <div className="pb-loops">
             <div className="pb-agents-h" style={{marginTop:0}}>Relational Expansion</div>
-            <div className="pb-loop"><span>Field of Action</span> sparks → <span>Cache</span> records</div>
+            <div className="pb-loop"><span>Action</span> sparks → <span>Cache</span> records</div>
             <div className="pb-loop"><span>CLSSM</span> provides structure → <span>Freedom Embassy</span> arbitrates</div>
             <div className="pb-loop"><span>A.R.T.</span> provokes → <span>Hotel</span> makes it livable and tactile</div>
             <div className="pb-loop"><span>ASU Master</span> synthesizes → the loop begins again</div>
