@@ -264,17 +264,22 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
     const seqInstruction = seqCtx?.instruction ? `\n\nYOUR ROLE IN THIS SEQUENCE: ${seqCtx.instruction}` : "";
     const prevOutputs = seqCtx?.previousOutputs ? `\n\nPREVIOUS AGENT OUTPUTS (build on these, do not repeat):\n${seqCtx.previousOutputs}` : "";
     const msg = `Idea: "${data.title}"${data.desc?`\n\nDescription: ${data.desc}`:""}${data.tags?.length?`\n\nTags: ${data.tags.join(", ")}`:""}\n${pbCtx}${seqSystem}${seqInstruction}${prevOutputs}\n\nRespond in this exact JSON format only, no markdown fences, no preamble:\n{"expansion":"your 2-3 sentence expansion","steps":["step 1","step 2","step 3"],"tasks":[{"label":"task description","status":"todo"},{"label":"task description","status":"todo"}]}`;
+    const currentSettings = asu.get_settings();
     try {
+      const reqBody = { model:currentSettings.model, max_tokens:1000, system:agent.prompt, messages:[{role:"user",content:msg}] };
+      console.log("[Backstage] callAgent →", agent.name, "model:", currentSettings.model, "key:", currentSettings.apiKey ? `${currentSettings.apiKey.slice(0,10)}...` : "MISSING");
       const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method:"POST", headers:{"Content-Type":"application/json","x-api-key":settings.apiKey,"anthropic-version":settings.anthropicVersion,"anthropic-dangerous-direct-browser-access":"true"},
-        body:JSON.stringify({ model:settings.model, max_tokens:1000, system:agent.prompt, messages:[{role:"user",content:msg}] }),
+        method:"POST", headers:{"Content-Type":"application/json","x-api-key":currentSettings.apiKey,"anthropic-version":currentSettings.anthropicVersion,"anthropic-dangerous-direct-browser-access":"true"},
+        body:JSON.stringify(reqBody),
       });
-      if (!res.ok) throw new Error(`${res.status}`);
+      if (!res.ok) { const errBody = await res.text(); console.error("[Backstage] API error:", res.status, errBody); throw new Error(`${res.status}: ${errBody.slice(0,200)}`); }
       const d = await res.json();
       const text = d.content?.map(b => b.text||"").join("")||"";
+      console.log("[Backstage] response text:", text.slice(0,200));
       try { const p=JSON.parse(text.replace(/```json|```/g,"").trim()); return {expansion:p.expansion||text,steps:Array.isArray(p.steps)?p.steps:[],tasks:Array.isArray(p.tasks)?p.tasks:[]}; }
       catch { return {expansion:text.slice(0,500),steps:[],tasks:[]}; }
     } catch(err) {
+      console.error("[Backstage] callAgent failed:", err);
       return {expansion:`${agent.name}: unavailable — ${err.message}`,steps:[`Define intent for ${agent.name}`,"Map constraints","Draft artifact"],tasks:[{label:"Review",status:"todo"}]};
     }
   }, [asu]);

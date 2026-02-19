@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { AGENTS } from "../data/agents";
 import { PILLARS, EMO_MAP, REFS } from "../data/playbook-data";
 import { AOM_VERSIONS } from "../data/aom-versions";
@@ -7,7 +7,9 @@ import { uid } from "../data/seed";
 // ─── ASU Store (MCP-ready data layer) ────────────────────────────
 // Each method maps 1:1 to a future MCP tool endpoint.
 // Store shape mirrors the MCP server spec: tools read/write from this.
-const INITIAL_STORE = {
+const STORAGE_KEY = "asu-store";
+
+const DEFAULT_STORE = {
   // Settings
   settings: {
     apiKey: "",
@@ -44,9 +46,28 @@ const INITIAL_STORE = {
   },
 };
 
+function loadStore() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return DEFAULT_STORE;
+    const saved = JSON.parse(raw);
+    // Deep merge saved over defaults so new keys are always present
+    return {
+      settings: { ...DEFAULT_STORE.settings, ...saved.settings },
+      playbook: { ...DEFAULT_STORE.playbook, ...saved.playbook, project: { ...DEFAULT_STORE.playbook.project, ...(saved.playbook?.project||{}) }, pillars: { ...DEFAULT_STORE.playbook.pillars, ...(saved.playbook?.pillars||{}) }, application: { ...DEFAULT_STORE.playbook.application, ...(saved.playbook?.application||{}) } },
+      backstage: { ...DEFAULT_STORE.backstage, ...saved.backstage, ideas: saved.backstage?.ideas?.length ? saved.backstage.ideas : DEFAULT_STORE.backstage.ideas, agentMask: { ...DEFAULT_STORE.backstage.agentMask, ...(saved.backstage?.agentMask||{}) } },
+      system: { ...DEFAULT_STORE.system, ...saved.system },
+      artOfModel: { ...DEFAULT_STORE.artOfModel, ...saved.artOfModel, responses: { ...DEFAULT_STORE.artOfModel.responses, ...(saved.artOfModel?.responses||{}) }, synthesis: { ...DEFAULT_STORE.artOfModel.synthesis, ...(saved.artOfModel?.synthesis||{}) } },
+    };
+  } catch { return DEFAULT_STORE; }
+}
+
 // Hook: provides store + MCP-shaped accessors
 function useASUStore() {
-  const [store, setStore] = useState(INITIAL_STORE);
+  const [store, setStore] = useState(loadStore);
+
+  // Persist to localStorage on every change
+  useEffect(() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(store)); } catch {} }, [store]);
 
   const api = useMemo(() => ({
     // ── Playbook Tools (read) ──
