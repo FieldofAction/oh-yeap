@@ -79,9 +79,9 @@ function PillarDiagnostic() {
 }
 
 const MODELS = [
-  { value:"claude-sonnet-4-20250514", label:"Sonnet 4" },
-  { value:"claude-haiku-4-20250414", label:"Haiku 4" },
-  { value:"claude-opus-4-20250514", label:"Opus 4" },
+  { value:"claude-sonnet-4-5-20250929", label:"Sonnet 4.5" },
+  { value:"claude-haiku-4-5-20251001", label:"Haiku 4.5" },
+  { value:"claude-opus-4-5-20251101", label:"Opus 4.5" },
 ];
 
 const SEQ_PROMPTS = {

@@ -11,7 +11,7 @@ const INITIAL_STORE = {
   // Settings
   settings: {
     apiKey: "",
-    model: "claude-sonnet-4-20250514",
+    model: "claude-sonnet-4-5-20250929",
     anthropicVersion: "2023-06-01",
   },
   // Playbook
