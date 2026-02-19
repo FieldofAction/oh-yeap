@@ -199,6 +199,8 @@ export default function Backstage({ content, themeKey, onThemeChange, onPublish,
   const [pipeMode, setPipeMode] = useState("v1");
   const [showPrompt, setShowPrompt] = useState(false);
   const [promptCopied, setPromptCopied] = useState(false);
+  const [synthCopied, setSynthCopied] = useState(false);
+  const [synthLogged, setSynthLogged] = useState(false);
 
   const PIPE_MODES = useMemo(() => ({
     v1: { label:"v1.0", desc:"Linear pipeline with signal clarity check",
@@ -292,7 +294,7 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
 
   const run = useCallback(async () => {
     if (running||!idea) return;
-    setRunning(true); setProgress(0); setBsSynthesis(null);
+    setRunning(true); setProgress(0); setBsSynthesis(null); setSynthCopied(false); setSynthLogged(false);
     const liveAsu = asuRef.current;
     const rid = uid(); const outs = {};
     const currentAm = liveAsu.get_agent_mask();
@@ -497,7 +499,7 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
                 <h4>Synthesis</h4>
                 <button className="btn" disabled={bsSyncing} style={{fontSize:10}} onClick={async ()=>{
                   if(bsSyncing) return;
-                  setBsSyncing(true);
+                  setBsSyncing(true); setSynthCopied(false); setSynthLogged(false);
                   const agentOutputs = lastRun.selection.map(ak => {
                     const ag = AGENTS.find(a=>a.key===ak);
                     const out = lastRun.outputs[ak];
@@ -520,9 +522,10 @@ Be specific to the outputs. Write 4-5 sentences in prose. No bullet points.
 
 Respond with ONLY the synthesis text, no preamble.`;
                   try {
+                    const liveSettings = asuRef.current.get_settings();
                     const res = await fetch("https://api.anthropic.com/v1/messages", {
-                      method:"POST",headers:{"Content-Type":"application/json","x-api-key":settings.apiKey,"anthropic-version":settings.anthropicVersion,"anthropic-dangerous-direct-browser-access":"true"},
-                      body:JSON.stringify({model:settings.model,max_tokens:600,messages:[{role:"user",content:prompt}]}),
+                      method:"POST",headers:{"Content-Type":"application/json","x-api-key":liveSettings.apiKey,"anthropic-version":liveSettings.anthropicVersion,"anthropic-dangerous-direct-browser-access":"true"},
+                      body:JSON.stringify({model:liveSettings.model,max_tokens:600,messages:[{role:"user",content:prompt}]}),
                     });
                     if(!res.ok) throw new Error(`${res.status}`);
                     const d = await res.json();
@@ -538,10 +541,16 @@ Respond with ONLY the synthesis text, no preamble.`;
                 <div style={{marginTop:8}}>
                   <div style={{fontSize:13,fontWeight:300,color:"var(--fg)",lineHeight:1.7,fontFamily:"var(--display)",letterSpacing:"-0.01em"}}>{bsSynthesis}</div>
                   <div style={{display:"flex",gap:6,marginTop:10}}>
-                    <button className="btn gh" style={{fontSize:9}} onClick={()=>navigator.clipboard?.writeText(bsSynthesis)}>Copy</button>
                     <button className="btn gh" style={{fontSize:9}} onClick={()=>{
-                      asu.log_decision({decision:`Synthesis for "${idea.title}": ${bsSynthesis.slice(0,200)}`,pillar:asu.get_dominant_pillar().key,note:"Auto-logged from backstage synthesis"});
-                    }}>Log as Decision</button>
+                      navigator.clipboard?.writeText(bsSynthesis);
+                      setSynthCopied(true);
+                      setTimeout(()=>setSynthCopied(false),2000);
+                    }}>{synthCopied?"Copied ✓":"Copy"}</button>
+                    <button className="btn gh" style={{fontSize:9}} onClick={()=>{
+                      asuRef.current.log_decision({decision:`Synthesis for "${idea.title}": ${bsSynthesis.slice(0,200)}`,pillar:asuRef.current.get_dominant_pillar().key,note:"Auto-logged from backstage synthesis"});
+                      setSynthLogged(true);
+                      setTimeout(()=>setSynthLogged(false),2000);
+                    }}>{synthLogged?"Logged ✓":"Log as Decision"}</button>
                   </div>
                 </div>
               )}
