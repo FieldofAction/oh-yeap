@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useRef, useMemo, useCallback } from "react";
 import { AGENTS } from "../data/agents";
 import { THEMES } from "../data/themes";
 import { PILLARS } from "../data/playbook-data";
@@ -184,6 +184,8 @@ export default function Backstage({ content, themeKey, onThemeChange, onPublish,
   const ideas = asu.get_ideas();
   const am = asu.get_agent_mask();
   const settings = asu.get_settings();
+  const asuRef = useRef(asu);
+  asuRef.current = asu;
   const [aid, setAid] = useState(ideas[0]?.id);
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -259,15 +261,19 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
   }, [asu]);
 
   const callAgent = useCallback(async (agent, data, seqCtx) => {
-    const pbCtx = asu.build_agent_context();
+    const liveAsu = asuRef.current;
+    const pbCtx = liveAsu.build_agent_context();
+    const currentSettings = liveAsu.get_settings();
     const seqSystem = seqCtx?.system ? `\n\n${seqCtx.system}` : "";
     const seqInstruction = seqCtx?.instruction ? `\n\nYOUR ROLE IN THIS SEQUENCE: ${seqCtx.instruction}` : "";
     const prevOutputs = seqCtx?.previousOutputs ? `\n\nPREVIOUS AGENT OUTPUTS (build on these, do not repeat):\n${seqCtx.previousOutputs}` : "";
     const msg = `Idea: "${data.title}"${data.desc?`\n\nDescription: ${data.desc}`:""}${data.tags?.length?`\n\nTags: ${data.tags.join(", ")}`:""}\n${pbCtx}${seqSystem}${seqInstruction}${prevOutputs}\n\nRespond in this exact JSON format only, no markdown fences, no preamble:\n{"expansion":"your 2-3 sentence expansion","steps":["step 1","step 2","step 3"],"tasks":[{"label":"task description","status":"todo"},{"label":"task description","status":"todo"}]}`;
-    const currentSettings = asu.get_settings();
+    console.log("[Backstage] callAgent →", agent.name, "model:", currentSettings.model, "key:", currentSettings.apiKey ? `${currentSettings.apiKey.slice(0,10)}...` : "MISSING");
+    if (!currentSettings.apiKey) {
+      return {expansion:`${agent.name}: API key is missing. Add it in Settings below.`,steps:[],tasks:[]};
+    }
     try {
       const reqBody = { model:currentSettings.model, max_tokens:1000, system:agent.prompt, messages:[{role:"user",content:msg}] };
-      console.log("[Backstage] callAgent →", agent.name, "model:", currentSettings.model, "key:", currentSettings.apiKey ? `${currentSettings.apiKey.slice(0,10)}...` : "MISSING");
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method:"POST", headers:{"Content-Type":"application/json","x-api-key":currentSettings.apiKey,"anthropic-version":currentSettings.anthropicVersion,"anthropic-dangerous-direct-browser-access":"true"},
         body:JSON.stringify(reqBody),
@@ -282,19 +288,21 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
       console.error("[Backstage] callAgent failed:", err);
       return {expansion:`${agent.name}: unavailable — ${err.message}`,steps:[`Define intent for ${agent.name}`,"Map constraints","Draft artifact"],tasks:[{label:"Review",status:"todo"}]};
     }
-  }, [asu]);
+  }, []);
 
   const run = useCallback(async () => {
     if (running||!idea) return;
     setRunning(true); setProgress(0); setBsSynthesis(null);
+    const liveAsu = asuRef.current;
     const rid = uid(); const outs = {};
+    const currentAm = liveAsu.get_agent_mask();
 
     const isSequence = pipeMode !== "free" && activePipe.sequence;
     const sel = isSequence
       ? activePipe.sequence.map(k => AGENTS.find(a => a.key === k)).filter(Boolean)
-      : AGENTS.filter(a => am[a.key]);
+      : AGENTS.filter(a => currentAm[a.key]);
 
-    asu.update_idea(idea.id, i => ({...i,runs:[...i.runs,{id:rid,status:"running",mode:pipeMode,selection:sel.map(a=>a.key),outputs:{}}]}));
+    liveAsu.update_idea(idea.id, i => ({...i,runs:[...i.runs,{id:rid,status:"running",mode:pipeMode,selection:sel.map(a=>a.key),outputs:{}}]}));
 
     let prevOutputs = "";
     for (let i=0;i<sel.length;i++) {
@@ -313,12 +321,12 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
         prevOutputs += `${sel[i].name}: ${r.expansion}\n`;
       }
 
-      asu.update_idea(idea.id, it => ({...it,runs:it.runs.map(rn => rn.id!==rid?rn:{...rn,outputs:{...rn.outputs,[sel[i].key]:r}})}));
+      asuRef.current.update_idea(idea.id, it => ({...it,runs:it.runs.map(rn => rn.id!==rid?rn:{...rn,outputs:{...rn.outputs,[sel[i].key]:r}})}));
     }
     setProgress(100);
-    asu.update_idea(idea.id, it => ({...it,runs:it.runs.map(rn => rn.id===rid?{...rn,status:"complete",outputs:outs}:rn)}));
+    asuRef.current.update_idea(idea.id, it => ({...it,runs:it.runs.map(rn => rn.id===rid?{...rn,status:"complete",outputs:outs}:rn)}));
     setRunning(false);
-  }, [running, idea, am, callAgent, asu, pipeMode, activePipe]);
+  }, [running, idea, callAgent, pipeMode, activePipe]);
 
   const pub = useCallback((ak, rn) => {
     const ag=AGENTS.find(a=>a.key===ak);
