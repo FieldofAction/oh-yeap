@@ -120,7 +120,7 @@ export default function App() {
 
       {/* Easter egg overlay — press ? to toggle */}
       {egg && (
-        <div style={{ position: "fixed", bottom: 40, left: 40, right: 40, zIndex: 200, background: "var(--sf)", border: "1px solid var(--bd)", padding: 24, fontFamily: "var(--sans)", fontSize: 11, color: "var(--fm)", lineHeight: 1.8, maxWidth: 480, animation: "en .3s ease" }}>
+        <div className="egg-overlay" style={{ position: "fixed", bottom: 20, left: 20, right: 20, zIndex: 200, background: "var(--sf)", border: "1px solid var(--bd)", padding: 20, fontFamily: "var(--sans)", fontSize: 11, color: "var(--fm)", lineHeight: 1.8, maxWidth: 480, animation: "en .3s ease" }}>
           <div style={{ fontSize: 9, fontWeight: 500, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--ff)", marginBottom: 8 }}>System Condition</div>
           <div><strong style={{ color: "var(--fg)" }}>{asu.get_system_condition().condition}</strong> · Reading {asu.get_system_condition().reading} · Building {asu.get_system_condition().building} · At {asu.get_system_condition().working}</div>
           <div style={{ marginTop: 12, fontSize: 10, color: "var(--ff)" }}>8 agents · {content.length} artifacts · {content.filter(c => c.status === "live").length} live</div>
