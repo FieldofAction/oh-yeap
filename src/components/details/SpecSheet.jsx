@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from "react";
 import { VIS } from "../../data/seed";
+import { PatternChipsDetail } from "../PatternLens";
 
-export default function SpecSheetDetail({ item, allItems, closing, onClose, onOpen, fg }) {
+export default function SpecSheetDetail({ item, allItems, closing, onClose, onOpen, fg, lens }) {
   const artVi = useCallback((i) => VIS[(Math.abs(item.title.charCodeAt(0)) + i) % VIS.length](fg), [item.title, fg]);
   const typeLabel = {diagram:"Diagram",prompt:"Prompt",framework:"Framework",model:"Model"}[item.artifactType] || "Artifact";
   const [copied, setCopied] = useState(false);
@@ -100,6 +101,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
             })}
           </div>
         )}
+        <PatternChipsDetail itemTitle={item.title} active={lens} />
         <div className="rd-tags">
           {item.tags?.map(t => <span key={t} className="card-tg">{t}</span>)}
           {item.relations?.map(r => <span key={r} className="card-tg rel">&rarr; {r}</span>)}

@@ -139,7 +139,7 @@ export default function Playbook({ asu }) {
               <button key={e} className={`pb-emo-btn ${emotion===e?"on":""}`} onClick={()=>asu.set_emotional_system(emotion===e?"":e)}>{e}</button>
             ))}
           </div>
-          {emotion && <div style={{marginTop:10,fontSize:11,color:"var(--fm)",fontStyle:"italic"}}>
+          {emotion && <div style={{marginTop:10,fontSize:11,color:"var(--fm)",fontWeight:300}}>
             {EMO_MAP[emotion]}
           </div>}
         </div>

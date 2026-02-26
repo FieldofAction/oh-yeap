@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 1020" width="680" height="1020">
+  <!--
+    WRITING COVER ART TEMPLATE
+    ===========================
+    Card: 340px x 510px (2:3 ratio) — this SVG is @2x (680x1020)
+    Export artwork at 680x1020 @2x or 1020x1530 @3x
+
+    LAYOUT:
+    - Image zone: top ~55% (0–561px @2x)
+    - Text zone:  bottom ~45% (561–1020px @2x) — solid bg, no art needed
+    - Fade:       48px gradient at bottom of image zone (465–561px @2x)
+
+    UI OVERLAYS ON IMAGE:
+    - Type badge:    top-left (32,24 from corner, ~120x32px @2x)
+    - Audio badge:   top-right (32,24 from corner, ~100x28px @2x)
+    - Color stripe:  full-width, 6px tall @2x at very top
+    - Bottom fade:   96px @2x gradient to card bg
+
+    SAFE ZONE: Keep primary artwork subject within the center.
+    Avoid placing key detail in the top 56px or bottom 96px of image zone.
+  -->
+
+  <!-- Card boundary -->
+  <rect x="0" y="0" width="680" height="1020" rx="24" fill="#131210" stroke="#1e1d1a" stroke-width="2"/>
+
+  <!-- ═══ IMAGE ZONE (top 55%) ═══ -->
+  <rect x="0" y="0" width="680" height="561" rx="24" fill="#1a1816" opacity="0.5"/>
+  <text x="340" y="280" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="24" fill="#4a4740" font-weight="300">IMAGE ZONE</text>
+  <text x="340" y="310" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="14" fill="#4a4740">680 x 561 @2x (340 x 280 @1x)</text>
+  <text x="340" y="332" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="12" fill="#4a4740">object-fit: cover — image fills this zone</text>
+
+  <!-- Color stripe @2x: full width, 6px, very top -->
+  <rect x="0" y="0" width="680" height="6" rx="2" fill="#a3896b" opacity="0.7"/>
+  <text x="340" y="20" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="9" fill="#c4a882">STRIPE (memo: gold / field-note: blue) — 3px @1x</text>
+
+  <!-- Type badge: top:12 left:16 @1x → top:24 left:32 @2x -->
+  <rect x="32" y="24" width="160" height="32" rx="6" fill="#0a0a09" opacity="0.7" stroke="#4a4740" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="112" y="45" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#8a867e" letter-spacing="1.5">TYPE BADGE</text>
+  <text x="112" y="70" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="9" fill="#4a4740">e.g. "Memo 3 · Art of Composability"</text>
+
+  <!-- Audio badge: top:12 right:16 @1x → top:24 right:32 @2x -->
+  <rect x="488" y="24" width="160" height="28" rx="6" fill="#0a0a09" opacity="0.7" stroke="#4a4740" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="568" y="43" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#8a867e" letter-spacing="1">AUDIO</text>
+  <text x="568" y="66" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="9" fill="#4a4740">e.g. "▶ 21:36"</text>
+
+  <!-- SAFE ZONE for primary artwork content -->
+  <rect x="40" y="56" width="600" height="409" rx="8" fill="none" stroke="#6b8fa3" stroke-width="1" stroke-dasharray="8,4" opacity="0.5"/>
+  <text x="340" y="268" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="16" fill="#6b8fa3" opacity="0.6" font-weight="500">SAFE ZONE</text>
+  <text x="340" y="290" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#6b8fa3" opacity="0.5">Keep primary subject / focal point here</text>
+  <text x="340" y="306" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#6b8fa3" opacity="0.5">600 x 409 @2x (300 x 204 @1x)</text>
+
+  <!-- Bottom fade zone: 96px @2x gradient from transparent to card bg -->
+  <defs>
+    <linearGradient id="fadeGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#131210" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#131210" stop-opacity="1"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="465" width="680" height="96" fill="url(#fadeGrad)"/>
+  <text x="340" y="520" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#8a867e" opacity="0.7">FADE ZONE — 48px @1x gradient to bg</text>
+  <text x="340" y="535" text-anchor="middle" font-family="Helvetica,Arial,sans-serif" font-size="9" fill="#8a867e" opacity="0.5">Art here will be partially obscured</text>
+
+  <!-- ═══ TEXT ZONE (bottom 45%) ═══ -->
+  <rect x="0" y="561" width="680" height="459" rx="0" fill="#131210"/>
+
+  <!-- Text zone content simulation -->
+  <!-- Title: padding 16px 20px @1x → 32px 40px @2x -->
+  <rect x="40" y="593" width="400" height="40" rx="4" fill="#f0ede6" opacity="0.12"/>
+  <text x="50" y="620" font-family="Georgia,serif" font-size="26" fill="#f0ede6" font-weight="400" letter-spacing="-0.5">Essay Title</text>
+
+  <!-- Description: 2 lines max -->
+  <rect x="40" y="649" width="520" height="16" rx="2" fill="#8a867e" opacity="0.12"/>
+  <rect x="40" y="673" width="380" height="16" rx="2" fill="#8a867e" opacity="0.12"/>
+  <text x="50" y="662" font-family="Helvetica,Arial,sans-serif" font-size="11" fill="#8a867e" opacity="0.5">Description text — 2 line clamp</text>
+
+  <!-- Meta row -->
+  <rect x="40" y="705" width="200" height="14" rx="2" fill="#4a4740" opacity="0.15"/>
+  <text x="50" y="716" font-family="Helvetica,Arial,sans-serif" font-size="10" fill="#4a4740" opacity="0.6">2025 · 22 min read · live</text>
+
+  <!-- Tags -->
+  <rect x="40" y="733" width="60" height="18" rx="4" fill="none" stroke="#1e1d1a" stroke-width="1"/>
+  <rect x="108" y="733" width="70" height="18" rx="4" fill="none" stroke="#1e1d1a" stroke-width="1"/>
+  <rect x="186" y="733" width="50" height="18" rx="4" fill="none" stroke="#1e1d1a" stroke-width="1"/>
+  <text x="50" y="746" font-family="Helvetica,Arial,sans-serif" font-size="9" fill="#4a4740">TAG</text>
+  <text x="118" y="746" font-family="Helvetica,Arial,sans-serif" font-size="9" fill="#4a4740">TAG</text>
+  <text x="196" y="746" font-family="Helvetica,Arial,sans-serif" font-size="9" fill="#4a4740">TAG</text>
+
+  <!-- ═══ ANNOTATIONS ═══ -->
+  <!-- Dimension labels -->
+  <line x1="668" y1="0" x2="668" y2="561" stroke="#6b8fa3" stroke-width="0.5" opacity="0.4"/>
+  <text x="676" y="280" font-family="Helvetica,Arial,sans-serif" font-size="9" fill="#6b8fa3" opacity="0.5" transform="rotate(90,676,280)">55% IMAGE</text>
+
+  <line x1="668" y1="561" x2="668" y2="1020" stroke="#a3896b" stroke-width="0.5" opacity="0.4"/>
+  <text x="676" y="790" font-family="Helvetica,Arial,sans-serif" font-size="9" fill="#a3896b" opacity="0.5" transform="rotate(90,676,790)">45% TEXT</text>
+
+  <!-- Divider line between zones -->
+  <line x1="0" y1="561" x2="680" y2="561" stroke="#4a4740" stroke-width="1" stroke-dasharray="6,4" opacity="0.3"/>
+</svg>

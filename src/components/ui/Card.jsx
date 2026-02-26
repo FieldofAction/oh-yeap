@@ -14,7 +14,7 @@ export default function Card({ item, delay, fg, onRelation, onOpen }) {
             <div dangerouslySetInnerHTML={{ __html: vi }} style={{ width:"100%", height:"100%" }} />
           )}
           <div className="card-vo" />
-          <div style={{position:"absolute",inset:0,background:"radial-gradient(circle at 50% 60%, rgba(200,170,100,0.06) 0%, transparent 60%)",opacity:hov?1:0,transition:"opacity .6s",pointerEvents:"none"}} />
+          <div style={{position:"absolute",inset:0,background:"radial-gradient(circle at 50% 60%, rgba(59,74,63,0.06) 0%, transparent 60%)",opacity:hov?1:0,transition:"opacity .6s",pointerEvents:"none"}} />
         </div>
       )}
       <div className="card-b">
@@ -25,7 +25,7 @@ export default function Card({ item, delay, fg, onRelation, onOpen }) {
         <div className="card-t">{item.title}</div>
         <div className="card-d">{item.desc}</div>
         <div style={{maxHeight:hov?40:0,opacity:hov?1:0,overflow:"hidden",transition:"all .4s ease",marginTop:hov?8:0}}>
-          <span style={{fontSize:11,fontStyle:"italic",color:"var(--ff)"}}>
+          <span style={{fontSize:11,fontWeight:300,color:"var(--ff)"}}>
             {item.section === "practice" ? "Applied intervention" : item.section === "writing" ? "Evolving document" : item.section === "exploration" ? "Active experiment" : "System artifact"} · {item.status}
           </span>
         </div>

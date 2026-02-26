@@ -1,13 +1,14 @@
 import React from "react";
 import { FILTERS } from "../data/playbook-data";
 import PracticeRow from "./ui/PracticeRow";
+import { PatternChips } from "./PatternLens";
 
-export default function Public({ items, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen }) {
+export default function Public({ items, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens }) {
   return (
     <>
       <div className="hero en" style={{position:"relative"}}>
         {/* Presence of Light — subtle radial glow behind hero */}
-        <div style={{position:"absolute",top:"30%",left:"20%",width:"50vw",height:"50vw",borderRadius:"50%",background:`radial-gradient(circle,${theme.bg === "#0a0a09" ? "rgba(200,180,140,0.03)" : "rgba(0,0,0,0.02)"} 0%,transparent 70%)`,pointerEvents:"none",zIndex:0}} />
+        <div style={{position:"absolute",top:"30%",left:"20%",width:"50vw",height:"50vw",borderRadius:"50%",background:`radial-gradient(circle,${theme.bg === "#0E0E0C" ? "rgba(59,74,63,0.04)" : "rgba(59,74,63,0.03)"} 0%,transparent 70%)`,pointerEvents:"none",zIndex:0}} />
         <div style={{position:"relative",zIndex:1}}>
           <div className="hero-pre en d1">Field of Action</div>
           <h1 className="hero-h en d2">Applied awareness<br/>in live <em>systems</em></h1>
@@ -47,7 +48,7 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
               <div className="prow-section en d5">
                 <div className="prow-section-h">Selected Work</div>
                 {practice.map((item, i) => (
-                  <PracticeRow key={item.id} item={item} delay={i} fg={theme.fg} onOpen={onOpen} />
+                  <PracticeRow key={item.id} item={item} delay={i} fg={theme.fg} onOpen={onOpen} lens={lens} />
                 ))}
               </div>
             )}
@@ -83,6 +84,7 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
                                 {item.readMin && <span>{item.readMin}m</span>}
                                 {item.audioDur && <span className="wr-toc-audio">▶</span>}
                               </div>
+                              <PatternChips itemTitle={item.title} active={lens} compact />
                             </div>
                           );
                         })}
@@ -108,6 +110,7 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
                         <div className="ex-row-t">{item.title}</div>
                         <div className="ex-row-sub">{item.subtitle}</div>
                         <div className="ex-row-d">{item.desc}</div>
+                        <PatternChips itemTitle={item.title} active={lens} compact />
                       </div>
                       <div className="ex-row-right">
                         <div className="ex-row-tags">
@@ -140,6 +143,7 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
                       <div className="af-row-body">
                         <div className="af-row-t">{item.title}</div>
                         <div className="af-row-d">{item.desc}</div>
+                        <PatternChips itemTitle={item.title} active={lens} compact />
                       </div>
                       <div className="af-row-status">{item.status}</div>
                     </div>
@@ -148,43 +152,11 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
               </div>
             )}
 
-            {items.length === 0 && <div style={{maxWidth:1200,margin:"0 auto",padding:"80px 40px",textAlign:"center",fontSize:13,color:"var(--ff)",fontStyle:"italic"}}>No items in this view.</div>}
+            {items.length === 0 && <div style={{maxWidth:1200,margin:"0 auto",padding:"80px 40px",textAlign:"center",fontSize:13,color:"var(--ff)",fontWeight:300}}>No items in this view.</div>}
           </>
         );
       })()}
 
-      {/* Ethos — minimal position for hiring managers */}
-      <div className="ethos en" style={{maxWidth:1200,margin:"80px auto 0",padding:"60px 40px",borderTop:"1px solid var(--bd)"}}>
-        <div style={{fontSize:9,fontWeight:500,letterSpacing:".14em",textTransform:"uppercase",color:"var(--ff)",marginBottom:16}}>Position</div>
-        <p style={{fontFamily:"var(--display)",fontSize:"clamp(22px,3vw,32px)",fontWeight:400,lineHeight:1.4,letterSpacing:"-0.02em",maxWidth:700}}>
-          A creative director working at the intersection of design systems, relational theory, and emerging technology — building conditions for coherence across brand, product, and culture.
-        </p>
-        <p style={{fontSize:13,fontWeight:300,lineHeight:1.7,color:"var(--fm)",maxWidth:520,marginTop:20}}>
-          The work moves between applied design leadership and theoretical research. Current focus: how relational awareness reshapes what design can be — from outputs to field conditions.
-        </p>
-      </div>
-
-      <div className="canon en">
-        <div className="canon-h">Relational Design</div>
-        <p className="canon-p">A practice of designing conditions — not outcomes. Orientation and shared language for work that holds complexity without collapsing it.</p>
-        <div className="canon-ax">
-          <span className="canon-al">Governing Principle</span>
-          <p className="canon-at">Embodied action precedes alignment. You do not act to become aligned. You act because alignment has already taken form.</p>
-        </div>
-        <div className="canon-ax">
-          <span className="canon-al">System Invariant</span>
-          <p className="canon-at">Practice precedes documentation. Documentation never leads offerings. Silence is allowed.</p>
-        </div>
-        <div className="canon-ax">
-          <span className="canon-al">Aliveness</span>
-          <p className="canon-at">The system demonstrates aliveness through responsiveness, not performance. State is visible. Change is legible. Stillness and motion are both evidence of attention.</p>
-        </div>
-      </div>
-      <div className="cta">
-        <p className="cta-p">Field of Action engages where a real system exists, a real constraint is present, and responsibility is held.</p>
-        <a href="#" className="cta-a">Begin a conversation →</a>
-      </div>
-      <footer className="foot"><span>Field of Action</span><span>2026</span></footer>
     </>
   );
 }

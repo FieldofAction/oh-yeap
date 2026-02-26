@@ -1,7 +1,8 @@
 import React, { useMemo, useCallback } from "react";
 import { VIS } from "../../data/seed";
+import { PatternChipsDetail } from "../PatternLens";
 
-export default function WritingDetail({ item, allItems, closing, onClose, onRelation, onOpen, fg }) {
+export default function WritingDetail({ item, allItems, closing, onClose, onRelation, onOpen, fg, lens }) {
   const writings = useMemo(() => allItems.filter(c => c.body && c.status !== "draft"), [allItems]);
   const idx = writings.findIndex(w => w.id === item.id);
   const prev = idx > 0 ? writings[idx - 1] : null;
@@ -107,6 +108,7 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
           }
           return null;
         })}
+        <PatternChipsDetail itemTitle={item.title} active={lens} />
         <div className="rd-tags">
           {item.tags?.map(t => <span key={t} className="card-tg">{t}</span>)}
           {item.relations?.map(r => <span key={r} className="card-tg rel" onClick={()=>{onClose();setTimeout(()=>onRelation(r),350)}} style={{cursor:"pointer"}}>→ {r}</span>)}

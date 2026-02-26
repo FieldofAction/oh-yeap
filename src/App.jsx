@@ -6,6 +6,13 @@ import Public from "./components/Public";
 import ArtOfModel from "./components/ArtOfModel";
 import Playbook from "./components/Playbook";
 import Backstage from "./components/Backstage";
+import Models from "./components/Models";
+import SiteFooter from "./components/SiteFooter";
+import About from "./components/About";
+import Colophon from "./components/Colophon";
+import Philosophy from "./components/Philosophy";
+import PatternLanguage from "./components/PatternLanguage";
+import { PatternLensToggle, PatternLensBar } from "./components/PatternLens";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
 import SketchbookDetail from "./components/details/Sketchbook";
@@ -16,25 +23,31 @@ function cv(t) {
   return {
     "--bg": t.bg, "--fg": t.fg, "--fm": t.fm, "--ff": t.ff,
     "--bd": t.bd, "--sf": t.sf, "--sfh": t.sfh, "--cbg": t.cbg, "--ch": t.ch,
+    "--ac1": t.ac1, "--ac2": t.ac2,
   };
 }
 
 export default function App() {
   const [view, setView] = useState("public");
-  const [themeKey, setThemeKey] = useState("threshold");
+  const [themeKey, setThemeKey] = useState("light");
   const [content, setContent] = useState(SEED);
   const [filter, setFilter] = useState("All");
   const [relFilter, setRelFilter] = useState(null);
   const [egg, setEgg] = useState(false);
+  const [lens, setLens] = useState(false);
   const [activeItem, setActiveItem] = useState(null);
   const [closing, setClosing] = useState(false);
   const asu = useASUStore();
   const theme = THEMES[themeKey];
+  const toggleLens = useCallback(() => setLens(p => !p), []);
 
-  // Easter egg: press "?" to reveal system condition overlay
+  // Easter eggs: press "?" for system condition, "M" for pattern lens
   React.useEffect(() => {
     const handler = (e) => {
+      const tag = e.target.tagName;
+      const isInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || e.target.isContentEditable;
       if (e.key === "?" && !e.ctrlKey && !e.metaKey) setEgg(p => !p);
+      if ((e.key === "m" || e.key === "M") && !e.ctrlKey && !e.metaKey && !isInput) setLens(p => !p);
       if (e.key === "Escape") {
         setEgg(false);
         setRelFilter(null);
@@ -98,33 +111,44 @@ export default function App() {
           <button className={`nl ${view === "backstage" ? "on" : ""}`} onClick={() => setView("backstage")}>Backstage</button>
         </div>
       </nav>
-      {view === "public" && <Public items={filtered} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={asu.get_system_condition()} onOpen={openItem} />}
+      <PatternLensBar active={lens} onToggle={toggleLens} onOpenModels={() => { setView("models"); window.scrollTo(0,0); }} />
+      {view === "public" && <Public items={filtered} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={asu.get_system_condition()} onOpen={openItem} lens={lens} />}
       {view === "model" && <ArtOfModel asu={asu} />}
       {view === "playbook" && <Playbook asu={asu} />}
       {view === "backstage" && <Backstage content={content} themeKey={themeKey} onThemeChange={setThemeKey} onPublish={handlePublish} asu={asu} />}
+      {view === "models" && <Models content={content} onOpen={openItem} fg={theme.fg} />}
+      {view === "about" && <About theme={theme} />}
+      {view === "colophon" && <Colophon />}
+      {view === "philosophy" && <Philosophy />}
+      {view === "patterns" && <PatternLanguage content={content} onOpen={openItem} fg={theme.fg} />}
+
+      <SiteFooter view={view} setView={setView} />
 
       {/* Writing detail overlay */}
-      {activeItem && activeItem.body && !activeItem.caseStudy && !activeItem.sketch && <WritingDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onRelation={handleRelation} onOpen={openItem} fg={theme.fg} />}
+      {activeItem && activeItem.body && !activeItem.caseStudy && !activeItem.sketch && <WritingDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onRelation={handleRelation} onOpen={openItem} fg={theme.fg} lens={lens} />}
 
       {/* Case study detail overlay */}
-      {activeItem && activeItem.caseStudy && <CaseStudyDetail item={activeItem} closing={closing} onClose={closeItem} fg={theme.fg} />}
+      {activeItem && activeItem.caseStudy && <CaseStudyDetail item={activeItem} closing={closing} onClose={closeItem} fg={theme.fg} lens={lens} />}
 
       {/* Exploration sketchbook overlay */}
-      {activeItem && activeItem.sketch && <SketchbookDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} fg={theme.fg} />}
+      {activeItem && activeItem.sketch && <SketchbookDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} fg={theme.fg} lens={lens} />}
 
       {/* Theory detail overlay */}
-      {activeItem && activeItem.theory && <TheoryDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} onRelation={handleRelation} fg={theme.fg} />}
+      {activeItem && activeItem.theory && <TheoryDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} onRelation={handleRelation} fg={theme.fg} lens={lens} />}
 
       {/* Artifact spec sheet overlay */}
-      {activeItem && activeItem.spec && !activeItem.sketch && !activeItem.theory && <SpecSheetDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} fg={theme.fg} />}
+      {activeItem && activeItem.spec && !activeItem.sketch && !activeItem.theory && <SpecSheetDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} fg={theme.fg} lens={lens} />}
+
+      {/* Pattern lens toggle — floating button */}
+      {view !== "models" && <PatternLensToggle active={lens} onToggle={toggleLens} />}
 
       {/* Easter egg overlay — press ? to toggle */}
       {egg && (
         <div className="egg-overlay" style={{ position: "fixed", bottom: 20, left: 20, right: 20, zIndex: 200, background: "var(--sf)", border: "1px solid var(--bd)", padding: 20, fontFamily: "var(--sans)", fontSize: 11, color: "var(--fm)", lineHeight: 1.8, maxWidth: 480, animation: "en .3s ease" }}>
           <div style={{ fontSize: 9, fontWeight: 500, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--ff)", marginBottom: 8 }}>System Condition</div>
           <div><strong style={{ color: "var(--fg)" }}>{asu.get_system_condition().condition}</strong> · Reading {asu.get_system_condition().reading} · Building {asu.get_system_condition().building} · At {asu.get_system_condition().working}</div>
-          <div style={{ marginTop: 12, fontSize: 10, color: "var(--ff)" }}>8 agents · {content.length} artifacts · {content.filter(c => c.status === "live").length} live</div>
-          <div style={{ marginTop: 8, fontSize: 9, color: "var(--ff)", fontStyle: "italic" }}>Press ? to close · Esc to clear</div>
+          <div style={{ marginTop: 12, fontSize: 10, color: "var(--ff)" }}>8 agents · {content.length} artifacts · {content.filter(c => c.status === "live").length} live · {lens ? "Pattern Lens on" : "Pattern Lens off"}</div>
+          <div style={{ marginTop: 8, fontSize: 9, color: "var(--ff)", fontWeight: 300 }}>Press ? to close · M for pattern lens · Esc to clear</div>
         </div>
       )}
     </div>

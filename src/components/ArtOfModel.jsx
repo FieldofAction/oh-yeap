@@ -98,7 +98,7 @@ Respond with ONLY the synthesis text, no preamble.`;
               <div className="aom-step-n" style={{color:filled?"var(--fg)":"var(--ff)"}}>{s.n}</div>
               <div className="aom-step-title">{s.title}</div>
               {filled && s.ph && <span style={{fontSize:9,color:"var(--fg)",marginLeft:8}}>✓</span>}
-              {!unlocked && <span style={{fontSize:9,color:"var(--ff)",marginLeft:8,fontStyle:"italic"}}>Complete previous step to unlock</span>}
+              {!unlocked && <span style={{fontSize:9,color:"var(--ff)",marginLeft:8,fontWeight:300}}>Complete previous step to unlock</span>}
             </div>
             {s.question && <div className="aom-step-q">{s.question}</div>}
             <div className="aom-step-body">{s.body}</div>
@@ -134,9 +134,9 @@ Respond with ONLY the synthesis text, no preamble.`;
               {synthesizing ? "Generating…" : synthesis ? "Regenerate" : "Generate Synthesis"}
             </button>
           </div>
-          {synthesizing && <div style={{fontSize:12,color:"var(--fm)",fontStyle:"italic"}}>Running your answers through the model…</div>}
-          {synthesis && !synthesizing && <div style={{fontSize:13,fontWeight:300,color:"var(--fg)",lineHeight:1.7,fontFamily:"var(--display)",letterSpacing:"-0.01em"}}>{synthesis}</div>}
-          {!synthesis && !synthesizing && <div style={{fontSize:11,color:"var(--ff)",fontStyle:"italic"}}>All steps complete. Generate a synthesis to see how your answers connect.</div>}
+          {synthesizing && <div style={{fontSize:12,color:"var(--fm)",fontWeight:300}}>Running your answers through the model…</div>}
+          {synthesis && !synthesizing && <div style={{fontSize:13,fontWeight:300,color:"var(--fg)",lineHeight:1.7,fontFamily:"var(--display)",letterSpacing:"0em"}}>{synthesis}</div>}
+          {!synthesis && !synthesizing && <div style={{fontSize:11,color:"var(--ff)",fontWeight:300}}>All steps complete. Generate a synthesis to see how your answers connect.</div>}
           {synthesis && <div style={{marginTop:12,fontSize:9,color:"var(--ff)"}}>This synthesis + your step responses are now feeding into the Playbook and Backstage agent context.</div>}
         </div>
       )}

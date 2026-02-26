@@ -1,7 +1,8 @@
 import React, { useMemo, useCallback } from "react";
 import { VIS } from "../../data/seed";
+import { PatternChipsDetail } from "../PatternLens";
 
-export default function CaseStudyDetail({ item, closing, onClose, fg }) {
+export default function CaseStudyDetail({ item, closing, onClose, fg, lens }) {
   const heroVi = useMemo(() => VIS[Math.abs(item.title.charCodeAt(0)) % VIS.length](fg), [item.title, fg]);
   const artVi = useCallback((i) => VIS[(Math.abs(item.title.charCodeAt(0)) + i + 1) % VIS.length](fg), [item.title, fg]);
 
@@ -171,6 +172,8 @@ export default function CaseStudyDetail({ item, closing, onClose, fg }) {
             {cs.insight.map((line, i) => <p key={i}>{line}</p>)}
           </div>
         )}
+
+        <PatternChipsDetail itemTitle={item.title} active={lens} />
 
         {/* ── Deliverables + Tags ── */}
         <div className="cs-footer">

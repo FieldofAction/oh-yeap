@@ -66,7 +66,7 @@ function PillarDiagnostic() {
         <div style={{ color: "var(--ff)", marginBottom: 2 }}>
           <strong style={{ color: dominant.color }}>Primary: {dominant.label}</strong>
         </div>
-        <div style={{ color: "var(--ff)", fontStyle: "italic" }}>{dominant.desc}</div>
+        <div style={{ color: "var(--ff)", fontWeight: 300 }}>{dominant.desc}</div>
         <div style={{ marginTop: 6, color: "var(--ff)", fontSize: 9 }}>
           {vals.system > 60 && vals.soul > 60 && "⚡ High System + Soul = infrastructure with atmosphere"}
           {vals.scenography > 60 && vals.relational > 60 && "⚡ High Scenography + Relational = choreographed spectacle"}
@@ -379,7 +379,7 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
                 </button>
               ))}
             </div>
-            <div style={{fontSize:9,color:"var(--fm)",marginTop:6,fontStyle:"italic"}}>{activePipe.desc}</div>
+            <div style={{fontSize:9,color:"var(--fm)",marginTop:6,fontWeight:300}}>{activePipe.desc}</div>
             {pipeMode !== "free" && (
               <div style={{marginTop:8,fontSize:9,color:"var(--ff)"}}>
                 Sequence: {activePipe.sequence?.map(k => AGENTS.find(a=>a.key===k)?.name).filter(Boolean).join(" → ")}
@@ -432,7 +432,7 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
                 <div style={{fontSize:9,letterSpacing:".08em",textTransform:"uppercase",color:"var(--ff)",marginBottom:4}}>API Version</div>
                 <input className="bsi" value={settings.anthropicVersion} onChange={e=>asu.set_settings({anthropicVersion:e.target.value})} style={{fontSize:11,padding:"6px 8px"}} />
               </div>
-              {!settings.apiKey && <div style={{fontSize:9,color:"#c44",fontStyle:"italic"}}>API key required for agent pipeline and synthesis</div>}
+              {!settings.apiKey && <div style={{fontSize:9,color:"#c44",fontWeight:300}}>API key required for agent pipeline and synthesis</div>}
             </div>
           </div>
         </div>
@@ -462,7 +462,7 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
           </div>
           <div className="bsc">
             <h4>Outputs {lastRun?.mode && lastRun.mode !== "free" && <span style={{fontSize:9,fontWeight:300,color:"var(--ff)"}}> · Sequence {PIPE_MODES[lastRun.mode]?.label || lastRun.mode}</span>}</h4>
-            {!lastRun?<div style={{fontSize:11,color:"var(--ff)",fontStyle:"italic"}}>Run to see outputs.</div>:lastRun.selection.map((ak,idx)=>{
+            {!lastRun?<div style={{fontSize:11,color:"var(--ff)",fontWeight:300}}>Run to see outputs.</div>:lastRun.selection.map((ak,idx)=>{
               const out=lastRun.outputs[ak];const ag=AGENTS.find(a=>a.key===ak);
               if(!ag) return null;
               const proc=!out&&lastRun.status==="running";
@@ -479,7 +479,7 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
                       {out.steps?.length>0&&<div style={{marginTop:6}}><div style={{fontSize:9,fontWeight:500,letterSpacing:".1em",textTransform:"uppercase",color:"var(--ff)",marginBottom:3}}>Plan</div><ol className="rsteps">{out.steps.map((s,i)=><li key={i}>{s}</li>)}</ol></div>}
                       {out.tasks?.length>0&&<div style={{marginTop:6}}><div style={{fontSize:9,fontWeight:500,letterSpacing:".1em",textTransform:"uppercase",color:"var(--ff)",marginBottom:3}}>Tasks</div>{out.tasks.map((t,i)=><div key={i} style={{fontSize:11,color:"var(--fm)",padding:"1px 0",display:"flex",gap:6}}><span style={{fontSize:9}}>{t.status==="done"?"✓":"○"}</span><span>{t.label}</span></div>)}</div>}
                     </>
-                  ):proc?<div style={{fontSize:11,color:"var(--ff)",fontStyle:"italic",padding:"6px 0"}}>Waiting…</div>:null}
+                  ):proc?<div style={{fontSize:11,color:"var(--ff)",fontWeight:300,padding:"6px 0"}}>Waiting…</div>:null}
                 </div>
               );
             })}
@@ -536,10 +536,10 @@ Respond with ONLY the synthesis text, no preamble.`;
                   setBsSyncing(false);
                 }}>{bsSyncing?"Generating…":bsSynthesis?"Regenerate":"Generate Synthesis"}</button>
               </div>
-              {bsSyncing && <div style={{fontSize:12,color:"var(--fm)",fontStyle:"italic",marginTop:8}}>Reading agent outputs and finding the throughline…</div>}
+              {bsSyncing && <div style={{fontSize:12,color:"var(--fm)",fontWeight:300,marginTop:8}}>Reading agent outputs and finding the throughline…</div>}
               {bsSynthesis && !bsSyncing && (
                 <div style={{marginTop:8}}>
-                  <div style={{fontSize:13,fontWeight:300,color:"var(--fg)",lineHeight:1.7,fontFamily:"var(--display)",letterSpacing:"-0.01em"}}>{bsSynthesis}</div>
+                  <div style={{fontSize:13,fontWeight:300,color:"var(--fg)",lineHeight:1.7,fontFamily:"var(--display)",letterSpacing:"0em"}}>{bsSynthesis}</div>
                   <div style={{display:"flex",gap:6,marginTop:10}}>
                     <button className="btn gh" style={{fontSize:9}} onClick={()=>{
                       navigator.clipboard?.writeText(bsSynthesis);
