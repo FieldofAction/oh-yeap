@@ -46,6 +46,8 @@ uniform vec3 uC2;
 uniform vec3 uC3;
 uniform vec3 uBg;
 uniform float uOpacity;
+uniform vec2 uMouse;
+uniform float uMouseIn;
 varying vec2 vUv;
 void main(){
   vec2 uv=vUv;
@@ -55,16 +57,36 @@ void main(){
   vec2 p2=vec2(0.7+cos(uTime*0.035)*0.18, 0.6+sin(uTime*0.045)*0.2);
   vec2 p3=vec2(0.5+sin(uTime*0.025+1.5)*0.22, 0.35+cos(uTime*0.038+0.8)*0.18);
 
+  // Mouse gently pushes nearby centers away, pulls color toward cursor
+  vec2 mouse=uMouse;
+  float mInf=uMouseIn;
+
+  // Nudge centers slightly away from cursor (subtle repel)
+  float r1=max(0.0,1.0-length(mouse-p1)*3.0)*mInf;
+  float r2=max(0.0,1.0-length(mouse-p2)*3.0)*mInf;
+  float r3=max(0.0,1.0-length(mouse-p3)*3.0)*mInf;
+  p1+=normalize(p1-mouse+0.001)*r1*0.06;
+  p2+=normalize(p2-mouse+0.001)*r2*0.06;
+  p3+=normalize(p3-mouse+0.001)*r3*0.06;
+
   // Soft radial influence
   float d1=1.0-smoothstep(0.0,0.65,length(uv-p1));
   float d2=1.0-smoothstep(0.0,0.6,length(uv-p2));
   float d3=1.0-smoothstep(0.0,0.55,length(uv-p3));
+
+  // Mouse warmth — a gentle glow that follows the cursor
+  float dm=1.0-smoothstep(0.0,0.35,length(uv-mouse));
+  dm*=mInf*0.3;
 
   // Blend over background
   vec3 col=uBg;
   col=mix(col,uC1,d1*0.7);
   col=mix(col,uC2,d2*0.5);
   col=mix(col,uC3,d3*0.35);
+
+  // Cursor warmth blends between the two accents
+  vec3 warmth=mix(uC1,uC2,0.5+sin(uTime*0.08)*0.3);
+  col=mix(col,warmth,dm);
 
   // Film grain to prevent banding
   float grain=snoise(uv*400.0+uTime)*0.006;
@@ -112,6 +134,8 @@ export default function HeroBg({ theme }) {
         uC3: { value: new Color(thm.fm) },
         uBg: { value: new Color(thm.bg) },
         uOpacity: { value: 1.0 },
+        uMouse: { value: [0.5, 0.5] },
+        uMouseIn: { value: 0.0 },
       },
       transparent: true,
       depthWrite: false,
@@ -122,7 +146,25 @@ export default function HeroBg({ theme }) {
     let scrollRatio = 0;
     let animId = null;
 
+    // Mouse state — raw target + lerped current
+    let mouseTarget = [0.5, 0.5];
+    let mouseCurrent = [0.5, 0.5];
+    let mouseIn = 0;       // 0 = outside, 1 = inside (lerped)
+    let mouseInTarget = 0;
+
     stateRef.current = { renderer, cam, scene, mat, geo };
+
+    // Mouse tracking
+    const onMouseMove = (e) => {
+      const rect = el.getBoundingClientRect();
+      mouseTarget[0] = (e.clientX - rect.left) / rect.width;
+      mouseTarget[1] = 1 - (e.clientY - rect.top) / rect.height; // flip Y for GL
+    };
+    const onMouseEnter = () => { mouseInTarget = 1; };
+    const onMouseLeave = () => { mouseInTarget = 0; };
+    el.addEventListener("mousemove", onMouseMove, { passive: true });
+    el.addEventListener("mouseenter", onMouseEnter);
+    el.addEventListener("mouseleave", onMouseLeave);
 
     // Scroll
     const onScroll = () => {
@@ -150,12 +192,20 @@ export default function HeroBg({ theme }) {
     document.addEventListener("visibilitychange", onVis);
 
     // Animate
+    const LERP = 0.04; // slow follow — trails behind the cursor
     function animate() {
       const t = clock.getElapsedTime();
       const fade = 1 - scrollRatio * 0.7;
 
+      // Lerp mouse position and presence
+      mouseCurrent[0] += (mouseTarget[0] - mouseCurrent[0]) * LERP;
+      mouseCurrent[1] += (mouseTarget[1] - mouseCurrent[1]) * LERP;
+      mouseIn += (mouseInTarget - mouseIn) * LERP;
+
       mat.uniforms.uTime.value = t;
       mat.uniforms.uOpacity.value = fade;
+      mat.uniforms.uMouse.value = mouseCurrent;
+      mat.uniforms.uMouseIn.value = mouseIn;
 
       renderer.render(scene, cam);
       animId = requestAnimationFrame(animate);
@@ -167,6 +217,9 @@ export default function HeroBg({ theme }) {
       cancelAnimationFrame(animId);
       clearTimeout(resizeTimer);
       ro.disconnect();
+      el.removeEventListener("mousemove", onMouseMove);
+      el.removeEventListener("mouseenter", onMouseEnter);
+      el.removeEventListener("mouseleave", onMouseLeave);
       window.removeEventListener("scroll", onScroll);
       document.removeEventListener("visibilitychange", onVis);
       geo.dispose();
