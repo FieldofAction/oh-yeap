@@ -4,6 +4,7 @@ const MAIN_LINKS = [
   { key:"public", label:"Work" },
   { key:"model", label:"Art of Model" },
   { key:"playbook", label:"Playbook" },
+  { key:"console", label:"Console" },
   { key:"backstage", label:"Backstage" },
   { key:"models", label:"Models" },
 ];

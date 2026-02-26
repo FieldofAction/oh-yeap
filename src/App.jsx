@@ -12,6 +12,7 @@ import About from "./components/About";
 import Colophon from "./components/Colophon";
 import Philosophy from "./components/Philosophy";
 import PatternLanguage from "./components/PatternLanguage";
+import FieldConsole from "./components/FieldConsole";
 import { PatternLensToggle, PatternLensBar } from "./components/PatternLens";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
@@ -108,6 +109,7 @@ export default function App() {
           <button className={`nl ${view === "public" ? "on" : ""}`} onClick={() => setView("public")}>Work</button>
           <button className={`nl ${view === "model" ? "on" : ""}`} onClick={() => setView("model")}>Art of Model</button>
           <button className={`nl ${view === "playbook" ? "on" : ""}`} onClick={() => setView("playbook")}>Playbook</button>
+          <button className={`nl ${view === "console" ? "on" : ""}`} onClick={() => setView("console")}>Console</button>
           <button className={`nl ${view === "backstage" ? "on" : ""}`} onClick={() => setView("backstage")}>Backstage</button>
         </div>
       </nav>
@@ -120,6 +122,7 @@ export default function App() {
       {view === "about" && <About theme={theme} />}
       {view === "colophon" && <Colophon />}
       {view === "philosophy" && <Philosophy />}
+      {view === "console" && <FieldConsole />}
       {view === "patterns" && <PatternLanguage content={content} onOpen={openItem} fg={theme.fg} />}
 
       <SiteFooter view={view} setView={setView} />
