@@ -47,7 +47,7 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
           <>
             {/* Practice — Metalab rows */}
             {(showAll || filter === "Practice" || relFilter) && practice.length > 0 && (
-              <div className="prow-section en d5">
+              <div className="prow-section reveal">
                 <div className="prow-section-h">Selected Work</div>
                 {practice.map((item, i) => (
                   <PracticeRow key={item.id} item={item} delay={i} fg={theme.fg} onOpen={onOpen} lens={lens} />
@@ -57,7 +57,7 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
 
             {/* Writing — Editorial contents grid (5 rows, multi-column) */}
             {(showAll || filter === "Writing" || relFilter) && (essays.length > 0 || notes.length > 0) && (
-              <div className="wr-section en">
+              <div className="wr-section reveal">
                 <div className="wr-section-h">Writing</div>
                 <div className="wr-toc-grid">
                   {(() => {
@@ -99,7 +99,7 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
 
             {/* Exploration — Research Threads */}
             {(showAll || filter === "Exploration" || relFilter) && exploration.length > 0 && (
-              <div className="ex-section en">
+              <div className="ex-section reveal">
                 <div className="ex-section-h">Exploration</div>
                 <div className="ex-list">
                   {exploration.map((item, i) => (
@@ -129,7 +129,7 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
 
             {/* Artifacts — Index Rows */}
             {(showAll || filter === "Artifacts" || relFilter) && artifacts.length > 0 && (
-              <div className="af-section en">
+              <div className="af-section reveal">
                 <div className="af-section-h">Artifacts</div>
                 <div className="af-list">
                   {artifacts.map((item, i) => (

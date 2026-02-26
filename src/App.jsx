@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { THEMES } from "./data/themes";
 import { SEED, uid, VIS } from "./data/seed";
 import useASUStore from "./store/useASUStore";
@@ -38,9 +38,37 @@ export default function App() {
   const [lens, setLens] = useState(false);
   const [activeItem, setActiveItem] = useState(null);
   const [closing, setClosing] = useState(false);
+  const [transitioning, setTransitioning] = useState(false);
   const asu = useASUStore();
   const theme = THEMES[themeKey];
   const toggleLens = useCallback(() => setLens(p => !p), []);
+
+  // Page transition — fade out, swap, fade in
+  const navigateTo = useCallback((target) => {
+    if (target === view && !transitioning) return;
+    setTransitioning(true);
+    setTimeout(() => {
+      setView(target);
+      window.scrollTo(0, 0);
+      setTransitioning(false);
+    }, 350);
+  }, [view, transitioning]);
+
+  // Scroll-reveal observer — watches .reveal elements, adds .revealed on intersect
+  useEffect(() => {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add("revealed");
+          obs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    const timer = setTimeout(() => {
+      document.querySelectorAll(".reveal:not(.revealed)").forEach(el => obs.observe(el));
+    }, 100); // slight delay so mount animations finish first
+    return () => { clearTimeout(timer); obs.disconnect(); };
+  }, [view]);
 
   // Easter eggs: press "?" for system condition, "M" for pattern lens
   React.useEffect(() => {
@@ -104,28 +132,30 @@ export default function App() {
   return (
     <div style={cv(theme)}>
       <nav className="nav">
-        <span className="nav-m" onClick={() => { setView("public"); setRelFilter(null); }}>Field of Action</span>
+        <span className="nav-m" onClick={() => { navigateTo("public"); setRelFilter(null); }}>Field of Action</span>
         <div className="nav-r">
-          <button className={`nl ${view === "public" ? "on" : ""}`} onClick={() => setView("public")}>Work</button>
-          <button className={`nl ${view === "model" ? "on" : ""}`} onClick={() => setView("model")}>Art of Model</button>
-          <button className={`nl ${view === "playbook" ? "on" : ""}`} onClick={() => setView("playbook")}>Playbook</button>
-          <button className={`nl ${view === "console" ? "on" : ""}`} onClick={() => setView("console")}>Console</button>
-          <button className={`nl ${view === "backstage" ? "on" : ""}`} onClick={() => setView("backstage")}>Backstage</button>
+          <button className={`nl ${view === "public" ? "on" : ""}`} onClick={() => navigateTo("public")}>Work</button>
+          <button className={`nl ${view === "model" ? "on" : ""}`} onClick={() => navigateTo("model")}>Art of Model</button>
+          <button className={`nl ${view === "playbook" ? "on" : ""}`} onClick={() => navigateTo("playbook")}>Playbook</button>
+          <button className={`nl ${view === "console" ? "on" : ""}`} onClick={() => navigateTo("console")}>Console</button>
+          <button className={`nl ${view === "backstage" ? "on" : ""}`} onClick={() => navigateTo("backstage")}>Backstage</button>
         </div>
       </nav>
-      <PatternLensBar active={lens} onToggle={toggleLens} onOpenModels={() => { setView("models"); window.scrollTo(0,0); }} />
-      {view === "public" && <Public items={filtered} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={asu.get_system_condition()} onOpen={openItem} lens={lens} />}
-      {view === "model" && <ArtOfModel asu={asu} />}
-      {view === "playbook" && <Playbook asu={asu} />}
-      {view === "backstage" && <Backstage content={content} themeKey={themeKey} onThemeChange={setThemeKey} onPublish={handlePublish} asu={asu} />}
-      {view === "models" && <Models content={content} onOpen={openItem} fg={theme.fg} />}
-      {view === "about" && <About theme={theme} />}
-      {view === "colophon" && <Colophon />}
-      {view === "philosophy" && <Philosophy />}
-      {view === "console" && <FieldConsole />}
-      {view === "patterns" && <PatternLanguage content={content} onOpen={openItem} fg={theme.fg} />}
+      <PatternLensBar active={lens} onToggle={toggleLens} onOpenModels={() => navigateTo("models")} />
+      <main className={`view-wrap${transitioning ? " view-leaving" : ""}`}>
+        {view === "public" && <Public items={filtered} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={asu.get_system_condition()} onOpen={openItem} lens={lens} />}
+        {view === "model" && <ArtOfModel asu={asu} />}
+        {view === "playbook" && <Playbook asu={asu} />}
+        {view === "backstage" && <Backstage content={content} themeKey={themeKey} onThemeChange={setThemeKey} onPublish={handlePublish} asu={asu} />}
+        {view === "models" && <Models content={content} onOpen={openItem} fg={theme.fg} />}
+        {view === "about" && <About theme={theme} />}
+        {view === "colophon" && <Colophon />}
+        {view === "philosophy" && <Philosophy />}
+        {view === "console" && <FieldConsole />}
+        {view === "patterns" && <PatternLanguage content={content} onOpen={openItem} fg={theme.fg} />}
+      </main>
 
-      <SiteFooter view={view} setView={setView} />
+      <SiteFooter view={view} setView={navigateTo} />
 
       {/* Writing detail overlay */}
       {activeItem && activeItem.body && !activeItem.caseStudy && !activeItem.sketch && <WritingDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onRelation={handleRelation} onOpen={openItem} fg={theme.fg} lens={lens} />}
