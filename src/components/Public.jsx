@@ -9,7 +9,7 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
     <>
       <div className="hero en" style={{position:"relative",overflow:"hidden"}}>
         <HeroBg theme={theme} />
-        <div style={{position:"relative",zIndex:1}}>
+        <div className="hero-inner" style={{position:"relative",zIndex:1}}>
           <div className="hero-pre en d1">Field of Action</div>
           <h1 className="hero-h en d2">Applied awareness<br/>in live systems</h1>
           <p className="hero-sub en d3">Where awareness becomes action — through design leadership, systems thinking, and relational infrastructure. Building conditions under which alignment can appear.</p>
