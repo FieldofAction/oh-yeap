@@ -109,7 +109,7 @@ export default function App() {
       document.querySelectorAll(".reveal:not(.revealed)").forEach(el => obs.observe(el));
     }, 100); // slight delay so mount animations finish first
     return () => { clearTimeout(timer); obs.disconnect(); };
-  }, [view]);
+  }, [view, filter, relFilter]);
 
   // Easter eggs: press "?" for system condition, "M" for pattern lens
   React.useEffect(() => {

@@ -33,8 +33,8 @@ export default function Sidebar({ view, navigateTo, filter, setFilter }) {
   const handleNav = (item) => {
     if (item.href) { window.open(item.href, "_blank"); return; }
     navigateTo(item.key);
-    if (item.filter) setFilter(item.filter);
-    else if (item.key === "public" && !item.filter) setFilter("All");
+    if (item.filter) { setFilter(item.filter); window.scrollTo(0, 0); }
+    else if (item.key === "public" && !item.filter) { setFilter("All"); window.scrollTo(0, 0); }
     setMobileOpen(false);
   };
 
