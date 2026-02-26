@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from "react";
+import useASUStore from "../store/useASUStore";
 
 const LAWS = [
   { id:"origin",     number:"I",   name:"Origin",     axiom:"The field begins in mind",           glyph:"◎", angle:-90,     color:"#C9A84C", description:"Every condition in the field traces back to a mental state. Consciousness is not inside the situation — it generates it." },
@@ -184,6 +185,7 @@ function MechanicsGrid({ combined, active, detected }) {
 /* ── Main Component ── */
 
 export default function FieldConsole() {
+  const asu = useASUStore();
   const [active, setActive] = useState(new Set());
   const [detected, setDetected] = useState(new Set());
   const [situation, setSituation] = useState("");
@@ -209,29 +211,34 @@ export default function FieldConsole() {
 
   const detectLaws = async () => {
     if (!situation.trim()) return;
+    const settings = asu.get_settings();
+    if (!settings.apiKey) { setDetectionNote("API key is missing. Add it in Backstage → Settings."); return; }
     setDetecting(true);
     setDetected(new Set());
     setDetectionNote(null);
     setSynthesis(null);
     try {
+      console.log("[Console] detect → key:", settings.apiKey ? `${settings.apiKey.slice(0,10)}...` : "MISSING", "model:", settings.model);
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type":"application/json","x-api-key":settings.apiKey,"anthropic-version":settings.anthropicVersion,"anthropic-dangerous-direct-browser-access":"true" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: settings.model,
           max_tokens: 400,
           system: `You identify which of the seven Field Laws are most present in a described situation.\nThe seven laws and their IDs:\n- origin: the situation's conditions trace back to a mental or perceptual state\n- scale: the same pattern is operating at multiple levels simultaneously\n- frequency: the person's signal, energy, or state is the key variable\n- axis: opposing forces or poles are in tension\n- cycle: timing, phases, contraction or expansion are the dominant dynamic\n- vector: causation, direction, and downstream effects are in play\n- generation: creation, collaboration, or the interplay of structure and flow is at stake\nReturn ONLY valid JSON — no markdown, no extra text:\n{"laws":["id1","id2"],"note":"One sentence naming the core dynamic at play."}\nSelect 2 to 4 laws most genuinely active. Be precise.`,
           messages: [{ role: "user", content: situation }]
         })
       });
+      if (!res.ok) { const errBody = await res.text(); console.error("[Console] API error:", res.status, errBody); setDetectionNote(`API error ${res.status} — check key and model in Backstage → Settings`); setDetecting(false); return; }
       const data = await res.json();
       const raw = (data.content?.[0]?.text || "{}").replace(/```json|```/g, "").trim();
       const parsed = JSON.parse(raw);
       const validIds = new Set(LAWS.map(l => l.id));
       setDetected(new Set((parsed.laws || []).filter(id => validIds.has(id))));
       setDetectionNote(parsed.note || null);
-    } catch {
-      setDetectionNote("The field is present. Trust what you feel.");
+    } catch (err) {
+      console.error("[Console] detect error:", err);
+      setDetectionNote("Detection failed — check browser console for details.");
     }
     setDetecting(false);
   };
@@ -239,6 +246,8 @@ export default function FieldConsole() {
   const generateSynthesis = async () => {
     const combined = new Set([...active, ...detected]);
     if (combined.size < 1) return;
+    const settings = asu.get_settings();
+    if (!settings.apiKey) { setSynthesis("API key is missing. Add it in Backstage → Settings."); return; }
     setLoading(true);
     setSynthesis(null);
     const activeLaws = LAWS.filter(l => active.has(l.id));
@@ -246,11 +255,12 @@ export default function FieldConsole() {
     const allLaws = LAWS.filter(l => combined.has(l.id));
     const lawDescriptions = allLaws.map(l => `${l.name} ("${l.axiom}"): ${l.description}`).join("\n");
     try {
+      console.log("[Console] synthesize → key:", settings.apiKey ? `${settings.apiKey.slice(0,10)}...` : "MISSING", "model:", settings.model);
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type":"application/json","x-api-key":settings.apiKey,"anthropic-version":settings.anthropicVersion,"anthropic-dangerous-direct-browser-access":"true" },
         body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
+          model: settings.model,
           max_tokens: 900,
           system: `You are a strategic field guide. Practical, precise, direct. Present tense. No mystical language — this is systems intelligence applied to real situations.\nGiven a situation and the field laws active within it, reveal:\n1. The specific leverage point where these laws intersect for THIS situation\n2. What operating from the center of this combination actually looks and feels like\n3. One concrete move available from that position right now\nThree tight paragraphs. No lists. Speak directly to the person as a trusted advisor would.`,
           messages: [{
@@ -259,10 +269,12 @@ export default function FieldConsole() {
           }]
         })
       });
+      if (!res.ok) { const errBody = await res.text(); console.error("[Console] API error:", res.status, errBody); setSynthesis(`API error ${res.status} — check key and model in Backstage → Settings`); setLoading(false); return; }
       const data = await res.json();
       setSynthesis(data.content?.[0]?.text || "The field cannot be reduced to words. Sit with the combination.");
-    } catch {
-      setSynthesis("The field cannot be reduced to words. Sit with the combination.");
+    } catch (err) {
+      console.error("[Console] synthesis error:", err);
+      setSynthesis("Synthesis failed — check browser console for details.");
     }
     setLoading(false);
   };

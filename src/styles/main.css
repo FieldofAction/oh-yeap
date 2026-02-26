@@ -1000,6 +1000,11 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
   .fl-synth{padding:24px}
 }
 
+/* ── Hero Background (HeroBg) ── */
+.hbg{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.hbg canvas{display:block;width:100%;height:100%}
+@media(prefers-reduced-motion:reduce){.hbg{display:none}}
+
 /* Font fallback declarations for offline / slow network */
 @font-face{font-family:'atlas grotesk';font-style:normal;font-weight:300 700;font-display:swap;src:local('Atlas Grotesk')}
 @font-face{font-family:'Space Mono';font-style:normal;font-weight:400 700;font-display:swap;src:local('Space Mono')}
