@@ -2,12 +2,11 @@ import React, { useState } from "react";
 
 const NAV = [
   { tier: "WORK", items: [
-    { key: "public", label: "Work" },
-    { key: "public", label: "Practice", filter: "Practice", indent: 1 },
-    { key: "public", label: "Writing", filter: "Writing", indent: 1 },
-    { key: "public", label: "Exploration", filter: "Exploration", indent: 1 },
-    { key: "public", label: "Artifacts", filter: "Artifacts", indent: 1 },
-    { key: "gallery", label: "Gallery", indent: 1 },
+    { key: "public", label: "Practice", filter: "Practice" },
+    { key: "public", label: "Writing", filter: "Writing" },
+    { key: "public", label: "Exploration", filter: "Exploration" },
+    { key: "public", label: "Artifacts", filter: "Artifacts" },
+    { key: "gallery", label: "Gallery" },
   ]},
   { tier: "STUDIO", items: [
     { key: "model", label: "Art of Model" },
