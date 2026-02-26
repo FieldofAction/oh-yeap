@@ -1,6 +1,5 @@
 import React from "react";
 import { FILTERS } from "../data/playbook-data";
-import PracticeRow from "./ui/PracticeRow";
 import { PatternChips } from "./PatternLens";
 import HeroBg from "./HeroBg";
 
@@ -11,16 +10,20 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
         <div className="hero-text">
           <div className="hero-pre en d1">Field of Action</div>
           <h1 className="hero-h en d2">Applied awareness<br/>in live systems</h1>
-          <p className="hero-sub en d3">Where awareness becomes action — through design leadership, systems thinking, and relational infrastructure. Building conditions under which alignment can appear.</p>
+          <p className="hero-bio en d3">Daniel is a design leader and systems thinker who builds at the intersection of product, culture, and infrastructure. Currently leading design at Apple Music, he brings over a decade of creative direction across platforms like Google Cloud, Vevo, and the Tribeca Film Festival. His work lives at the edge of structure and intuition — where frameworks become adaptive, and clarity becomes emotional. He writes, explores, builds tools, and publishes through Field of Action — a living studio of applied awareness.</p>
+          <div className="hero-links en d4">
+            <a href="https://fieldofaction.substack.com" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
+            <a href="https://linkedin.com/in/danieldickson" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
+          </div>
+          <div className="nowbar en d5">
+            <span>Currently at <em>{nowState.working}</em></span><span>/</span>
+            <span>Reading <em>{nowState.reading}</em></span><span>/</span>
+            <span>Building <em>{nowState.building}</em></span>
+          </div>
         </div>
         <div className="hero-window">
           <HeroBg theme={theme} />
         </div>
-      </div>
-      <div className="nowbar en d4">
-        <span>Currently at <em>{nowState.working}</em></span><span>/</span>
-        <span>Reading <em>{nowState.reading}</em></span><span>/</span>
-        <span>Building <em>{nowState.building}</em></span>
       </div>
 
       {/* Connection filter indicator */}
@@ -31,9 +34,11 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
         </div>
       )}
 
-      <div className="filters en d5">
-        {FILTERS.map(f => <button key={f} className={`fc ${!relFilter && filter===f?"on":""}`} onClick={() => setFilter(f)}>{f}</button>)}
-      </div>
+      {(filter !== "All" || relFilter) && (
+        <div className="filters en d5">
+          {FILTERS.map(f => <button key={f} className={`fc ${!relFilter && filter===f?"on":""}`} onClick={() => setFilter(f)}>{f}</button>)}
+        </div>
+      )}
       {/* ── Differentiated Sections ── */}
       {(() => {
         const practice = items.filter(i => i.section === "practice");
@@ -45,13 +50,25 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
 
         return (
           <>
-            {/* Practice — Metalab rows */}
+            {/* Practice — Cinematic horizontal carousel */}
             {(showAll || filter === "Practice" || relFilter) && practice.length > 0 && (
-              <div className="prow-section reveal">
-                <div className="prow-section-h">Selected Work</div>
-                {practice.map((item, i) => (
-                  <PracticeRow key={item.id} item={item} delay={i} fg={theme.fg} onOpen={onOpen} lens={lens} />
-                ))}
+              <div className="work-section reveal">
+                <div className="work-section-h">Selected Work</div>
+                <div className="work-carousel">
+                  {practice.map((item, i) => (
+                    <div key={item.id} className="work-card en" onClick={() => onOpen(item)} style={{ animationDelay: `${0.05 + i * 0.06}s` }}>
+                      <div className="work-card-visual" style={{ background: `linear-gradient(135deg, ${theme.ac1}22, ${theme.ac2}18)` }}>
+                        <span className="work-card-year">{item.year}</span>
+                      </div>
+                      <div className="work-card-body">
+                        <div className="work-card-role">{item.role}</div>
+                        <div className="work-card-title">{item.title}</div>
+                        <div className="work-card-desc">{item.subtitle}</div>
+                        {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
