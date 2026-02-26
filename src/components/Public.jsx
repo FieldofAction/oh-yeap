@@ -2,8 +2,9 @@ import React from "react";
 import { FILTERS } from "../data/playbook-data";
 import { PatternChips } from "./PatternLens";
 import HeroBg from "./HeroBg";
+import NetworkGraph from "./NetworkGraph";
 
-export default function Public({ items, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens }) {
+export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens }) {
   return (
     <>
       <div className="hero en">
@@ -24,6 +25,11 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
         <div className="hero-window">
           <HeroBg theme={theme} />
         </div>
+      </div>
+
+      {/* Network diagram — interactive connections map */}
+      <div className="ng-section reveal">
+        <NetworkGraph items={allItems} onRelation={onRelation} activeNode={relFilter} />
       </div>
 
       {/* Connection filter indicator */}

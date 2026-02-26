@@ -1057,6 +1057,42 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 .hbg canvas{display:block;width:100%;height:100%}
 @media(prefers-reduced-motion:reduce){.hbg{display:none}}
 
+/* ── Custom Cursor ── */
+body.custom-cursor,body.custom-cursor *{cursor:none!important}
+.cursor-dot{position:fixed;top:-4px;left:-4px;width:8px;height:8px;background:var(--ac2);border-radius:50%;pointer-events:none;z-index:9999;will-change:transform;transition:width .2s,height .2s,top .2s,left .2s,background .2s,opacity .2s}
+.cursor-ring{position:fixed;top:-20px;left:-20px;width:40px;height:40px;border-radius:50%;pointer-events:none;z-index:9998;will-change:transform;background:radial-gradient(circle,color-mix(in srgb,var(--ac2) 15%,transparent),transparent 70%);transition:width .3s,height .3s,top .3s,left .3s,opacity .3s}
+.cursor-dot.cursor-hover{top:-16px;left:-16px;width:32px;height:32px;background:transparent;border:1.5px solid var(--ac2)}
+.cursor-ring.cursor-hover{top:-28px;left:-28px;width:56px;height:56px;background:radial-gradient(circle,color-mix(in srgb,var(--ac2) 22%,transparent),transparent 70%)}
+@keyframes cursorPulse{0%{opacity:.8}50%{opacity:.3;transform:scale(1.5)}100%{opacity:.8}}
+.cursor-ring.cursor-active{animation:cursorPulse .3s ease both}
+.cursor-dot.cursor-active{width:6px;height:6px;top:-3px;left:-3px}
+@media(pointer:coarse){.cursor-dot,.cursor-ring{display:none!important}body.custom-cursor,body.custom-cursor *{cursor:auto!important}}
+
+/* ── Network Graph ── */
+.ng-section{max-width:1200px;margin:0 auto;padding:0 40px}
+.ng-container{width:100%;position:relative}
+.ng-header{font-size:14px;font-weight:600;letter-spacing:.02em;color:var(--ff);padding:72px 0 20px;border-top:1px solid var(--bd);margin-top:8px}
+.ng-svg{display:block;width:100%;overflow:visible}
+.ng-edge{stroke:var(--bd);stroke-width:1;transition:stroke .3s,opacity .3s}
+.ng-edge-hl{stroke:var(--ac2);stroke-width:1.5;opacity:1}
+.ng-edge-dim{opacity:.15}
+.ng-entered .ng-edge{stroke-dasharray:1000;animation:ngEdgeDraw .8s ease both}
+@keyframes ngEdgeDraw{from{stroke-dashoffset:1000}to{stroke-dashoffset:0}}
+.ng-node{cursor:pointer;transition:opacity .3s}
+.ng-node-dim{opacity:.2}
+.ng-node-circle{opacity:.7;transition:opacity .3s}
+.ng-node-hovered .ng-node-circle{opacity:1}
+.ng-entered .ng-node{animation:ngNodeIn .5s cubic-bezier(.16,1,.3,1) both}
+@keyframes ngNodeIn{from{opacity:0}to{opacity:1}}
+.ng-entered .ng-node-circle{animation:ngBreathe 3s ease-in-out infinite alternate}
+@keyframes ngBreathe{0%{opacity:.6}100%{opacity:.85}}
+.ng-node-glow{fill:var(--ac2);opacity:.1;animation:ngGlowPulse 1.5s ease-in-out infinite alternate}
+@keyframes ngGlowPulse{0%{opacity:.08}100%{opacity:.15}}
+.ng-node-label{font-family:var(--sans);font-size:10px;fill:var(--ff);text-anchor:middle;pointer-events:none;transition:fill .3s}
+.ng-label-hl{fill:var(--fg);font-weight:500}
+@media(max-width:768px){.ng-section{padding:0 20px}.ng-header{padding-top:48px}.ng-node-label{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.cursor-dot,.cursor-ring{display:none!important}body.custom-cursor,body.custom-cursor *{cursor:auto!important}.ng-entered .ng-edge{animation:none;stroke-dasharray:none}.ng-entered .ng-node{animation:none;opacity:1}.ng-entered .ng-node-circle{animation:none;opacity:.7}.ng-node-glow{animation:none}}
+
 /* Font fallback declarations for offline / slow network */
 @font-face{font-family:'atlas grotesk';font-style:normal;font-weight:300 700;font-display:swap;src:local('Atlas Grotesk')}
 @font-face{font-family:'Space Mono';font-style:normal;font-weight:400 700;font-display:swap;src:local('Space Mono')}

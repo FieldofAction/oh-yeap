@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { THEMES } from "./data/themes";
 import { SEED, uid, VIS } from "./data/seed";
 import useASUStore from "./store/useASUStore";
@@ -42,6 +42,44 @@ export default function App() {
   const asu = useASUStore();
   const theme = THEMES[themeKey];
   const toggleLens = useCallback(() => setLens(p => !p), []);
+
+  /* ── Custom cursor ── */
+  const cursorRef = useRef(null);
+  const cursorRingRef = useRef(null);
+  useEffect(() => {
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (isTouch || reduceMotion) return;
+    document.body.classList.add("custom-cursor");
+    const dot = cursorRef.current;
+    const ring = cursorRingRef.current;
+    if (!dot || !ring) return;
+    let mouseX = -100, mouseY = -100, dotX = -100, dotY = -100, ringX = -100, ringY = -100;
+    let hovering = false, animId = null;
+    const DOT_LERP = 0.15, RING_LERP = 0.08;
+    const onMove = (e) => { mouseX = e.clientX; mouseY = e.clientY; };
+    const onDown = () => { dot.classList.add("cursor-active"); ring.classList.add("cursor-active"); };
+    const onUp = () => { dot.classList.remove("cursor-active"); ring.classList.remove("cursor-active"); };
+    const INTERACTIVE = "a,button,[role='button'],input,textarea,select,.card,.csm,.prow,.work-card,.wr-toc-row,.ex-row,.af-row,.sk-conn-item,.sp-source-item,.rd-related-item,.hero-link,.nl,.fc,.ft-link,.pl-toggle,.ng-node";
+    const onOver = (e) => {
+      const hit = e.target.closest(INTERACTIVE);
+      if (hit && !hovering) { hovering = true; dot.classList.add("cursor-hover"); ring.classList.add("cursor-hover"); }
+      else if (!hit && hovering) { hovering = false; dot.classList.remove("cursor-hover"); ring.classList.remove("cursor-hover"); }
+    };
+    const tick = () => {
+      dotX += (mouseX - dotX) * DOT_LERP; dotY += (mouseY - dotY) * DOT_LERP;
+      ringX += (mouseX - ringX) * RING_LERP; ringY += (mouseY - ringY) * RING_LERP;
+      dot.style.transform = `translate(${dotX}px,${dotY}px)`;
+      ring.style.transform = `translate(${ringX}px,${ringY}px)`;
+      animId = requestAnimationFrame(tick);
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("mousedown", onDown);
+    window.addEventListener("mouseup", onUp);
+    document.addEventListener("mouseover", onOver, { passive: true });
+    animId = requestAnimationFrame(tick);
+    return () => { cancelAnimationFrame(animId); document.body.classList.remove("custom-cursor"); window.removeEventListener("mousemove", onMove); window.removeEventListener("mousedown", onDown); window.removeEventListener("mouseup", onUp); document.removeEventListener("mouseover", onOver); };
+  }, []);
 
   // Page transition — fade out, swap, fade in
   const navigateTo = useCallback((target) => {
@@ -143,7 +181,7 @@ export default function App() {
       </nav>
       <PatternLensBar active={lens} onToggle={toggleLens} onOpenModels={() => navigateTo("models")} />
       <main className={`view-wrap${transitioning ? " view-leaving" : ""}`}>
-        {view === "public" && <Public items={filtered} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={asu.get_system_condition()} onOpen={openItem} lens={lens} />}
+        {view === "public" && <Public items={filtered} allItems={content} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={asu.get_system_condition()} onOpen={openItem} lens={lens} />}
         {view === "model" && <ArtOfModel asu={asu} />}
         {view === "playbook" && <Playbook asu={asu} />}
         {view === "backstage" && <Backstage content={content} themeKey={themeKey} onThemeChange={setThemeKey} onPublish={handlePublish} asu={asu} />}
@@ -184,6 +222,9 @@ export default function App() {
           <div style={{ marginTop: 8, fontSize: 9, color: "var(--ff)", fontWeight: 300 }}>Press ? to close · M for pattern lens · Esc to clear</div>
         </div>
       )}
+      {/* Custom cursor */}
+      <div ref={cursorRef} className="cursor-dot" />
+      <div ref={cursorRingRef} className="cursor-ring" />
     </div>
   );
 }
