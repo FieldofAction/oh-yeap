@@ -8,11 +8,14 @@ import Playbook from "./components/Playbook";
 import Backstage from "./components/Backstage";
 import Models from "./components/Models";
 import SiteFooter from "./components/SiteFooter";
+import Sidebar from "./components/Sidebar";
 import About from "./components/About";
 import Colophon from "./components/Colophon";
 import Philosophy from "./components/Philosophy";
 import PatternLanguage from "./components/PatternLanguage";
 import FieldConsole from "./components/FieldConsole";
+import IncandescantLab from "./components/IncandescantLab";
+import SpatialGallery from "./components/SpatialGallery";
 import { PatternLensToggle, PatternLensBar } from "./components/PatternLens";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
@@ -60,7 +63,7 @@ export default function App() {
     const onMove = (e) => { mouseX = e.clientX; mouseY = e.clientY; };
     const onDown = () => { dot.classList.add("cursor-active"); ring.classList.add("cursor-active"); };
     const onUp = () => { dot.classList.remove("cursor-active"); ring.classList.remove("cursor-active"); };
-    const INTERACTIVE = "a,button,[role='button'],input,textarea,select,.card,.csm,.prow,.work-card,.wr-toc-row,.ex-row,.af-row,.sk-conn-item,.sp-source-item,.rd-related-item,.hero-link,.nl,.fc,.ft-link,.pl-toggle,.ng-node";
+    const INTERACTIVE = "a,button,[role='button'],input,textarea,select,.card,.csm,.prow,.work-card,.wr-toc-row,.ex-row,.af-row,.sk-conn-item,.sp-source-item,.rd-related-item,.hero-link,.nl,.fc,.ft-link,.pl-toggle,.ng-node,.sb-link,.sb-brand,.il-card-head,.sg-flat-card";
     const onOver = (e) => {
       const hit = e.target.closest(INTERACTIVE);
       if (hit && !hovering) { hovering = true; dot.classList.add("cursor-hover"); ring.classList.add("cursor-hover"); }
@@ -168,32 +171,27 @@ export default function App() {
   }, []);
 
   return (
-    <div style={cv(theme)}>
-      <nav className="nav">
-        <span className="nav-m" onClick={() => { navigateTo("public"); setRelFilter(null); }}>Field of Action</span>
-        <div className="nav-r">
-          <button className={`nl ${view === "public" ? "on" : ""}`} onClick={() => navigateTo("public")}>Work</button>
-          <button className={`nl ${view === "model" ? "on" : ""}`} onClick={() => navigateTo("model")}>Art of Model</button>
-          <button className={`nl ${view === "playbook" ? "on" : ""}`} onClick={() => navigateTo("playbook")}>Playbook</button>
-          <button className={`nl ${view === "console" ? "on" : ""}`} onClick={() => navigateTo("console")}>Console</button>
-          <button className={`nl ${view === "backstage" ? "on" : ""}`} onClick={() => navigateTo("backstage")}>Backstage</button>
-        </div>
-      </nav>
-      <PatternLensBar active={lens} onToggle={toggleLens} onOpenModels={() => navigateTo("models")} />
-      <main className={`view-wrap${transitioning ? " view-leaving" : ""}`}>
-        {view === "public" && <Public items={filtered} allItems={content} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={asu.get_system_condition()} onOpen={openItem} lens={lens} />}
-        {view === "model" && <ArtOfModel asu={asu} />}
-        {view === "playbook" && <Playbook asu={asu} />}
-        {view === "backstage" && <Backstage content={content} themeKey={themeKey} onThemeChange={setThemeKey} onPublish={handlePublish} asu={asu} />}
-        {view === "models" && <Models content={content} onOpen={openItem} fg={theme.fg} />}
-        {view === "about" && <About theme={theme} />}
-        {view === "colophon" && <Colophon />}
-        {view === "philosophy" && <Philosophy />}
-        {view === "console" && <FieldConsole />}
-        {view === "patterns" && <PatternLanguage content={content} onOpen={openItem} fg={theme.fg} />}
-      </main>
+    <div style={cv(theme)} className="app-layout">
+      <Sidebar view={view} navigateTo={navigateTo} filter={filter} setFilter={handleFilter} />
+      <div className="app-content">
+        <PatternLensBar active={lens} onToggle={toggleLens} onOpenModels={() => navigateTo("models")} />
+        <main className={`view-wrap${transitioning ? " view-leaving" : ""}`}>
+          {view === "public" && <Public items={filtered} allItems={content} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={asu.get_system_condition()} onOpen={openItem} lens={lens} />}
+          {view === "model" && <ArtOfModel asu={asu} />}
+          {view === "playbook" && <Playbook asu={asu} />}
+          {view === "backstage" && <Backstage content={content} themeKey={themeKey} onThemeChange={setThemeKey} onPublish={handlePublish} asu={asu} />}
+          {view === "models" && <Models content={content} onOpen={openItem} fg={theme.fg} />}
+          {view === "about" && <About theme={theme} />}
+          {view === "colophon" && <Colophon />}
+          {view === "philosophy" && <Philosophy />}
+          {view === "console" && <FieldConsole />}
+          {view === "lab" && <IncandescantLab asu={asu} />}
+          {view === "gallery" && <SpatialGallery items={content} theme={theme} onOpen={openItem} />}
+          {view === "patterns" && <PatternLanguage content={content} onOpen={openItem} fg={theme.fg} />}
+        </main>
 
-      <SiteFooter view={view} setView={navigateTo} />
+          <SiteFooter />
+      </div>
 
       {/* Writing detail overlay */}
       {activeItem && activeItem.body && !activeItem.caseStudy && !activeItem.sketch && <WritingDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onRelation={handleRelation} onOpen={openItem} fg={theme.fg} lens={lens} />}

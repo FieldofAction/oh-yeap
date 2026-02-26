@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import { VIS } from "../../data/seed";
 import { PatternChipsDetail } from "../PatternLens";
+import VideoEmbed from "../VideoEmbed";
 
 export default function WritingDetail({ item, allItems, closing, onClose, onRelation, onOpen, fg, lens }) {
   const writings = useMemo(() => allItems.filter(c => c.body && c.status !== "draft"), [allItems]);
@@ -80,6 +81,13 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
                   {!block.src && <div className="rd-artwork-label">Artwork {i}</div>}
                 </div>
                 {block.caption && <div className="rd-artwork-cap">{block.caption}</div>}
+              </div>
+            );
+          }
+          if (block.type === "video") {
+            return (
+              <div key={i} className="dc" style={{animationDelay:`${0.5 + i * 0.06}s`}}>
+                <VideoEmbed url={block.url} poster={block.poster} caption={block.caption} />
               </div>
             );
           }

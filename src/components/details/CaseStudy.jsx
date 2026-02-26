@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from "react";
 import { VIS } from "../../data/seed";
 import { PatternChipsDetail } from "../PatternLens";
+import VideoEmbed from "../VideoEmbed";
 
 export default function CaseStudyDetail({ item, closing, onClose, fg, lens }) {
   const heroVi = useMemo(() => VIS[Math.abs(item.title.charCodeAt(0)) % VIS.length](fg), [item.title, fg]);
@@ -49,6 +50,13 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens }) {
           )}
           <div className="cs-hero-glow" />
         </div>
+
+        {/* ── Optional Video ── */}
+        {item.videoUrl && (
+          <div className="dc dc3">
+            <VideoEmbed url={item.videoUrl} poster={item.videoPoster} />
+          </div>
+        )}
 
         {/* ── Institutional Context ── */}
         {cs.context && (
