@@ -20,7 +20,6 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 @media(max-width:768px){.hero{padding:0 20px;min-height:70vh}}
 .hero-pre{font-size:11px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:var(--ff);margin-bottom:24px}
 .hero-h{font-family:var(--display);font-size:clamp(42px,7vw,80px);font-weight:500;letter-spacing:0em;line-height:1.05;max-width:900px;margin-bottom:28px}
-.hero-h em{font-weight:300;opacity:.5}
 .hero-sub{font-size:16px;font-weight:300;line-height:1.7;color:var(--fm);max-width:520px}
 
 .nowbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:10px 40px;font-size:9px;letter-spacing:.04em;color:var(--ff);opacity:.45;max-width:1200px;margin:0 auto;transition:opacity .3s}

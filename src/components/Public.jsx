@@ -11,7 +11,7 @@ export default function Public({ items, filter, setFilter, relFilter, onRelation
         <div style={{position:"absolute",top:"30%",left:"20%",width:"50vw",height:"50vw",borderRadius:"50%",background:`radial-gradient(circle,${theme.bg === "#0E0E0C" ? "rgba(59,74,63,0.04)" : "rgba(59,74,63,0.03)"} 0%,transparent 70%)`,pointerEvents:"none",zIndex:0}} />
         <div style={{position:"relative",zIndex:1}}>
           <div className="hero-pre en d1">Field of Action</div>
-          <h1 className="hero-h en d2">Applied awareness<br/>in live <em>systems</em></h1>
+          <h1 className="hero-h en d2">Applied awareness<br/>in live systems</h1>
           <p className="hero-sub en d3">Where awareness becomes action — through design leadership, systems thinking, and relational infrastructure. Building conditions under which alignment can appear.</p>
         </div>
       </div>
