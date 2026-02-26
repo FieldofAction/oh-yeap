@@ -64,6 +64,11 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 }
 @media(prefers-reduced-motion:reduce){.sb{transition:none}}
 
+/* ── Section Header (filtered views) ── */
+.section-header{max-width:1200px;margin:0 auto;padding:100px 40px 32px}
+.section-header-h{font-family:var(--display);font-size:clamp(28px,4vw,42px);font-weight:500;letter-spacing:-.01em}
+@media(max-width:768px){.section-header{padding:80px 20px 24px}}
+
 .hero{position:relative;display:flex;align-items:center;min-height:80vh;padding:0 40px;max-width:1200px;margin:0 auto 40px}
 .hero-text{position:relative;z-index:1;flex:0 0 62%}
 .hero-window{position:absolute;right:40px;top:50%;transform:translateY(-50%);width:48%;height:60%;min-height:320px;max-height:480px;border-radius:20px;overflow:hidden}

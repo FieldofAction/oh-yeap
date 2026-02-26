@@ -5,32 +5,46 @@ import HeroBg from "./HeroBg";
 import NetworkGraph from "./NetworkGraph";
 
 export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens }) {
+  const isHome = filter === "All" && !relFilter;
+
   return (
     <>
-      <div className="hero en">
-        <div className="hero-text">
-          <div className="hero-pre en d1">Field of Action</div>
-          <h1 className="hero-h en d2">Applied awareness<br/>in live systems</h1>
-          <p className="hero-bio en d3">Daniel is a design leader and systems thinker who builds at the intersection of product, culture, and infrastructure. Currently leading design at Apple Music, he brings over a decade of creative direction across platforms like Google Cloud, Vevo, and the Tribeca Film Festival. His work lives at the edge of structure and intuition — where frameworks become adaptive, and clarity becomes emotional. He writes, explores, builds tools, and publishes through Field of Action — a living studio of applied awareness.</p>
-          <div className="hero-links en d4">
-            <a href="https://fieldofaction.substack.com" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
-            <a href="https://linkedin.com/in/danieldickson" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
+      {/* Hero + network only on home (All) view */}
+      {isHome && (
+        <>
+          <div className="hero en">
+            <div className="hero-text">
+              <div className="hero-pre en d1">Field of Action</div>
+              <h1 className="hero-h en d2">Applied awareness<br/>in live systems</h1>
+              <p className="hero-bio en d3">Daniel is a design leader and systems thinker who builds at the intersection of product, culture, and infrastructure. Currently leading design at Apple Music, he brings over a decade of creative direction across platforms like Google Cloud, Vevo, and the Tribeca Film Festival. His work lives at the edge of structure and intuition — where frameworks become adaptive, and clarity becomes emotional. He writes, explores, builds tools, and publishes through Field of Action — a living studio of applied awareness.</p>
+              <div className="hero-links en d4">
+                <a href="https://fieldofaction.substack.com" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
+                <a href="https://linkedin.com/in/danieldickson" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
+              </div>
+              <div className="nowbar en d5">
+                <span>Currently at <em>{nowState.working}</em></span><span>/</span>
+                <span>Reading <em>{nowState.reading}</em></span><span>/</span>
+                <span>Building <em>{nowState.building}</em></span>
+              </div>
+            </div>
+            <div className="hero-window">
+              <HeroBg theme={theme} />
+            </div>
           </div>
-          <div className="nowbar en d5">
-            <span>Currently at <em>{nowState.working}</em></span><span>/</span>
-            <span>Reading <em>{nowState.reading}</em></span><span>/</span>
-            <span>Building <em>{nowState.building}</em></span>
-          </div>
-        </div>
-        <div className="hero-window">
-          <HeroBg theme={theme} />
-        </div>
-      </div>
 
-      {/* Network diagram — interactive connections map */}
-      <div className="ng-section reveal">
-        <NetworkGraph items={allItems} onRelation={onRelation} activeNode={relFilter} />
-      </div>
+          {/* Network diagram — interactive connections map */}
+          <div className="ng-section reveal">
+            <NetworkGraph items={allItems} onRelation={onRelation} activeNode={relFilter} />
+          </div>
+        </>
+      )}
+
+      {/* Section header when filtered */}
+      {!isHome && !relFilter && (
+        <div className="section-header en">
+          <h1 className="section-header-h">{filter}</h1>
+        </div>
+      )}
 
       {/* Connection filter indicator */}
       {relFilter && (
