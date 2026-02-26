@@ -29,17 +29,17 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
     <div className={`rd-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>← Back</button>
       <div className="rd-inner">
-        <h1 className={`rd-title${fn}`}>{item.title}</h1>
-        {item.subtitle && <div className={`rd-subtitle${fn}`}>{item.subtitle}</div>}
-        <div className="rd-meta">
+        <h1 className={`rd-title${fn} dc dc1`}>{item.title}</h1>
+        {item.subtitle && <div className={`rd-subtitle${fn} dc dc2`}>{item.subtitle}</div>}
+        <div className="rd-meta dc dc2">
           {isMemo && item.memoNum && <span>Memo {item.memoNum}</span>}
           {isMemo && item.memoNum && <div className="rd-meta-sep" />}
           <span>{item.year}</span>
           {item.readMin && <><div className="rd-meta-sep" /><span>{item.readMin} min read</span></>}
         </div>
-        <p className={`rd-desc${fn}`}>{item.desc}</p>
+        <p className={`rd-desc${fn} dc dc3`}>{item.desc}</p>
         {item.audioDur && item.substackUrl && (
-          <a href={item.substackUrl} target="_blank" rel="noopener noreferrer" className="rd-audio-bar" style={{textDecoration:"none",color:"inherit",cursor:"pointer"}}>
+          <a href={item.substackUrl} target="_blank" rel="noopener noreferrer" className="rd-audio-bar dc dc3" style={{textDecoration:"none",color:"inherit",cursor:"pointer"}}>
             <div className="rd-audio-dot" />
             <div className="rd-audio-wave">
               {[4,7,10,6,9,5,8,11,7,4,6,9,5,8,10,6].map((h,i) => <span key={i} style={{height:h}} />)}
@@ -47,8 +47,8 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
             <span>Listen on Substack · {item.audioDur}</span>
           </a>
         )}
-        <div className="rd-hr" />
-        <div className="rd-hero-art">
+        <div className="rd-hr dc dc4" />
+        <div className="rd-hero-art dc dc4 img-reveal">
           {item.coverImg ? (
             <img src={item.coverImg} alt={item.title} />
           ) : (
@@ -56,20 +56,20 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
           )}
           <div className="rd-hero-art-glow" />
         </div>
-        <div className="rd-caption">
+        <div className="rd-caption dc dc5">
           {item.subtitle || item.section} — {item.title}
         </div>
         {item.body?.map((block, i) => {
           if (block.type === "text") {
             return (
-              <div key={i} className={`rd-body-text${fn}`}>
+              <div key={i} className={`rd-body-text${fn} dc`} style={{animationDelay:`${0.5 + i * 0.06}s`}}>
                 {block.content.split("\n\n").map((para, j) => <p key={j}>{para}</p>)}
               </div>
             );
           }
           if (block.type === "artwork") {
             return (
-              <div key={i} className="rd-artwork">
+              <div key={i} className="rd-artwork dc img-reveal" style={{animationDelay:`${0.5 + i * 0.06}s`}}>
                 <div className="rd-artwork-frame">
                   {block.src ? (
                     <img src={block.src} alt={block.alt || block.caption || ""} />
@@ -90,7 +90,7 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
               `© ${item.year} Daniel Dickson · Distributed by Cache`
             ];
             return (
-              <div key={i} className="rd-credit">
+              <div key={i} className="rd-credit dc dc7">
                 {block.thesis && <div className="rd-credit-thesis">{block.thesis}</div>}
                 {autoLines.map((ln, j) => <div key={j} className="rd-credit-line" dangerouslySetInnerHTML={{ __html: ln }} />)}
               </div>
@@ -98,7 +98,7 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
           }
           if (block.type === "citations") {
             return (
-              <div key={i} className="rd-citations">
+              <div key={i} className="rd-citations dc dc7">
                 <div className="rd-citations-h">Works Cited</div>
                 <div className="rd-citations-list">
                   {block.items?.map((c, j) => <div key={j} className="rd-cite" dangerouslySetInnerHTML={{ __html: c }} />)}
@@ -109,12 +109,12 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
           return null;
         })}
         <PatternChipsDetail itemTitle={item.title} active={lens} />
-        <div className="rd-tags">
+        <div className="rd-tags dc dc7">
           {item.tags?.map(t => <span key={t} className="card-tg">{t}</span>)}
           {item.relations?.map(r => <span key={r} className="card-tg rel" onClick={()=>{onClose();setTimeout(()=>onRelation(r),350)}} style={{cursor:"pointer"}}>→ {r}</span>)}
         </div>
         {related.length > 0 && (
-          <div className="rd-related">
+          <div className="rd-related dc dc8">
             <div className="rd-related-h">Connected Work</div>
             {related.map(r => (
               <div key={r.id} className="rd-related-item" onClick={() => { if(r.body){onOpen(r);window.scrollTo(0,0)} else {onClose();setTimeout(()=>onRelation(r.title),350)} }}>
@@ -127,7 +127,7 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
             ))}
           </div>
         )}
-        <div className="rd-nav">
+        <div className="rd-nav dc dc8">
           {prev ? (
             <button className="rd-nav-btn" onClick={() => { onOpen(prev); window.scrollTo(0,0); }}>
               <span className="rd-nav-label">← Previous</span>

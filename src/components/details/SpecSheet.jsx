@@ -18,7 +18,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
     <div className={`sp-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>&larr; Back</button>
       <div className="sp-inner">
-        <div className="sp-head">
+        <div className="sp-head dc dc1">
           <div className="sp-head-left">
             <div className="sp-badge">{typeLabel}</div>
             <h1 className="sp-title">{item.title}</h1>
@@ -34,7 +34,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
 
         {/* Executable prompt block — copy-paste ready */}
         {item.spec?.prompt && (
-          <div className="sp-section">
+          <div className="sp-section dc dc3">
             <div className="sp-prompt-header">
               <div className="sp-section-label">Prompt</div>
               <button className="sp-copy-btn" onClick={() => handleCopy(item.spec.prompt)}>
@@ -48,11 +48,11 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         )}
 
         {item.spec?.preview && (
-          <div className="sp-section">
+          <div className="sp-section dc dc4">
             <div className="sp-section-label">{item.spec.prompt ? "How It Works" : "Preview"}</div>
             {item.spec.preview.type === "visual" && (
               <>
-                <div className="sp-preview-visual">
+                <div className="sp-preview-visual img-reveal">
                   {item.spec.preview.src ? (
                     <img src={item.spec.preview.src} alt={item.spec.preview.caption || item.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
                   ) : (
@@ -69,7 +69,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           </div>
         )}
         {item.spec?.anatomy?.length > 0 && (
-          <div className="sp-section">
+          <div className="sp-section dc dc5">
             <div className="sp-section-label">Anatomy</div>
             <div className="sp-anatomy">
               {item.spec.anatomy.map((a, i) => (
@@ -82,13 +82,13 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           </div>
         )}
         {item.spec?.usage && (
-          <div className="sp-section">
+          <div className="sp-section dc dc6">
             <div className="sp-section-label">Usage</div>
             <div className="sp-usage">{item.spec.usage}</div>
           </div>
         )}
         {item.spec?.source?.length > 0 && (
-          <div className="sp-section">
+          <div className="sp-section dc dc7">
             <div className="sp-section-label">Source</div>
             {item.spec.source.map((s, i) => {
               const linked = allItems.find(a => a.title === s.title);
@@ -102,7 +102,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           </div>
         )}
         <PatternChipsDetail itemTitle={item.title} active={lens} />
-        <div className="rd-tags">
+        <div className="rd-tags dc dc8">
           {item.tags?.map(t => <span key={t} className="card-tg">{t}</span>)}
           {item.relations?.map(r => <span key={r} className="card-tg rel">&rarr; {r}</span>)}
         </div>

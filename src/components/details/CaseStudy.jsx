@@ -11,7 +11,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens }) {
   const imgs = cs.images || {};
 
   const Img = ({ idx, caption }) => (
-    <div className="cs-fig">
+    <div className="cs-fig dc img-reveal" style={{animationDelay:`${0.2 + idx * 0.08}s`}}>
       <div className="cs-full-img">
         {imgs[`fig${idx}`] ? (
           <img src={imgs[`fig${idx}`]} alt={caption || `${item.title} figure ${idx}`} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
@@ -30,7 +30,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens }) {
       <div className="cs-inner">
 
         {/* ── Title + Meta ── */}
-        <div className="cs-header">
+        <div className="cs-header dc dc1">
           <h1 className="cs-title">{item.title}</h1>
           <p className="cs-subtitle">{item.subtitle}</p>
           <div className="cs-meta-row">
@@ -41,7 +41,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens }) {
         </div>
 
         {/* ── Hero ── */}
-        <div className="cs-hero">
+        <div className="cs-hero dc dc2 img-reveal">
           {imgs.hero ? (
             <img src={imgs.hero} alt={item.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
           ) : (
@@ -52,7 +52,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens }) {
 
         {/* ── Institutional Context ── */}
         {cs.context && (
-          <div className="cs-narrative">
+          <div className="cs-narrative dc dc3">
             <div className="cs-section-label">Institutional Context</div>
             <div className="cs-body">
               {cs.context.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}
@@ -64,7 +64,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens }) {
 
         {/* ── The Challenge ── */}
         {cs.challenge && (
-          <div className="cs-narrative">
+          <div className="cs-narrative dc dc4">
             <div className="cs-section-label">The Challenge</div>
             <div className="cs-body"><p>{cs.challenge.body}</p></div>
             {cs.challenge.points?.length > 0 && (
@@ -85,14 +85,14 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens }) {
 
         {/* ── Challenge closing as big pull quote ── */}
         {cs.challenge?.closing && (
-          <div className="cs-pullquote">{cs.challenge.closing}</div>
+          <div className="cs-pullquote dc dc5">{cs.challenge.closing}</div>
         )}
 
         <Img idx={2} />
 
         {/* ── Strategic Reframe — the centerpiece ── */}
         {cs.reframe && (
-          <div className="cs-reframe">
+          <div className="cs-reframe dc dc5">
             <div className="cs-section-label">Strategic Reframe</div>
             <div className="cs-reframe-vis">
               <span className="cs-reframe-from">{cs.reframe[0]}</span>
@@ -111,7 +111,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens }) {
 
         {/* ── The Intervention ── */}
         {cs.intervention && (
-          <div className="cs-narrative">
+          <div className="cs-narrative dc dc6">
             <div className="cs-section-label">The Intervention</div>
             <div className="cs-intervention-grid">
               {cs.intervention.system && (
@@ -149,7 +149,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens }) {
 
         {/* ── The Results ── */}
         {cs.results && (
-          <div className="cs-narrative">
+          <div className="cs-narrative dc dc7">
             <div className="cs-section-label">The Results</div>
             {cs.results.points?.length > 0 && (
               <ul className="cs-points">
@@ -161,14 +161,14 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens }) {
 
         {/* ── Results closing as big pull quote ── */}
         {cs.results?.closing && (
-          <div className="cs-pullquote">{cs.results.closing}</div>
+          <div className="cs-pullquote dc dc7">{cs.results.closing}</div>
         )}
 
         <Img idx={5} />
 
         {/* ── Field Insight — closing moment ── */}
         {cs.insight && (
-          <div className="cs-insight">
+          <div className="cs-insight dc dc8">
             {cs.insight.map((line, i) => <p key={i}>{line}</p>)}
           </div>
         )}
@@ -176,7 +176,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens }) {
         <PatternChipsDetail itemTitle={item.title} active={lens} />
 
         {/* ── Deliverables + Tags ── */}
-        <div className="cs-footer">
+        <div className="cs-footer dc dc8">
           {item.deliverables?.length > 0 && (
             <div className="cs-deliv">
               <div className="cs-section-label">Deliverables</div>

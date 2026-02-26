@@ -23,7 +23,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
       <button className="rd-back" onClick={onClose}>← Back</button>
       <div className="th-inner">
         {/* Title block with icon */}
-        <div className="th-head">
+        <div className="th-head dc dc1">
           <div className="th-icon">
             <RDIcon color={fg} size={36} />
           </div>
@@ -45,14 +45,14 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
 
         {/* Intro — page 1 framing */}
         {theory.intro && (
-          <div className="th-intro">
+          <div className="th-intro dc dc2">
             <p>{theory.intro}</p>
           </div>
         )}
 
         {/* Process diagram */}
         {theory.processDiagram?.length > 0 && (
-          <div className="th-process">
+          <div className="th-process dc dc3">
             <div className="th-section-label">Relational Design Process Diagram</div>
             <div className="th-process-ring">
               {theory.processDiagram.map((step, i) => (
@@ -67,7 +67,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
 
         {/* Abstract */}
         {theory.abstract && (
-          <div className="th-abstract">
+          <div className="th-abstract dc dc4">
             <div className="th-section-header">
               <div className="th-section-label">Abstract</div>
               <div className="th-section-page">3</div>
@@ -77,7 +77,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
         )}
 
         {/* Hero visual */}
-        <div className="th-hero-visual">
+        <div className="th-hero-visual dc dc5 img-reveal">
           {imgs.hero ? (
             <img src={imgs.hero} alt={item.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
           ) : (
@@ -88,14 +88,14 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
 
         {/* Body sections with page-style headers */}
         {theory.sections?.map((section, i) => (
-          <div key={i} className="th-body-section">
+          <div key={i} className="th-body-section dc" style={{animationDelay:`${0.5 + i * 0.08}s`}}>
             <div className="th-body-heading">{section.heading}</div>
             <div className="th-body-text">
               {section.body.split("\n\n").map((para, j) => <p key={j}>{para}</p>)}
             </div>
             {/* Interstitial visual between sections */}
             {i < theory.sections.length - 1 && (
-              <div className="th-interstitial">
+              <div className="th-interstitial img-reveal" style={{animationDelay:`${0.5 + i * 0.08}s`}}>
                 {imgs[`inter${i + 1}`] ? (
                   <img src={imgs[`inter${i + 1}`]} alt={`${section.heading} visual`} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
                 ) : (
@@ -110,7 +110,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
 
         {/* Principles */}
         {theory.principles?.length > 0 && (
-          <div className="th-principles">
+          <div className="th-principles dc dc7">
             <div className="th-body-heading">Principles of Relational Design</div>
             <div className="th-principles-grid">
               {theory.principles.map((p, i) => (
@@ -126,7 +126,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
 
         {/* Lineages — structured per PDF page 11 */}
         {theory.lineages?.length > 0 && (
-          <div className="th-lineages">
+          <div className="th-lineages dc dc8">
             <div className="th-body-heading">Lineages of Relational Design</div>
             <div className="th-body-text"><p>Relational Design grows from a lineage of movements that expanded the purpose and material of design.</p></div>
             <div className="th-lineages-grid">
@@ -142,7 +142,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
 
         {/* Works Cited */}
         {theory.worksCited?.length > 0 && (
-          <div className="th-works-cited">
+          <div className="th-works-cited dc dc8">
             <div className="th-section-header">
               <div className="th-section-label">Works Cited</div>
               <div className="th-section-page">12</div>

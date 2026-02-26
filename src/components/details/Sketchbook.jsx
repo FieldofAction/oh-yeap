@@ -9,27 +9,27 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
     <div className={`sk-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>← Back</button>
       <div className="sk-inner">
-        <div className="sk-status">
+        <div className="sk-status dc dc1">
           <span className={`ex-pin-dot ${item.status}`} />
           {item.status === "wip" ? "In Progress" : item.status}
         </div>
-        <h1 className="sk-title">{item.title}</h1>
-        <div className="sk-sub">{item.subtitle} · {item.year}</div>
+        <h1 className="sk-title dc dc1">{item.title}</h1>
+        <div className="sk-sub dc dc2">{item.subtitle} · {item.year}</div>
         {item.sketch?.hypothesis && (
-          <div className="sk-hyp">
+          <div className="sk-hyp dc dc3">
             <div className="sk-hyp-label">Hypothesis</div>
             <div className="sk-hyp-text">{item.sketch.hypothesis}</div>
           </div>
         )}
         {item.sketch?.fragments?.length > 0 && (
-          <div className="sk-frag-section">
+          <div className="sk-frag-section dc dc4">
             <div className="sk-frag-label">Fragments</div>
             <div className="sk-fragments">
               {item.sketch.fragments.map((frag, i) => {
                 if (frag.type === "visual") {
                   return (
                     <React.Fragment key={i}>
-                      <div className="sk-frag-visual">
+                      <div className="sk-frag-visual img-reveal" style={{animationDelay:`${0.3 + i * 0.08}s`}}>
                         {frag.src ? (
                           <img src={frag.src} alt={frag.caption || `${item.title} fragment ${i}`} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
                         ) : (
@@ -55,7 +55,7 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
           </div>
         )}
         {item.sketch?.openQuestions?.length > 0 && (
-          <div className="sk-oq">
+          <div className="sk-oq dc dc6">
             <div className="sk-oq-label">Open Questions</div>
             {item.sketch.openQuestions.map((q, i) => (
               <div key={i} className="sk-oq-item">{q}</div>
@@ -63,7 +63,7 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
           </div>
         )}
         {item.sketch?.connections?.length > 0 && (
-          <div className="sk-conn">
+          <div className="sk-conn dc dc7">
             <div className="sk-conn-label">Connections</div>
             {item.sketch.connections.map((c, i) => {
               const linked = allItems.find(a => a.title === c.title);
@@ -77,7 +77,7 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
           </div>
         )}
         <PatternChipsDetail itemTitle={item.title} active={lens} />
-        <div className="rd-tags">
+        <div className="rd-tags dc dc8">
           {item.tags?.map(t => <span key={t} className="card-tg">{t}</span>)}
           {item.relations?.map(r => <span key={r} className="card-tg rel">→ {r}</span>)}
         </div>
