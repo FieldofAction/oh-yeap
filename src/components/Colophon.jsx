@@ -12,7 +12,7 @@ const TECH = [
 ];
 
 const PRINCIPLES = [
-  "Two typefaces only: Space Grotesk for display and body, Space Mono for code.",
+  "Two typefaces only: Atlas Grotesk for display and body, Space Mono for code.",
   "CSS custom properties drive theming \u2014 every color is a variable.",
   "Entrance animations with staggered delays create rhythm on load.",
   "Responsive breakpoints at 480px, 600px, 768px, and 900px.",
@@ -63,7 +63,7 @@ export default function Colophon() {
         <div className="co-sl">Typography + Color</div>
         <div className="co-type-spec">
           <div className="co-type-row">
-            <div className="co-type-sample">Space Grotesk</div>
+            <div className="co-type-sample">Atlas Grotesk</div>
             <div className="co-type-label">Display + Body &middot; Titles, headings, body text, UI &middot; 300/400/500/600/700 weights</div>
           </div>
           <div className="co-type-row">

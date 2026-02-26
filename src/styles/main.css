@@ -1,5 +1,5 @@
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--sans:'Space Grotesk',system-ui,sans-serif;--display:'Space Grotesk',system-ui,sans-serif;--mono:'Space Mono',monospace}
+:root{--sans:'atlas grotesk',system-ui,sans-serif;--display:'atlas grotesk',system-ui,sans-serif;--mono:'Space Mono',monospace}
 html{scroll-behavior:smooth}
 body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;transition:background .5s,color .5s}
 ::selection{background:var(--fg);color:var(--bg)}
@@ -923,5 +923,5 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 @media(max-width:600px){.ph-principles-grid,.ph-lineages-grid,.ph-works-list{grid-template-columns:1fr}}
 
 /* Font fallback declarations for offline / slow network */
-@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:300 700;font-display:swap;src:local('Space Grotesk')}
+@font-face{font-family:'atlas grotesk';font-style:normal;font-weight:300 700;font-display:swap;src:local('Atlas Grotesk')}
 @font-face{font-family:'Space Mono';font-style:normal;font-weight:400 700;font-display:swap;src:local('Space Mono')}
