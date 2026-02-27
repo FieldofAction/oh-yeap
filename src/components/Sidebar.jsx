@@ -47,17 +47,18 @@ export default function Sidebar({ view, navigateTo, filter, setFilter }) {
 
   return (
     <>
-      <button className="sb-toggle" onClick={() => setMobileOpen(p => !p)} aria-label="Menu">
-        <span className="sb-toggle-bar" />
-        <span className="sb-toggle-bar" />
-        <span className="sb-toggle-bar" />
-      </button>
-
-      <aside className={`sb${mobileOpen ? " sb-open" : ""}`}>
-        <div className="sb-brand" onClick={() => { navigateTo("public"); setFilter("All"); setMobileOpen(false); }}>
+      <div className="topbar">
+        <button className="sb-toggle" onClick={() => setMobileOpen(p => !p)} aria-label="Menu">
+          <span className="sb-toggle-bar" />
+          <span className="sb-toggle-bar" />
+          <span className="sb-toggle-bar" />
+        </button>
+        <div className="sb-brand" onClick={() => { navigateTo("public"); setFilter("All"); setMobileOpen(false); window.scrollTo(0, 0); }}>
           Field of Action
         </div>
+      </div>
 
+      <aside className={`sb${mobileOpen ? " sb-open" : ""}`}>
         {NAV.map(group => (
           <div key={group.tier} className="sb-tier">
             <div className="sb-tier-h">{group.tier}</div>
