@@ -1,7 +1,6 @@
 import React from "react";
 import { FILTERS } from "../data/playbook-data";
 import { PatternChips } from "./PatternLens";
-import HeroBg from "./HeroBg";
 import NetworkGraph from "./NetworkGraph";
 
 export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens }) {
@@ -15,7 +14,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
           <div className="hero en">
             <div className="hero-text">
               <div className="hero-pre en d1">Field of Action</div>
-              <h1 className="hero-h en d2">Applied awareness<br/>in live systems</h1>
+              <h1 className="hero-h en d2">Designing Structure<br/>for Living Systems</h1>
               <p className="hero-bio en d3">Daniel is a design leader and systems thinker who builds at the intersection of product, culture, and infrastructure. Currently leading design at Apple Music, he brings over a decade of creative direction across platforms like Google Cloud, Vevo, and the Tribeca Film Festival. His work lives at the edge of structure and intuition — where frameworks become adaptive, and clarity becomes emotional. He writes, explores, builds tools, and publishes through Field of Action — a living studio of applied awareness.</p>
               <div className="hero-links en d4">
                 <a href="https://fieldofaction.substack.com" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
@@ -26,9 +25,6 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 <span>Reading <em>{nowState.reading}</em></span><span>/</span>
                 <span>Building <em>{nowState.building}</em></span>
               </div>
-            </div>
-            <div className="hero-window">
-              <HeroBg theme={theme} />
             </div>
           </div>
 

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { THEMES } from "./data/themes";
 import { SEED, uid, VIS } from "./data/seed";
 import useASUStore from "./store/useASUStore";
@@ -15,7 +15,6 @@ import Philosophy from "./components/Philosophy";
 import PatternLanguage from "./components/PatternLanguage";
 import FieldConsole from "./components/FieldConsole";
 import IncandescantLab from "./components/IncandescantLab";
-import SpatialGallery from "./components/SpatialGallery";
 import { PatternLensToggle, PatternLensBar } from "./components/PatternLens";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
@@ -46,44 +45,6 @@ export default function App() {
   const theme = THEMES[themeKey];
   const toggleLens = useCallback(() => setLens(p => !p), []);
 
-  /* ── Custom cursor ── */
-  const cursorRef = useRef(null);
-  const cursorRingRef = useRef(null);
-  useEffect(() => {
-    const isTouch = window.matchMedia("(pointer: coarse)").matches;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (isTouch || reduceMotion) return;
-    document.body.classList.add("custom-cursor");
-    const dot = cursorRef.current;
-    const ring = cursorRingRef.current;
-    if (!dot || !ring) return;
-    let mouseX = -100, mouseY = -100, dotX = -100, dotY = -100, ringX = -100, ringY = -100;
-    let hovering = false, animId = null;
-    const DOT_LERP = 0.15, RING_LERP = 0.08;
-    const onMove = (e) => { mouseX = e.clientX; mouseY = e.clientY; };
-    const onDown = () => { dot.classList.add("cursor-active"); ring.classList.add("cursor-active"); };
-    const onUp = () => { dot.classList.remove("cursor-active"); ring.classList.remove("cursor-active"); };
-    const INTERACTIVE = "a,button,[role='button'],input,textarea,select,.card,.csm,.prow,.g-card,.sk-conn-item,.sp-source-item,.rd-related-item,.hero-link,.nl,.fc,.ft-link,.pl-toggle,.ng-node,.sb-link,.sb-brand,.il-card-head,.sg-flat-card";
-    const onOver = (e) => {
-      const hit = e.target.closest(INTERACTIVE);
-      if (hit && !hovering) { hovering = true; dot.classList.add("cursor-hover"); ring.classList.add("cursor-hover"); }
-      else if (!hit && hovering) { hovering = false; dot.classList.remove("cursor-hover"); ring.classList.remove("cursor-hover"); }
-    };
-    const tick = () => {
-      dotX += (mouseX - dotX) * DOT_LERP; dotY += (mouseY - dotY) * DOT_LERP;
-      ringX += (mouseX - ringX) * RING_LERP; ringY += (mouseY - ringY) * RING_LERP;
-      dot.style.transform = `translate(${dotX}px,${dotY}px)`;
-      ring.style.transform = `translate(${ringX}px,${ringY}px)`;
-      animId = requestAnimationFrame(tick);
-    };
-    window.addEventListener("mousemove", onMove, { passive: true });
-    window.addEventListener("mousedown", onDown);
-    window.addEventListener("mouseup", onUp);
-    document.addEventListener("mouseover", onOver, { passive: true });
-    animId = requestAnimationFrame(tick);
-    return () => { cancelAnimationFrame(animId); document.body.classList.remove("custom-cursor"); window.removeEventListener("mousemove", onMove); window.removeEventListener("mousedown", onDown); window.removeEventListener("mouseup", onUp); document.removeEventListener("mouseover", onOver); };
-  }, []);
-
   // Page transition — fade out, swap, fade in
   const navigateTo = useCallback((target) => {
     if (target === view && !transitioning) return;
@@ -92,7 +53,7 @@ export default function App() {
       setView(target);
       window.scrollTo(0, 0);
       setTransitioning(false);
-    }, 350);
+    }, 200);
   }, [view, transitioning]);
 
   // Scroll-reveal observer — watches .reveal elements, adds .revealed on intersect
@@ -123,7 +84,7 @@ export default function App() {
         setRelFilter(null);
         if (activeItem) {
           setClosing(true);
-          setTimeout(() => { setActiveItem(null); setClosing(false) }, 300);
+          setTimeout(() => { setActiveItem(null); setClosing(false) }, 200);
         }
       }
     };
@@ -160,7 +121,7 @@ export default function App() {
   }, []);
   const closeItem = useCallback(() => {
     setClosing(true);
-    setTimeout(() => { setActiveItem(null); setClosing(false); }, 300);
+    setTimeout(() => { setActiveItem(null); setClosing(false); }, 200);
   }, []);
   const handlePublish = useCallback((item) => {
     setContent(prev => {
@@ -186,7 +147,6 @@ export default function App() {
           {view === "philosophy" && <Philosophy />}
           {view === "console" && <FieldConsole />}
           {view === "lab" && <IncandescantLab asu={asu} />}
-          {view === "gallery" && <SpatialGallery items={content} theme={theme} onOpen={openItem} />}
           {view === "patterns" && <PatternLanguage content={content} onOpen={openItem} fg={theme.fg} />}
         </main>
 
@@ -220,9 +180,6 @@ export default function App() {
           <div style={{ marginTop: 8, fontSize: 9, color: "var(--ff)", fontWeight: 300 }}>Press ? to close · M for pattern lens · Esc to clear</div>
         </div>
       )}
-      {/* Custom cursor */}
-      <div ref={cursorRef} className="cursor-dot" />
-      <div ref={cursorRingRef} className="cursor-ring" />
     </div>
   );
 }

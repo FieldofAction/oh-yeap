@@ -6,7 +6,6 @@ const NAV = [
     { key: "public", label: "Writing", filter: "Writing" },
     { key: "public", label: "Exploration", filter: "Exploration" },
     { key: "public", label: "Artifacts", filter: "Artifacts" },
-    { key: "gallery", label: "Gallery" },
   ]},
   { tier: "STUDIO", items: [
     { key: "model", label: "Art of Model" },

@@ -14,7 +14,7 @@ export default function Card({ item, delay, fg, onRelation, onOpen }) {
             <div dangerouslySetInnerHTML={{ __html: vi }} style={{ width:"100%", height:"100%" }} />
           )}
           <div className="card-vo" />
-          <div style={{position:"absolute",inset:0,background:"radial-gradient(circle at 50% 60%, rgba(59,74,63,0.06) 0%, transparent 60%)",opacity:hov?1:0,transition:"opacity .6s",pointerEvents:"none"}} />
+          <div style={{position:"absolute",inset:0,background:"radial-gradient(circle at 50% 60%, rgba(47,91,255,0.06) 0%, transparent 60%)",opacity:hov?1:0,transition:"opacity .6s",pointerEvents:"none"}} />
         </div>
       )}
       <div className="card-b">
