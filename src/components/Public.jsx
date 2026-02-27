@@ -62,28 +62,27 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
       {/* ── Differentiated Sections ── */}
       {(() => {
         const practice = items.filter(i => i.section === "practice");
-        const essays = items.filter(i => i.section === "writing" && !i.short);
-        const notes = items.filter(i => i.section === "writing" && i.short);
+        const allWriting = items.filter(i => i.section === "writing");
         const exploration = items.filter(i => i.section === "exploration");
         const artifacts = items.filter(i => i.section === "artifacts");
         const showAll = filter === "All" && !relFilter;
 
         return (
           <>
-            {/* Practice — Cinematic horizontal carousel */}
+            {/* Practice — 4-column grid cards */}
             {(showAll || filter === "Practice" || relFilter) && practice.length > 0 && (
-              <div className="work-section reveal">
-                <div className="work-section-h">Selected Work</div>
-                <div className="work-carousel">
+              <div className={`content-section${showAll ? " reveal" : ""}`}>
+                {showAll && <div className="content-section-h">Selected Work</div>}
+                <div className="grid-4">
                   {practice.map((item, i) => (
-                    <div key={item.id} className="work-card en" onClick={() => onOpen(item)} style={{ animationDelay: `${0.05 + i * 0.06}s` }}>
-                      <div className="work-card-visual" style={{ background: `linear-gradient(135deg, ${theme.ac1}22, ${theme.ac2}18)` }}>
-                        <span className="work-card-year">{item.year}</span>
+                    <div key={item.id} className={`g-card${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? { animationDelay: `${0.05 + i * 0.06}s` } : undefined}>
+                      <div className="g-card-visual" style={{ background: `linear-gradient(135deg, ${theme.ac1}22, ${theme.ac2}18)` }}>
+                        <span className="g-card-year">{item.year}</span>
                       </div>
-                      <div className="work-card-body">
-                        <div className="work-card-role">{item.role}</div>
-                        <div className="work-card-title">{item.title}</div>
-                        <div className="work-card-desc">{item.subtitle}</div>
+                      <div className="g-card-body">
+                        <div className="g-card-pre">{item.role}</div>
+                        <div className="g-card-title">{item.title}</div>
+                        <div className="g-card-desc">{item.subtitle}</div>
                         {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
                       </div>
                     </div>
@@ -92,71 +91,54 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
               </div>
             )}
 
-            {/* Writing — Editorial contents grid (5 rows, multi-column) */}
-            {(showAll || filter === "Writing" || relFilter) && (essays.length > 0 || notes.length > 0) && (
-              <div className="wr-section reveal">
-                <div className="wr-section-h">Writing</div>
-                <div className="wr-toc-grid">
-                  {(() => {
-                    const all = [...essays, ...notes];
-                    const rows = 5;
-                    const cols = Math.ceil(all.length / rows);
-                    const columns = [];
-                    for (let c = 0; c < cols; c++) {
-                      columns.push(all.slice(c * rows, c * rows + rows));
-                    }
-                    return columns.map((col, ci) => (
-                      <div key={ci} className="wr-toc-col">
-                        {col.map((item, ri) => {
-                          const i = ci * rows + ri;
-                          const isMemo = item.writeType === "memo";
-                          return (
-                            <div key={item.id} className="wr-toc-row en" style={{animationDelay:`${0.03+i*0.03}s`}} onClick={()=>onOpen(item)}>
-                              <div className="wr-toc-num">{String(i+1).padStart(2,"0")}</div>
-                              <div className="wr-toc-body">
-                                <div className="wr-toc-type">
-                                  {isMemo && item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}
-                                </div>
-                                <div className="wr-toc-title">{item.title}</div>
-                              </div>
-                              <div className="wr-toc-meta">
-                                {item.readMin && <span>{item.readMin}m</span>}
-                                {item.audioDur && <span className="wr-toc-audio">▶</span>}
-                              </div>
-                              <PatternChips itemTitle={item.title} active={lens} compact />
-                            </div>
-                          );
-                        })}
+            {/* Writing — 4-column grid cards */}
+            {(showAll || filter === "Writing" || relFilter) && allWriting.length > 0 && (
+              <div className={`content-section${showAll ? " reveal" : ""}`}>
+                {showAll && <div className="content-section-h">Writing</div>}
+                <div className="grid-4">
+                  {allWriting.map((item, i) => {
+                    const isMemo = item.writeType === "memo";
+                    return (
+                      <div key={item.id} className={`g-card g-card-compact${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.03+i*0.04}s`} : undefined}>
+                        <div className="g-card-body">
+                          <div className="g-card-pre">
+                            {isMemo && item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}
+                          </div>
+                          <div className="g-card-title">{item.title}</div>
+                          {item.subtitle && <div className="g-card-desc">{item.subtitle}</div>}
+                          <div className="g-card-meta">
+                            {item.readMin && <span>{item.readMin} min read</span>}
+                            {item.audioDur && <span>▶ Audio</span>}
+                          </div>
+                          <PatternChips itemTitle={item.title} active={lens} compact />
+                        </div>
                       </div>
-                    ));
-                  })()}
+                    );
+                  })}
                 </div>
               </div>
             )}
 
-            {/* Exploration — Research Threads */}
+            {/* Exploration — 4-column grid cards */}
             {(showAll || filter === "Exploration" || relFilter) && exploration.length > 0 && (
-              <div className="ex-section reveal">
-                <div className="ex-section-h">Exploration</div>
-                <div className="ex-list">
+              <div className={`content-section${showAll ? " reveal" : ""}`}>
+                {showAll && <div className="content-section-h">Exploration</div>}
+                <div className="grid-4">
                   {exploration.map((item, i) => (
-                    <div key={item.id} className="ex-row en" style={{animationDelay:`${0.05+i*0.04}s`}} onClick={()=>onOpen(item)}>
-                      <div className="ex-row-left">
-                        <span className={`ex-row-dot ${item.status}`} />
-                        <span className="ex-row-status">{item.status === "wip" ? "In Progress" : item.status}</span>
-                      </div>
-                      <div className="ex-row-body">
-                        <div className="ex-row-t">{item.title}</div>
-                        <div className="ex-row-sub">{item.subtitle}</div>
-                        <div className="ex-row-d">{item.desc}</div>
-                        <PatternChips itemTitle={item.title} active={lens} compact />
-                      </div>
-                      <div className="ex-row-right">
-                        <div className="ex-row-tags">
+                    <div key={item.id} className={`g-card${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.05+i*0.04}s`} : undefined}>
+                      <div className="g-card-body">
+                        <div className="g-card-pre">
+                          <span className={`g-card-dot ${item.status}`} />
+                          {item.status === "wip" ? "In Progress" : item.status}
+                        </div>
+                        <div className="g-card-title">{item.title}</div>
+                        <div className="g-card-desc">{item.subtitle}</div>
+                        <p className="g-card-summary">{item.desc}</p>
+                        <div className="g-card-tags">
                           {item.tags?.map(t => <span key={t} className="card-tg">{t}</span>)}
                           {item.relations?.map(r => <span key={r} className="card-tg rel" onClick={(e)=>{e.stopPropagation();onRelation(r)}} style={{cursor:"pointer"}}>→ {r}</span>)}
                         </div>
-                        <span className="ex-row-arrow">↗</span>
+                        <PatternChips itemTitle={item.title} active={lens} compact />
                       </div>
                     </div>
                   ))}
@@ -164,27 +146,20 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
               </div>
             )}
 
-            {/* Artifacts — Index Rows */}
+            {/* Artifacts — 4-column grid cards */}
             {(showAll || filter === "Artifacts" || relFilter) && artifacts.length > 0 && (
-              <div className="af-section reveal">
-                <div className="af-section-h">Artifacts</div>
-                <div className="af-list">
+              <div className={`content-section${showAll ? " reveal" : ""}`}>
+                {showAll && <div className="content-section-h">Artifacts</div>}
+                <div className="grid-4">
                   {artifacts.map((item, i) => (
-                    <div key={item.id} className="af-row en" style={{animationDelay:`${0.05+i*0.04}s`}} onClick={()=>onOpen(item)}>
-                      <div className="af-row-icon">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                          {item.tags?.includes("Visual")
-                            ? <><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/></>
-                            : <><path d="M4 4h16v16H4z"/><path d="M9 4v16"/><path d="M4 9h16"/></>
-                          }
-                        </svg>
-                      </div>
-                      <div className="af-row-body">
-                        <div className="af-row-t">{item.title}</div>
-                        <div className="af-row-d">{item.desc}</div>
+                    <div key={item.id} className={`g-card g-card-compact${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.05+i*0.04}s`} : undefined}>
+                      <div className="g-card-body">
+                        <div className="g-card-pre">{item.artifactType || "Artifact"} · {item.version}</div>
+                        <div className="g-card-title">{item.title}</div>
+                        <div className="g-card-desc">{item.desc}</div>
+                        <div className="g-card-status">{item.status}</div>
                         <PatternChips itemTitle={item.title} active={lens} compact />
                       </div>
-                      <div className="af-row-status">{item.status}</div>
                     </div>
                   ))}
                 </div>

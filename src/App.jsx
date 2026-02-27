@@ -63,7 +63,7 @@ export default function App() {
     const onMove = (e) => { mouseX = e.clientX; mouseY = e.clientY; };
     const onDown = () => { dot.classList.add("cursor-active"); ring.classList.add("cursor-active"); };
     const onUp = () => { dot.classList.remove("cursor-active"); ring.classList.remove("cursor-active"); };
-    const INTERACTIVE = "a,button,[role='button'],input,textarea,select,.card,.csm,.prow,.work-card,.wr-toc-row,.ex-row,.af-row,.sk-conn-item,.sp-source-item,.rd-related-item,.hero-link,.nl,.fc,.ft-link,.pl-toggle,.ng-node,.sb-link,.sb-brand,.il-card-head,.sg-flat-card";
+    const INTERACTIVE = "a,button,[role='button'],input,textarea,select,.card,.csm,.prow,.g-card,.sk-conn-item,.sp-source-item,.rd-related-item,.hero-link,.nl,.fc,.ft-link,.pl-toggle,.ng-node,.sb-link,.sb-brand,.il-card-head,.sg-flat-card";
     const onOver = (e) => {
       const hit = e.target.closest(INTERACTIVE);
       if (hit && !hovering) { hovering = true; dot.classList.add("cursor-hover"); ring.classList.add("cursor-hover"); }
