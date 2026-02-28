@@ -293,35 +293,6 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .g-card-dot{width:6px;height:6px;border-radius:50%;display:inline-block}
 .g-card-dot.wip{background:var(--ac2)}.g-card-dot.live{background:var(--ac1)}.g-card-dot.seed{background:var(--ff)}
 
-/* ── Writing Section ── */
-.wr-tier{max-width:1200px;margin:0 auto;padding:0 40px}
-.wr-tier-h{font-size:11px;font-weight:500;letter-spacing:.03em;text-transform:uppercase;color:var(--ff);padding:48px 0 16px;border-bottom:1px solid var(--bd)}
-@media(max-width:768px){.wr-tier{padding:0 20px}.wr-tier-h{padding:32px 0 12px}}
-
-/* Featured cards — 2-col with cover art */
-.wr-feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;padding-top:24px}
-.wr-feat{cursor:pointer;overflow:hidden;background:var(--cbg);transition:background .3s,box-shadow .3s ease,transform .3s ease}
-.wr-feat:hover{background:var(--ch);transform:translateY(-3px);box-shadow:0 8px 32px color-mix(in srgb,var(--fg) 10%,transparent)}
-.wr-feat-img{width:100%;aspect-ratio:16/11;object-fit:cover;display:block}
-.wr-feat-body{padding:24px}
-.wr-feat-pre{font-size:10px;font-weight:500;letter-spacing:.02em;text-transform:uppercase;color:var(--ff);margin-bottom:8px}
-.wr-feat-title{font-family:var(--display);font-size:clamp(20px,2.5vw,28px);font-weight:400;line-height:1.2;letter-spacing:.01em;margin-bottom:8px}
-.wr-feat-sub{font-size:13px;font-weight:500;color:var(--fm);margin-bottom:4px}
-.wr-feat-desc{font-size:12px;color:var(--fm);line-height:1.55}
-.wr-feat-meta{display:flex;gap:12px;font-size:10px;color:var(--ff);margin-top:10px}
-@media(max-width:768px){.wr-feat-grid{grid-template-columns:1fr;gap:16px}.wr-feat-body{padding:20px}}
-
-/* All Writing — condensed 3-col grid */
-.wr-all-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding-top:20px}
-.wr-compact{cursor:pointer;padding:20px;background:var(--cbg);border:1px solid var(--bd);transition:background .2s,border-color .2s}
-.wr-compact:hover{background:var(--ch);border-color:color-mix(in srgb,var(--fg) 12%,var(--bd))}
-.wr-compact-pre{font-size:10px;font-weight:500;letter-spacing:.02em;text-transform:uppercase;color:var(--ff);margin-bottom:6px}
-.wr-compact-title{font-family:var(--display);font-size:16px;font-weight:400;line-height:1.25;margin-bottom:4px}
-.wr-compact-sub{font-size:11px;color:var(--fm);line-height:1.45}
-.wr-compact-meta{display:flex;gap:10px;font-size:10px;color:var(--ff);margin-top:8px}
-@media(max-width:900px){.wr-all-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.wr-all-grid{grid-template-columns:1fr;gap:12px}}
-
 /* ── Case Study Detail ── */
 .cs-overlay{position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;animation:rdOpen .3s ease both}
 .cs-overlay.closing{animation:rdClose .3s ease both}
