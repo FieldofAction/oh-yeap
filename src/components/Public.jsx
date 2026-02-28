@@ -89,33 +89,56 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
               </div>
             )}
 
-            {/* Writing — 4-column grid cards */}
-            {(showAll || filter === "Writing" || relFilter) && allWriting.length > 0 && (
-              <div className={`content-section${showAll ? " reveal" : ""}`}>
-                {showAll && <div className="content-section-h">Writing</div>}
-                <div className="grid-4">
-                  {allWriting.map((item, i) => {
-                    const isMemo = item.writeType === "memo";
-                    return (
-                      <div key={item.id} className={`g-card g-card-compact${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.03+i*0.04}s`} : undefined}>
-                        <div className="g-card-body">
-                          <div className="g-card-pre">
-                            {isMemo && item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}
-                          </div>
-                          <div className="g-card-title">{item.title}</div>
-                          {item.subtitle && <div className="g-card-desc">{item.subtitle}</div>}
-                          <div className="g-card-meta">
-                            {item.readMin && <span>{item.readMin} min read</span>}
-                            {item.audioDur && <span>▶ Audio</span>}
-                          </div>
-                          <PatternChips itemTitle={item.title} active={lens} compact />
-                        </div>
+            {/* Writing — two-tier row layout */}
+            {(showAll || filter === "Writing" || relFilter) && allWriting.length > 0 && (() => {
+              const featured = allWriting.filter(i => i.featured);
+              const rest = allWriting
+                .filter(i => !i.featured)
+                .sort((a, b) => {
+                  // Memos first (by memoNum desc), then field notes
+                  if (a.writeType === "memo" && b.writeType !== "memo") return -1;
+                  if (a.writeType !== "memo" && b.writeType === "memo") return 1;
+                  if (a.writeType === "memo" && b.writeType === "memo") return (b.memoNum || 0) - (a.memoNum || 0);
+                  return 0;
+                });
+              const renderRow = (item, i, isFeat) => {
+                const isMemo = item.writeType === "memo";
+                return (
+                  <div key={item.id} className={`wr-row${isFeat ? " wr-row-feat" : ""}${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.03+i*0.04}s`} : undefined}>
+                    <div className="wr-row-left">
+                      <div className="wr-row-pre">{isMemo && item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}</div>
+                      <div className="wr-row-title">{item.title}</div>
+                    </div>
+                    <div className="wr-row-right">
+                      {item.subtitle && <div className="wr-row-sub">{item.subtitle}</div>}
+                      <div className="wr-row-desc">{item.desc}</div>
+                      <div className="wr-row-meta">
+                        {item.readMin && <span>{item.readMin} min read</span>}
+                        {item.audioDur && <span>▶ Audio</span>}
                       </div>
-                    );
-                  })}
+                      {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
+                    </div>
+                  </div>
+                );
+              };
+              return (
+                <div className={`content-section${showAll ? " reveal" : ""}`}>
+                  {showAll && <div className="content-section-h">Writing</div>}
+                  {featured.length > 0 && (
+                    <div className="wr-tier">
+                      <div className="wr-tier-h">Featured</div>
+                      {featured.map((item, i) => renderRow(item, i, true))}
+                    </div>
+                  )}
+                  {rest.length > 0 && (
+                    <div className="wr-tier">
+                      {featured.length > 0 && <div className="wr-tier-h">All Writing</div>}
+                      {rest.map((item, i) => renderRow(item, i + featured.length, false))}
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* Exploration — 4-column grid cards */}
             {(showAll || filter === "Exploration" || relFilter) && exploration.length > 0 && (
