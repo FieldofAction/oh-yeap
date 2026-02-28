@@ -362,8 +362,6 @@ export default function FieldConsole() {
       {/* SVG Console */}
       <div className="fl-ring en d3">
         <svg viewBox={`0 0 ${W} ${H}`} className="fl-svg">
-          <circle cx={cx} cy={cy} r={radius + 55} fill="none" stroke="var(--bd)" strokeWidth="2.5" opacity="0.5" />
-          <circle cx={cx} cy={cy} r={radius - 50} fill="none" stroke="var(--bd)" strokeWidth="1.5" strokeDasharray="3 9" opacity="0.5" />
           <ConnectionLines active={active} detected={detected} cx={cx} cy={cy} radius={radius} />
           {LAWS.map(law => (
             <LawNode key={law.id} law={law}
