@@ -32,7 +32,7 @@ function cv(t) {
 
 export default function App() {
   const [view, setView] = useState("public");
-  const [themeKey, setThemeKey] = useState("light");
+  const [themeKey, setThemeKey] = useState("threshold");
   const [content, setContent] = useState(SEED);
   const [filter, setFilter] = useState("All");
   const [relFilter, setRelFilter] = useState(null);
@@ -45,16 +45,21 @@ export default function App() {
   const theme = THEMES[themeKey];
   const toggleLens = useCallback(() => setLens(p => !p), []);
 
-  // Page transition — fade out, swap, fade in
+  // Views that use dark/editorial theme; everything else uses light/lab
+  const WORK_VIEWS = useMemo(() => new Set(["public", "about", "colophon", "philosophy", "patterns", "models"]), []);
+
+  // Page transition — fade out, swap, fade in, auto-switch theme
   const navigateTo = useCallback((target) => {
     if (target === view && !transitioning) return;
+    const nextTheme = WORK_VIEWS.has(target) ? "threshold" : "light";
     setTransitioning(true);
+    setThemeKey(nextTheme);
     setTimeout(() => {
       setView(target);
       window.scrollTo(0, 0);
       setTransitioning(false);
     }, 200);
-  }, [view, transitioning]);
+  }, [view, transitioning, WORK_VIEWS]);
 
   // Scroll-reveal observer — watches .reveal elements, adds .revealed on intersect
   useEffect(() => {
