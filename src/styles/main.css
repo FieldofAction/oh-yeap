@@ -319,7 +319,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .ix-wr-feat{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:24px 0;border-bottom:1px solid var(--bd)}
 .ix-wr-feat-card{cursor:pointer;overflow:hidden;transition:opacity .2s ease}
 .ix-wr-feat-card:hover{opacity:.8}
-.ix-wr-feat-img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}
+.ix-wr-feat-img{width:100%;aspect-ratio:2/1;display:block;background:var(--ac1);border-radius:4px}
 .ix-wr-feat-body{padding:12px 0 0}
 .ix-wr-feat-title{font-family:var(--display);font-size:17px;font-weight:400;line-height:1.2;margin-bottom:4px}
 .ix-wr-feat-sub{font-size:11px;color:var(--fm);line-height:1.4}
