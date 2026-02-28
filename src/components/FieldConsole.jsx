@@ -377,21 +377,15 @@ export default function FieldConsole() {
                 strokeDasharray="2 9" className="fl-spin" style={{ transformOrigin: `${cx}px ${cy}px` }} />
             </>
           )}
-          <text x={cx} y={cy - 22} textAnchor="middle"
-            fill={combined.size > 0 ? "var(--ac2)" : "var(--bd)"}
-            fontSize="8" fontFamily="var(--sans)" fontWeight="500" letterSpacing="3"
-            style={{ transition: "fill 0.5s" }}>
-            {combined.size === 0 ? "FIELD CENTER" : situationName ? "IN FIELD" : "FIELD CENTER"}
-          </text>
-          <text x={cx} y={cy + 12} textAnchor="middle"
+          <text x={cx} y={cy + 6} textAnchor="middle"
             fill={combined.size > 0 ? "var(--fg)" : "var(--bd)"}
             fontSize={combined.size === 0 ? 18 : 36} fontFamily="var(--display)" fontWeight="600"
             style={{ transition: "all 0.5s" }}>
             {combined.size === 0 ? "○" : combined.size}
           </text>
           {combined.size > 0 && (
-            <text x={cx} y={cy + 34} textAnchor="middle" fill="var(--ff)"
-              fontSize="7" fontFamily="var(--sans)" fontWeight="400" letterSpacing="3.5">
+            <text x={cx} y={cy + 30} textAnchor="middle" fill="var(--ff)"
+              fontSize="11" fontFamily="var(--sans)" fontWeight="500" letterSpacing="3">
               {combined.size === 1 ? "LAW" : "LAWS"}
             </text>
           )}
