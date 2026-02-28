@@ -3,6 +3,9 @@ import { FILTERS } from "../data/playbook-data";
 import { PatternChips } from "./PatternLens";
 import NetworkGraph from "./NetworkGraph";
 
+/* ── Hero mode: 1 = Threshold Strip, 2 = Signal Bar, 3 = Ambient Dashboard ── */
+const HERO_MODE = 1;
+
 export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens, showGraph }) {
   const isHome = filter === "All" && !relFilter;
 
@@ -11,22 +14,76 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
       {/* Hero + network only on home (All) view */}
       {isHome && (
         <>
-          <div className="hero en">
-            <div className="hero-text">
-              <div className="hero-pre en d1">Field of Action</div>
-              <h1 className="hero-h en d2">Designing Structure<br/>for Living Systems</h1>
-              <p className="hero-bio en d3">Daniel is a design leader and systems thinker who builds at the intersection of product, culture, and infrastructure. Currently leading design at Apple Music, he brings over a decade of creative direction across platforms like Google Cloud, Vevo, and the Tribeca Film Festival. His work lives at the edge of structure and intuition — where frameworks become adaptive, and clarity becomes emotional. He writes, explores, builds tools, and publishes through Field of Action — a living studio of applied awareness.</p>
-              <div className="hero-links en d4">
-                <a href="https://fieldofaction.substack.com" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
-                <a href="https://linkedin.com/in/danieldickson" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
-              </div>
-              <div className="nowbar en d5">
-                <span>Currently at <em>{nowState.working}</em></span><span>/</span>
-                <span>Reading <em>{nowState.reading}</em></span><span>/</span>
-                <span>Building <em>{nowState.building}</em></span>
+          {HERO_MODE === 1 && (
+            <div className="hero hero--strip en">
+              <h1 className="hero-h en d1">Designing Structure<br/>for Living Systems</h1>
+              <div className="hero-strip-row en d2">
+                <div className="nowbar">
+                  <span>Currently at <em>{nowState.working}</em></span><span>/</span>
+                  <span>Reading <em>{nowState.reading}</em></span><span>/</span>
+                  <span>Building <em>{nowState.building}</em></span>
+                </div>
+                <div className="hero-links">
+                  <a href="https://fieldofaction.substack.com" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
+                  <a href="https://linkedin.com/in/danieldickson" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
+                </div>
               </div>
             </div>
-          </div>
+          )}
+
+          {HERO_MODE === 2 && (
+            <div className="hero hero--signal en">
+              <div className="hero-pre en d1">Field of Action</div>
+              <h1 className="hero-h en d2">Designing Structure<br/>for Living Systems</h1>
+              <p className="hero-signal-line en d3">Design leader and systems thinker. Structure, culture, and infrastructure. Currently at Apple Music.</p>
+              <div className="hero-strip-row en d4">
+                <div className="hero-links">
+                  <a href="https://fieldofaction.substack.com" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
+                  <a href="https://linkedin.com/in/danieldickson" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
+                </div>
+                <div className="nowbar">
+                  <span>Currently at <em>{nowState.working}</em></span><span>/</span>
+                  <span>Reading <em>{nowState.reading}</em></span><span>/</span>
+                  <span>Building <em>{nowState.building}</em></span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {HERO_MODE === 3 && (
+            <div className="hero hero--dash en">
+              <div className="hero-dash-grid en d1">
+                <div className="hero-dash-cell">
+                  <div className="hero-dash-label">Studio</div>
+                  <div className="hero-dash-val">Field of Action</div>
+                </div>
+                <div className="hero-dash-cell">
+                  <div className="hero-dash-label">Role</div>
+                  <div className="hero-dash-val">Design Leader</div>
+                </div>
+                <div className="hero-dash-cell">
+                  <div className="hero-dash-label">Current</div>
+                  <div className="hero-dash-val">{nowState.working}</div>
+                </div>
+                <div className="hero-dash-cell">
+                  <div className="hero-dash-label">Reading</div>
+                  <div className="hero-dash-val">{nowState.reading}</div>
+                </div>
+                <div className="hero-dash-cell">
+                  <div className="hero-dash-label">Building</div>
+                  <div className="hero-dash-val">{nowState.building}</div>
+                </div>
+                <div className="hero-dash-cell">
+                  <div className="hero-dash-label">Links</div>
+                  <div className="hero-dash-val hero-links">
+                    <a href="https://fieldofaction.substack.com" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
+                    <a href="https://linkedin.com/in/danieldickson" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
+                  </div>
+                </div>
+              </div>
+              <h1 className="hero-h hero-dash-h en d2">Designing Structure<br/>for Living Systems</h1>
+            </div>
+          )}
 
           {/* Network diagram — easter egg, press G to toggle */}
           {showGraph && (
