@@ -3,7 +3,7 @@ import { FILTERS } from "../data/playbook-data";
 import { PatternChips } from "./PatternLens";
 import NetworkGraph from "./NetworkGraph";
 
-export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens }) {
+export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens, showGraph }) {
   const isHome = filter === "All" && !relFilter;
 
   return (
@@ -28,10 +28,12 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
             </div>
           </div>
 
-          {/* Network diagram — interactive connections map */}
-          <div className="ng-section reveal">
-            <NetworkGraph items={allItems} onRelation={onRelation} activeNode={relFilter} />
-          </div>
+          {/* Network diagram — easter egg, press G to toggle */}
+          {showGraph && (
+            <div className="ng-section en">
+              <NetworkGraph items={allItems} onRelation={onRelation} activeNode={relFilter} />
+            </div>
+          )}
         </>
       )}
 

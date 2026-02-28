@@ -38,6 +38,7 @@ export default function App() {
   const [relFilter, setRelFilter] = useState(null);
   const [egg, setEgg] = useState(false);
   const [lens, setLens] = useState(false);
+  const [showGraph, setShowGraph] = useState(false);
   const [activeItem, setActiveItem] = useState(null);
   const [closing, setClosing] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
@@ -77,15 +78,17 @@ export default function App() {
     return () => { clearTimeout(timer); obs.disconnect(); };
   }, [view, filter, relFilter]);
 
-  // Easter eggs: press "?" for system condition, "M" for pattern lens
+  // Easter eggs: press "?" for system condition, "M" for pattern lens, "G" for connections graph
   React.useEffect(() => {
     const handler = (e) => {
       const tag = e.target.tagName;
       const isInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || e.target.isContentEditable;
       if (e.key === "?" && !e.ctrlKey && !e.metaKey) setEgg(p => !p);
       if ((e.key === "m" || e.key === "M") && !e.ctrlKey && !e.metaKey && !isInput) setLens(p => !p);
+      if ((e.key === "g" || e.key === "G") && !e.ctrlKey && !e.metaKey && !isInput) setShowGraph(p => !p);
       if (e.key === "Escape") {
         setEgg(false);
+        setShowGraph(false);
         setRelFilter(null);
         if (activeItem) {
           setClosing(true);
@@ -142,7 +145,7 @@ export default function App() {
       <div className="app-content">
         <PatternLensBar active={lens} onToggle={toggleLens} onOpenModels={() => navigateTo("models")} />
         <main className={`view-wrap${transitioning ? " view-leaving" : ""}`}>
-          {view === "public" && <Public items={filtered} allItems={content} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={asu.get_system_condition()} onOpen={openItem} lens={lens} />}
+          {view === "public" && <Public items={filtered} allItems={content} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={asu.get_system_condition()} onOpen={openItem} lens={lens} showGraph={showGraph} />}
           {view === "model" && <ArtOfModel asu={asu} />}
           {view === "playbook" && <Playbook asu={asu} />}
           {view === "backstage" && <Backstage content={content} themeKey={themeKey} onThemeChange={setThemeKey} onPublish={handlePublish} asu={asu} />}
@@ -182,7 +185,7 @@ export default function App() {
           <div style={{ fontSize: 9, fontWeight: 500, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--ff)", marginBottom: 8 }}>System Condition</div>
           <div><strong style={{ color: "var(--fg)" }}>{asu.get_system_condition().condition}</strong> · Reading {asu.get_system_condition().reading} · Building {asu.get_system_condition().building} · At {asu.get_system_condition().working}</div>
           <div style={{ marginTop: 12, fontSize: 10, color: "var(--ff)" }}>8 agents · {content.length} artifacts · {content.filter(c => c.status === "live").length} live · {lens ? "Pattern Lens on" : "Pattern Lens off"}</div>
-          <div style={{ marginTop: 8, fontSize: 9, color: "var(--ff)", fontWeight: 300 }}>Press ? to close · M for pattern lens · Esc to clear</div>
+          <div style={{ marginTop: 8, fontSize: 9, color: "var(--ff)", fontWeight: 300 }}>Press ? to close · M for pattern lens · G for connections · Esc to clear</div>
         </div>
       )}
     </div>
