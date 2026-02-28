@@ -124,18 +124,22 @@ export default function NetworkGraph({ items, onRelation, activeNode }) {
 
   // Label collision avoidance — flip overlapping labels above their nodes
   const labelOffsets = useMemo(() => {
+    const CPX = 6.2; // approx px per character at label font size
     const offsets = {};
     positions.forEach(p => {
       const r = 5 + (edgeCounts[p.id] || 0) * 1.5;
       offsets[p.id] = r + 14; // default: below
     });
-    // Check each pair; if labels would overlap, flip the smaller node's label above
+    // Check each pair; use label text width for horizontal threshold
     for (let i = 0; i < positions.length; i++) {
       for (let j = i + 1; j < positions.length; j++) {
         const a = positions[i], b = positions[j];
         const dx = Math.abs(a.x - b.x);
         const dy = Math.abs(a.y - b.y);
-        if (dx < 120 && dy < 45) {
+        // horizontal threshold = half-width of each label (text is centered)
+        const hw = (a.id.length * CPX + b.id.length * CPX) / 2;
+        const threshX = Math.max(120, hw);
+        if (dx < threshX && dy < 50) {
           // Labels would collide — flip the one with fewer edges above
           const ca = edgeCounts[a.id] || 0, cb = edgeCounts[b.id] || 0;
           const flip = ca <= cb ? a.id : b.id;
