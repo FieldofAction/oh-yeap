@@ -89,51 +89,63 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
               </div>
             )}
 
-            {/* Writing — two-tier row layout */}
+            {/* Writing — featured cards + condensed grid */}
             {(showAll || filter === "Writing" || relFilter) && allWriting.length > 0 && (() => {
               const featured = allWriting.filter(i => i.featured);
               const rest = allWriting
                 .filter(i => !i.featured)
                 .sort((a, b) => {
-                  // Memos first (by memoNum desc), then field notes
                   if (a.writeType === "memo" && b.writeType !== "memo") return -1;
                   if (a.writeType !== "memo" && b.writeType === "memo") return 1;
                   if (a.writeType === "memo" && b.writeType === "memo") return (b.memoNum || 0) - (a.memoNum || 0);
                   return 0;
                 });
-              const renderRow = (item, i, isFeat) => {
-                const isMemo = item.writeType === "memo";
-                return (
-                  <div key={item.id} className={`wr-row${isFeat ? " wr-row-feat" : ""}${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.03+i*0.04}s`} : undefined}>
-                    <div className="wr-row-left">
-                      <div className="wr-row-pre">{isMemo && item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}</div>
-                      <div className="wr-row-title">{item.title}</div>
-                    </div>
-                    <div className="wr-row-right">
-                      {item.subtitle && <div className="wr-row-sub">{item.subtitle}</div>}
-                      <div className="wr-row-desc">{item.desc}</div>
-                      <div className="wr-row-meta">
-                        {item.readMin && <span>{item.readMin} min read</span>}
-                        {item.audioDur && <span>▶ Audio</span>}
-                      </div>
-                      {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
-                    </div>
-                  </div>
-                );
-              };
               return (
                 <div className={`content-section${showAll ? " reveal" : ""}`}>
                   {showAll && <div className="content-section-h">Writing</div>}
                   {featured.length > 0 && (
                     <div className="wr-tier">
                       <div className="wr-tier-h">Featured</div>
-                      {featured.map((item, i) => renderRow(item, i, true))}
+                      <div className="wr-feat-grid">
+                        {featured.map((item, i) => (
+                          <div key={item.id} className={`wr-feat${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.03+i*0.06}s`} : undefined}>
+                            {item.coverImg && <img className="wr-feat-img" src={item.coverImg} alt="" loading="lazy" />}
+                            <div className="wr-feat-body">
+                              <div className="wr-feat-pre">{item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}</div>
+                              <div className="wr-feat-title">{item.title}</div>
+                              {item.subtitle && <div className="wr-feat-sub">{item.subtitle}</div>}
+                              <div className="wr-feat-desc">{item.desc}</div>
+                              <div className="wr-feat-meta">
+                                {item.readMin && <span>{item.readMin} min read</span>}
+                                {item.audioDur && <span>▶ Audio</span>}
+                              </div>
+                              {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                   {rest.length > 0 && (
                     <div className="wr-tier">
                       {featured.length > 0 && <div className="wr-tier-h">All Writing</div>}
-                      {rest.map((item, i) => renderRow(item, i + featured.length, false))}
+                      <div className="wr-all-grid">
+                        {rest.map((item, i) => {
+                          const isMemo = item.writeType === "memo";
+                          return (
+                            <div key={item.id} className={`wr-compact${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.02+i*0.03}s`} : undefined}>
+                              <div className="wr-compact-pre">{isMemo && item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}</div>
+                              <div className="wr-compact-title">{item.title}</div>
+                              {item.subtitle && <div className="wr-compact-sub">{item.subtitle}</div>}
+                              <div className="wr-compact-meta">
+                                {item.readMin && <span>{item.readMin} min</span>}
+                                {item.audioDur && <span>▶</span>}
+                              </div>
+                              {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
                 </div>
