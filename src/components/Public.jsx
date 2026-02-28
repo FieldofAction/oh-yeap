@@ -4,7 +4,7 @@ import { PatternChips } from "./PatternLens";
 import NetworkGraph from "./NetworkGraph";
 
 /* ── Hero mode: 1 = Threshold Strip, 2 = Signal Bar, 3 = Ambient Dashboard ── */
-const HERO_MODE = 1;
+const HERO_MODE = 2;
 
 export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens, showGraph }) {
   const isHome = filter === "All" && !relFilter;
