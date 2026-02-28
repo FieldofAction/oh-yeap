@@ -46,8 +46,8 @@ export default function App() {
   const theme = THEMES[themeKey];
   const toggleLens = useCallback(() => setLens(p => !p), []);
 
-  // Views that use dark/editorial theme; everything else uses light/lab
-  const WORK_VIEWS = useMemo(() => new Set(["public", "about", "colophon", "philosophy", "patterns", "models"]), []);
+  // Views that use dark/editorial theme; everything else (studio + info) uses light/lab
+  const WORK_VIEWS = useMemo(() => new Set(["public", "models"]), []);
 
   // Page transition — fade out, swap, fade in, auto-switch theme
   const navigateTo = useCallback((target) => {
