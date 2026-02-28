@@ -67,14 +67,13 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
 
         return (
           <>
-            {/* Practice — index rows */}
+            {/* Practice — index rows with hover artwork */}
             {(showAll || filter === "Practice" || relFilter) && practice.length > 0 && (
               <div className={`content-section${showAll ? " reveal" : ""}`}>
                 {showAll && <div className="content-section-h">Selected Work</div>}
                 <div className="ix">
                   {practice.map((item, i) => (
                     <div key={item.id} className={`ix-row${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.05+i*0.06}s`} : undefined}>
-                      <div className="ix-num">{String(i + 1).padStart(2, "0")}</div>
                       <div className="ix-main">
                         <div className="ix-pre">{item.role}</div>
                         <div className="ix-title">{item.title}</div>
@@ -86,6 +85,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                         </div>
                         <div className="ix-year">{item.year}</div>
                       </div>
+                      <div className="ix-preview" style={{background:`linear-gradient(135deg, ${theme.ac1}30, ${theme.ac2}20)`}} />
                       {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
                     </div>
                   ))}
@@ -93,51 +93,70 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
               </div>
             )}
 
-            {/* Writing — index grid */}
-            {(showAll || filter === "Writing" || relFilter) && allWriting.length > 0 && (
-              <div className={`content-section${showAll ? " reveal" : ""}`}>
-                {showAll && <div className="content-section-h">Writing</div>}
-                <div className="ix-wr">
-                  {allWriting.map((item, i) => {
-                    const isMemo = item.writeType === "memo";
-                    return (
-                      <div key={item.id} className={`ix-wr-item${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.02+i*0.03}s`} : undefined}>
-                        <div className="ix-wr-head">
-                          <span className="ix-wr-num">{String(i + 1).padStart(2, "0")}</span>
-                          <span className="ix-wr-pre">{isMemo && item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}</span>
-                          <span className="ix-wr-meta">
-                            {item.readMin && <span>{item.readMin}m</span>}
-                            {item.audioDur && <span>▶</span>}
-                          </span>
+            {/* Writing — featured tiles + index grid */}
+            {(showAll || filter === "Writing" || relFilter) && allWriting.length > 0 && (() => {
+              const featured = allWriting.filter(i => i.featured);
+              const rest = allWriting.filter(i => !i.featured);
+              return (
+                <div className={`content-section${showAll ? " reveal" : ""}`}>
+                  {showAll && <div className="content-section-h">Writing</div>}
+                  {featured.length > 0 && (
+                    <div className="ix-wr-feat">
+                      {featured.map((item, i) => (
+                        <div key={item.id} className={`ix-wr-feat-card${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.03+i*0.05}s`} : undefined}>
+                          {item.coverImg && <img className="ix-wr-feat-img" src={item.coverImg} alt="" loading="lazy" />}
+                          <div className="ix-wr-feat-body">
+                            <div className="ix-wr-pre">{item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}</div>
+                            <div className="ix-wr-feat-title">{item.title}</div>
+                            <div className="ix-wr-feat-sub">{item.subtitle}</div>
+                            <div className="ix-wr-meta">
+                              {item.readMin && <span>{item.readMin}m</span>}
+                              {item.audioDur && <span>▶</span>}
+                            </div>
+                          </div>
                         </div>
-                        <div className="ix-wr-title">{item.title}</div>
-                      </div>
-                    );
-                  })}
+                      ))}
+                    </div>
+                  )}
+                  {rest.length > 0 && (
+                    <div className="ix-wr">
+                      {rest.map((item, i) => {
+                        const isMemo = item.writeType === "memo";
+                        return (
+                          <div key={item.id} className={`ix-wr-item${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.02+i*0.03}s`} : undefined}>
+                            <div className="ix-wr-head">
+                              <span className="ix-wr-pre">{isMemo && item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}</span>
+                              <span className="ix-wr-meta">
+                                {item.readMin && <span>{item.readMin}m</span>}
+                                {item.audioDur && <span>▶</span>}
+                              </span>
+                            </div>
+                            <div className="ix-wr-title">{item.title}</div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
-            {/* Exploration — index rows */}
+            {/* Exploration — 2-col compact (matches Artifacts) */}
             {(showAll || filter === "Exploration" || relFilter) && exploration.length > 0 && (
               <div className={`content-section${showAll ? " reveal" : ""}`}>
                 {showAll && <div className="content-section-h">Exploration</div>}
-                <div className="ix">
+                <div className="ix-art">
                   {exploration.map((item, i) => (
-                    <div key={item.id} className={`ix-row${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.05+i*0.04}s`} : undefined}>
-                      <div className="ix-num"><span className={`ix-dot ${item.status}`} /></div>
-                      <div className="ix-main">
-                        <div className="ix-pre">{item.status === "wip" ? "In Progress" : item.status}</div>
-                        <div className="ix-title">{item.title}</div>
-                        <div className="ix-sub">{item.subtitle}</div>
-                        <div className="ix-desc">{item.desc}</div>
+                    <div key={item.id} className={`ix-art-item${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.05+i*0.04}s`} : undefined}>
+                      <div className="ix-art-head">
+                        <span className="ix-art-type">{item.status === "wip" ? "In Progress" : item.status}</span>
+                        <span className={`ix-dot ${item.status}`} />
                       </div>
-                      <div className="ix-right">
-                        <div className="ix-tags">
-                          {item.tags?.map(t => <span key={t} className="ix-tag">{t}</span>)}
-                          {item.relations?.map(r => <span key={r} className="ix-tag ix-tag-rel" onClick={(e)=>{e.stopPropagation();onRelation(r)}}>→ {r}</span>)}
-                        </div>
-                        <div className="ix-year">{item.year}</div>
+                      <div className="ix-art-title">{item.title}</div>
+                      <div className="ix-art-desc">{item.desc}</div>
+                      <div className="ix-art-tags">
+                        {item.tags?.map(t => <span key={t} className="ix-tag">{t}</span>)}
+                        {item.relations?.map(r => <span key={r} className="ix-tag ix-tag-rel" onClick={(e)=>{e.stopPropagation();onRelation(r)}}>→ {r}</span>)}
                       </div>
                       {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
                     </div>
