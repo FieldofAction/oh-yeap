@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import useASUStore from "../store/useASUStore";
 
 const LAWS = [
@@ -191,6 +191,15 @@ export default function FieldConsole() {
   const [showKey, setShowKey] = useState(false);
   const textRef = useRef(null);
 
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+      if (e.key === "k" || e.key === "K") setShowKey(v => !v);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
   const W = 640, H = 640;
   const cx = W / 2, cy = H / 2;
   const radius = 240;
@@ -293,9 +302,6 @@ export default function FieldConsole() {
         <div className="fl-pre">Field of Action</div>
         <h1 className="fl-h">Field Console</h1>
         <div className="fl-rule" />
-        <button className="fl-key-toggle" onClick={() => setShowKey(v => !v)} title="Translation Key">
-          {showKey ? "✕" : "?"}
-        </button>
       </div>
 
       {/* Hidden Translation Key */}
