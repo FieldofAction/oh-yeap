@@ -46,13 +46,14 @@ export default function App() {
   const theme = THEMES[themeKey];
   const toggleLens = useCallback(() => setLens(p => !p), []);
 
-  // Views that use dark/editorial theme; everything else (studio + info) uses light/lab
+  // View-to-theme mapping: Work = dark, Studio = light, Info = medium grey
   const WORK_VIEWS = useMemo(() => new Set(["public", "models"]), []);
+  const INFO_VIEWS = useMemo(() => new Set(["about", "colophon", "philosophy", "patterns"]), []);
 
   // Page transition — fade out, swap, fade in, auto-switch theme
   const navigateTo = useCallback((target) => {
     if (target === view && !transitioning) return;
-    const nextTheme = WORK_VIEWS.has(target) ? "threshold" : "light";
+    const nextTheme = WORK_VIEWS.has(target) ? "threshold" : INFO_VIEWS.has(target) ? "info" : "light";
     setTransitioning(true);
     setThemeKey(nextTheme);
     setTimeout(() => {
@@ -60,7 +61,7 @@ export default function App() {
       window.scrollTo(0, 0);
       setTransitioning(false);
     }, 200);
-  }, [view, transitioning, WORK_VIEWS]);
+  }, [view, transitioning, WORK_VIEWS, INFO_VIEWS]);
 
   // Scroll-reveal observer — watches .reveal elements, adds .revealed on intersect
   useEffect(() => {

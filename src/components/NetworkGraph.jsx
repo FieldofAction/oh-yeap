@@ -31,7 +31,7 @@ function buildGraph(items) {
 
 /* ── Simple force-directed layout ── */
 function computeLayout(nodes, edges, width, height) {
-  const PAD = 60, ITER = 120, REPULSE = 2000, ATTRACT = 0.005, DAMP = 0.9;
+  const PAD = 60, ITER = 120, REPULSE = 3500, ATTRACT = 0.004, DAMP = 0.9;
   const cx = width / 2, cy = height / 2;
   const r = Math.min(width, height) / 2 - PAD;
 
@@ -122,6 +122,31 @@ export default function NetworkGraph({ items, onRelation, activeNode }) {
 
   const effectiveHover = hoveredNode || activeNode;
 
+  // Label collision avoidance — flip overlapping labels above their nodes
+  const labelOffsets = useMemo(() => {
+    const offsets = {};
+    positions.forEach(p => {
+      const r = 5 + (edgeCounts[p.id] || 0) * 1.5;
+      offsets[p.id] = r + 14; // default: below
+    });
+    // Check each pair; if labels would overlap, flip the smaller node's label above
+    for (let i = 0; i < positions.length; i++) {
+      for (let j = i + 1; j < positions.length; j++) {
+        const a = positions[i], b = positions[j];
+        const dx = Math.abs(a.x - b.x);
+        const dy = Math.abs(a.y - b.y);
+        if (dx < 120 && dy < 45) {
+          // Labels would collide — flip the one with fewer edges above
+          const ca = edgeCounts[a.id] || 0, cb = edgeCounts[b.id] || 0;
+          const flip = ca <= cb ? a.id : b.id;
+          const rFlip = 5 + (edgeCounts[flip] || 0) * 1.5;
+          offsets[flip] = -(rFlip + 6); // above
+        }
+      }
+    }
+    return offsets;
+  }, [positions, edgeCounts]);
+
   const connectedTo = useMemo(() => {
     if (!effectiveHover) return null;
     const s = new Set();
@@ -194,7 +219,7 @@ export default function NetworkGraph({ items, onRelation, activeNode }) {
               >
                 {isHovered && <circle cx={p.x} cy={p.y} r={r + 12} className="ng-node-glow" />}
                 <circle cx={p.x} cy={p.y} r={r} fill={sectionColor(node?.section)} className="ng-node-circle" />
-                <text x={p.x} y={p.y + r + 14} className={`ng-node-label${isHovered ? " ng-label-hl" : ""}`}>
+                <text x={p.x} y={p.y + (labelOffsets[p.id] || r + 14)} className={`ng-node-label${isHovered ? " ng-label-hl" : ""}`}>
                   {p.id}
                 </text>
               </g>
