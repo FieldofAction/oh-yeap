@@ -37,7 +37,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 @media(prefers-reduced-motion:reduce){.view-wrap{transition:none}.reveal{opacity:1;transform:none}.revealed{animation:none}.dc{animation:none}.img-reveal{animation:none}.rd-audio-wave span{animation:none}}
 
 /* ── Top Bar + Hamburger Navigation ── */
-.app-layout{min-height:100vh}
+.app-layout{min-height:100vh;background:var(--bg);color:var(--fg);transition:background .3s,color .3s}
 .app-content{min-width:0;padding-top:48px}
 .topbar{position:fixed;top:0;left:0;right:0;z-index:130;display:flex;align-items:center;justify-content:center;height:48px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
 .sb-brand{font-size:13px;font-weight:500;letter-spacing:.03em;text-transform:uppercase;cursor:pointer;transition:opacity .2s;padding:0}
