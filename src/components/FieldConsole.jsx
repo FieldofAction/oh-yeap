@@ -2,13 +2,13 @@ import { useState, useRef, useCallback } from "react";
 import useASUStore from "../store/useASUStore";
 
 const LAWS = [
-  { id:"origin",     number:"I",   name:"Origin",     axiom:"The field begins in mind",           glyph:"◎", angle:-90,     color:"#C9A84C", description:"Every condition in the field traces back to a mental state. Consciousness is not inside the situation — it generates it." },
-  { id:"scale",      number:"II",  name:"Scale",      axiom:"The pattern holds at every level",    glyph:"⟡", angle:-38.57,  color:"#8B7EC8", description:"What is true in the small is true in the large. Navigate one level well and you are navigating all levels simultaneously." },
-  { id:"frequency",  number:"III", name:"Frequency",  axiom:"Everything is signal",                glyph:"〜", angle:12.86,   color:"#5BA8A0", description:"Every action, thought, and state broadcasts a signal. The frequency you hold determines what you can receive and what you attract." },
-  { id:"axis",       number:"IV",  name:"Axis",       axiom:"Every force has its complement",      glyph:"⊕", angle:64.29,   color:"#E07B5A", description:"Opposing forces are not enemies — they are the same spectrum. Mastery is moving fluidly between poles rather than being fixed at either end." },
-  { id:"cycle",      number:"V",   name:"Cycle",      axiom:"Everything moves in season",          glyph:"≋", angle:115.71,  color:"#7AB8D4", description:"Expansion follows contraction. Rest follows output. The practitioner who knows the cycle is never caught off-guard by either phase." },
-  { id:"vector",     number:"VI",  name:"Vector",     axiom:"Every action carries direction",      glyph:"→", angle:167.14,  color:"#B5CC8E", description:"Nothing is neutral. Every move you make has magnitude and direction — and produces a corresponding effect downstream. Awareness is the instrument." },
-  { id:"generation", number:"VII", name:"Generation", axiom:"Creation requires two",               glyph:"⚭", angle:218.57,  color:"#D4A0C8", description:"Structure and flow. Initiative and receptivity. Every act of creation requires both principles operating in conscious relation to each other." },
+  { id:"origin",     number:"I",   name:"Origin",     source:"Mentalism",      axiom:"The field begins in mind",           glyph:"◎", angle:-90,     color:"#C9A84C", description:"Every condition in the field traces back to a mental state. Consciousness is not inside the situation — it generates it." },
+  { id:"scale",      number:"II",  name:"Scale",      source:"Correspondence", axiom:"The pattern holds at every level",    glyph:"⟡", angle:-38.57,  color:"#8B7EC8", description:"What is true in the small is true in the large. Navigate one level well and you are navigating all levels simultaneously." },
+  { id:"frequency",  number:"III", name:"Frequency",  source:"Vibration",      axiom:"Everything is signal",                glyph:"〜", angle:12.86,   color:"#5BA8A0", description:"Every action, thought, and state broadcasts a signal. The frequency you hold determines what you can receive and what you attract." },
+  { id:"axis",       number:"IV",  name:"Axis",       source:"Polarity",       axiom:"Every force has its complement",      glyph:"⊕", angle:64.29,   color:"#E07B5A", description:"Opposing forces are not enemies — they are the same spectrum. Mastery is moving fluidly between poles rather than being fixed at either end." },
+  { id:"cycle",      number:"V",   name:"Cycle",      source:"Rhythm",         axiom:"Everything moves in season",          glyph:"≋", angle:115.71,  color:"#7AB8D4", description:"Expansion follows contraction. Rest follows output. The practitioner who knows the cycle is never caught off-guard by either phase." },
+  { id:"vector",     number:"VI",  name:"Vector",     source:"Cause & Effect", axiom:"Every action carries direction",      glyph:"→", angle:167.14,  color:"#B5CC8E", description:"Nothing is neutral. Every move you make has magnitude and direction — and produces a corresponding effect downstream. Awareness is the instrument." },
+  { id:"generation", number:"VII", name:"Generation", source:"Gender",         axiom:"Creation requires two",               glyph:"⚭", angle:218.57,  color:"#D4A0C8", description:"Structure and flow. Initiative and receptivity. Every act of creation requires both principles operating in conscious relation to each other." },
 ];
 
 const PAIR_MECHANICS = {
@@ -48,15 +48,15 @@ const toRad = (deg) => (deg * Math.PI) / 180;
 function LawNode({ law, active, detected, onClick, cx, cy, radius }) {
   const x = cx + radius * Math.cos(toRad(law.angle));
   const y = cy + radius * Math.sin(toRad(law.angle));
-  const nodeR = 38;
+  const nodeR = 46;
   const isHighlighted = active || detected;
 
   return (
     <g onClick={() => onClick(law.id)} style={{ cursor: "pointer" }}>
       {isHighlighted && (
-        <circle cx={x} cy={y} r={nodeR + 14} fill="none"
+        <circle cx={x} cy={y} r={nodeR + 16} fill="none"
           stroke={law.color}
-          strokeWidth={detected && !active ? "1.5" : "1"}
+          strokeWidth={detected && !active ? "2" : "1.5"}
           opacity={detected && !active ? 0.4 : 0.2}
           strokeDasharray={detected && !active ? "4 4" : "none"}
           className="fl-pulse"
@@ -65,28 +65,22 @@ function LawNode({ law, active, detected, onClick, cx, cy, radius }) {
       <circle cx={x} cy={y} r={nodeR}
         fill={active ? `${law.color}28` : detected ? `${law.color}0e` : "var(--bg)"}
         stroke={active ? law.color : detected ? `${law.color}77` : "var(--bd)"}
-        strokeWidth={active ? "1.5" : detected ? "1" : "0.75"}
+        strokeWidth={active ? "3" : detected ? "2" : "2"}
         style={{ transition: "all 0.5s ease" }}
       />
       {detected && !active && (
-        <circle cx={x} cy={y} r={nodeR - 7} fill="none"
-          stroke={law.color} strokeWidth="0.5" opacity="0.25" strokeDasharray="2 7" />
+        <circle cx={x} cy={y} r={nodeR - 8} fill="none"
+          stroke={law.color} strokeWidth="1" opacity="0.25" strokeDasharray="2 7" />
       )}
-      <text x={x} y={y - 10} textAnchor="middle"
+      <text x={x} y={y - 6} textAnchor="middle"
         fill={active ? law.color : detected ? `${law.color}cc` : "var(--bd)"}
-        fontSize="18" fontFamily="var(--display)"
+        fontSize="22" fontFamily="var(--display)" fontWeight="600"
         style={{ transition: "fill 0.5s ease", userSelect: "none" }}>
         {law.glyph}
       </text>
-      <text x={x} y={y + 6} textAnchor="middle"
-        fill={isHighlighted ? "var(--fg)" : "var(--bd)"}
-        fontSize="9" fontFamily="var(--mono)" letterSpacing="1.5"
-        style={{ transition: "fill 0.5s ease", userSelect: "none" }}>
-        {law.number}
-      </text>
-      <text x={x} y={y + 18} textAnchor="middle"
+      <text x={x} y={y + 14} textAnchor="middle"
         fill={active ? law.color : detected ? `${law.color}88` : "var(--bd)"}
-        fontSize="8" fontFamily="var(--mono)" letterSpacing="1"
+        fontSize="10" fontFamily="var(--sans)" fontWeight="700" letterSpacing="1.5"
         style={{ transition: "fill 0.5s ease", userSelect: "none" }}>
         {law.name.toUpperCase()}
       </text>
@@ -112,9 +106,9 @@ function ConnectionLines({ active, detected, cx, cy, radius }) {
       const pa = getPos(a), pb = getPos(b);
       lines.push(
         <line key={`glow-${key}`} x1={pa.x} y1={pa.y} x2={pb.x} y2={pb.y}
-          stroke={a.color} strokeWidth="4" opacity="0.07" />,
+          stroke={a.color} strokeWidth="6" opacity="0.07" />,
         <line key={`a-${key}`} x1={pa.x} y1={pa.y} x2={pb.x} y2={pb.y}
-          stroke={`url(#grad-${a.id}-${b.id})`} strokeWidth="1.5"
+          stroke={`url(#grad-${a.id}-${b.id})`} strokeWidth="2.5"
           strokeDasharray="6 4" className="fl-dash" />
       );
     }
@@ -127,7 +121,7 @@ function ConnectionLines({ active, detected, cx, cy, radius }) {
         const pa = getPos(allHighlighted[i]), pb = getPos(allHighlighted[j]);
         lines.push(
           <line key={`d-${key}`} x1={pa.x} y1={pa.y} x2={pb.x} y2={pb.y}
-            stroke="var(--bd)" strokeWidth="0.75" strokeDasharray="2 10" opacity="0.7" />
+            stroke="var(--bd)" strokeWidth="1.5" strokeDasharray="2 10" opacity="0.7" />
         );
       }
     }
@@ -194,11 +188,12 @@ export default function FieldConsole() {
   const [detectionNote, setDetectionNote] = useState(null);
   const [loading, setLoading] = useState(false);
   const [detecting, setDetecting] = useState(false);
+  const [showKey, setShowKey] = useState(false);
   const textRef = useRef(null);
 
-  const W = 540, H = 540;
+  const W = 640, H = 640;
   const cx = W / 2, cy = H / 2;
-  const radius = 195;
+  const radius = 240;
 
   const toggleLaw = useCallback((id) => {
     setActive(prev => {
@@ -298,7 +293,26 @@ export default function FieldConsole() {
         <div className="fl-pre">Field of Action</div>
         <h1 className="fl-h">Field Console</h1>
         <div className="fl-rule" />
+        <button className="fl-key-toggle" onClick={() => setShowKey(v => !v)} title="Translation Key">
+          {showKey ? "✕" : "?"}
+        </button>
       </div>
+
+      {/* Hidden Translation Key */}
+      {showKey && (
+        <div className="fl-key en">
+          <div className="fl-key-label">Translation Key</div>
+          <div className="fl-key-grid">
+            {LAWS.map(l => (
+              <div key={l.id} className="fl-key-row">
+                <span className="fl-key-source">{l.source}</span>
+                <span className="fl-key-arrow">→</span>
+                <span className="fl-key-name" style={{ color: l.color }}>{l.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Situation Panel */}
       <div className="fl-sit en d2">
@@ -348,8 +362,8 @@ export default function FieldConsole() {
       {/* SVG Console */}
       <div className="fl-ring en d3">
         <svg viewBox={`0 0 ${W} ${H}`} className="fl-svg">
-          <circle cx={cx} cy={cy} r={radius + 50} fill="none" stroke="var(--bd)" strokeWidth="1" opacity="0.5" />
-          <circle cx={cx} cy={cy} r={radius - 44} fill="none" stroke="var(--bd)" strokeWidth="0.5" strokeDasharray="3 9" opacity="0.5" />
+          <circle cx={cx} cy={cy} r={radius + 55} fill="none" stroke="var(--bd)" strokeWidth="2.5" opacity="0.5" />
+          <circle cx={cx} cy={cy} r={radius - 50} fill="none" stroke="var(--bd)" strokeWidth="1.5" strokeDasharray="3 9" opacity="0.5" />
           <ConnectionLines active={active} detected={detected} cx={cx} cy={cy} radius={radius} />
           {LAWS.map(law => (
             <LawNode key={law.id} law={law}
@@ -357,29 +371,29 @@ export default function FieldConsole() {
               onClick={toggleLaw} cx={cx} cy={cy} radius={radius} />
           ))}
           {/* Field Center */}
-          <circle cx={cx} cy={cy} r={62} fill="var(--bg)" stroke="var(--bd)" strokeWidth="1.5" />
+          <circle cx={cx} cy={cy} r={72} fill="var(--bg)" stroke="var(--bd)" strokeWidth="3" />
           {combined.size > 0 && (
             <>
-              <circle cx={cx} cy={cy} r={62} fill="none" stroke="var(--ac2)" strokeWidth="0.5" opacity={0.3} className="fl-breathe" />
-              <circle cx={cx} cy={cy} r={54} fill="none" stroke="var(--ac2)" strokeWidth="0.3" opacity={0.12}
+              <circle cx={cx} cy={cy} r={72} fill="none" stroke="var(--ac2)" strokeWidth="1" opacity={0.3} className="fl-breathe" />
+              <circle cx={cx} cy={cy} r={62} fill="none" stroke="var(--ac2)" strokeWidth="0.5" opacity={0.12}
                 strokeDasharray="2 9" className="fl-spin" style={{ transformOrigin: `${cx}px ${cy}px` }} />
             </>
           )}
           <text x={cx} y={cy - 10} textAnchor="middle"
             fill={combined.size > 0 ? "var(--ac2)" : "var(--bd)"}
-            fontSize="8" fontFamily="var(--mono)" letterSpacing="2"
+            fontSize="9" fontFamily="var(--sans)" fontWeight="700" letterSpacing="2.5"
             style={{ transition: "fill 0.5s" }}>
             {combined.size === 0 ? "FIELD CENTER" : situationName ? "IN FIELD" : "FIELD CENTER"}
           </text>
-          <text x={cx} y={cy + 10} textAnchor="middle"
+          <text x={cx} y={cy + 14} textAnchor="middle"
             fill={combined.size > 0 ? "var(--fg)" : "var(--bd)"}
-            fontSize={combined.size === 0 ? 14 : 24} fontFamily="var(--display)"
+            fontSize={combined.size === 0 ? 18 : 30} fontFamily="var(--display)" fontWeight="600"
             style={{ transition: "all 0.5s" }}>
             {combined.size === 0 ? "○" : combined.size}
           </text>
           {combined.size > 0 && (
-            <text x={cx} y={cy + 24} textAnchor="middle" fill="var(--ff)"
-              fontSize="7" fontFamily="var(--mono)" letterSpacing="2">
+            <text x={cx} y={cy + 28} textAnchor="middle" fill="var(--ff)"
+              fontSize="8" fontFamily="var(--sans)" fontWeight="700" letterSpacing="2.5">
               {combined.size === 1 ? "LAW" : "LAWS"}
             </text>
           )}
