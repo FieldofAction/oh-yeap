@@ -54,24 +54,24 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
             <div className="hero hero--dash en">
               <div className="hero-dash-grid en d1">
                 <div className="hero-dash-cell">
-                  <div className="hero-dash-label">Studio</div>
-                  <div className="hero-dash-val">Field of Action</div>
+                  <div className="hero-dash-label">Practice</div>
+                  <div className="hero-dash-val">Relational Design</div>
                 </div>
                 <div className="hero-dash-cell">
-                  <div className="hero-dash-label">Role</div>
-                  <div className="hero-dash-val">Design Leader</div>
+                  <div className="hero-dash-label">Position</div>
+                  <div className="hero-dash-val">Design Leader at Apple TV</div>
                 </div>
                 <div className="hero-dash-cell">
-                  <div className="hero-dash-label">Current</div>
-                  <div className="hero-dash-val">{nowState.working}</div>
-                </div>
-                <div className="hero-dash-cell">
-                  <div className="hero-dash-label">Reading</div>
-                  <div className="hero-dash-val">{nowState.reading}</div>
+                  <div className="hero-dash-label">Attention</div>
+                  <div className="hero-dash-val">Consolidation → Application</div>
                 </div>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Building</div>
-                  <div className="hero-dash-val">{nowState.building}</div>
+                  <div className="hero-dash-val">Energetic Fields</div>
+                </div>
+                <div className="hero-dash-cell">
+                  <div className="hero-dash-label">Writing</div>
+                  <div className="hero-dash-val">Themes of Authoring</div>
                 </div>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Links</div>
