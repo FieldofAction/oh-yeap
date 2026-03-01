@@ -1,8 +1,8 @@
 import React, { useCallback } from "react";
 import { VIS } from "../../data/seed";
-import { PatternChipsDetail } from "../PatternLens";
+import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
 
-export default function SketchbookDetail({ item, allItems, closing, onClose, onOpen, fg, lens }) {
+export default function SketchbookDetail({ item, allItems, closing, onClose, onOpen, fg, lens, patternLens }) {
   const artVi = useCallback((i) => VIS[(Math.abs(item.title.charCodeAt(0)) + i) % VIS.length](fg), [item.title, fg]);
 
   return (
@@ -77,6 +77,7 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
           </div>
         )}
         <PatternChipsDetail itemTitle={item.title} active={lens} />
+        <AlexanderChipsDetail itemTitle={item.title} active={patternLens} />
         <div className="rd-tags dc dc8">
           {item.tags?.map(t => <span key={t} className="card-tg">{t}</span>)}
           {item.relations?.map(r => <span key={r} className="card-tg rel">→ {r}</span>)}

@@ -825,7 +825,8 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 .pl-bar-dot{width:6px;height:6px;border-radius:50%;background:var(--ac2);opacity:.6;animation:pl-pulse 2s ease-in-out infinite}
 .pl-bar-label{font-weight:500;letter-spacing:.01em;font-size:10px}
 .pl-bar-count{color:var(--fm);font-family:var(--display);font-size:11px}
-.pl-bar-link{background:none;border:none;color:var(--ff);font-family:var(--sans);font-size:10px;cursor:pointer;padding:0;letter-spacing:.04em;transition:color .2s;margin-left:auto}
+.pl-bar-link{background:none;border:none;color:var(--ff);font-family:var(--sans);font-size:10px;cursor:pointer;padding:0;letter-spacing:.04em;transition:color .2s}
+.pl-bar-link:first-of-type{margin-left:auto}
 .pl-bar-link:hover{color:var(--fg)}
 .pl-bar-close{background:none;border:none;color:var(--ff);font-size:14px;cursor:pointer;padding:0 0 0 8px;transition:color .2s;line-height:1}
 .pl-bar-close:hover{color:var(--fg)}
@@ -875,6 +876,57 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
   .pl-toggle{bottom:12px;right:12px}
   .pl-chip-label{max-width:60px}
   .compact .pl-chip-label{max-width:50px}
+}
+
+/* ── Dual Lens Toggle ── */
+.dl-toggle{position:fixed;bottom:24px;right:24px;z-index:180;display:flex;gap:1px;background:var(--bd)}
+.dl-btn{display:flex;align-items:center;gap:5px;padding:8px 12px;background:var(--sf);border:none;color:var(--ff);font-family:var(--sans);font-size:10px;letter-spacing:.06em;cursor:pointer;transition:all .3s ease;opacity:.45}
+.dl-btn:first-child{border-radius:0}
+.dl-btn:last-child{border-radius:0}
+.dl-btn:hover{opacity:1;color:var(--fg)}
+.dl-btn.on{opacity:1;color:var(--fg);background:var(--cbg)}
+.dl-btn svg{flex-shrink:0}
+.dl-btn-count{font-family:var(--display);font-size:11px}
+@media(max-width:600px){.dl-toggle{bottom:16px;right:16px}.dl-btn{padding:6px 10px}}
+@media(max-width:480px){.dl-toggle{bottom:12px;right:12px}}
+
+/* ── Alexander Chips (Pattern Lens — outlined/hollow) ── */
+.al-chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;animation:en .3s ease both}
+.al-chips.compact{margin-top:5px}
+.al-chip{position:relative;display:inline-flex;align-items:center;gap:3px;padding:1px 6px;background:transparent;border:1px solid var(--bd);font-family:var(--sans);font-size:8px;color:var(--ff);cursor:pointer;transition:all .2s;letter-spacing:.04em;opacity:.45}
+.al-chip:hover{opacity:1;color:var(--fm);border-color:var(--fm)}
+.al-chip.open{opacity:1;color:var(--fg);border-color:var(--fg);z-index:50}
+.al-chip-num{font-family:var(--display);font-size:9px;opacity:.6}
+.al-chip-label{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100px}
+.al-chip-more{opacity:.35;border:none}
+.compact .al-chip-label{max-width:72px}
+
+.al-chip-tip{position:absolute;top:calc(100% + 6px);left:0;min-width:220px;max-width:300px;padding:12px 14px;background:var(--bg);border:1px solid var(--bd);z-index:100;display:flex;flex-direction:column;gap:4px;animation:en .2s ease both;box-shadow:0 4px 24px rgba(0,0,0,.15)}
+.al-tip-title{font-family:var(--display);font-size:13px;font-weight:400;color:var(--fg);line-height:1.3}
+.al-tip-meta{font-size:10px;font-weight:500;letter-spacing:.01em;color:var(--ff)}
+.al-tip-notes{font-size:11px;font-weight:300;line-height:1.6;color:var(--fm)}
+
+/* Alexander detail panel — richer display in overlays */
+.al-detail{margin:32px 0;padding:24px 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);animation:en .4s ease both}
+.al-detail-header{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+.al-detail-icon{display:flex;align-items:center;color:var(--ff);opacity:.6}
+.al-detail-label{font-size:11px;font-weight:500;letter-spacing:.01em;color:var(--ff)}
+.al-detail-count{font-family:var(--display);font-size:12px;color:var(--ff);opacity:.5;margin-left:4px}
+.al-detail-list{display:flex;flex-direction:column;gap:0}
+.al-detail-item{display:grid;grid-template-columns:36px 1fr;gap:0 12px;padding:12px 0;border-bottom:1px solid var(--bd)}
+.al-detail-item:last-child{border-bottom:none}
+.al-detail-num{font-family:var(--display);font-size:14px;font-weight:400;color:var(--ff);opacity:.4;line-height:1.2}
+.al-detail-body{min-width:0}
+.al-detail-title{font-family:var(--display);font-size:14px;font-weight:400;color:var(--fg);line-height:1.3;margin-bottom:4px}
+.al-detail-notes{font-size:12px;font-weight:300;line-height:1.6;color:var(--fm)}
+.al-detail-meta{font-size:10px;font-weight:500;letter-spacing:.01em;color:var(--ff);margin-top:4px}
+@media(max-width:600px){
+  .al-chip-tip{min-width:180px;max-width:240px;left:-20px}
+  .al-detail-item{grid-template-columns:28px 1fr}
+}
+@media(max-width:480px){
+  .al-chip-label{max-width:60px}
+  .compact .al-chip-label{max-width:50px}
 }
 
 /* ── Pattern Language Page ── */

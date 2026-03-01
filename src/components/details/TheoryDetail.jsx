@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { VIS } from "../../data/seed";
-import { PatternChipsDetail } from "../PatternLens";
+import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
 
 /* Relational Design icon — official mark (Illustrator 29.5.1 export) */
 function RDIcon({ color = "currentColor", size = 36 }) {
@@ -13,7 +13,7 @@ function RDIcon({ color = "currentColor", size = 36 }) {
   );
 }
 
-export default function TheoryDetail({ item, allItems, closing, onClose, onOpen, onRelation, fg, lens }) {
+export default function TheoryDetail({ item, allItems, closing, onClose, onOpen, onRelation, fg, lens, patternLens }) {
   const artVi = useCallback((i) => VIS[(Math.abs(item.title.charCodeAt(0)) + i) % VIS.length](fg), [item.title, fg]);
   const theory = item.theory;
   const imgs = theory?.images || {};
@@ -156,6 +156,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
         )}
 
         <PatternChipsDetail itemTitle={item.title} active={lens} />
+        <AlexanderChipsDetail itemTitle={item.title} active={patternLens} />
         {/* Tags + Relations */}
         <div className="rd-tags">
           {item.tags?.map(t => <span key={t} className="card-tg">{t}</span>)}

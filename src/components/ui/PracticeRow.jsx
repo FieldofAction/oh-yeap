@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { VIS } from "../../data/seed";
-import { PatternChips } from "../PatternLens";
+import { PatternChips, AlexanderChips } from "../PatternLens";
 
-export default function PracticeRow({ item, delay, fg, onOpen, lens }) {
+export default function PracticeRow({ item, delay, fg, onOpen, lens, patternLens }) {
   const vi = useMemo(() => VIS[Math.abs(item.title.charCodeAt(0)) % VIS.length](fg), [item.title, fg]);
   return (
     <div className="prow en" style={{ animationDelay: `${0.1+delay*0.08}s` }} onClick={()=>onOpen(item)}>
@@ -10,6 +10,7 @@ export default function PracticeRow({ item, delay, fg, onOpen, lens }) {
       <div className="prow-desc">
         {item.desc}
         <PatternChips itemTitle={item.title} active={lens} compact />
+        <AlexanderChips itemTitle={item.title} active={patternLens} compact />
       </div>
       <div className="prow-meta">
         {item.tags?.slice(0,2).map(t => <span key={t} className="prow-tag">{t}</span>)}

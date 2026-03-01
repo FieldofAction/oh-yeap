@@ -139,7 +139,8 @@ export default function Canon() {
 
         {/* Lens Mode acknowledgment */}
         <div className="cn-lens-note">
-          <em>Model Lens</em> — reveal structural relationships across work. Press <kbd>M</kbd> to activate.
+          <em>Model Lens</em> — reveal mental model relationships across work. Press <kbd>M</kbd> to activate.
+          <em>Pattern Lens</em> — overlay Alexander's architectural patterns. Press <kbd>P</kbd> to activate.
         </div>
       </div>
 

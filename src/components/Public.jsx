@@ -1,12 +1,12 @@
 import React from "react";
 import { FILTERS } from "../data/playbook-data";
-import { PatternChips } from "./PatternLens";
+import { PatternChips, AlexanderChips } from "./PatternLens";
 import NetworkGraph from "./NetworkGraph";
 
 /* ── Hero mode: 1 = Threshold Strip, 2 = Signal Bar, 3 = Ambient Dashboard ── */
 const HERO_MODE = 2;
 
-export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens, showGraph }) {
+export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens, patternLens, showGraph }) {
   const isHome = filter === "All" && !relFilter;
 
   return (
@@ -164,6 +164,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                       </div>
                       <div className="ix-preview" style={{background:`linear-gradient(135deg, ${theme.ac1}30, ${theme.ac2}20)`}} />
                       {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
+                      {patternLens && <AlexanderChips itemTitle={item.title} active={patternLens} compact />}
                     </div>
                   ))}
                 </div>
@@ -236,6 +237,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                         {item.relations?.map(r => <span key={r} className="ix-tag ix-tag-rel" onClick={(e)=>{e.stopPropagation();onRelation(r)}}>→ {r}</span>)}
                       </div>
                       {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
+                      {patternLens && <AlexanderChips itemTitle={item.title} active={patternLens} compact />}
                     </div>
                   ))}
                 </div>
@@ -257,6 +259,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                       <div className="ix-art-title">{item.title}</div>
                       <div className="ix-art-desc">{item.desc}</div>
                       {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
+                      {patternLens && <AlexanderChips itemTitle={item.title} active={patternLens} compact />}
                     </div>
                   ))}
                 </div>
