@@ -33,19 +33,36 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
 
           {HERO_MODE === 2 && (
             <div className="hero hero--signal en">
-              <div className="hero-pre en d1">Field of Action</div>
-              <h1 className="hero-h en d2">Designing Structure<br/>for Living Systems</h1>
-              <div className="hero-strip-row en d4">
-                <div className="hero-links">
-                  <a href="https://fieldofaction.substack.com" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
-                  <a href="https://linkedin.com/in/danieldickson" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
+              <div className="hero-dash-grid en d1">
+                <div className="hero-dash-cell">
+                  <div className="hero-dash-label">Practice</div>
+                  <div className="hero-dash-val">Relational Design</div>
                 </div>
-                <div className="nowbar">
-                  <span>Currently at <em>{nowState.working}</em></span><span>/</span>
-                  <span>Reading <em>{nowState.reading}</em></span><span>/</span>
-                  <span>Building <em>{nowState.building}</em></span>
+                <div className="hero-dash-cell">
+                  <div className="hero-dash-label">Position</div>
+                  <div className="hero-dash-val">Design Leader<br/>at Apple TV</div>
+                </div>
+                <div className="hero-dash-cell">
+                  <div className="hero-dash-label">Attention</div>
+                  <div className="hero-dash-val">Consolidation → Application</div>
+                </div>
+                <div className="hero-dash-cell">
+                  <div className="hero-dash-label">Building</div>
+                  <div className="hero-dash-val">Energetic Fields</div>
+                </div>
+                <div className="hero-dash-cell">
+                  <div className="hero-dash-label">Writing</div>
+                  <div className="hero-dash-val">Themes of Authoring</div>
+                </div>
+                <div className="hero-dash-cell">
+                  <div className="hero-dash-label">Links</div>
+                  <div className="hero-dash-val hero-links">
+                    <a href="https://fieldofaction.substack.com" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
+                    <a href="https://linkedin.com/in/danieldickson" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
+                  </div>
                 </div>
               </div>
+              <h1 className="hero-h en d2">Designing Structure<br/>for Living Systems</h1>
             </div>
           )}
 
