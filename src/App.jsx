@@ -15,7 +15,7 @@ import Canon from "./components/Canon";
 import PatternLanguage from "./components/PatternLanguage";
 import FieldConsole from "./components/FieldConsole";
 import IncandescantLab from "./components/IncandescantLab";
-import { PatternLensBar } from "./components/PatternLens";
+import { PatternLensToggle, PatternLensBar } from "./components/PatternLens";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
 import SketchbookDetail from "./components/details/Sketchbook";
@@ -46,14 +46,15 @@ export default function App() {
   const theme = THEMES[themeKey];
   const toggleLens = useCallback(() => setLens(p => !p), []);
 
-  // View-to-theme mapping: Work = dark, Studio = light, Info = medium grey
-  const WORK_VIEWS = useMemo(() => new Set(["public", "models"]), []);
-  const INFO_VIEWS = useMemo(() => new Set(["about", "colophon", "canon", "patterns"]), []);
+  // View-to-theme mapping: Work = dark, Canon = deep slate, Studio = light, Info = medium grey
+  const WORK_VIEWS = useMemo(() => new Set(["public"]), []);
+  const CANON_VIEWS = useMemo(() => new Set(["canon"]), []);
+  const INFO_VIEWS = useMemo(() => new Set(["about", "colophon"]), []);
 
   // Page transition — fade out, swap, fade in, auto-switch theme
   const navigateTo = useCallback((target) => {
     if (target === view && !transitioning) return;
-    const nextTheme = WORK_VIEWS.has(target) ? "threshold" : INFO_VIEWS.has(target) ? "info" : "light";
+    const nextTheme = WORK_VIEWS.has(target) ? "threshold" : CANON_VIEWS.has(target) ? "canon" : INFO_VIEWS.has(target) ? "info" : "light";
     setTransitioning(true);
     setThemeKey(nextTheme);
     setTimeout(() => {
@@ -61,7 +62,7 @@ export default function App() {
       window.scrollTo(0, 0);
       setTransitioning(false);
     }, 200);
-  }, [view, transitioning, WORK_VIEWS, INFO_VIEWS]);
+  }, [view, transitioning, WORK_VIEWS, CANON_VIEWS, INFO_VIEWS]);
 
   // Scroll-reveal observer — watches .reveal elements, adds .revealed on intersect
   useEffect(() => {
@@ -177,7 +178,8 @@ export default function App() {
       {/* Artifact spec sheet overlay */}
       {activeItem && activeItem.spec && !activeItem.sketch && !activeItem.theory && <SpecSheetDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} fg={theme.fg} lens={lens} />}
 
-      {/* Pattern lens — keyboard shortcut M still active, floating toggle removed */}
+      {/* Pattern lens toggle — floating 71 button */}
+      {view !== "models" && <PatternLensToggle active={lens} onToggle={toggleLens} />}
 
       {/* Easter egg overlay — press ? to toggle */}
       {egg && (
