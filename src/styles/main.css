@@ -341,13 +341,14 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .ix-year{font-size:11px;color:var(--ff);letter-spacing:.01em}
 .ix-dot{width:7px;height:7px;border-radius:50%;display:inline-block}
 .ix-dot.wip{background:var(--ac2)}.ix-dot.live{background:var(--ac1)}.ix-dot.seed{background:var(--ff)}
+.ix-row:last-child{border-bottom:none}
 /* Hover artwork preview */
 .ix-preview{position:absolute;right:40px;top:50%;transform:translateY(-50%);width:180px;height:120px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;transform:translateY(-50%) translateX(8px)}
 .ix-row:hover .ix-preview{opacity:1;transform:translateY(-50%) translateX(0)}
 @media(max-width:768px){.ix-row{grid-template-columns:1fr;gap:12px}.ix-right{align-items:flex-start}.ix-tags{justify-content:flex-start}.ix-preview{display:none}}
 
 /* Writing featured tiles — 4-col with cover art */
-.ix-wr-feat{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:24px 0;border-bottom:1px solid var(--bd)}
+.ix-wr-feat{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:24px 0}
 .ix-wr-feat-card{cursor:pointer;overflow:hidden;transition:opacity .2s ease}
 .ix-wr-feat-card:hover{opacity:.8}
 .ix-wr-feat-img{width:100%;aspect-ratio:2/1;display:block;background:var(--ac1);border-radius:4px}
@@ -360,6 +361,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 /* Writing index — multi-column */
 .ix-wr{display:grid;grid-template-columns:repeat(4,1fr);gap:0 24px}
 .ix-wr-item{padding:16px 0;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .2s ease}
+.ix-wr .ix-wr-item:nth-last-child(-n+4){border-bottom:none}
 .ix-wr-item:hover{background:var(--sf);margin:0 -8px;padding-left:8px;padding-right:8px}
 .ix-wr-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .ix-wr-pre{font-size:9px;font-weight:500;letter-spacing:.03em;text-transform:uppercase;color:var(--ff)}
@@ -371,6 +373,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 /* Artifacts & Exploration index — 2-column */
 .ix-art{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
 .ix-art-item{padding:20px 0;border-bottom:1px solid var(--bd);cursor:pointer;transition:background .2s ease}
+.ix-art .ix-art-item:nth-last-child(-n+2){border-bottom:none}
 .ix-art-item:hover{background:var(--sf);margin:0 -8px;padding-left:8px;padding-right:8px}
 .ix-art-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .ix-art-type{font-size:10px;font-weight:500;letter-spacing:.03em;text-transform:uppercase;color:var(--ff)}
