@@ -2,147 +2,87 @@ export const uid = () => Math.random().toString(36).slice(2, 10);
 
 export const SEED = [
   { id:uid(), section:"practice", title:"Apple Music", subtitle:"Designing for Orientation in a Plural System", desc:"Design systems and product surfaces for the music streaming platform.", year:"2023–", status:"live", tags:["Product","Systems","Music"], relations:[], hasVisual:true, role:"Creative Lead", deliverables:["Product Design","Design Systems","Visual Language","Feature Design"], caseStudy:{
-    snapshot:{
-      context:"Global music streaming ecosystem with expanding listening modes",
-      challenge:"Listening types visually indistinguishable within a pluralist design system",
-      risk:"Discovery fatigue, flattened identity, reduced user orientation",
-      shift:["Plural expression","Wayfinding intelligence"],
-      impact:"Clearer content distinction, stronger listening intent, improved navigability",
+    framing:"As Apple Music scaled, its design system prioritized cohesion across a rapidly expanding ecosystem. Genres, moods, editorial programs, live content, and algorithmic playlists all lived inside a beautifully unified structure. But cohesion began to blur distinction. The system was plural. The experience was flat. When everything looks equally important, nothing feels intentional.\n\nThe tension was subtle but meaningful. Listening modes shared similar visual treatment. Content hierarchy lacked strong intent signals. Users had limited cues about the experience they were selecting. Internal teams defaulted to aesthetic unity over semantic clarity.\n\nThe system optimized for harmony — not orientation.",
+    reframe:{
+      thesis:"Wayfinding Intelligence",
+      body:"The objective was not to reduce diversity. It was to make it legible.\n\nDesign needed to help users answer:\nWhat am I choosing? Why am I choosing it? What type of listening experience is this?",
     },
-    context:"As Apple Music scaled, its design system prioritized cohesion across a rapidly expanding ecosystem. Genres, moods, editorial programs, live content, and algorithmic playlists all lived inside a beautifully unified structure.\n\nBut cohesion began to blur distinction.\n\nThe system was plural. The experience was flat.\n\nWhen everything looks equally important, nothing feels intentional.",
-    challenge:{
-      body:"The tension was subtle but meaningful.",
-      points:["Listening modes shared similar visual treatment","Content hierarchy lacked strong intent signals","Users had limited cues about the experience they were selecting","Internal teams defaulted to aesthetic unity over semantic clarity"],
-      risks:["Discovery fatigue","Reduced engagement depth","Flattened differentiation between editorial and utility content"],
-      closing:"The system optimized for harmony — not orientation.",
-    },
-    reframe:["Plural Listening","Wayfinding Intelligence"],
-    reframeBody:"The objective was not to reduce diversity. It was to make it legible.\n\nDesign needed to help users answer:\nWhat am I choosing? Why am I choosing it? What type of listening experience is this?",
     intervention:{
       system:["Clarified typological differentiation between listening modes","Strengthened hierarchy between editorial, algorithmic, and curated content","Embedded navigational cues into layout structure"],
       expression:["Increased visual signal for content type","Reinforced structural markers for genre vs mood vs feature","Preserved Apple brand cohesion while increasing semantic clarity"],
       governance:["Aligned cross-functional teams around wayfinding principles","Reinforced consistent application across modules","Protected differentiation from visual drift"],
     },
-    results:{
+    outcomes:{
       points:["Improved content orientation across the ecosystem","Increased internal clarity around categorization","Strengthened link between listening intent and design signal","Elevated perception of system intelligence"],
       closing:"The system began to guide.",
+      insight:["Plural systems require visible structure.","Orientation is not utility. It is respect.","Clarity becomes emotional at scale."],
     },
-    insight:["Plural systems require visible structure.","Orientation is not utility. It is respect.","Clarity becomes emotional at scale."],
     images:{
       // hero:"/images/case-studies/apple-music-hero.jpg",
-      // fig1:"/images/case-studies/apple-music-fig-1.jpg",
-      // fig2:"/images/case-studies/apple-music-fig-2.jpg",
-      // fig3:"/images/case-studies/apple-music-fig-3.jpg",
-      // fig4:"/images/case-studies/apple-music-fig-4.jpg",
-      // fig5:"/images/case-studies/apple-music-fig-5.jpg",
+      figures:[],
     },
   }},
   { id:uid(), section:"practice", title:"Google Cloud", subtitle:"Embodying Progress Within a Framework Brand", desc:"Creative direction and design strategy for cloud infrastructure products.", year:"2021–2023", status:"live", tags:["Leadership","Strategy","Enterprise"], relations:[], hasVisual:true, role:"Design Lead", deliverables:["Creative Direction","Design Systems","Team Leadership","Product Strategy"], caseStudy:{
-    snapshot:{
-      context:"Enterprise infrastructure platform operating within Google's master brand system",
-      challenge:"Strong framework foundation, but muted expression of innovation",
-      risk:"Brand perceived as static infrastructure rather than forward momentum",
-      shift:["Framework brand","Embodied progress"],
-      impact:"Stronger perception of innovation, clearer Cloud identity, expressive system expansion",
+    framing:"Google Cloud operates within one of the most disciplined brand systems in the world. That proximity creates a paradox: it inherits trust and clarity — but risks compressing differentiation. Cloud is architecture, reliability, and scale. But it must also signal ambition. The system was structured. The expression needed motion.\n\nThe design foundation was consistent but under-signaled product ambition. Expression skewed utilitarian. Storytelling signals lagged product evolution. Visual language felt infrastructural rather than progressive.\n\nThe brand could explain. It needed to feel inevitable.",
+    reframe:{
+      thesis:"Embodied Progress",
+      body:"The goal was not to depart from Google. It was to express momentum within the system.\n\nProgress needed to become visible.",
     },
-    context:"Google Cloud operates within one of the most disciplined brand systems in the world.\n\nThat proximity creates a paradox: it inherits trust and clarity — but risks compressing differentiation.\n\nCloud is architecture, reliability, and scale. But it must also signal ambition.\n\nThe system was structured. The expression needed motion.",
-    challenge:{
-      body:"The design foundation was consistent but under-signaled product ambition.",
-      points:["Framework-first system emphasized clarity","Expression skewed utilitarian","Storytelling signals lagged product evolution","Visual language felt infrastructural rather than progressive"],
-      risks:["Reduced differentiation in a competitive category","Emotional underperformance","Brand stagnation relative to product advancement"],
-      closing:"The brand could explain. It needed to feel inevitable.",
-    },
-    reframe:["Framework","Embodied Progress"],
-    reframeBody:"The goal was not to depart from Google. It was to express momentum within the system.\n\nProgress needed to become visible.",
     intervention:{
       system:["Expanded modular patterns to support narrative storytelling","Clarified separation between infrastructure clarity and expressive emphasis","Preserved Google brand integrity while extending Cloud distinction"],
       expression:["Elevated motion, rhythm, and compositional energy","Strengthened visual signals of forward movement","Developed expressive behaviors within system constraints"],
       governance:["Defined guardrails for expressive expansion","Aligned stakeholders on clarity vs narrative thresholds","Protected cohesion at scale"],
     },
-    results:{
+    outcomes:{
       points:["Stronger perception of Cloud as innovative and forward-facing","Improved alignment between product ambition and brand expression","Greater flexibility within system boundaries","Increased internal clarity on expressive use"],
       closing:"Cloud began to feel like movement — not just structure.",
+      insight:["Framework brands win on discipline.","But discipline must allow signal.","Expression is not decoration. It is strategic amplification."],
     },
-    insight:["Framework brands win on discipline.","But discipline must allow signal.","Expression is not decoration. It is strategic amplification."],
     images:{
       // hero:"/images/case-studies/google-cloud-hero.jpg",
-      // fig1:"/images/case-studies/google-cloud-fig-1.jpg",
-      // fig2:"/images/case-studies/google-cloud-fig-2.jpg",
-      // fig3:"/images/case-studies/google-cloud-fig-3.jpg",
-      // fig4:"/images/case-studies/google-cloud-fig-4.jpg",
-      // fig5:"/images/case-studies/google-cloud-fig-5.jpg",
+      figures:[],
     },
   }},
   { id:uid(), section:"practice", title:"Vevo", subtitle:"Designing in Service of the Artist", desc:"Brand identity, product design, and creative direction for the world's largest music video platform.", year:"2016–2021", status:"live", tags:["Brand","Product","Music"], relations:[], hasVisual:true, role:"Creative Director", deliverables:["Brand Identity","Product Design","Creative Direction","Design Systems"], caseStudy:{
-    snapshot:{
-      context:"Global music video platform operating in a post-MTV media landscape",
-      challenge:"Brand expression competing visually with artists",
-      risk:"Erosion of artist trust, diluted platform credibility",
-      shift:["Competing brand","Supporting brand"],
-      impact:"Artist-first hierarchy, disciplined visual system, stronger cultural alignment",
+    framing:"Vevo emerged in a media environment shaped by loud platform identities. But artists increasingly arrived with their own aesthetic gravity. The platform needed to evolve. Not louder. More disciplined.\n\nThe brand occupied space that belonged to the artist. Brand expression was visually assertive, competing with artist identity. Hierarchy between artist and platform was inconsistent, and over-expression diluted authority.\n\nThe platform was speaking too loudly.",
+    reframe:{
+      thesis:"Supporting Brand",
+      body:"From personality to infrastructure.\n\nThe platform becomes the stage — not the performer.",
     },
-    context:"Vevo emerged in a media environment shaped by loud platform identities.\n\nBut artists increasingly arrived with their own aesthetic gravity.\n\nThe platform needed to evolve. Not louder. More disciplined.",
-    challenge:{
-      body:"The brand occupied space that belonged to the artist.",
-      points:["Brand expression visually assertive","Graphics competing with artist identity","Inconsistent hierarchy between artist and platform","Over-expression diluted authority"],
-      risks:["Reduced artist trust","Brand fatigue","Platform overshadowing talent"],
-      closing:"The platform was speaking too loudly.",
-    },
-    reframe:["Competing Brand","Supporting Brand"],
-    reframeBody:"From personality to infrastructure.\n\nThe platform becomes the stage — not the performer.",
     intervention:{
       system:["Established artist-first hierarchy","Created disciplined framing systems","Reduced visual noise"],
       expression:["Simplified typography and overlays","Increased intentional restraint","Strengthened coherence across outputs"],
       governance:["Defined brand visibility thresholds","Aligned teams around artist-first criteria","Protected discipline across touchpoints"],
     },
-    results:{
+    outcomes:{
       points:["Clearer artist-first positioning","Increased brand maturity","Improved internal alignment","Stronger perception as trusted music partner"],
       closing:"Restraint became authority.",
+      insight:["In culture-driven ecosystems, service builds power.","Removing ego strengthens identity.","The strongest brands know when to step back."],
     },
-    insight:["In culture-driven ecosystems, service builds power.","Removing ego strengthens identity.","The strongest brands know when to step back."],
     images:{
       // hero:"/images/case-studies/vevo-hero.jpg",
-      // fig1:"/images/case-studies/vevo-fig-1.jpg",
-      // fig2:"/images/case-studies/vevo-fig-2.jpg",
-      // fig3:"/images/case-studies/vevo-fig-3.jpg",
-      // fig4:"/images/case-studies/vevo-fig-4.jpg",
-      // fig5:"/images/case-studies/vevo-fig-5.jpg",
+      figures:[],
     },
   }},
   { id:uid(), section:"practice", title:"Tribeca Festival", subtitle:"From Event Institution to Editorial Organism", desc:"Experience design and visual identity for the cultural festival.", year:"2014–2016", status:"archived", tags:["Experience","Identity","Culture"], relations:[], hasVisual:true, role:"Creative Director", deliverables:["Experience Design","Visual Identity","Environmental Graphics","Digital Design"], caseStudy:{
-    snapshot:{
-      context:"Cultural film institution expanding beyond its annual festival cycle",
-      challenge:"Identity anchored to event moment, limited year-round narrative presence",
-      risk:"Seasonal relevance, fragmented engagement, institutional stagnation",
-      shift:["Event institution","Editorial cultural platform"],
-      impact:"Sustained cultural presence, cohesive year-round identity, stronger narrative continuity",
+    framing:"Tribeca began as a response to a historic moment. It became an established film institution. But institutions can become seasonal. The opportunity was not to redesign the festival — it was to extend its voice beyond it. Culture does not operate once a year.\n\nThe identity was optimized for a moment, not a presence. Visual identity was anchored to festival activation, with limited editorial continuity outside the event window. Institutional tone overshadowed conversational voice, and application was fragmented across programming and digital.\n\nTribeca could gather attention. It needed to sustain it.",
+    reframe:{
+      thesis:"Editorial Organism",
+      body:"From moment-based identity to continuous cultural voice.\n\nThe system needed elasticity.",
     },
-    context:"Tribeca began as a response to a historic moment. It became an established film institution.\n\nBut institutions can become seasonal.\n\nThe opportunity was not to redesign the festival — it was to extend its voice beyond it.\n\nCulture does not operate once a year.",
-    challenge:{
-      body:"The identity was optimized for a moment, not a presence.",
-      points:["Visual identity optimized for festival activation","Limited editorial continuity outside event window","Institutional tone over conversational voice","Fragmented application across programming and digital"],
-      risks:["Relevance spikes and drops annually","Audience engagement declines between cycles","Brand perceived as event, not platform"],
-      closing:"Tribeca could gather attention. It needed to sustain it.",
-    },
-    reframe:["Event Institution","Editorial Organism"],
-    reframeBody:"From moment-based identity to continuous cultural voice.\n\nThe system needed elasticity.",
     intervention:{
       system:["Expanded identity to support year-round publishing","Built modular frameworks adaptable beyond event assets","Established continuity across digital and programming"],
       expression:["Shifted tone toward curatorial voice","Increased narrative framing","Refined layout for storytelling depth"],
       governance:["Aligned teams around year-round continuity","Clarified integration between festival identity and ongoing platform","Reduced fragmentation across touchpoints"],
     },
-    results:{
+    outcomes:{
       points:["Stronger year-round cultural presence","Increased coherence across editorial outputs","Improved engagement between festival cycles","Elevated perception as a cultural voice"],
       closing:"Tribeca became less episodic. More alive.",
+      insight:["Institutions risk calcifying when tied to singular moments.","Editorial thinking creates elasticity.","Continuity builds relevance."],
     },
-    insight:["Institutions risk calcifying when tied to singular moments.","Editorial thinking creates elasticity.","Continuity builds relevance."],
     images:{
       // hero:"/images/case-studies/tribeca-hero.jpg",
-      // fig1:"/images/case-studies/tribeca-fig-1.jpg",
-      // fig2:"/images/case-studies/tribeca-fig-2.jpg",
-      // fig3:"/images/case-studies/tribeca-fig-3.jpg",
-      // fig4:"/images/case-studies/tribeca-fig-4.jpg",
-      // fig5:"/images/case-studies/tribeca-fig-5.jpg",
+      figures:[],
     },
   }},
   { id:uid(), section:"writing", writeType:"memo", memoNum:1, title:"Beyond Productivity", coverImg:"https://substackcdn.com/image/fetch/w_1200,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa205171e-cfc6-4a70-90ee-06c5245bf627_4501x4501.heic", subtitle:"Art of Emergence", desc:"Identity, emergence, and the collapse of work as meaning.", year:"2025", status:"live", tags:["Identity","Emergence","Work"], relations:["Way of the Wave","Reshaping Players"], hasVisual:false, readMin:25, substackUrl:"https://adickson.substack.com/p/beyond-productivity", body:[

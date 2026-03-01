@@ -419,11 +419,6 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .cs-points{list-style:none;padding:0;margin:16px 0}
 .cs-points li{font-size:14px;font-weight:400;color:var(--fm);line-height:1.7;padding:8px 0 8px 16px;border-left:2px solid var(--ac1)}
 
-/* Risk block */
-.cs-risk-block{margin-top:24px;padding:20px;background:var(--sf)}
-.cs-risk-label{font-size:11px;font-weight:500;letter-spacing:.01em;color:var(--fm);display:block;margin-bottom:12px}
-.cs-risk-block .cs-points{margin:0}
-.cs-risk-block .cs-points li{color:color-mix(in srgb,var(--fg) 65%,var(--fm))}
 
 /* Pull quotes — full width, big type */
 .cs-pullquote{font-family:var(--display);font-size:clamp(28px,4.5vw,44px);font-weight:400;color:var(--fg);line-height:1.15;letter-spacing:0.01em;padding:64px 0;text-align:center}
@@ -436,13 +431,9 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .cs-full-img-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(47,91,255,0.04) 0%,transparent 60%);pointer-events:none}
 .cs-fig-cap{font-size:11px;color:var(--ff);margin-top:12px;line-height:1.5}
 
-/* Strategic Reframe — the centerpiece */
+/* Strategic Reframe — thesis moment */
 .cs-reframe{margin:48px 0;padding:80px 0;text-align:center}
-.cs-reframe .cs-section-label{text-align:center}
-.cs-reframe-vis{display:flex;flex-direction:column;align-items:center;gap:16px;margin-bottom:48px}
-.cs-reframe-from{font-family:var(--display);font-size:clamp(28px,5vw,48px);font-weight:400;color:var(--ff);letter-spacing:0em;line-height:1}
-.cs-reframe-arrow{font-size:24px;color:var(--ff);opacity:.3;line-height:1}
-.cs-reframe-to{font-family:var(--display);font-size:clamp(28px,5vw,48px);font-weight:400;color:var(--fg);letter-spacing:0em;line-height:1}
+.cs-reframe-thesis{font-family:var(--display);font-size:clamp(28px,5vw,48px);font-weight:400;color:var(--fg);letter-spacing:0em;line-height:1.15;margin-bottom:32px}
 .cs-reframe-body{text-align:left;max-width:520px;margin:0 auto}
 
 /* Intervention — numbered cards */
