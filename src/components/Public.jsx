@@ -84,6 +84,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
               <div className="hero-threshold">
                 <div className="hero-threshold-arc" />
                 <h1 className="hero-h hero-dash-h en d2">Designing Structure<br/>for Living Systems</h1>
+                <p className="hero-bio en d3">Daniel is a design leader and systems thinker who builds at the intersection of product, culture, and infrastructure. Currently leading design at Apple Music, he brings over a decade of creative direction across platforms like Google Cloud, Vevo, and the Tribeca Film Festival. His work lives at the edge of structure and intuition — where frameworks become adaptive, and clarity becomes emotional. He writes, explores, builds tools, and publishes through Field of Action — a living studio of applied awareness.</p>
               </div>
             </div>
           )}
