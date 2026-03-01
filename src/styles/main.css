@@ -888,7 +888,14 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 
 .pa-disciplines{margin-bottom:48px}
 .pa-disc-row{display:flex;gap:8px;flex-wrap:wrap}
-.pa-disc-chip{font-size:10px;font-weight:400;letter-spacing:.06em;color:var(--fm);padding:4px 12px;border:1px solid var(--bd);transition:color .2s}
+.pa-disc-chip{font-size:10px;font-weight:400;letter-spacing:.06em;color:var(--fm);padding:4px 12px;border:1px solid var(--bd);transition:color .2s;cursor:pointer}
+.pa-disc-chip:hover{color:var(--fg);border-color:var(--fm)}
+.pa-disc-chip.on{color:var(--fg);border-color:var(--fg);font-weight:500}
+
+.pa-group{margin-bottom:24px}
+.pa-group-h{font-size:9px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);opacity:.6;padding:16px 0 6px;margin-top:8px}
+
+.pa-model-desc-empty{font-style:italic;opacity:.4}
 
 .pa-volume{margin-bottom:48px;padding-top:32px;border-top:1px solid var(--bd)}
 .pa-vol-head{display:flex;align-items:baseline;gap:12px;margin-bottom:24px;flex-wrap:wrap}
