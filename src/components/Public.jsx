@@ -67,7 +67,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 </div>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Building</div>
-                  <div className="hero-dash-val">Energetic Depth</div>
+                  <div className="hero-dash-val">Energetic Fields</div>
                 </div>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Writing</div>
