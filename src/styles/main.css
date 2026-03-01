@@ -96,7 +96,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 
 /* Threshold arc — event boundary */
 .hero-threshold{position:relative;display:flex;align-items:center;justify-content:flex-start;min-height:180px}
-.hero-threshold-arc{position:absolute;left:50%;top:50%;width:900px;height:900px;transform:translate(-50%,-50%);border-radius:50%;border:1px solid var(--bd);pointer-events:none;opacity:.4}
+.hero-threshold-arc{position:absolute;left:50%;top:50%;width:1400px;height:1400px;transform:translate(-50%,-50%);border-radius:50%;border:1px solid var(--bd);pointer-events:none;opacity:.4}
 
 @media(max-width:768px){
   .hero{padding:0 20px}
