@@ -35,7 +35,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
             <div className="hero hero--signal en">
               <div className="hero-pre en d1">Field of Action</div>
               <h1 className="hero-h en d2">Designing Structure<br/>for Living Systems</h1>
-              <p className="hero-signal-line en d3">Design leader and systems thinker. Structure, culture, and infrastructure. Currently at Apple Music.</p>
+              <p className="hero-signal-line en d3">Design leader and systems thinker. Structure, culture, and infrastructure. Currently at Apple TV.</p>
               <div className="hero-strip-row en d4">
                 <div className="hero-links">
                   <a href="https://fieldofaction.substack.com" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
