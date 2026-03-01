@@ -30,7 +30,9 @@ const NAV = [
     { key: "colophon", label: "Colophon" },
   ]},
   { tier: "REFERENCE", items: [
-    { href: "https://patternlanguage.cc", label: "Pattern Language" },
+    { key: "models", label: "Mental Models" },
+    { key: "patterns", label: "Pattern Language" },
+    { href: "https://patternlanguage.cc", label: "patternlanguage.cc" },
   ]},
   { tier: "EXTERNAL", items: [
     { href: "https://fieldofaction.substack.com", label: "Substack" },
