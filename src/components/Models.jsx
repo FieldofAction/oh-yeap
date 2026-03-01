@@ -190,8 +190,18 @@ export default function Models({ content, onOpen, fg }) {
 
       {/* Footer */}
       <div className="mm-footer">
-        <div className="mm-footer-source">Organized from The Great Mental Models by Shane Parrish</div>
-        <div className="mm-footer-note">{MODELS.length} patterns &middot; {VOLUMES.length} volumes</div>
+        <div className="mm-footer-cite">
+          <div className="mm-footer-title">The Great Mental Models</div>
+          <div className="mm-footer-subtitle">Volumes 1&ndash;{VOLUMES.length}</div>
+        </div>
+        <div className="mm-footer-authors">Shane Parrish &amp; Rhiannon Beaubien</div>
+        <div className="mm-footer-pub">Latticework Publishing, Ottawa</div>
+        <div className="mm-footer-meta">{MODELS.length} models &middot; {VOLUMES.length} volumes</div>
+        <div className="mm-footer-link">
+          <a href="https://fs.blog/tgmm/" target="_blank" rel="noopener noreferrer">
+            fs.blog/tgmm <span className="mm-footer-ext">&nearr;</span>
+          </a>
+        </div>
       </div>
     </div>
   );

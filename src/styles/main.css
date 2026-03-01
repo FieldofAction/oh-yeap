@@ -792,9 +792,16 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 .mm-card-vol-badge{font-size:9px;letter-spacing:.01em;color:var(--ff);margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)}
 
 .mm-empty{padding:80px 0;text-align:center;font-size:13px;color:var(--ff)}
-.mm-footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--bd);text-align:center}
-.mm-footer-source{font-size:10px;color:var(--ff);letter-spacing:.01em;margin-bottom:4px}
-.mm-footer-note{font-size:9px;color:var(--ff);opacity:.5}
+.mm-footer{margin-top:48px;padding:32px 0;border-top:1px solid var(--bd);text-align:center}
+.mm-footer-cite{margin-bottom:12px}
+.mm-footer-title{font-family:var(--display);font-size:16px;font-weight:400;color:var(--fg);line-height:1.2}
+.mm-footer-subtitle{font-size:11px;font-weight:300;color:var(--fm);margin-top:2px;letter-spacing:.02em}
+.mm-footer-authors{font-size:11px;font-weight:400;color:var(--fm);margin-bottom:4px}
+.mm-footer-pub{font-size:10px;font-weight:300;color:var(--ff);letter-spacing:.02em;margin-bottom:12px}
+.mm-footer-meta{font-size:9px;color:var(--ff);opacity:.5;margin-bottom:8px}
+.mm-footer-link a{font-size:10px;color:var(--ff);text-decoration:none;letter-spacing:.01em;transition:color .2s}
+.mm-footer-link a:hover{color:var(--fg)}
+.mm-footer-ext{font-size:9px;opacity:.5}
 
 @media(max-width:900px){.mm-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.mm-grid{grid-template-columns:1fr}}
@@ -932,9 +939,14 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 .pa-model-rel-chip{font-size:10px;font-weight:300;color:var(--ff);cursor:pointer;padding:2px 6px;transition:color .2s;letter-spacing:.02em}
 .pa-model-rel-chip:hover{color:var(--fg)}
 
-.pa-source{margin-top:48px;padding-top:24px;border-top:1px solid var(--bd);text-align:center}
-.pa-source-text{font-size:10px;color:var(--ff);letter-spacing:.01em;margin-bottom:4px}
-.pa-source-note{font-size:9px;color:var(--ff);opacity:.5}
+.pa-source{margin-top:48px;padding:32px 0;border-top:1px solid var(--bd);text-align:center}
+.pa-source-cite{margin-bottom:12px}
+.pa-source-title{font-family:var(--display);font-size:16px;font-weight:400;color:var(--fg);font-style:italic;line-height:1.2}
+.pa-source-subtitle{font-size:11px;font-weight:300;color:var(--fm);margin-top:2px;letter-spacing:.02em}
+.pa-source-authors{font-size:11px;font-weight:400;color:var(--fm);margin-bottom:4px;max-width:400px;margin-left:auto;margin-right:auto;line-height:1.5}
+.pa-source-pub{font-size:10px;font-weight:300;color:var(--ff);letter-spacing:.02em;margin-bottom:12px}
+.pa-source-meta{font-size:9px;color:var(--ff);opacity:.5;margin-bottom:4px}
+.pa-source-isbn{font-size:9px;font-weight:300;color:var(--ff);opacity:.35;letter-spacing:.04em;font-family:var(--mono)}
 
 @media(max-width:600px){
   .pa{padding:100px 20px 60px}

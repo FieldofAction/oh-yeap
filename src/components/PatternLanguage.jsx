@@ -209,13 +209,21 @@ export default function PatternLanguage({ content, onOpen, fg }) {
 
       {/* Source */}
       <div className="pa-source en">
-        <div className="pa-source-text">
-          From <em>A Pattern Language</em> by Christopher Alexander, Sara Ishikawa,
-          Murray Silverstein, Max Jacobson, Ingrid Fiksdahl-King &amp; Shlomo Angel (1977)
+        <div className="pa-source-cite">
+          <div className="pa-source-title">A Pattern Language</div>
+          <div className="pa-source-subtitle">Towns, Buildings, Construction</div>
         </div>
-        <div className="pa-source-note">
+        <div className="pa-source-authors">
+          Christopher Alexander, Sara Ishikawa, Murray Silverstein,
+          Max Jacobson, Ingrid Fiksdahl-King &amp; Shlomo Angel
+        </div>
+        <div className="pa-source-pub">
+          Oxford University Press, New York, 1977
+        </div>
+        <div className="pa-source-meta">
           {totalPatterns} patterns &middot; {SCALES.length} scales &middot; {totalGroups} groups
         </div>
+        <div className="pa-source-isbn">ISBN 0-19-501919-9</div>
       </div>
     </div>
   );
