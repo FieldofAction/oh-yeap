@@ -19,10 +19,10 @@ const NAV = [
       { key: "console", label: "Console" },
     ]},
     { group: "Research", children: [
-      { key: "lab", label: "Incandescent Lab" },
+      { key: "backstage", label: "Backstage" },
     ]},
     { group: "Archive", children: [
-      { key: "backstage", label: "Backstage" },
+      { key: "lab", label: "Incandescent Lab" },
     ]},
   ]},
   { tier: "INFO", items: [
