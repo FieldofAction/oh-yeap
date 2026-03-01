@@ -59,7 +59,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 </div>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Position</div>
-                  <div className="hero-dash-val">Design Leader at<br/>Apple TV</div>
+                  <div className="hero-dash-val">Design Leader /<br/>at Apple TV</div>
                 </div>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Attention</div>
