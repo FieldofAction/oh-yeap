@@ -197,11 +197,6 @@ export default function Models({ content, onOpen, fg }) {
         <div className="mm-footer-authors">Shane Parrish &amp; Rhiannon Beaubien</div>
         <div className="mm-footer-pub">Latticework Publishing, Ottawa</div>
         <div className="mm-footer-meta">{MODELS.length} models &middot; {VOLUMES.length} volumes</div>
-        <div className="mm-footer-link">
-          <a href="https://fs.blog/tgmm/" target="_blank" rel="noopener noreferrer">
-            fs.blog/tgmm <span className="mm-footer-ext">&nearr;</span>
-          </a>
-        </div>
       </div>
     </div>
   );
