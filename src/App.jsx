@@ -11,11 +11,11 @@ import SiteFooter from "./components/SiteFooter";
 import Sidebar from "./components/Sidebar";
 import About from "./components/About";
 import Colophon from "./components/Colophon";
-import Philosophy from "./components/Philosophy";
+import Canon from "./components/Canon";
 import PatternLanguage from "./components/PatternLanguage";
 import FieldConsole from "./components/FieldConsole";
 import IncandescantLab from "./components/IncandescantLab";
-import { PatternLensToggle, PatternLensBar } from "./components/PatternLens";
+import { PatternLensBar } from "./components/PatternLens";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
 import SketchbookDetail from "./components/details/Sketchbook";
@@ -48,7 +48,7 @@ export default function App() {
 
   // View-to-theme mapping: Work = dark, Studio = light, Info = medium grey
   const WORK_VIEWS = useMemo(() => new Set(["public", "models"]), []);
-  const INFO_VIEWS = useMemo(() => new Set(["about", "colophon", "philosophy", "patterns"]), []);
+  const INFO_VIEWS = useMemo(() => new Set(["about", "colophon", "canon", "patterns"]), []);
 
   // Page transition — fade out, swap, fade in, auto-switch theme
   const navigateTo = useCallback((target) => {
@@ -153,7 +153,7 @@ export default function App() {
           {view === "models" && <Models content={content} onOpen={openItem} fg={theme.fg} />}
           {view === "about" && <About theme={theme} />}
           {view === "colophon" && <Colophon />}
-          {view === "philosophy" && <Philosophy />}
+          {view === "canon" && <Canon />}
           {view === "console" && <FieldConsole />}
           {view === "lab" && <IncandescantLab asu={asu} />}
           {view === "patterns" && <PatternLanguage content={content} onOpen={openItem} fg={theme.fg} />}
@@ -177,8 +177,7 @@ export default function App() {
       {/* Artifact spec sheet overlay */}
       {activeItem && activeItem.spec && !activeItem.sketch && !activeItem.theory && <SpecSheetDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} fg={theme.fg} lens={lens} />}
 
-      {/* Pattern lens toggle — floating button */}
-      {view !== "models" && <PatternLensToggle active={lens} onToggle={toggleLens} />}
+      {/* Pattern lens — keyboard shortcut M still active, floating toggle removed */}
 
       {/* Easter egg overlay — press ? to toggle */}
       {egg && (

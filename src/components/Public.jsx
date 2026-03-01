@@ -138,7 +138,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
       {(() => {
         const practice = items.filter(i => i.section === "practice");
         const allWriting = items.filter(i => i.section === "writing");
-        const exploration = items.filter(i => i.section === "exploration");
+        const exploration = items.filter(i => i.section === "exploration" && i.title !== "Relational Design");
         const artifacts = items.filter(i => i.section === "artifacts");
         const showAll = filter === "All" && !relFilter;
 

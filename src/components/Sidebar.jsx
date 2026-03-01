@@ -7,17 +7,30 @@ const NAV = [
     { key: "public", label: "Exploration", filter: "Exploration" },
     { key: "public", label: "Artifacts", filter: "Artifacts" },
   ]},
+  { tier: "CANON", items: [
+    { key: "canon", label: "Relational Design" },
+  ]},
   { tier: "STUDIO", items: [
-    { key: "model", label: "Art of Model" },
-    { key: "playbook", label: "Playbook" },
-    { key: "console", label: "Console" },
-    { key: "lab", label: "Incandescent Lab" },
-    { key: "backstage", label: "Backstage" },
+    { group: "Methods", children: [
+      { key: "model", label: "Art of Model" },
+      { key: "playbook", label: "Playbook" },
+    ]},
+    { group: "Interfaces", children: [
+      { key: "console", label: "Console" },
+    ]},
+    { group: "Research", children: [
+      { key: "lab", label: "Incandescent Lab" },
+    ]},
+    { group: "Archive", children: [
+      { key: "backstage", label: "Backstage" },
+    ]},
   ]},
   { tier: "INFO", items: [
     { key: "about", label: "About" },
     { key: "colophon", label: "Colophon" },
-    { key: "philosophy", label: "Philosophy" },
+  ]},
+  { tier: "REFERENCE", items: [
+    { key: "models", label: "Mental Models" },
     { key: "patterns", label: "Pattern Language" },
   ]},
   { tier: "EXTERNAL", items: [
@@ -61,17 +74,35 @@ export default function Sidebar({ view, navigateTo, filter, setFilter }) {
         {NAV.map(group => (
           <div key={group.tier} className="sb-tier">
             <div className="sb-tier-h">{group.tier}</div>
-            {group.items.map(item => (
-              item.href ? (
-                <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" className="sb-link sb-external" style={{ paddingLeft: 20 }}>
-                  {item.label} <span className="sb-ext-arrow">↗</span>
-                </a>
-              ) : (
-                <button key={`${item.key}-${item.label}`} className={`sb-link${isActive(item) ? " on" : ""}`} style={{ paddingLeft: 20 + (item.indent || 0) * 16 }} onClick={() => handleNav(item)}>
+            {group.items.map((item) => {
+              /* Sub-group with children (e.g. STUDIO → Methods, Interfaces) */
+              if (item.group) {
+                return (
+                  <div key={item.group} className="sb-group">
+                    <div className="sb-group-h">{item.group}</div>
+                    {item.children.map(child => (
+                      <button key={`${child.key}-${child.label}`} className={`sb-link${isActive(child) ? " on" : ""}`} style={{ paddingLeft: 32 }} onClick={() => handleNav(child)}>
+                        {child.label}
+                      </button>
+                    ))}
+                  </div>
+                );
+              }
+              /* External link */
+              if (item.href) {
+                return (
+                  <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" className="sb-link sb-external" style={{ paddingLeft: 20 }}>
+                    {item.label} <span className="sb-ext-arrow">↗</span>
+                  </a>
+                );
+              }
+              /* Standard nav item */
+              return (
+                <button key={`${item.key}-${item.label}`} className={`sb-link${isActive(item) ? " on" : ""}`} style={{ paddingLeft: 20 }} onClick={() => handleNav(item)}>
                   {item.label}
                 </button>
-              )
-            ))}
+              );
+            })}
           </div>
         ))}
       </aside>

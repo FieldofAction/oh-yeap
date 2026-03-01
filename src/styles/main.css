@@ -57,6 +57,21 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .sb-backdrop{display:block;position:fixed;inset:0;z-index:135;background:rgba(0,0,0,.4)}
 @media(prefers-reduced-motion:reduce){.sb{transition:none}}
 
+/* ── Sidebar sub-groups (STUDIO tier) ── */
+.sb-group{margin:0}
+.sb-group-h{font-size:8px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);opacity:.5;padding:10px 20px 2px}
+
+/* ── Canon sub-nav (sticky anchored navigation) ── */
+.cn-subnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:24px;padding:12px 0;margin-bottom:32px;border-bottom:1px solid var(--bd);background:var(--bg)}
+.cn-subnav-link{font-size:11px;font-weight:400;letter-spacing:.02em;color:var(--ff);background:none;border:none;cursor:pointer;padding:4px 0;font-family:var(--sans);transition:color .2s;border-bottom:1px solid transparent}
+.cn-subnav-link:hover{color:var(--fg)}
+.cn-subnav-link.on{color:var(--fg);font-weight:500;border-bottom-color:var(--fg)}
+
+/* ── Canon lens mode note ── */
+.cn-lens-note{font-size:11px;font-weight:300;color:var(--ff);line-height:1.7;padding:24px 0;border-top:1px solid var(--bd);margin-top:24px;margin-bottom:40px}
+.cn-lens-note em{font-style:normal;font-weight:500;color:var(--fm)}
+.cn-lens-note kbd{font-family:var(--mono);font-size:10px;background:var(--sf);padding:2px 6px;border:1px solid var(--bd);border-radius:3px;color:var(--fm)}
+
 /* ── Section Header (filtered views) ── */
 .section-header{max-width:1200px;margin:0 auto;padding:100px 40px 32px}
 .section-header-h{font-family:var(--display);font-size:clamp(28px,4vw,42px);font-weight:500;letter-spacing:-.01em}

@@ -1,3 +1,4 @@
+// DEPRECATED: merged into Canon.jsx — this file is no longer imported by App.jsx
 import React from "react";
 import { SEED } from "../data/seed";
 
