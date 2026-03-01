@@ -94,11 +94,9 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .hero-dash-h{margin-top:0}
 .hero--dash .hero-links{gap:12px}
 
-/* Micro-graphic identity strip */
-.hero-micro{display:flex;align-items:center;gap:16px;margin-bottom:28px}
-.hero-glyphs{font-family:var(--display);font-size:15px;letter-spacing:8px;color:var(--ff);opacity:.5}
-.hero-pill{font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ac1);border:1px solid var(--ac1);border-radius:100px;padding:4px 14px;font-family:var(--mono);white-space:nowrap}
-.hero-year{font-size:10px;font-weight:500;letter-spacing:.04em;color:var(--ff);font-family:var(--mono);opacity:.5}
+/* Threshold arc */
+.hero-threshold{position:relative;display:flex;align-items:center;justify-content:flex-start;min-height:180px}
+.hero-threshold-arc{position:absolute;left:50%;top:50%;width:600px;height:600px;transform:translate(-50%,-50%);border-radius:50%;border:1px solid var(--bd);pointer-events:none;opacity:.5}
 
 @media(max-width:768px){
   .hero{padding:0 20px}

@@ -81,12 +81,10 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                   </div>
                 </div>
               </div>
-              <div className="hero-micro en d2">
-                <div className="hero-glyphs">◎ ⟡ 〜 ⊕ ≋ → ⚭</div>
-                <span className="hero-pill">Applied Awareness</span>
-                <span className="hero-year">2025</span>
+              <div className="hero-threshold">
+                <div className="hero-threshold-arc" />
+                <h1 className="hero-h hero-dash-h en d2">Designing Structure<br/>for Living Systems</h1>
               </div>
-              <h1 className="hero-h hero-dash-h en d3">Designing Structure<br/>for Living Systems</h1>
             </div>
           )}
 
