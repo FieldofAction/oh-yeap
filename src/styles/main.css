@@ -80,7 +80,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 
 /* Mode 2 — Signal Bar */
 .hero--signal{display:flex;flex-direction:column;justify-content:flex-end;min-height:44vh;padding-top:120px;padding-bottom:40px}
-.hero--signal .hero-h{margin-bottom:16px}
+.hero--signal .hero-h{font-size:clamp(32px,5vw,56px);margin-bottom:16px}
 .hero-signal-line{font-size:15px;font-weight:400;line-height:1.7;color:var(--fm);max-width:580px;margin-bottom:24px}
 
 /* Mode 3 — Ambient Dashboard */
