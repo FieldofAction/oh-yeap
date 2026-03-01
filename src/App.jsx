@@ -80,7 +80,7 @@ export default function App() {
     return () => { clearTimeout(timer); obs.disconnect(); };
   }, [view, filter, relFilter]);
 
-  // Easter eggs: press "?" for system condition, "M" for pattern lens, "G" for connections graph
+  // Easter eggs: press "?" for system condition, "M" for model lens, "G" for connections graph
   React.useEffect(() => {
     const handler = (e) => {
       const tag = e.target.tagName;
@@ -186,8 +186,8 @@ export default function App() {
         <div className="egg-overlay" style={{ position: "fixed", bottom: 20, left: 20, right: 20, zIndex: 200, background: "var(--sf)", border: "1px solid var(--bd)", padding: 20, fontFamily: "var(--sans)", fontSize: 11, color: "var(--fm)", lineHeight: 1.8, maxWidth: 480, animation: "en .3s ease" }}>
           <div style={{ fontSize: 9, fontWeight: 500, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--ff)", marginBottom: 8 }}>System Condition</div>
           <div><strong style={{ color: "var(--fg)" }}>{asu.get_system_condition().condition}</strong> · Reading {asu.get_system_condition().reading} · Building {asu.get_system_condition().building} · At {asu.get_system_condition().working}</div>
-          <div style={{ marginTop: 12, fontSize: 10, color: "var(--ff)" }}>8 agents · {content.length} artifacts · {content.filter(c => c.status === "live").length} live · {lens ? "Pattern Lens on" : "Pattern Lens off"}</div>
-          <div style={{ marginTop: 8, fontSize: 9, color: "var(--ff)", fontWeight: 300 }}>Press ? to close · M for pattern lens · G for connections · Esc to clear</div>
+          <div style={{ marginTop: 12, fontSize: 10, color: "var(--ff)" }}>8 agents · {content.length} artifacts · {content.filter(c => c.status === "live").length} live · {lens ? "Model Lens on" : "Model Lens off"}</div>
+          <div style={{ marginTop: 8, fontSize: 9, color: "var(--ff)", fontWeight: 300 }}>Press ? to close · M for model lens · G for connections · Esc to clear</div>
         </div>
       )}
     </div>

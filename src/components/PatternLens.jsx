@@ -12,7 +12,7 @@ export function modelsForItem(itemTitle) {
 
 /**
  * PatternChips — renders a row of subtle model annotation chips for a given content item.
- * Only visible when `active` (the pattern lens is on).
+ * Only visible when `active` (the model lens is on).
  * Clicking a chip opens a small tooltip with the model description.
  */
 export function PatternChips({ itemTitle, active, compact }) {
@@ -51,7 +51,7 @@ export function PatternChips({ itemTitle, active, compact }) {
 }
 
 /**
- * PatternLensToggle — small floating button to toggle the pattern lens on/off.
+ * PatternLensToggle — small floating button to toggle the model lens on/off.
  * Shows in bottom-right corner when models view is not active.
  */
 export function PatternLensToggle({ active, onToggle }) {
@@ -59,8 +59,8 @@ export function PatternLensToggle({ active, onToggle }) {
     <button
       className={`pl-toggle${active ? " on" : ""}`}
       onClick={onToggle}
-      title={active ? "Hide pattern lens (M)" : "Show pattern lens (M)"}
-      aria-label="Toggle pattern lens"
+      title={active ? "Hide model lens (M)" : "Show model lens (M)"}
+      aria-label="Toggle model lens"
     >
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="16" height="16">
         <circle cx="12" cy="12" r="3" />
@@ -72,7 +72,7 @@ export function PatternLensToggle({ active, onToggle }) {
 }
 
 /**
- * PatternLensBar — a small indicator bar when the lens is active.
+ * PatternLensBar — a small indicator bar when the model lens is active.
  * Shows at the top of the page, very subtle.
  */
 export function PatternLensBar({ active, onToggle, onOpenModels }) {
@@ -80,7 +80,7 @@ export function PatternLensBar({ active, onToggle, onOpenModels }) {
   return (
     <div className="pl-bar en">
       <span className="pl-bar-dot" />
-      <span className="pl-bar-label">Pattern Lens Active</span>
+      <span className="pl-bar-label">Model Lens Active</span>
       <span className="pl-bar-count">{MODELS.length} models</span>
       <button className="pl-bar-link" onClick={onOpenModels}>Browse all →</button>
       <button className="pl-bar-close" onClick={onToggle}>×</button>

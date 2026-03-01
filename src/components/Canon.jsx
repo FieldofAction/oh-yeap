@@ -139,7 +139,7 @@ export default function Canon() {
 
         {/* Lens Mode acknowledgment */}
         <div className="cn-lens-note">
-          <em>Lens Mode</em> — reveal structural relationships across work. Press <kbd>M</kbd> to activate.
+          <em>Model Lens</em> — reveal structural relationships across work. Press <kbd>M</kbd> to activate.
         </div>
       </div>
 
