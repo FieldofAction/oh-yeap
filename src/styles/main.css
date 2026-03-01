@@ -94,9 +94,9 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .hero-dash-h{margin-top:0}
 .hero--dash .hero-links{gap:12px}
 
-/* Threshold arc */
-.hero-threshold{position:relative;display:flex;align-items:center;justify-content:flex-start;min-height:180px}
-.hero-threshold-arc{position:absolute;left:50%;top:50%;width:600px;height:600px;transform:translate(-50%,-50%);border-radius:50%;border:1px solid var(--bd);pointer-events:none;opacity:.5}
+/* Threshold arc — event boundary */
+.hero-threshold{position:relative;display:flex;align-items:center;justify-content:flex-start;min-height:180px;overflow:hidden}
+.hero-threshold-arc{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);aspect-ratio:1/1;border-radius:50%;border:1px solid var(--bd);pointer-events:none;opacity:.5}
 
 @media(max-width:768px){
   .hero{padding:0 20px}
