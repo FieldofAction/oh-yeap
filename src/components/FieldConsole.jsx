@@ -299,8 +299,7 @@ export default function FieldConsole() {
     <div className="fl en">
       {/* Header */}
       <div className="fl-header en d1">
-        <div className="fl-pre">Field of Action</div>
-        <h1 className="fl-h">Field Console</h1>
+        <h1 className="fl-h">Console</h1>
         <div className="fl-rule" />
       </div>
 
