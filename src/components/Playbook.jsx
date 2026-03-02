@@ -16,7 +16,7 @@ export default function Playbook({ asu }) {
       `Client: ${project.client || "—"}`,
       `Date: ${new Date().toLocaleDateString()}`,
       ``,
-      `THE ASU METHOD`,
+      `THE FIELD OF ACTION METHOD`,
       `Framework: System, Scenography, Soul, Relational Design`,
       `"Blending systematic clarity, scenographic spectacle, soulful atmosphere,`,
       `and relational design to build worlds that are both disciplined and alive."`,
@@ -71,13 +71,13 @@ export default function Playbook({ asu }) {
           <div style={{fontSize:11,color:"var(--fm)",lineHeight:1.6,marginBottom:16}}>Each agent is a pavilion inside the larger ecosystem. They don't just hold an identity — they act on inputs and expand them. Inputs are never static — they are constantly acted upon, reframed, and elevated.</div>
           <div className="pb-agents-h">Agent → Input → Action</div>
           {[
+            {name:"Field",input:"Phenomena, signals, patterns",action:"Observes, distills, and translates into frameworks"},
             {name:"Action",input:"Raw ideas, briefs",action:"Transforms into bold, dramatic design expressions"},
             {name:"Cache",input:"Documentation, narrative",action:"Reframes as publishing, memory, or cultural artifact"},
             {name:"Hotel",input:"Lifestyle cues, objects",action:"Expands into spaces of sensuality and play"},
             {name:"A.R.T.",input:"Concepts, provocations",action:"Challenges and reframes through artistic intervention"},
             {name:"CLSSM",input:"Chaos, complexity",action:"Provides structure, cadence, and classical proportion"},
             {name:"Freedom Embassy",input:"Proposals, outputs",action:"Arbitrates, governs, ensures alignment with values"},
-            {name:"ASU Master",input:"All agent outputs",action:"Synthesizes into unified expression and direction"},
           ].map((a,i) => (
             <div key={i} className="pb-agent-row">
               <div className="pb-agent-name">{a.name}</div>
@@ -91,7 +91,7 @@ export default function Playbook({ asu }) {
             <div className="pb-loop"><span>Action</span> sparks → <span>Cache</span> records</div>
             <div className="pb-loop"><span>CLSSM</span> provides structure → <span>Freedom Embassy</span> arbitrates</div>
             <div className="pb-loop"><span>A.R.T.</span> provokes → <span>Hotel</span> makes it livable and tactile</div>
-            <div className="pb-loop"><span>ASU Master</span> synthesizes → the loop begins again</div>
+            <div className="pb-loop"><span>Freedom Embassy</span> synthesizes → the loop begins again</div>
           </div>
         </div>
       </div>
