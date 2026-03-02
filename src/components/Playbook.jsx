@@ -16,7 +16,7 @@ export default function Playbook({ asu }) {
       `Client: ${project.client || "—"}`,
       `Date: ${new Date().toLocaleDateString()}`,
       ``,
-      `THE FIELD OF ACTION METHOD`,
+      `FIELD OF ACTION METHOD`,
       `Framework: System, Scenography, Soul, Relational Design`,
       `"Blending systematic clarity, scenographic spectacle, soulful atmosphere,`,
       `and relational design to build worlds that are both disciplined and alive."`,
@@ -49,11 +49,11 @@ export default function Playbook({ asu }) {
   return (
     <div className="pb en">
       <div className="pb-h">Playbook</div>
-      <div className="pb-sub">The Field of Action Method — a living framework for designing worlds through systematic clarity, scenographic spectacle, soulful atmosphere, and relational design.</div>
+      <div className="pb-sub">Field of Action Method — a living framework for designing worlds through systematic clarity, scenographic spectacle, soulful atmosphere, and relational design.</div>
 
-      {/* The Field of Action Method */}
+      {/* Field of Action Method */}
       <div className="pb-method">
-        <div className="pb-method-h">The Field of Action Method</div>
+        <div className="pb-method-h">Field of Action Method</div>
         <div className="pb-method-d">A framework for designing worlds through System, Scenography, Soul, and Relational Design. Each part acts like a pavilion in a world expo — distinct but unified by shared vision.</div>
         <div className="pb-mpillars">
           <div className="pb-mpill"><div className="pb-mpill-bar" style={{background:"#6b8fa3"}} /><div className="pb-mpill-n">System</div><div className="pb-mpill-d">Clarity of structure, proportion, and function.</div></div>
@@ -61,7 +61,7 @@ export default function Playbook({ asu }) {
           <div className="pb-mpill"><div className="pb-mpill-bar" style={{background:"#8c6ba3"}} /><div className="pb-mpill-n">Soul</div><div className="pb-mpill-d">Emotional registers that create atmosphere and resonance.</div></div>
           <div className="pb-mpill"><div className="pb-mpill-bar" style={{background:"#6ba37a"}} /><div className="pb-mpill-n">Relational</div><div className="pb-mpill-d">Choreography of connection — how people, agents, and environments interact.</div></div>
         </div>
-        <div className="pb-method-sentence">"The Field of Action Method is my approach to design — blending systematic clarity, scenographic spectacle, soulful atmosphere, and relational design to build worlds that are both disciplined and alive."</div>
+        <div className="pb-method-sentence">"Field of Action Method is my approach to design — blending systematic clarity, scenographic spectacle, soulful atmosphere, and relational design to build worlds that are both disciplined and alive."</div>
       </div>
 
       {/* Agents as Action Systems */}
