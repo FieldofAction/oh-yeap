@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { PATTERNS, SCALES, GROUPS } from "../data/patterns";
 import { SEED } from "../data/seed";
 
@@ -15,11 +15,33 @@ import { SEED } from "../data/seed";
 export default function PatternLanguage({ content, onOpen, fg }) {
   const [expandedId, setExpandedId] = useState(null);
   const [scaleFilter, setScaleFilter] = useState("all");
+  const [search, setSearch] = useState("");
 
-  /* group patterns by scale, then by group within each scale */
+  /* close expanded card on Escape */
+  useEffect(() => {
+    const handler = (e) => {
+      if (e.key === "Escape" && expandedId) setExpandedId(null);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [expandedId]);
+
+  /* filter patterns by search query */
+  const filtered = useMemo(() => {
+    if (!search.trim()) return PATTERNS;
+    const q = search.toLowerCase();
+    return PATTERNS.filter(p =>
+      p.title.toLowerCase().includes(q) ||
+      p.desc?.toLowerCase().includes(q) ||
+      p.notes?.toLowerCase().includes(q) ||
+      p.group.replace(/-/g, " ").includes(q)
+    );
+  }, [search]);
+
+  /* group filtered patterns by scale, then by group within each scale */
   const grouped = useMemo(() => {
     return SCALES.map(scale => {
-      const scalePatterns = PATTERNS.filter(p => p.scale === scale.key);
+      const scalePatterns = filtered.filter(p => p.scale === scale.key);
       const scaleGroups = GROUPS.filter(g => g.scale === scale.key);
 
       const sections = scaleGroups.map(g => ({
@@ -28,8 +50,8 @@ export default function PatternLanguage({ content, onOpen, fg }) {
       })).filter(g => g.patterns.length > 0);
 
       return { ...scale, sections, total: scalePatterns.length };
-    });
-  }, []);
+    }).filter(s => s.total > 0);
+  }, [filtered]);
 
   /* apply scale filter */
   const visible = useMemo(() => {
@@ -101,8 +123,15 @@ export default function PatternLanguage({ content, onOpen, fg }) {
         </div>
       </div>
 
-      {/* Scale filter */}
+      {/* Search + Scale filter */}
       <div className="pa-disciplines en d3">
+        <input
+          className="pa-search"
+          type="text"
+          placeholder="Search patterns..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
         <div className="pa-sl">Scales</div>
         <div className="pa-disc-row">
           <span
@@ -166,11 +195,15 @@ export default function PatternLanguage({ content, onOpen, fg }) {
 
                       {isOpen && (
                         <div className="pa-model-detail en">
-                          {hasNotes && (
-                            <p className="pa-model-desc">{pattern.notes}</p>
+                          {pattern.desc && (
+                            <p className="pa-model-desc">{pattern.desc}</p>
                           )}
 
-                          {!hasNotes && !hasApplied && (
+                          {hasNotes && (
+                            <p className="pa-model-notes">{pattern.notes}</p>
+                          )}
+
+                          {!pattern.desc && !hasNotes && !hasApplied && (
                             <p className="pa-model-desc pa-model-desc-empty">
                               No practice notes yet.
                             </p>
@@ -206,6 +239,11 @@ export default function PatternLanguage({ content, onOpen, fg }) {
           ))}
         </div>
       ))}
+
+      {/* Empty state */}
+      {filtered.length === 0 && (
+        <div className="pa-empty">No patterns match &ldquo;{search}&rdquo;</div>
+      )}
 
       {/* Source */}
       <div className="pa-source en">
