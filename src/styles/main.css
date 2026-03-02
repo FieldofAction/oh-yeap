@@ -1112,8 +1112,7 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 .fl{max-width:1000px;margin:0 auto;padding:100px 40px 160px;display:flex;flex-direction:column;align-items:center}
 @media(max-width:768px){.fl{padding:80px 20px 120px}}
 .fl-header{text-align:center;margin-bottom:24px;position:relative}
-.fl-pre{font-size:11px;font-weight:500;letter-spacing:.01em;color:var(--ff);margin-bottom:12px}
-.fl-h{font-family:var(--display);font-size:clamp(20px,4vw,30px);font-weight:500;letter-spacing:.01em;margin:0}
+.fl-h{font-family:var(--display);font-size:clamp(32px,5vw,48px);font-weight:500;letter-spacing:0em;margin:0}
 .fl-rule{width:50px;height:1px;background:var(--bd);margin:16px auto 0}
 .fl-key-toggle{position:absolute;top:0;right:0;width:28px;height:28px;border-radius:50%;border:1px solid var(--bd);background:transparent;color:var(--ff);font-family:var(--mono);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .fl-key-toggle:hover{color:var(--fg);border-color:var(--fg)}
@@ -1230,13 +1229,13 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 /* ── Incandescent Lab ── */
 .il{max-width:1000px;margin:0 auto;padding:100px 40px 160px}
 .il-header{margin-bottom:48px}
-.il-title{font-family:var(--display);font-size:clamp(28px,4vw,42px);font-weight:500;letter-spacing:-.01em;margin-bottom:12px}
+.il-title{font-family:var(--display);font-size:clamp(32px,5vw,48px);font-weight:500;letter-spacing:0em;margin-bottom:12px}
 .il-sub{font-size:13px;font-weight:300;color:var(--fm);line-height:1.7;max-width:600px}
 .il-empty{text-align:center;padding:80px 20px;color:var(--fm);font-size:13px;font-weight:300;line-height:1.8}
 .il-empty-icon{font-size:28px;color:var(--ff);margin-bottom:16px}
 .il-empty-hint{font-size:11px;color:var(--ff);margin-top:8px}
 .il-grid{display:flex;flex-direction:column;gap:12px}
-.il-card{background:var(--sf);border:1px solid var(--bd);border-radius:8px;overflow:hidden;transition:border-color .2s}
+.il-card{background:var(--sf);border:1px solid var(--bd);overflow:hidden;transition:border-color .2s}
 .il-card:hover{border-color:color-mix(in srgb,var(--fg) 20%,var(--bd))}
 .il-card-open{border-color:var(--ac2)}
 .il-card-head{display:flex;align-items:flex-start;justify-content:space-between;padding:20px;cursor:pointer;gap:16px}
