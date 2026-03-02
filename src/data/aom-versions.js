@@ -25,7 +25,7 @@ export const AOM_VERSIONS = {
   v3: {
     label:"v3", title:"The Art of Model", subtitle:"Operating System for Generative Identity.", shift:"From authorship → infrastructure",
     steps: [
-      {n:"0",title:"Observe",question:"What is happening?",body:"Stabilize perception. What patterns are repeating? What energy is rising or collapsing?",layer:"Input",mapped:"Field of Action / Cache",ph:"What are you observing?"},
+      {n:"0",title:"Observe",question:"What is happening?",body:"Stabilize perception. What patterns are repeating? What energy is rising or collapsing?",layer:"Input",mapped:"Field / Cache",ph:"What are you observing?"},
       {n:"1",title:"Synthesize",question:"What is the underlying relational dynamic?",body:"Detect field structure. What tension is unresolved? What wants coherence?",layer:"Pattern extraction",mapped:"Works in Progress",ph:"What pattern or tension are you detecting?"},
       {n:"2",title:"Train",question:"What quality do I want to cultivate?",body:"Select quality. What behavior does this system reinforce? What muscle is being built?",layer:"Identity shaping",mapped:"Soul / Personal Practice",ph:"What quality is being trained?"},
       {n:"3",title:"Emit",question:"What signal enters the market?",body:"Shape signal. What ecosystem does this attract? Is this aligned with 10-year authorship?",layer:"Externalization",mapped:"Action / Brand Expression",ph:"What signal are you emitting?"},

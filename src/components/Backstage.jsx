@@ -88,7 +88,7 @@ const SEQ_PROMPTS = {
   v1: `ASU — Deterministic Sequence
 Treat the following as a live signal.
 Run agents in this exact order:
-1. Field of Action — sense and clarify the signal.
+1. Field — sense and clarify the signal.
 2. Works in Progress — structure it into a model or framework.
 3. Cache — name it (title + thesis).
 4. Action — translate it into a system or interface.
@@ -104,7 +104,7 @@ Rules:
 Signal:`,
   v2: `ASU — Deterministic Sequence 2.0
 Treat the following as a live signal inside a dynamic field.
-Phase 0 — Field of Action
+Phase 0 — Field
 • Clarify the signal.
 • Identify environmental, personal, and systemic context.
 • Surface hidden tensions or weak signals.
@@ -144,7 +144,7 @@ Before creating anything:
 • Does it require action, reflection, or release?
 If the signal does not require generation, say so clearly and stop.
 If it does, continue.
-Phase 0 — Field of Action
+Phase 0 — Field
 • Clarify the signal.
 • Identify context (personal, environmental, systemic).
 • Surface hidden tension.
@@ -204,13 +204,13 @@ export default function Backstage({ content, themeKey, onThemeChange, onPublish,
 
   const PIPE_MODES = useMemo(() => ({
     v1: { label:"v1.0", desc:"Linear pipeline with signal clarity check",
-      sequence:["field-of-action","works-in-progress","cache","action","hotel","art-practice","clssm","freedom-embassy"],
+      sequence:["field","works-in-progress","cache","action","hotel","art-practice","clssm","freedom-embassy"],
       system:`ASU Deterministic Sequence 1.0 — Treat the input as a live signal. Run agents in strict order. Each agent builds on the previous layer.
 
 RULES: Keep outputs concise and non-redundant. Do not skip stages. Build layer by layer.`,
       agentInstructions:{
-        "field-of-action":"Phase 1: Assess signal clarity (clear / needs sharpening / compound signal), then sense and clarify the signal. Define what it actually is.",
-        "works-in-progress":"Phase 2: Structure the clarified signal into a model, map, or framework. Build on Field of Action's assessment.",
+        "field":"Phase 1: Assess signal clarity (clear / needs sharpening / compound signal), then sense and clarify the signal. Define what it actually is.",
+        "works-in-progress":"Phase 2: Structure the clarified signal into a model, map, or framework. Build on Field's assessment.",
         "cache":"Phase 3: Name it — title + thesis. This is the signal's identity. Build on the structure from Works in Progress.",
         "action":"Phase 4: Translate into a system, interface, or applied design pattern. Build on Cache's naming.",
         "hotel":"Phase 5: Embody as ritual, object, or material practice. Build on Action's system. If no material dimension exists, say so clearly.",
@@ -220,13 +220,13 @@ RULES: Keep outputs concise and non-redundant. Do not skip stages. Build layer b
       }
     },
     v2: { label:"v2.0", desc:"Contextual pipeline with Phase 0 framing",
-      sequence:["field-of-action","works-in-progress","cache","action","hotel","art-practice","clssm","freedom-embassy"],
-      system:`ASU Deterministic Sequence 2.0 — Treat the input as a live signal inside a dynamic field. Field of Action runs as Phase 0 to frame the entire pipeline.
+      sequence:["field","works-in-progress","cache","action","hotel","art-practice","clssm","freedom-embassy"],
+      system:`ASU Deterministic Sequence 2.0 — Treat the input as a live signal inside a dynamic field. Field runs as Phase 0 to frame the entire pipeline.
 
 RULES: Each layer must build on the previous one. No repetition across agents. Be concise but not shallow. Prefer structural clarity over poetic excess. Close the loop with a clear move.`,
       agentInstructions:{
-        "field-of-action":"Phase 0 — FRAMING LAYER: Clarify the signal. Identify environmental, personal, and systemic context. Surface hidden tensions or weak signals. Define the real question underneath the signal. Your output frames everything that follows.",
-        "works-in-progress":"Phase 1: Structure the signal into a model, map, or index. Build on Field of Action's framing.",
+        "field":"Phase 0 — FRAMING LAYER: Clarify the signal. Identify environmental, personal, and systemic context. Surface hidden tensions or weak signals. Define the real question underneath the signal. Your output frames everything that follows.",
+        "works-in-progress":"Phase 1: Structure the signal into a model, map, or index. Build on Field's framing.",
         "cache":"Phase 2: Name it — title + thesis + 3 claims. Build on the structure.",
         "action":"Phase 3: Translate into a system, interface, or behavioral pattern. Build on Cache's naming.",
         "hotel":"Phase 4: Embody as a ritual, object, or practice. Build on the system.",
@@ -236,13 +236,13 @@ RULES: Each layer must build on the previous one. No repetition across agents. B
       }
     },
     v3: { label:"v3.0", desc:"Gated recursive pipeline with necessity check",
-      sequence:["field-of-action","works-in-progress","cache","action","hotel","art-practice","clssm","freedom-embassy"],
-      system:`ASU Deterministic Sequence 3.0 — Treat the input as a live signal inside a dynamic field. CRITICAL: Field of Action must first run a Necessity Check before anything else.
+      sequence:["field","works-in-progress","cache","action","hotel","art-practice","clssm","freedom-embassy"],
+      system:`ASU Deterministic Sequence 3.0 — Treat the input as a live signal inside a dynamic field. CRITICAL: Field must first run a Necessity Check before anything else.
 
 RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if momentum becomes performative. If tension remains unresolved, the final agent may recommend a recursive cycle.`,
       agentInstructions:{
-        "field-of-action":"Phase -1 NECESSITY CHECK + Phase 0 FRAMING: FIRST — Is this signal worthy of generation? Is it noise, avoidance, repetition, or real movement? Does it require action, reflection, or release? If the signal does not require generation, say so clearly in your expansion and recommend stopping. If it does require generation: clarify the signal, identify context (personal, environmental, systemic), surface hidden tension, define the real underlying question.",
-        "works-in-progress":"Phase 1: Structure into model / index / map. Build on the framing. If Field of Action recommended stopping, acknowledge and provide only a minimal structural note.",
+        "field":"Phase -1 NECESSITY CHECK + Phase 0 FRAMING: FIRST — Is this signal worthy of generation? Is it noise, avoidance, repetition, or real movement? Does it require action, reflection, or release? If the signal does not require generation, say so clearly in your expansion and recommend stopping. If it does require generation: clarify the signal, identify context (personal, environmental, systemic), surface hidden tension, define the real underlying question.",
+        "works-in-progress":"Phase 1: Structure into model / index / map. Build on the framing. If Field recommended stopping, acknowledge and provide only a minimal structural note.",
         "cache":"Phase 2: Name it — title + thesis + 3 claims.",
         "action":"Phase 3: Translate into system or interface pattern.",
         "hotel":"Phase 4: Embody as ritual, object, or behavioral practice.",
@@ -333,7 +333,7 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
   const pub = useCallback((ak, rn) => {
     const ag=AGENTS.find(a=>a.key===ak);
     if(!ag||!rn.outputs[ak]) return;
-    const map={"action":"practice","cache":"writing","works-in-progress":"exploration","field-of-action":"writing"};
+    const map={"action":"practice","cache":"writing","works-in-progress":"exploration","field":"writing"};
     onPublish({section:map[ak]||"exploration",title:`${idea.title} — ${ag.name}`,subtitle:ag.name,year:new Date().getFullYear().toString(),status:"draft",desc:rn.outputs[ak].expansion,tags:idea.tags||[],relations:[]});
   }, [idea, onPublish]);
 
