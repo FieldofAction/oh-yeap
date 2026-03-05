@@ -69,15 +69,15 @@ export default function Playbook({ asu }) {
         <div className="pb-sl">Agents as Action Systems</div>
         <div className="pb-card">
           <div style={{fontSize:11,color:"var(--fm)",lineHeight:1.6,marginBottom:16}}>Each agent is a pavilion inside the larger ecosystem. They don't just hold an identity — they act on inputs and expand them. Inputs are never static — they are constantly acted upon, reframed, and elevated.</div>
-          <div className="pb-agents-h">Agent → Input → Action</div>
+          <div className="pb-agents-h">Ring 1 — Operational Cycle</div>
           {[
-            {name:"Field",input:"Phenomena, signals, patterns",action:"Observes, distills, and translates into frameworks"},
-            {name:"Action",input:"Raw ideas, briefs",action:"Transforms into bold, dramatic design expressions"},
-            {name:"Cache",input:"Documentation, narrative",action:"Reframes as publishing, memory, or cultural artifact"},
-            {name:"Hotel",input:"Lifestyle cues, objects",action:"Expands into spaces of sensuality and play"},
-            {name:"A.R.T.",input:"Concepts, provocations",action:"Challenges and reframes through artistic intervention"},
-            {name:"CLSSM",input:"Chaos, complexity",action:"Provides structure, cadence, and classical proportion"},
-            {name:"Freedom Embassy",input:"Proposals, outputs",action:"Arbitrates, governs, ensures alignment with values"},
+            {name:"Field",input:"Phenomena, signals, patterns",action:"Senses signals in the environment and translates into frameworks"},
+            {name:"Works in Progress",input:"Emerging ideas, raw material",action:"Investigates, prototypes, and structures into working models"},
+            {name:"Action",input:"Structured ideas, briefs",action:"Produces concrete artifacts — systems, interfaces, objects"},
+            {name:"Cache",input:"Completed artifacts, narrative",action:"Preserves as durable, portable, stand-alone forms"},
+            {name:"Atlas",input:"Archive, accumulated work",action:"Maps relationships, lineages, and recurring patterns"},
+            {name:"Grace",input:"Artifacts ready for release",action:"Determines placement — audience, timing, channel, conditions"},
+            {name:"Open",input:"Unresolved questions, tensions",action:"Holds what has not yet taken form — emergence space"},
           ].map((a,i) => (
             <div key={i} className="pb-agent-row">
               <div className="pb-agent-name">{a.name}</div>
@@ -86,12 +86,44 @@ export default function Playbook({ asu }) {
               <div className="pb-agent-io">{a.action}</div>
             </div>
           ))}
+          <div className="pb-agents-h">Ring 2 — Practice Layer</div>
+          {[
+            {name:"Art Practice",input:"Concepts, aesthetic material",action:"Sustains experimentation and personal mastery"},
+            {name:"Hotel",input:"Lifestyle cues, objects",action:"Produces lifestyle artifacts and experiential environments"},
+          ].map((a,i) => (
+            <div key={`r2-${i}`} className="pb-agent-row">
+              <div className="pb-agent-name">{a.name}</div>
+              <div className="pb-agent-io">{a.input}</div>
+              <div className="pb-agent-arrow">→</div>
+              <div className="pb-agent-io">{a.action}</div>
+            </div>
+          ))}
+          <div className="pb-agents-h">Ring 3 — Governance Layer</div>
+          {[
+            {name:"CLSSM",input:"Deep patterns, axioms",action:"Generates conceptual primitives and structural source"},
+            {name:"Freedom Embassy",input:"System proposals, direction",action:"Establishes governance and system boundaries"},
+          ].map((a,i) => (
+            <div key={`r3-${i}`} className="pb-agent-row">
+              <div className="pb-agent-name">{a.name}</div>
+              <div className="pb-agent-io">{a.input}</div>
+              <div className="pb-agent-arrow">→</div>
+              <div className="pb-agent-io">{a.action}</div>
+            </div>
+          ))}
           <div className="pb-loops">
-            <div className="pb-agents-h" style={{marginTop:0}}>Relational Expansion</div>
-            <div className="pb-loop"><span>Action</span> sparks → <span>Cache</span> records</div>
-            <div className="pb-loop"><span>CLSSM</span> provides structure → <span>Freedom Embassy</span> arbitrates</div>
-            <div className="pb-loop"><span>A.R.T.</span> provokes → <span>Hotel</span> makes it livable and tactile</div>
-            <div className="pb-loop"><span>Freedom Embassy</span> synthesizes → the loop begins again</div>
+            <div className="pb-agents-h" style={{marginTop:0}}>Operational Cycle</div>
+            <div className="pb-loop"><span>Field</span> senses → <span>Works in Progress</span> structures</div>
+            <div className="pb-loop"><span>Action</span> produces → <span>Cache</span> preserves</div>
+            <div className="pb-loop"><span>Atlas</span> maps → <span>Grace</span> places</div>
+            <div className="pb-loop"><span>Open</span> holds emergence → the cycle begins again</div>
+          </div>
+          <div className="pb-loops" style={{marginTop:12}}>
+            <div className="pb-agents-h" style={{marginTop:0}}>Practice Layer</div>
+            <div className="pb-loop"><span>Art Practice</span> experiments → <span>Hotel</span> materializes</div>
+          </div>
+          <div className="pb-loops" style={{marginTop:12}}>
+            <div className="pb-agents-h" style={{marginTop:0}}>Governance Layer</div>
+            <div className="pb-loop"><span>CLSSM</span> generates primitives → <span>Freedom Embassy</span> governs</div>
           </div>
         </div>
       </div>

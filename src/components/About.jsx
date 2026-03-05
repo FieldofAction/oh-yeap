@@ -1,5 +1,5 @@
 import React from "react";
-import { AGENTS } from "../data/agents";
+import { AGENTS, RING_LABELS } from "../data/agents";
 import { AOM_VERSIONS } from "../data/aom-versions";
 
 /* extract a concise role from each agent's prompt (first sentence after "Your role is") */
@@ -62,14 +62,19 @@ export default function About({ theme }) {
       <div className="ab-section en d5">
         <div className="ab-sl">Action Systems Universal</div>
         <p className="ab-body" style={{ marginBottom:24 }}>
-          An eight-agent architecture for multi-perspective thinking. Each agent holds a distinct lens on the same input &mdash; together they form the operational layer beneath the practice.
+          An eleven-agent architecture organized in three rings &mdash; an operational cycle for production and interpretation, a practice layer for creative vitality, and a governance layer for structural authority. Each agent holds a distinct orientation on the same input.
         </p>
         <div className="ab-agents">
-          {AGENTS.map(a => (
-            <div key={a.key} className="ab-agent">
-              <div className="ab-agent-name">{a.name}</div>
-              <div className="ab-agent-role">{agentRole(a.prompt)}</div>
-            </div>
+          {[1,2,3].map(ring => (
+            <React.Fragment key={ring}>
+              <div className="ab-ring-label">{RING_LABELS[ring].name}</div>
+              {AGENTS.filter(a => a.ring === ring).map(a => (
+                <div key={a.key} className="ab-agent">
+                  <div className="ab-agent-name">{a.name}</div>
+                  <div className="ab-agent-role">{agentRole(a.prompt)}</div>
+                </div>
+              ))}
+            </React.Fragment>
           ))}
         </div>
       </div>

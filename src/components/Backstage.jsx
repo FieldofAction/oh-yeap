@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useCallback } from "react";
-import { AGENTS } from "../data/agents";
+import { AGENTS, CORE_CYCLE } from "../data/agents";
 import { THEMES } from "../data/themes";
 import { PILLARS } from "../data/playbook-data";
 import { uid } from "../data/seed";
@@ -85,24 +85,23 @@ const MODELS = [
 ];
 
 const SEQ_PROMPTS = {
-  v1: `ASU — Deterministic Sequence
+  v1: `ASU — Operational Cycle 1.0
 Treat the following as a live signal.
 Run agents in this exact order:
 1. Field — sense and clarify the signal.
 2. Works in Progress — structure it into a model or framework.
-3. Cache — name it (title + thesis).
-4. Action — translate it into a system or interface.
-5. Hotel — embody it as ritual or object.
-6. Art Practice — express its emotional or visual form.
-7. CLSSM — distill the governing principle.
-8. Freedom Embassy — decide one clear next move.
+3. Action — translate it into an artifact.
+4. Cache — preserve it as a durable form.
+5. Atlas — map its relationships to existing work.
+6. Grace — determine how it enters the world.
+7. Open — hold what remains unresolved.
 Rules:
 • Each agent must build on the previous layer.
 • Keep outputs concise and non-redundant.
 • Do not skip stages.
-• End with exactly one recommended action.
+• End with what remains open.
 Signal:`,
-  v2: `ASU — Deterministic Sequence 2.0
+  v2: `ASU — Operational Cycle 2.0
 Treat the following as a live signal inside a dynamic field.
 Phase 0 — Field
 • Clarify the signal.
@@ -112,30 +111,26 @@ Phase 0 — Field
 Then run agents in this exact order:
 1. Works in Progress
    Structure the signal into a model, map, or index.
-2. Cache
-   Name it: title + thesis + 3 claims.
-3. Action
-   Translate it into a system, interface, or behavioral pattern.
-4. Hotel
-   Embody it as a ritual, object, or practice.
-5. Art Practice
-   Express its emotional or visual resonance.
-6. CLSSM
-   Distill the governing principle or law.
-7. Freedom Embassy
-   Decide:
-   • What moves forward?
-   • What pauses?
-   • What archives?
-   End with exactly one recommended next action.
+2. Action
+   Translate it into an artifact or applied pattern.
+3. Cache
+   Preserve it: title + thesis + durable form.
+4. Atlas
+   Map relationships to existing work and lineages.
+5. Grace
+   Determine placement: audience, timing, channel.
+   May delay release if conditions aren't met.
+6. Open
+   Hold what remains unresolved.
+   Name open questions and speculative directions.
 Rules:
 • Each layer must build on the previous one.
 • No repetition across agents.
 • Be concise but not shallow.
 • Prefer structural clarity over poetic excess.
-• Close the loop with a clear move.
+• Close with what remains genuinely open.
 Signal:`,
-  v3: `ASU — Deterministic Sequence 3.0
+  v3: `ASU — Operational Cycle 3.0
 Treat the following as a live signal inside a dynamic field.
 Phase -1 — Necessity Check
 Before creating anything:
@@ -152,31 +147,25 @@ Phase 0 — Field
 Then run agents in order:
 1. Works in Progress
    Structure into model / index / map.
-2. Cache
-   Name it: title + thesis + 3 claims.
-3. Action
-   Translate into system or interface pattern.
-4. Hotel
-   Embody as ritual, object, or behavioral practice.
-5. Art Practice
-   Express emotional / visual dimension.
-6. CLSSM
-   Distill governing law.
-7. Freedom Embassy
-   Decide:
-   • Move forward
-   • Pause
-   • Archive
-   • Re-run at deeper level
-End with exactly ONE:
-• concrete action OR
-• deliberate non-action
+2. Action
+   Translate into artifact or applied pattern.
+3. Cache
+   Preserve: title + thesis + durable form.
+4. Atlas
+   Map relationships and lineages.
+5. Grace
+   Determine placement. May delay release.
+   Specify conditions if delaying.
+6. Open
+   Hold unresolved questions.
+   Name speculative directions.
+   Acknowledge what the system does not yet understand.
 Rules:
 • Build layer by layer.
 • No redundancy.
 • Prefer clarity over volume.
 • Stop if momentum becomes performative.
-• If tension remains unresolved, optionally trigger one recursive cycle.
+• If tension remains unresolved, it belongs to Open.
 Signal:`,
 };
 
@@ -203,55 +192,52 @@ export default function Backstage({ content, themeKey, onThemeChange, onPublish,
   const [synthLogged, setSynthLogged] = useState(false);
 
   const PIPE_MODES = useMemo(() => ({
-    v1: { label:"v1.0", desc:"Linear pipeline with signal clarity check",
-      sequence:["field","works-in-progress","cache","action","hotel","art-practice","clssm","freedom-embassy"],
-      system:`ASU Deterministic Sequence 1.0 — Treat the input as a live signal. Run agents in strict order. Each agent builds on the previous layer.
+    v1: { label:"v1.0", desc:"Linear operational cycle with signal clarity check",
+      sequence: CORE_CYCLE,
+      system:`ASU Operational Cycle 1.0 — Treat the input as a live signal. Run Ring 1 agents in strict order. Each agent builds on the previous layer.
 
 RULES: Keep outputs concise and non-redundant. Do not skip stages. Build layer by layer.`,
       agentInstructions:{
         "field":"Phase 1: Assess signal clarity (clear / needs sharpening / compound signal), then sense and clarify the signal. Define what it actually is.",
         "works-in-progress":"Phase 2: Structure the clarified signal into a model, map, or framework. Build on Field's assessment.",
-        "cache":"Phase 3: Name it — title + thesis. This is the signal's identity. Build on the structure from Works in Progress.",
-        "action":"Phase 4: Translate into a system, interface, or applied design pattern. Build on Cache's naming.",
-        "hotel":"Phase 5: Embody as ritual, object, or material practice. Build on Action's system. If no material dimension exists, say so clearly.",
-        "art-practice":"Phase 6: Express the emotional or visual form. Build on all previous layers.",
-        "clssm":"Phase 7: Distill the governing principle or law that holds the entire sequence together.",
-        "freedom-embassy":"Phase 8: Decide — move forward, pause, or archive. End with exactly one recommended action.",
+        "action":"Phase 3: Translate into a concrete artifact — system, interface, or applied design pattern. Build on the structure from Works in Progress.",
+        "cache":"Phase 4: Preserve it — title + thesis + durable form. This is the artifact's identity and archive entry. Build on Action's output.",
+        "atlas":"Phase 5: Map relationships to existing work. What lineages connect? What patterns recur? What earlier work does this extend? Build on Cache's naming.",
+        "grace":"Phase 6: Determine how this enters the world. Evaluate audience, timing, and channel. If conditions aren't met, recommend delay and specify what must change.",
+        "open":"Phase 7: Hold what remains unresolved. Name the open questions, speculative directions, and what the system does not yet understand about this signal.",
       }
     },
-    v2: { label:"v2.0", desc:"Contextual pipeline with Phase 0 framing",
-      sequence:["field","works-in-progress","cache","action","hotel","art-practice","clssm","freedom-embassy"],
-      system:`ASU Deterministic Sequence 2.0 — Treat the input as a live signal inside a dynamic field. Field runs as Phase 0 to frame the entire pipeline.
+    v2: { label:"v2.0", desc:"Contextual cycle with Phase 0 framing",
+      sequence: CORE_CYCLE,
+      system:`ASU Operational Cycle 2.0 — Treat the input as a live signal inside a dynamic field. Field runs as Phase 0 to frame the entire cycle.
 
-RULES: Each layer must build on the previous one. No repetition across agents. Be concise but not shallow. Prefer structural clarity over poetic excess. Close the loop with a clear move.`,
+RULES: Each layer must build on the previous one. No repetition across agents. Be concise but not shallow. Prefer structural clarity over poetic excess. Close with what remains genuinely open.`,
       agentInstructions:{
         "field":"Phase 0 — FRAMING LAYER: Clarify the signal. Identify environmental, personal, and systemic context. Surface hidden tensions or weak signals. Define the real question underneath the signal. Your output frames everything that follows.",
         "works-in-progress":"Phase 1: Structure the signal into a model, map, or index. Build on Field's framing.",
-        "cache":"Phase 2: Name it — title + thesis + 3 claims. Build on the structure.",
-        "action":"Phase 3: Translate into a system, interface, or behavioral pattern. Build on Cache's naming.",
-        "hotel":"Phase 4: Embody as a ritual, object, or practice. Build on the system.",
-        "art-practice":"Phase 5: Express its emotional or visual resonance. Build on all previous layers.",
-        "clssm":"Phase 6: Distill the governing principle or law.",
-        "freedom-embassy":"Phase 7 — DECISION: What moves forward? What pauses? What archives? End with exactly one recommended next action.",
+        "action":"Phase 2: Translate into an artifact or applied pattern. Build on the structure.",
+        "cache":"Phase 3: Preserve it — title + thesis + durable form. Build on Action's output.",
+        "atlas":"Phase 4: Map relationships to existing work and lineages. What connects? What recurs? Build on all previous layers.",
+        "grace":"Phase 5 — PLACEMENT: Determine how this enters the world. Evaluate audience, narrative framing, cultural timing, distribution. May delay release — if so, specify conditions.",
+        "open":"Phase 6 — EMERGENCE: Hold what remains unresolved. Name open questions and speculative directions. Acknowledge what the system does not yet understand.",
       }
     },
-    v3: { label:"v3.0", desc:"Gated recursive pipeline with necessity check",
-      sequence:["field","works-in-progress","cache","action","hotel","art-practice","clssm","freedom-embassy"],
-      system:`ASU Deterministic Sequence 3.0 — Treat the input as a live signal inside a dynamic field. CRITICAL: Field must first run a Necessity Check before anything else.
+    v3: { label:"v3.0", desc:"Gated cycle with necessity check",
+      sequence: CORE_CYCLE,
+      system:`ASU Operational Cycle 3.0 — Treat the input as a live signal inside a dynamic field. CRITICAL: Field must first run a Necessity Check before anything else.
 
-RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if momentum becomes performative. If tension remains unresolved, the final agent may recommend a recursive cycle.`,
+RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if momentum becomes performative. If tension remains unresolved, it belongs to Open.`,
       agentInstructions:{
         "field":"Phase -1 NECESSITY CHECK + Phase 0 FRAMING: FIRST — Is this signal worthy of generation? Is it noise, avoidance, repetition, or real movement? Does it require action, reflection, or release? If the signal does not require generation, say so clearly in your expansion and recommend stopping. If it does require generation: clarify the signal, identify context (personal, environmental, systemic), surface hidden tension, define the real underlying question.",
         "works-in-progress":"Phase 1: Structure into model / index / map. Build on the framing. If Field recommended stopping, acknowledge and provide only a minimal structural note.",
-        "cache":"Phase 2: Name it — title + thesis + 3 claims.",
-        "action":"Phase 3: Translate into system or interface pattern.",
-        "hotel":"Phase 4: Embody as ritual, object, or behavioral practice.",
-        "art-practice":"Phase 5: Express emotional / visual dimension.",
-        "clssm":"Phase 6: Distill governing law.",
-        "freedom-embassy":"Phase 7 — DECISION: Move forward, pause, archive, OR re-run at deeper level. End with exactly ONE: concrete action OR deliberate non-action. If tension remains unresolved, you may recommend one recursive cycle through the pipeline.",
+        "action":"Phase 2: Translate into artifact or applied pattern.",
+        "cache":"Phase 3: Preserve — title + thesis + durable form.",
+        "atlas":"Phase 4: Map relationships and lineages across the archive.",
+        "grace":"Phase 5 — PLACEMENT: Determine how this enters the world. May delay release. Specify conditions for release if delaying.",
+        "open":"Phase 6 — EMERGENCE: Hold unresolved questions. Name speculative directions. Acknowledge what the system does not yet understand. If tension remains unresolved, it belongs here.",
       }
     },
-    free: { label:"Free", desc:"Manual agent selection, no sequence",
+    free: { label:"Free", desc:"Manual agent selection — all rings available",
       sequence:null, system:null, agentInstructions:null
     },
   }), []);
@@ -333,7 +319,7 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
   const pub = useCallback((ak, rn) => {
     const ag=AGENTS.find(a=>a.key===ak);
     if(!ag||!rn.outputs[ak]) return;
-    const map={"action":"practice","cache":"writing","works-in-progress":"exploration","field":"writing"};
+    const map={"action":"practice","cache":"writing","works-in-progress":"exploration","field":"writing","atlas":"exploration","grace":"writing","open":"exploration","art-practice":"exploration","hotel":"exploration","clssm":"exploration","freedom-embassy":"writing"};
     onPublish({section:map[ak]||"exploration",title:`${idea.title} — ${ag.name}`,subtitle:ag.name,year:new Date().getFullYear().toString(),status:"draft",desc:rn.outputs[ak].expansion,tags:idea.tags||[],relations:[]});
   }, [idea, onPublish]);
 

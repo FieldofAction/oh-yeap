@@ -1031,6 +1031,8 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 .ab-body{font-size:14px;font-weight:400;line-height:1.7;color:var(--fm);max-width:560px}
 .ab-body+.ab-body{margin-top:16px}
 .ab-agents{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ab-ring-label{grid-column:1/-1;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);margin-top:12px;padding-bottom:4px;border-bottom:1px solid var(--bd)}
+.ab-ring-label:first-child{margin-top:0}
 .ab-agent{background:var(--sf);padding:20px}
 .ab-agent-name{font-size:11px;font-weight:500;letter-spacing:.04em;margin-bottom:6px}
 .ab-agent-role{font-size:11px;letter-spacing:.01em;color:var(--ff);margin-bottom:8px}
