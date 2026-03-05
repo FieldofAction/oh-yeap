@@ -85,6 +85,49 @@ const MODELS = [
 ];
 
 const SEQ_PROMPTS = {
+  v4: `ASU — Canonical System Order (V4)
+Treat the following as a live signal inside the full ASU system.
+Run all agents in canonical order. The system loops — Field reopens perception, CLSSM regenerates ideas, Freedom Embassy stabilizes governance.
+
+Band 1 — Perception + Creation (situations become artifacts):
+1. Field
+   Read signals from the environment. Identify tensions, opportunities, constraints.
+2. Works in Progress
+   Investigate emerging ideas. Experiment with possible responses. Develop early models.
+3. Action
+   Produce artifacts, systems, or interventions that respond to Field conditions.
+
+Band 2 — Memory + Intelligence (work becomes knowledge):
+4. Cache
+   Store the artifact in retrievable form. Preserve beyond the moment of creation.
+5. Atlas
+   Map relationships between this artifact and existing work. Reveal patterns. Link lineages. Make the system self-aware.
+
+Band 3 — Cultural Release (timing engine):
+6. Grace
+   Determine when, how, and where this enters the world. Maintain integrity and resonance. May delay release.
+7. Open
+   Hold unresolved futures. Preserve optionality. Keep the system generative rather than closed.
+
+Band 4 — Deep System (long-term vitality):
+8. Art Practice
+   Maintain personal exploration and aesthetic development outside instrumental goals.
+9. Hotel
+   Materialize ideas in lived culture — objects, environments, experiential artifacts.
+10. CLSSM
+    Generate deep conceptual primitives that seed future cycles.
+11. Freedom Embassy
+    Establish system authority. Define structural rules. Maintain long-term continuity.
+
+Rules:
+• The system is a loop, not a pipeline. Each pass deepens the previous.
+• Agents build on all previous layers.
+• No redundancy across agents.
+• Perception + Creation converts signal to artifact.
+• Memory + Intelligence converts artifact to knowledge.
+• Cultural Release governs timing and placement.
+• Deep System maintains long-term vitality and governance.
+Signal:`,
   v1: `ASU — Full Cycle 1.0
 Treat the following as a live signal.
 Run all agents across three rings in this exact order:
@@ -215,13 +258,32 @@ export default function Backstage({ content, themeKey, onThemeChange, onPublish,
   const pbEmotion = asu.get_emotional_system().emotion;
   const [bsSynthesis, setBsSynthesis] = useState(null);
   const [bsSyncing, setBsSyncing] = useState(false);
-  const [pipeMode, setPipeMode] = useState("v1");
+  const [pipeMode, setPipeMode] = useState("v4");
   const [showPrompt, setShowPrompt] = useState(false);
   const [promptCopied, setPromptCopied] = useState(false);
   const [synthCopied, setSynthCopied] = useState(false);
   const [synthLogged, setSynthLogged] = useState(false);
 
   const PIPE_MODES = useMemo(() => ({
+    v4: { label:"v4.0", desc:"Canonical system order — four functional bands",
+      sequence: CORE_CYCLE,
+      system:`ASU Canonical System Order (V4) — Treat the input as a live signal inside the full ASU system. Agents operate in four functional bands: Perception + Creation, Memory + Intelligence, Cultural Release, Deep System. The system is a loop — each pass deepens the previous.
+
+RULES: Agents build on all previous layers. No redundancy. Perception + Creation converts signal to artifact. Memory + Intelligence converts artifact to knowledge. Cultural Release governs timing. Deep System maintains long-term vitality and governance.`,
+      agentInstructions:{
+        "field":"Band 1 — PERCEPTION: Read signals from the environment. Identify tensions, opportunities, and constraints within the active context. Define the situation clearly.",
+        "works-in-progress":"Band 1 — EXPLORATION: Investigate emerging ideas. Experiment with possible responses. Develop early conceptual models. Build on Field's reading.",
+        "action":"Band 1 — CREATION: Produce the artifact, system, or intervention that responds to the conditions identified. Build on WIP's models.",
+        "cache":"Band 2 — PRESERVATION: Store this artifact in retrievable form. Title + thesis + durable form. Ensure it persists beyond the moment of creation.",
+        "atlas":"Band 2 — RELATIONAL MAPPING: Map relationships between this artifact and existing work. Link lineages. Reveal patterns. Make the system self-aware. This is where work becomes knowledge.",
+        "grace":"Band 3 — PLACEMENT: Determine when, how, and where this enters the world. Maintain integrity and resonance. May delay release — if so, specify conditions.",
+        "open":"Band 3 — EMERGENCE: Hold unresolved futures. Preserve optionality. Name what remains genuinely open. Keep the system generative rather than closed.",
+        "art-practice":"Band 4 — INTERNAL MAKING: Maintain personal exploration and aesthetic development outside instrumental goals. What does this signal mean for your own creative practice?",
+        "hotel":"Band 4 — MATERIAL LAYER: Materialize ideas in lived culture — objects, environments, experiential artifacts. If no material dimension exists, say so clearly.",
+        "clssm":"Band 4 — SOURCE: Generate the deep conceptual primitive beneath this entire cycle. What foundational idea seeds the next cycle of perception and creation?",
+        "freedom-embassy":"Band 4 — GOVERNANCE: Establish system authority for this signal. Define structural rules. Maintain long-term continuity. The loop returns to Field — what should Field perceive next?",
+      }
+    },
     v1: { label:"v1.0", desc:"Full 11-agent cycle with signal clarity check",
       sequence: CORE_CYCLE,
       system:`ASU Full Cycle 1.0 — Treat the input as a live signal. Run all agents across three rings in strict order. Each agent builds on the previous layer.
