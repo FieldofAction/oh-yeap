@@ -85,9 +85,10 @@ const MODELS = [
 ];
 
 const SEQ_PROMPTS = {
-  v1: `ASU — Operational Cycle 1.0
+  v1: `ASU — Full Cycle 1.0
 Treat the following as a live signal.
-Run agents in this exact order:
+Run all agents across three rings in this exact order:
+Ring 1 — Operational Cycle:
 1. Field — sense and clarify the signal.
 2. Works in Progress — structure it into a model or framework.
 3. Action — translate it into an artifact.
@@ -95,20 +96,27 @@ Run agents in this exact order:
 5. Atlas — map its relationships to existing work.
 6. Grace — determine how it enters the world.
 7. Open — hold what remains unresolved.
+Ring 2 — Practice Layer:
+8. Art Practice — explore its aesthetic and sensory dimension.
+9. Hotel — assess its material or experiential form.
+Ring 3 — Governance Layer:
+10. CLSSM — surface the deep structural pattern beneath it.
+11. Freedom Embassy — decide: activate, pause, or archive.
 Rules:
 • Each agent must build on the previous layer.
 • Keep outputs concise and non-redundant.
 • Do not skip stages.
-• End with what remains open.
+• End with a governance decision.
 Signal:`,
-  v2: `ASU — Operational Cycle 2.0
+  v2: `ASU — Full Cycle 2.0
 Treat the following as a live signal inside a dynamic field.
 Phase 0 — Field
 • Clarify the signal.
 • Identify environmental, personal, and systemic context.
 • Surface hidden tensions or weak signals.
 • Define the real question underneath the signal.
-Then run agents in this exact order:
+Then run agents across all rings:
+Ring 1 — Operational Cycle:
 1. Works in Progress
    Structure the signal into a model, map, or index.
 2. Action
@@ -123,14 +131,25 @@ Then run agents in this exact order:
 6. Open
    Hold what remains unresolved.
    Name open questions and speculative directions.
+Ring 2 — Practice Layer:
+7. Art Practice
+   Explore the aesthetic or visual resonance.
+8. Hotel
+   Embody as ritual, object, or experiential environment.
+Ring 3 — Governance Layer:
+9. CLSSM
+   Distill the governing principle or deep structural pattern.
+10. Freedom Embassy
+    Decide: move forward, pause, or archive.
+    End with exactly one recommended next action.
 Rules:
 • Each layer must build on the previous one.
 • No repetition across agents.
 • Be concise but not shallow.
 • Prefer structural clarity over poetic excess.
-• Close with what remains genuinely open.
+• Close with a governance decision.
 Signal:`,
-  v3: `ASU — Operational Cycle 3.0
+  v3: `ASU — Full Cycle 3.0
 Treat the following as a live signal inside a dynamic field.
 Phase -1 — Necessity Check
 Before creating anything:
@@ -144,7 +163,8 @@ Phase 0 — Field
 • Identify context (personal, environmental, systemic).
 • Surface hidden tension.
 • Define the real underlying question.
-Then run agents in order:
+Then run agents across all rings:
+Ring 1 — Operational Cycle:
 1. Works in Progress
    Structure into model / index / map.
 2. Action
@@ -159,13 +179,23 @@ Then run agents in order:
 6. Open
    Hold unresolved questions.
    Name speculative directions.
-   Acknowledge what the system does not yet understand.
+Ring 2 — Practice Layer:
+7. Art Practice
+   Express emotional / visual / sensory dimension.
+8. Hotel
+   Embody as ritual, object, or behavioral practice.
+Ring 3 — Governance Layer:
+9. CLSSM
+   Distill governing law or deep structural pattern.
+10. Freedom Embassy
+    Decide: move forward, pause, archive, or re-run.
+    End with exactly ONE: concrete action OR deliberate non-action.
 Rules:
 • Build layer by layer.
 • No redundancy.
 • Prefer clarity over volume.
 • Stop if momentum becomes performative.
-• If tension remains unresolved, it belongs to Open.
+• Governance closes the cycle.
 Signal:`,
 };
 
@@ -192,49 +222,61 @@ export default function Backstage({ content, themeKey, onThemeChange, onPublish,
   const [synthLogged, setSynthLogged] = useState(false);
 
   const PIPE_MODES = useMemo(() => ({
-    v1: { label:"v1.0", desc:"Linear operational cycle with signal clarity check",
+    v1: { label:"v1.0", desc:"Full 11-agent cycle with signal clarity check",
       sequence: CORE_CYCLE,
-      system:`ASU Operational Cycle 1.0 — Treat the input as a live signal. Run Ring 1 agents in strict order. Each agent builds on the previous layer.
+      system:`ASU Full Cycle 1.0 — Treat the input as a live signal. Run all agents across three rings in strict order. Each agent builds on the previous layer.
 
-RULES: Keep outputs concise and non-redundant. Do not skip stages. Build layer by layer.`,
+RULES: Keep outputs concise and non-redundant. Do not skip stages. Build layer by layer. Governance closes the cycle.`,
       agentInstructions:{
-        "field":"Phase 1: Assess signal clarity (clear / needs sharpening / compound signal), then sense and clarify the signal. Define what it actually is.",
-        "works-in-progress":"Phase 2: Structure the clarified signal into a model, map, or framework. Build on Field's assessment.",
-        "action":"Phase 3: Translate into a concrete artifact — system, interface, or applied design pattern. Build on the structure from Works in Progress.",
-        "cache":"Phase 4: Preserve it — title + thesis + durable form. This is the artifact's identity and archive entry. Build on Action's output.",
-        "atlas":"Phase 5: Map relationships to existing work. What lineages connect? What patterns recur? What earlier work does this extend? Build on Cache's naming.",
-        "grace":"Phase 6: Determine how this enters the world. Evaluate audience, timing, and channel. If conditions aren't met, recommend delay and specify what must change.",
-        "open":"Phase 7: Hold what remains unresolved. Name the open questions, speculative directions, and what the system does not yet understand about this signal.",
+        "field":"Ring 1, Phase 1: Assess signal clarity (clear / needs sharpening / compound signal), then sense and clarify the signal. Define what it actually is.",
+        "works-in-progress":"Ring 1, Phase 2: Structure the clarified signal into a model, map, or framework. Build on Field's assessment.",
+        "action":"Ring 1, Phase 3: Translate into a concrete artifact — system, interface, or applied design pattern. Build on the structure from Works in Progress.",
+        "cache":"Ring 1, Phase 4: Preserve it — title + thesis + durable form. This is the artifact's identity and archive entry. Build on Action's output.",
+        "atlas":"Ring 1, Phase 5: Map relationships to existing work. What lineages connect? What patterns recur? What earlier work does this extend? Build on Cache's naming.",
+        "grace":"Ring 1, Phase 6: Determine how this enters the world. Evaluate audience, timing, and channel. If conditions aren't met, recommend delay and specify what must change.",
+        "open":"Ring 1, Phase 7: Hold what remains unresolved. Name the open questions, speculative directions, and what the system does not yet understand about this signal.",
+        "art-practice":"Ring 2, Phase 8: Explore the aesthetic and sensory dimension. What does this look like, feel like, sound like? Build on all previous layers. Be evocative but precise.",
+        "hotel":"Ring 2, Phase 9: Assess the material dimension. Does this have an experiential or embodied form? If yes, describe it. If no material dimension exists, say so clearly.",
+        "clssm":"Ring 3, Phase 10: Surface the deep structural pattern beneath the entire sequence. Connect to foundational axioms. What governing law holds this together? Be brief, dense, and non-obvious.",
+        "freedom-embassy":"Ring 3, Phase 11: Final governance decision — activate, pause, or archive. What does this trade off? What condition does it build toward? End with exactly one recommended action.",
       }
     },
-    v2: { label:"v2.0", desc:"Contextual cycle with Phase 0 framing",
+    v2: { label:"v2.0", desc:"Full cycle with Phase 0 framing",
       sequence: CORE_CYCLE,
-      system:`ASU Operational Cycle 2.0 — Treat the input as a live signal inside a dynamic field. Field runs as Phase 0 to frame the entire cycle.
+      system:`ASU Full Cycle 2.0 — Treat the input as a live signal inside a dynamic field. Field runs as Phase 0 to frame the entire cycle. All three rings execute in sequence.
 
-RULES: Each layer must build on the previous one. No repetition across agents. Be concise but not shallow. Prefer structural clarity over poetic excess. Close with what remains genuinely open.`,
+RULES: Each layer must build on the previous one. No repetition across agents. Be concise but not shallow. Prefer structural clarity over poetic excess. Governance closes the cycle.`,
       agentInstructions:{
         "field":"Phase 0 — FRAMING LAYER: Clarify the signal. Identify environmental, personal, and systemic context. Surface hidden tensions or weak signals. Define the real question underneath the signal. Your output frames everything that follows.",
-        "works-in-progress":"Phase 1: Structure the signal into a model, map, or index. Build on Field's framing.",
-        "action":"Phase 2: Translate into an artifact or applied pattern. Build on the structure.",
-        "cache":"Phase 3: Preserve it — title + thesis + durable form. Build on Action's output.",
-        "atlas":"Phase 4: Map relationships to existing work and lineages. What connects? What recurs? Build on all previous layers.",
-        "grace":"Phase 5 — PLACEMENT: Determine how this enters the world. Evaluate audience, narrative framing, cultural timing, distribution. May delay release — if so, specify conditions.",
-        "open":"Phase 6 — EMERGENCE: Hold what remains unresolved. Name open questions and speculative directions. Acknowledge what the system does not yet understand.",
+        "works-in-progress":"Ring 1, Phase 1: Structure the signal into a model, map, or index. Build on Field's framing.",
+        "action":"Ring 1, Phase 2: Translate into an artifact or applied pattern. Build on the structure.",
+        "cache":"Ring 1, Phase 3: Preserve it — title + thesis + durable form. Build on Action's output.",
+        "atlas":"Ring 1, Phase 4: Map relationships to existing work and lineages. What connects? What recurs? Build on all previous layers.",
+        "grace":"Ring 1, Phase 5 — PLACEMENT: Determine how this enters the world. Evaluate audience, narrative framing, cultural timing, distribution. May delay release — if so, specify conditions.",
+        "open":"Ring 1, Phase 6 — EMERGENCE: Hold what remains unresolved. Name open questions and speculative directions. Acknowledge what the system does not yet understand.",
+        "art-practice":"Ring 2, Phase 7: Explore the aesthetic or visual resonance. What is the sensory dimension of this work? Build on all previous layers.",
+        "hotel":"Ring 2, Phase 8: Embody as ritual, object, or experiential environment. If no material dimension exists, say so clearly.",
+        "clssm":"Ring 3, Phase 9: Distill the governing principle or deep structural pattern beneath the entire cycle.",
+        "freedom-embassy":"Ring 3, Phase 10 — GOVERNANCE: What moves forward? What pauses? What archives? End with exactly one recommended next action.",
       }
     },
-    v3: { label:"v3.0", desc:"Gated cycle with necessity check",
+    v3: { label:"v3.0", desc:"Gated full cycle with necessity check",
       sequence: CORE_CYCLE,
-      system:`ASU Operational Cycle 3.0 — Treat the input as a live signal inside a dynamic field. CRITICAL: Field must first run a Necessity Check before anything else.
+      system:`ASU Full Cycle 3.0 — Treat the input as a live signal inside a dynamic field. CRITICAL: Field must first run a Necessity Check before anything else. All three rings execute in sequence.
 
-RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if momentum becomes performative. If tension remains unresolved, it belongs to Open.`,
+RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if momentum becomes performative. Governance closes the cycle.`,
       agentInstructions:{
         "field":"Phase -1 NECESSITY CHECK + Phase 0 FRAMING: FIRST — Is this signal worthy of generation? Is it noise, avoidance, repetition, or real movement? Does it require action, reflection, or release? If the signal does not require generation, say so clearly in your expansion and recommend stopping. If it does require generation: clarify the signal, identify context (personal, environmental, systemic), surface hidden tension, define the real underlying question.",
-        "works-in-progress":"Phase 1: Structure into model / index / map. Build on the framing. If Field recommended stopping, acknowledge and provide only a minimal structural note.",
-        "action":"Phase 2: Translate into artifact or applied pattern.",
-        "cache":"Phase 3: Preserve — title + thesis + durable form.",
-        "atlas":"Phase 4: Map relationships and lineages across the archive.",
-        "grace":"Phase 5 — PLACEMENT: Determine how this enters the world. May delay release. Specify conditions for release if delaying.",
-        "open":"Phase 6 — EMERGENCE: Hold unresolved questions. Name speculative directions. Acknowledge what the system does not yet understand. If tension remains unresolved, it belongs here.",
+        "works-in-progress":"Ring 1, Phase 1: Structure into model / index / map. Build on the framing. If Field recommended stopping, acknowledge and provide only a minimal structural note.",
+        "action":"Ring 1, Phase 2: Translate into artifact or applied pattern.",
+        "cache":"Ring 1, Phase 3: Preserve — title + thesis + durable form.",
+        "atlas":"Ring 1, Phase 4: Map relationships and lineages across the archive.",
+        "grace":"Ring 1, Phase 5 — PLACEMENT: Determine how this enters the world. May delay release. Specify conditions for release if delaying.",
+        "open":"Ring 1, Phase 6 — EMERGENCE: Hold unresolved questions. Name speculative directions. Acknowledge what the system does not yet understand.",
+        "art-practice":"Ring 2, Phase 7: Express emotional / visual / sensory dimension. Sustain creative vitality.",
+        "hotel":"Ring 2, Phase 8: Embody as ritual, object, or behavioral practice. If no material dimension exists, say so clearly.",
+        "clssm":"Ring 3, Phase 9: Distill governing law or deep structural pattern.",
+        "freedom-embassy":"Ring 3, Phase 10 — GOVERNANCE: Move forward, pause, archive, or re-run at deeper level. End with exactly ONE: concrete action OR deliberate non-action.",
       }
     },
     free: { label:"Free", desc:"Manual agent selection — all rings available",

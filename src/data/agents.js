@@ -21,4 +21,4 @@ export const RING_LABELS = {
   3: { name:"Governance Layer", desc:"Provides conceptual source and structural authority" },
 };
 
-export const CORE_CYCLE = ["field","works-in-progress","action","cache","atlas","grace","open"];
+export const CORE_CYCLE = ["field","works-in-progress","action","cache","atlas","grace","open","art-practice","hotel","clssm","freedom-embassy"];
