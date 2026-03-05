@@ -472,7 +472,10 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
             <div style={{fontSize:9,color:"var(--fm)",marginTop:6,fontWeight:300}}>{activePipe.desc}</div>
             {pipeMode !== "free" && (
               <div style={{marginTop:8,fontSize:9,color:"var(--ff)"}}>
-                Sequence: {activePipe.sequence?.map(k => AGENTS.find(a=>a.key===k)?.name).filter(Boolean).join(" → ")}
+                {pipeMode === "v4"
+                  ? "Perception → Exploration → Creation → Memory → Intelligence → Placement → Emergence → Practice → Material → Source → Governance"
+                  : `Sequence: ${activePipe.sequence?.map(k => AGENTS.find(a=>a.key===k)?.name).filter(Boolean).join(" → ")}`
+                }
               </div>
             )}
             {pipeMode !== "free" && (
@@ -556,7 +559,12 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
               const out=lastRun.outputs[ak];const ag=AGENTS.find(a=>a.key===ak);
               if(!ag) return null;
               const proc=!out&&lastRun.status==="running";
-              const stepLabel = lastRun.mode && lastRun.mode !== "free" ? `${idx===0&&lastRun.mode==="v3"?"Phase -1/0":idx===0&&lastRun.mode==="v2"?"Phase 0":`Phase ${idx}`}` : null;
+              const V4_LABELS = {"field":"Perception","works-in-progress":"Exploration","action":"Creation","cache":"Memory","atlas":"Intelligence","grace":"Placement","open":"Emergence","art-practice":"Practice","hotel":"Material","clssm":"Source","freedom-embassy":"Governance"};
+              const stepLabel = lastRun.mode && lastRun.mode !== "free"
+                ? lastRun.mode === "v4"
+                  ? V4_LABELS[ak] || null
+                  : `${idx===0&&lastRun.mode==="v3"?"Phase -1/0":idx===0&&lastRun.mode==="v2"?"Phase 0":`Phase ${idx}`}`
+                : null;
               return(
                 <div key={ak} className="rout" style={{opacity:proc?.5:1}}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
