@@ -17,6 +17,7 @@ const NAV = [
     ]},
     { group: "Interfaces", children: [
       { key: "console", label: "Console" },
+      { key: "foa", label: "FOA Generator" },
     ]},
     { group: "Research", children: [
       { key: "backstage", label: "Backstage" },

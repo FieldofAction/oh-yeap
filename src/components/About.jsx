@@ -4,8 +4,8 @@ import { AOM_VERSIONS } from "../data/aom-versions";
 
 /* extract a concise role from each agent's prompt (first sentence after "Your role is") */
 function agentRole(prompt) {
-  const m = prompt.match(/Your role is ([^.]+)/);
-  return m ? m[1] : "";
+  const m = prompt.match(/Your (?:role|orientation) is ([^.—]+)/);
+  return m ? m[1].trim() : "";
 }
 
 export default function About({ theme }) {

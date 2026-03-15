@@ -2,6 +2,7 @@ import React from "react";
 import { FILTERS } from "../data/playbook-data";
 import { PatternChips, AlexanderChips } from "./PatternLens";
 import NetworkGraph from "./NetworkGraph";
+import HeroCycle from "./HeroCycle";
 
 /* ── Hero mode: 1 = Threshold Strip, 2 = Signal Bar, 3 = Ambient Dashboard ── */
 const HERO_MODE = 2;
@@ -54,15 +55,10 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                   <div className="hero-dash-label">Writing</div>
                   <div className="hero-dash-val">Themes of Authoring</div>
                 </div>
-                <div className="hero-dash-cell">
-                  <div className="hero-dash-label">Links</div>
-                  <div className="hero-dash-val hero-links">
-                    <a href="https://fieldofaction.substack.com" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
-                    <a href="https://linkedin.com/in/danieldickson" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
-                  </div>
-                </div>
               </div>
-              <h1 className="hero-h en d2">Designing Structure<br/>for Living Systems</h1>
+              <div className="en d2">
+                <HeroCycle />
+              </div>
             </div>
           )}
 

@@ -125,6 +125,37 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .nowbar em{font-family:var(--display);color:var(--fm);font-size:10px}
 .nowbar span{white-space:nowrap}
 
+/* ── Hero Cycle ── */
+.hc{position:relative;cursor:pointer;min-height:clamp(120px,18vw,220px);display:flex;align-items:flex-end}
+.hc-dots{position:absolute;top:0;right:0;display:flex;gap:6px;z-index:2}
+.hc-dot{width:6px;height:6px;border-radius:50%;border:1px solid var(--ff);background:transparent;cursor:pointer;padding:0;transition:background .3s}
+.hc-dot.on{background:var(--fg)}
+.hc-slide{width:100%;transition:opacity .4s ease,transform .4s ease;opacity:1;transform:translateY(0)}
+.hc-slide.hc-leaving{opacity:0;transform:translateY(8px)}
+.hc-slide.hc-entering{animation:hcIn .4s ease forwards}
+@keyframes hcIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ACTION rebus — stacked rows */
+.hc-action{display:flex;flex-direction:column;gap:0;line-height:.88}
+.hc-action-row{display:flex;gap:0;animation:hcIn .4s ease both}
+.hc-action-letter{font-family:var(--display);font-size:clamp(48px,8vw,96px);font-weight:800;letter-spacing:-.02em;text-transform:uppercase;color:var(--fg);line-height:.88}
+.hc-action-img{-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 200%;animation:hcTex 8s ease infinite alternate}
+@keyframes hcTex{0%{background-position:0% 0%}100%{background-position:100% 100%}}
+
+/* Identity slide */
+.hc-identity{display:flex;flex-direction:column;gap:8px}
+.hc-identity-name{font-family:var(--display);font-size:clamp(36px,6vw,72px);font-weight:500;letter-spacing:-.01em;line-height:1.05;color:var(--fg);margin:0}
+.hc-identity-sub{font-family:var(--sans);font-size:clamp(10px,1.2vw,13px);font-weight:300;letter-spacing:.04em;color:var(--ff);margin:0;text-transform:uppercase}
+
+/* Hero text (structure + push slides) */
+.hc-text{margin:0}
+
+@media(max-width:768px){
+  .hc{min-height:100px}
+  .hc-action-letter{font-size:clamp(36px,12vw,60px)}
+  .hc-identity-name{font-size:clamp(28px,8vw,48px)}
+}
+
 .filters{display:flex;gap:24px;padding:32px 40px 20px;flex-wrap:wrap;max-width:1200px;margin:0 auto}
 @media(max-width:768px){.filters{padding:24px 20px 14px;gap:16px}}
 .fc{font-size:13px;font-weight:400;letter-spacing:.03em;text-transform:uppercase;color:var(--ff);padding:4px 0;cursor:pointer;transition:color .2s,transform .2s;background:none;border:none;font-family:var(--sans);position:relative}
@@ -258,6 +289,13 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .rd-audio-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--fm)}
 .rd-audio-wave{display:flex;align-items:center;gap:1px;height:12px}
 .rd-audio-wave span{display:block;width:2px;background:var(--ff)}
+/* Inline audio player */
+.rd-audio-player{gap:10px;cursor:default}
+.rd-audio-play{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--fm);background:transparent;color:var(--fm);font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:border-color .2s,color .2s;padding:0;line-height:1}
+.rd-audio-play:hover,.rd-audio-play.on{border-color:var(--fg);color:var(--fg)}
+.rd-audio-track{flex:1;height:3px;background:var(--bd);cursor:pointer;position:relative;border-radius:1px}
+.rd-audio-progress{position:absolute;left:0;top:0;height:100%;background:var(--fm);border-radius:1px;transition:width .1s linear}
+.rd-audio-time{font-size:10px;font-family:var(--mono);color:var(--ff);white-space:nowrap;letter-spacing:.02em}
 .rd-artwork{width:calc(100% + 80px);margin-left:-40px;margin-top:40px;margin-bottom:12px;position:relative}
 .rd-artwork-frame{width:100%;background:var(--sf);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
 .rd-artwork-frame img{width:100%;height:auto;display:block}
@@ -1016,7 +1054,9 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 /* ── Global Site Footer (minimal — nav is in sidebar) ── */
 .ft{max-width:1200px;margin:80px auto 0;padding:0 40px}
 .ft-inner{border-top:1px solid var(--bd)}
-.ft-bar{display:flex;justify-content:space-between;font-size:10px;font-weight:400;letter-spacing:.03em;text-transform:uppercase;color:var(--ff);padding:24px 0 48px}
+.ft-bar{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:400;letter-spacing:.03em;text-transform:uppercase;color:var(--ff);padding:24px 0 48px}
+.ft-left{display:flex;align-items:center;gap:8px}
+.ft-mark{opacity:.7;transition:opacity .3s}.ft-mark:hover{opacity:1}
 @media(max-width:768px){.ft{padding:0 20px;margin-top:48px}.ft-bar{padding:20px 0 32px}}
 
 /* ── About Page ── */

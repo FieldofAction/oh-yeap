@@ -1,7 +1,62 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useRef, useState } from "react";
 import { VIS } from "../../data/seed";
 import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
 import VideoEmbed from "../VideoEmbed";
+
+function AudioPlayer({ src, dur }) {
+  const ref = useRef(null);
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [currentTime, setCurrent] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  const toggle = () => {
+    const a = ref.current;
+    if (!a) return;
+    if (playing) { a.pause(); } else { a.play(); }
+    setPlaying(!playing);
+  };
+
+  const onTime = () => {
+    const a = ref.current;
+    if (!a || !a.duration) return;
+    setProgress((a.currentTime / a.duration) * 100);
+    setCurrent(a.currentTime);
+  };
+
+  const onLoaded = () => {
+    if (ref.current?.duration) setDuration(ref.current.duration);
+  };
+
+  const seek = (e) => {
+    const a = ref.current;
+    if (!a || !a.duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    a.currentTime = pct * a.duration;
+  };
+
+  const fmt = (s) => {
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${String(sec).padStart(2, "0")}`;
+  };
+
+  return (
+    <div className="rd-audio-bar rd-audio-player dc dc3">
+      <audio ref={ref} src={src} preload="metadata" onTimeUpdate={onTime} onLoadedMetadata={onLoaded} onEnded={() => setPlaying(false)} />
+      <button className={`rd-audio-play${playing ? " on" : ""}`} onClick={toggle}>
+        {playing ? "❚❚" : "▶"}
+      </button>
+      <div className="rd-audio-track" onClick={seek}>
+        <div className="rd-audio-progress" style={{ width: `${progress}%` }} />
+      </div>
+      <span className="rd-audio-time">
+        {currentTime > 0 ? fmt(currentTime) : "0:00"} / {duration > 0 ? fmt(duration) : dur || "—"}
+      </span>
+    </div>
+  );
+}
 
 export default function WritingDetail({ item, allItems, closing, onClose, onRelation, onOpen, fg, lens, patternLens }) {
   const writings = useMemo(() => allItems.filter(c => c.body && c.status !== "draft"), [allItems]);
@@ -39,7 +94,8 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
           {item.readMin && <><div className="rd-meta-sep" /><span>{item.readMin} min read</span></>}
         </div>
         <p className={`rd-desc${fn} dc dc3`}>{item.desc}</p>
-        {item.audioDur && item.substackUrl && (
+        {item.audioSrc && <AudioPlayer src={item.audioSrc} dur={item.audioDur} />}
+        {!item.audioSrc && item.audioDur && item.substackUrl && (
           <a href={item.substackUrl} target="_blank" rel="noopener noreferrer" className="rd-audio-bar dc dc3" style={{textDecoration:"none",color:"inherit",cursor:"pointer"}}>
             <div className="rd-audio-dot" />
             <div className="rd-audio-wave">

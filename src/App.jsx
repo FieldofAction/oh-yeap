@@ -15,6 +15,7 @@ import Canon from "./components/Canon";
 import PatternLanguage from "./components/PatternLanguage";
 import FieldConsole from "./components/FieldConsole";
 import IncandescantLab from "./components/IncandescantLab";
+import FOAGenerator from "./components/FOAGenerator";
 import { DualLensToggle, DualLensBar } from "./components/PatternLens";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
@@ -161,6 +162,7 @@ export default function App() {
           {view === "console" && <FieldConsole />}
           {view === "lab" && <IncandescantLab asu={asu} />}
           {view === "patterns" && <PatternLanguage content={content} onOpen={openItem} fg={theme.fg} />}
+          {view === "foa" && <FOAGenerator />}
         </main>
 
           <SiteFooter />
@@ -189,7 +191,7 @@ export default function App() {
         <div className="egg-overlay" style={{ position: "fixed", bottom: 20, left: 20, right: 20, zIndex: 200, background: "var(--sf)", border: "1px solid var(--bd)", padding: 20, fontFamily: "var(--sans)", fontSize: 11, color: "var(--fm)", lineHeight: 1.8, maxWidth: 480, animation: "en .3s ease" }}>
           <div style={{ fontSize: 9, fontWeight: 500, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--ff)", marginBottom: 8 }}>System Condition</div>
           <div><strong style={{ color: "var(--fg)" }}>{asu.get_system_condition().condition}</strong> · Reading {asu.get_system_condition().reading} · Building {asu.get_system_condition().building} · At {asu.get_system_condition().working}</div>
-          <div style={{ marginTop: 12, fontSize: 10, color: "var(--ff)" }}>8 agents · {content.length} artifacts · {content.filter(c => c.status === "live").length} live · {lens ? "Model Lens on" : "Model Lens off"} · {patternLens ? "Pattern Lens on" : "Pattern Lens off"}</div>
+          <div style={{ marginTop: 12, fontSize: 10, color: "var(--ff)" }}>11 agents · {content.length} artifacts · {content.filter(c => c.status === "live").length} live · {lens ? "Model Lens on" : "Model Lens off"} · {patternLens ? "Pattern Lens on" : "Pattern Lens off"}</div>
           <div style={{ marginTop: 8, fontSize: 9, color: "var(--ff)", fontWeight: 300 }}>Press ? to close · M for model lens · P for pattern lens · G for connections · Esc to clear</div>
         </div>
       )}
