@@ -410,7 +410,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .ix-wr-feat{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;padding:24px 0}
 .ix-wr-feat-card{cursor:pointer;overflow:hidden;transition:opacity .2s ease}
 .ix-wr-feat-card:hover{opacity:.8}
-.ix-wr-feat-img{width:100%;aspect-ratio:2/1;display:block;background:var(--ac1);border-radius:4px}
+.ix-wr-feat-img{width:100%;aspect-ratio:2/1;display:block;background:var(--sf);border-radius:4px;overflow:hidden}
 .ix-wr-feat-body{padding:12px 0 0}
 .ix-wr-feat-title{font-family:var(--display);font-size:17px;font-weight:600;line-height:1.2;letter-spacing:-0.01em;margin-bottom:4px}
 .ix-wr-feat-sub{font-size:11px;color:var(--fm);line-height:1.4}

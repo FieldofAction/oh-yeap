@@ -230,7 +230,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                     <div className="ix-wr-feat">
                       {featured.map((item, i) => (
                         <div key={item.id} className={`ix-wr-feat-card${showAll ? " en" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.03+i*0.05}s`} : undefined}>
-                          <div className="ix-wr-feat-img" />
+                          <div className="ix-wr-feat-img" style={item.coverImg ? {backgroundImage:`url(${item.coverImg})`,backgroundSize:"cover",backgroundPosition:"center"} : undefined} />
                           <div className="ix-wr-feat-body">
                             <div className="ix-wr-pre">{item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}</div>
                             <div className="ix-wr-feat-title">{item.title}</div>
