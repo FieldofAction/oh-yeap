@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { FILTERS } from "../data/playbook-data";
 import { PatternChips, AlexanderChips } from "./PatternLens";
 import NetworkGraph from "./NetworkGraph";
@@ -6,6 +6,58 @@ import HeroCycle from "./HeroCycle";
 
 /* ── Hero mode: 1 = Threshold Strip, 2 = Signal Bar, 3 = Ambient Dashboard ── */
 const HERO_MODE = 2;
+
+/* ── Extract artwork images from item body for hover preview ── */
+function getPreviewImages(item) {
+  if (!item.body) return [];
+  return item.body
+    .filter(b => b.type === "artwork" && b.src)
+    .map(b => b.src);
+}
+
+/* ── Hover slideshow preview for work cards ── */
+function HoverPreview({ images, fallbackBg }) {
+  const [idx, setIdx] = useState(0);
+  const timer = useRef(null);
+  const [hovering, setHovering] = useState(false);
+
+  useEffect(() => {
+    if (hovering && images.length > 1) {
+      timer.current = setInterval(() => {
+        setIdx(prev => (prev + 1) % images.length);
+      }, 1200);
+    }
+    return () => clearInterval(timer.current);
+  }, [hovering, images.length]);
+
+  const onEnter = useCallback(() => { setHovering(true); setIdx(0); }, []);
+  const onLeave = useCallback(() => { setHovering(false); setIdx(0); clearInterval(timer.current); }, []);
+
+  if (!images.length) {
+    return <div className="ix-preview" style={{ background: fallbackBg }} />;
+  }
+
+  return (
+    <div className="ix-preview ix-preview-live" onMouseEnter={onEnter} onMouseLeave={onLeave}>
+      {images.map((src, i) => (
+        <img
+          key={src}
+          src={src}
+          alt=""
+          className={`ix-preview-img${i === idx ? " on" : ""}`}
+          loading="lazy"
+        />
+      ))}
+      {images.length > 1 && (
+        <div className="ix-preview-dots">
+          {images.map((_, i) => (
+            <span key={i} className={`ix-preview-dot${i === idx ? " on" : ""}`} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens, patternLens, showGraph }) {
   const isHome = filter === "All" && !relFilter;
@@ -158,7 +210,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                         </div>
                         <div className="ix-year">{item.year}</div>
                       </div>
-                      <div className="ix-preview" style={{background:`linear-gradient(135deg, ${theme.ac1}30, ${theme.ac2}20)`}} />
+                      <HoverPreview images={getPreviewImages(item)} fallbackBg={`linear-gradient(135deg, ${theme.ac1}30, ${theme.ac2}20)`} />
                       {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
                       {patternLens && <AlexanderChips itemTitle={item.title} active={patternLens} compact />}
                     </div>

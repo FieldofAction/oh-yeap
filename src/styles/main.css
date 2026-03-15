@@ -396,8 +396,14 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .ix-dot.wip{background:var(--ac2)}.ix-dot.live{background:var(--ac1)}.ix-dot.seed{background:var(--ff)}
 .ix-row:last-child{border-bottom:none}
 /* Hover artwork preview */
-.ix-preview{position:absolute;right:40px;top:50%;transform:translateY(-50%);width:180px;height:120px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;transform:translateY(-50%) translateX(8px)}
+.ix-preview{position:absolute;right:40px;top:50%;transform:translateY(-50%);width:180px;height:120px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;transform:translateY(-50%) translateX(8px);overflow:hidden}
+.ix-preview-live{pointer-events:auto}
 .ix-row:hover .ix-preview{opacity:1;transform:translateY(-50%) translateX(0)}
+.ix-preview-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px;opacity:0;transition:opacity .4s ease}
+.ix-preview-img.on{opacity:1}
+.ix-preview-dots{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:4px;z-index:1}
+.ix-preview-dot{width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.35);transition:background .3s}
+.ix-preview-dot.on{background:rgba(255,255,255,.9)}
 @media(max-width:768px){.ix-row{grid-template-columns:1fr;gap:12px}.ix-right{align-items:flex-start}.ix-tags{justify-content:flex-start}.ix-preview{display:none}}
 
 /* Writing featured tiles — 4-col with cover art */
