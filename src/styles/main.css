@@ -319,14 +319,14 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .rd-related-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--bd);cursor:pointer;transition:color .2s}
 .rd-related-item:hover{color:var(--fg)}
 .rd-related-item:last-child{border-bottom:none}
-.rd-related-title{font-family:var(--display);font-size:18px;font-weight:600
+.rd-related-title{font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:-0.01em}
 .rd-related-sub{font-size:11px;color:var(--ff);letter-spacing:.01em}
 .rd-nav{display:flex;justify-content:space-between;margin-top:64px;padding-top:32px;border-top:1px solid var(--bd)}
 .rd-nav-btn{font-size:10px;font-weight:400;letter-spacing:.03em;text-transform:uppercase;color:var(--fm);cursor:pointer;transition:color .2s;background:none;border:none;font-family:var(--sans);padding:8px 0;display:flex;flex-direction:column;gap:4px;max-width:45%}
 .rd-nav-btn:hover{color:var(--fg)}
 .rd-nav-btn.next{text-align:right;align-items:flex-end}
 .rd-nav-label{font-size:9px;letter-spacing:.03em;color:var(--ff)}
-.rd-nav-title{font-family:var(--display);font-size:16px;font-weight:600;letter-spacing:-0.01em
+.rd-nav-title{font-family:var(--display);font-size:16px;font-weight:600;letter-spacing:-0.01em}
 
 /* ── Practice Rows (Metalab-style) ── */
 .prow{display:flex;align-items:center;gap:24px;padding:20px 0;border-bottom:1px solid var(--bd);cursor:pointer;transition:transform .3s ease,box-shadow .3s ease,border-color .3s;max-width:1200px;margin:0 auto;position:relative;overflow:hidden}
