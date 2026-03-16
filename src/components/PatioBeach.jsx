@@ -152,15 +152,15 @@ const CLUSTER_A = [
   "media/posts/201804/17939689354009499.jpg",
   "media/posts/201804/17908504351162607.jpg",
   "media/posts/201804/17866282903230045.jpg",
-  "media/posts/201805/17949781765060375.jpg",
-  "media/posts/201806/17929735133087025.jpg",
-  "media/posts/201807/17939265459016997.jpg",
+  "media/posts/201805/17842029628275231.jpg",
+  "media/posts/201806/17854705888269236.jpg",
+  "media/posts/201807/17843682085281889.jpg",
 ];
 const CLUSTER_B = [
-  "media/posts/201809/17960019006079193.jpg",
-  "media/posts/201810/17980988095020009.jpg",
-  "media/posts/201811/17992103063085685.jpg",
-  "media/posts/201901/18013316671115107.jpg",
+  "media/posts/201809/17869478800273583.jpg",
+  "media/posts/201810/17889745252270730.jpg",
+  "media/posts/201811/17864431423288942.jpg",
+  "media/posts/201901/17842094581343828.jpg",
 ];
 
 function ImageCard({ src, index, onClick, isMulti, by, caption }) {
@@ -322,7 +322,7 @@ export default function PatioBeach() {
             <p className="pb-narr-body">This project began as a simple act of noticing.</p>
             <p className="pb-narr-body">For a few years I walked my son Mathis to preschool along the same route each morning. Park Slope to Gowanus in Brooklyn. Along the way I'd whip out my iPhone or my Fujifilm X100 and photograph objects that had been left behind: broken furniture, lost toys, crushed packaging, forgotten tools, and empty alcohol containers. Honestly, it felt like a wild party happened after dark. But every night. Chaos!</p>
             <p className="pb-narr-body">One of the first images I took was of me in a thrown-out mirror. Funny looking back on it now. But it snowballed from there. At first it felt like a small curiosity or a way to sharpen my eye. Over time I realized the documenting was fun. New York is a dirty city. Lots of garbage and all types. Large and small. People throw away anything. The quiet life of things the city had decided it no longer needed. And perhaps the things we decide are the same about ourselves.</p>
-            <p className="pb-narr-body">I was not the first person to discover the hidden material of refuse. I'm reminded of Justin Gignac's <em>Garbage for Sale</em>, Young Blanks' legendary <em>Periodical Table of Trash</em>, and the <em>Noah Purifoy Outdoor Desert Art Museum</em> in Joshua Tree, a 10-acre open-air gallery featuring over 100 large-scale assemblage sculptures created from found desert, household, and industrial junk. Each person brings their own perspective. It hits everyone differently.</p>
+            <p className="pb-narr-body">I was not the first person to discover the hidden material of refuse. I'm reminded of Justin Gignac's <a href="https://www.nycgarbage.com/" target="_blank" rel="noopener noreferrer">Garbage for Sale</a>, Young Blanks' legendary <a href="https://www.youngblanks.com/periodical-table-of-trash" target="_blank" rel="noopener noreferrer">Periodical Table of Trash</a>, and the <a href="https://www.noahpurifoy.com/" target="_blank" rel="noopener noreferrer">Noah Purifoy Outdoor Desert Art Museum</a> in Joshua Tree, a 10-acre open-air gallery featuring over 100 large-scale assemblage sculptures created from found desert, household, and industrial junk. Each person brings their own perspective. It hits everyone differently.</p>
           </NarrativeSection>
 
           {/* Photo cluster */}
