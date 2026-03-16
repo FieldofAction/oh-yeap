@@ -88,7 +88,10 @@ export default function Superconscious() {
       {/* Context */}
       <section className="sc-narrative">
         <p className="sc-narr-body">
-          These drawings came out of wanting to anchor myself — to not be thrown into the new cycle. This was one of few techniques I created to reveal the subconscious. What started to happen is that I became aware of the conscious and subconscious simultaneously. Superconscious.
+          Over time something shifted. I stopped toggling between awareness and instinct and began holding both at once — conscious of the mark being made while simultaneously surrendering to what wanted to emerge. The drawings became a record of that state. Not conscious. Not subconscious. Superconscious.
+        </p>
+        <p className="sc-narr-body">
+          These drawings came out of wanting to anchor myself — to not be thrown into the news cycle. Between 2019 and 2025, the world kept accelerating. Information, crisis, opinion — an endless loop designed to pull you out of yourself. I needed a practice that could hold me in place. Something slower than thought. Something the body could lead.
         </p>
         <p className="sc-narr-meta">
           Monoline white paint on black 9 × 11″ archival paper · 126 drawings · Showing 115
