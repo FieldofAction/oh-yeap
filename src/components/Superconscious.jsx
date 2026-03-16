@@ -94,7 +94,7 @@ export default function Superconscious() {
           They came out of a desire to anchor myself. To resist being pulled into the churn of the news cycle. Between 2019 and 2025 the world kept accelerating. Information, crisis, and opinion. An endless loop designed to pull you out of yourself. This practice allowed a hold in place. Something slower than thought. Something the body could lead.
         </p>
         <p className="sc-narr-meta">
-          Monoline white paint on black 9 × 11″ archival paper · 126 drawings · Showing 115
+          Monoline white paint on black 9 × 11″ archival paper · 400 drawings · Showing 115
         </p>
       </section>
 
