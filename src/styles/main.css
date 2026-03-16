@@ -752,7 +752,12 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .pb-card-media{width:100%;height:100%;object-fit:cover;display:block;transition:opacity .5s ease,transform .4s ease}
 .pb-card-img:hover{transform:scale(1.04)}
 .pb-card-err{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--ff);font-size:10px}
-.pb-card-multi{position:absolute;top:8px;right:8px;color:var(--fm);font-size:9px;font-weight:500;letter-spacing:0.04em;background:rgba(0,0,0,0.5);padding:2px 5px}
+.pb-card-multi{position:absolute;top:8px;right:8px;color:rgba(255,255,255,0.8);font-size:9px;font-weight:500;letter-spacing:0.04em;background:rgba(0,0,0,0.5);padding:2px 5px}
+.pb-card-by{position:absolute;bottom:6px;left:6px;font-size:8px;font-weight:500;letter-spacing:0.04em;color:rgba(255,255,255,0.85);background:rgba(0,0,0,0.55);padding:2px 6px;opacity:0;transition:opacity .3s}
+.pb-card:hover .pb-card-by{opacity:1}
+.pb-card-hover{position:absolute;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:flex-end;padding:10px;opacity:0;transition:opacity .3s;pointer-events:none}
+.pb-card:hover .pb-card-hover{opacity:1}
+.pb-card-hover span{font-size:9px;font-weight:400;color:rgba(255,255,255,0.85);line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .pb-empty{text-align:center;padding:60px 0;color:var(--ff);font-size:11px;letter-spacing:0.08em;text-transform:uppercase}
 /* lightbox */
 .pb-lightbox{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.94);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:zoom-out;font-family:var(--sans)}
