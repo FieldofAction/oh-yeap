@@ -33,203 +33,49 @@ Each object must have exactly these keys:
 - "authority": string (2 lines, all caps, newline separated with \\n)
 - "temporal": string (short activation phrase, all caps)`;
 
-const COLORS = [
-  { bg: "#0a0a0a", text: "#f0f0f0", accent: "#FFE500", border: "#333" },
-  { bg: "#f5f0e8", text: "#1a1a1a", accent: "#CC2200", border: "#1a1a1a" },
-  { bg: "#0d1117", text: "#c9d1d9", accent: "#58a6ff", border: "#30363d" },
-  { bg: "#1a1a1a", text: "#e8e8e8", accent: "#FF6B35", border: "#444" },
-  { bg: "#f0f0f0", text: "#111111", accent: "#0066FF", border: "#111" },
-  { bg: "#0a0a14", text: "#e8e0ff", accent: "#9B59B6", border: "#2d2d4e" },
-  { bg: "#141414", text: "#d4f5d4", accent: "#00FF88", border: "#2a4a2a" },
-  { bg: "#1a0a00", text: "#f5e6cc", accent: "#FF9900", border: "#4a2a00" },
-];
-
 function ArtifactCard({ artifact, index, isNew }) {
-  const colors = COLORS[index % COLORS.length];
   const thesis = artifact.thesis?.split("\\n") || [];
   const orientation = artifact.orientation?.split("\\n") || [];
   const authority = artifact.authority?.split("\\n") || [];
   const signalWords = artifact.signal?.split(" ") || [];
 
   return (
-    <div
-      style={{
-        backgroundColor: colors.bg,
-        color: colors.text,
-        border: `1px solid ${colors.border}`,
-        padding: "32px",
-        fontFamily: "'IBM Plex Mono', 'Courier New', monospace",
-        position: "relative",
-        animation: isNew ? "fadeSlideIn 0.5s ease forwards" : "none",
-        animationDelay: `${index * 0.07}s`,
-        opacity: isNew ? 0 : 1,
-        overflow: "hidden",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          top: "12px",
-          right: "16px",
-          fontSize: "10px",
-          opacity: 0.4,
-          letterSpacing: "0.15em",
-        }}
-      >
+    <div className={`fg-card${isNew ? " fg-card-in" : ""}`} style={{ animationDelay: `${index * 0.07}s` }}>
+      <div className="fg-card-idx">
         {String(index + 1).padStart(2, "0")} / 08
       </div>
 
-      <div
-        style={{
-          fontSize: "9px",
-          letterSpacing: "0.2em",
-          opacity: 0.6,
-          marginBottom: "6px",
-          color: colors.accent,
-        }}
-      >
-        {artifact.metadata}
-      </div>
-      <div
-        style={{
-          fontSize: "8px",
-          letterSpacing: "0.25em",
-          opacity: 0.45,
-          marginBottom: "28px",
-          borderBottom: `1px solid ${colors.border}`,
-          paddingBottom: "12px",
-        }}
-      >
-        {artifact.label}
+      <div className="fg-card-meta">{artifact.metadata}</div>
+      <div className="fg-card-label">{artifact.label}</div>
+
+      <div className="fg-card-thesis">
+        {thesis.map((line, i) => <div key={i}>{line}</div>)}
       </div>
 
-      <div style={{ marginBottom: "28px" }}>
-        {thesis.map((line, i) => (
-          <div
-            key={i}
-            style={{
-              fontSize: "18px",
-              fontWeight: "700",
-              letterSpacing: "0.05em",
-              lineHeight: "1.2",
-              fontFamily: "'IBM Plex Mono', monospace",
-            }}
-          >
-            {line}
-          </div>
-        ))}
-      </div>
-
-      <div
-        style={{
-          marginBottom: "28px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "2px",
-        }}
-      >
+      <div className="fg-card-signal">
         {signalWords.map((word, i) => (
-          <div
-            key={i}
-            style={{
-              fontSize: "28px",
-              fontWeight: "900",
-              letterSpacing: "0.12em",
-              color: colors.accent,
-              lineHeight: "1",
-              opacity: 1 - i * 0.2,
-            }}
-          >
-            {word}
-          </div>
+          <div key={i} style={{ opacity: 1 - i * 0.2 }}>{word}</div>
         ))}
       </div>
 
-      <div
-        style={{
-          borderTop: `1px solid ${colors.border}`,
-          marginBottom: "20px",
-          opacity: 0.5,
-        }}
-      />
+      <div className="fg-card-divider" />
 
-      <div style={{ marginBottom: "28px" }}>
-        <div
-          style={{
-            fontSize: "8px",
-            letterSpacing: "0.2em",
-            opacity: 0.4,
-            marginBottom: "8px",
-          }}
-        >
-          ✺
-        </div>
+      <div className="fg-card-orient">
+        <div className="fg-card-orient-mark">✺</div>
         {orientation.map((line, i) => (
-          <div
-            key={i}
-            style={{
-              fontSize: "11px",
-              letterSpacing: "0.1em",
-              lineHeight: "1.7",
-              fontStyle: /[a-z]/.test(line) ? "italic" : "normal",
-              opacity: 0.85,
-            }}
-          >
-            {line}
-          </div>
+          <div key={i} style={{ fontStyle: /[a-z]/.test(line) ? "italic" : "normal" }}>{line}</div>
         ))}
       </div>
 
-      <div
-        style={{
-          borderTop: `1px solid ${colors.border}`,
-          paddingTop: "16px",
-          marginBottom: "16px",
-        }}
-      >
+      <div className="fg-card-auth">
         {authority.map((line, i) => (
-          <div
-            key={i}
-            style={{
-              fontSize: i === 0 ? "11px" : "8px",
-              letterSpacing: "0.2em",
-              opacity: i === 0 ? 0.9 : 0.5,
-              fontWeight: i === 0 ? "600" : "400",
-              lineHeight: "1.5",
-            }}
-          >
-            {line}
-          </div>
+          <div key={i} className={i === 0 ? "fg-auth-primary" : "fg-auth-secondary"}>{line}</div>
         ))}
       </div>
 
-      <div
-        style={{
-          borderTop: `1px solid ${colors.border}`,
-          paddingTop: "12px",
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-        }}
-      >
-        <div
-          style={{
-            width: "6px",
-            height: "6px",
-            backgroundColor: colors.accent,
-            borderRadius: "50%",
-          }}
-        />
-        <div
-          style={{
-            fontSize: "9px",
-            letterSpacing: "0.25em",
-            color: colors.accent,
-            fontWeight: "700",
-          }}
-        >
-          {artifact.temporal}
-        </div>
+      <div className="fg-card-temporal">
+        <div className="fg-temporal-dot" />
+        <span>{artifact.temporal}</span>
       </div>
     </div>
   );
@@ -293,220 +139,58 @@ export default function FOAGenerator() {
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#080808",
-        color: "#e0e0e0",
-        fontFamily: "'IBM Plex Mono', 'Courier New', monospace",
-      }}
-    >
-      <style>{`
-        @keyframes fadeSlideIn {
-          from { opacity: 0; transform: translateY(12px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes pulse {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.4; }
-        }
-        .foa-textarea:focus { outline: none; }
-        .foa-textarea::placeholder { color: #444; }
-      `}</style>
-
+    <div className="fg en">
       {/* Header */}
-      <div
-        style={{
-          borderBottom: "1px solid #1e1e1e",
-          padding: "24px 40px",
-          display: "flex",
-          alignItems: "baseline",
-          justifyContent: "space-between",
-        }}
-      >
+      <div className="fg-header">
         <div>
-          <div
-            style={{
-              fontSize: "9px",
-              letterSpacing: "0.3em",
-              color: "#FFE500",
-              marginBottom: "4px",
-            }}
-          >
-            FOA.SYSTEM / ARTIFACT GENERATOR
-          </div>
-          <div
-            style={{
-              fontSize: "11px",
-              letterSpacing: "0.15em",
-              opacity: 0.4,
-            }}
-          >
-            FIELD OF ACTION — RELATIONAL DESIGN PRACTICE
-          </div>
+          <div className="fg-header-label">Artifact Generator</div>
+          <div className="fg-header-sub">Field of Action — Relational Design Practice</div>
         </div>
-        <div
-          style={{
-            fontSize: "9px",
-            letterSpacing: "0.2em",
-            opacity: 0.25,
-          }}
-        >
-          V.02 / 2026
-        </div>
+        <div className="fg-header-ver">V.02 / 2026</div>
       </div>
 
       {/* Input Zone */}
-      <div
-        style={{
-          padding: "40px",
-          borderBottom: "1px solid #1e1e1e",
-          maxWidth: "680px",
-        }}
-      >
-        <div
-          style={{
-            fontSize: "8px",
-            letterSpacing: "0.25em",
-            color: "#FFE500",
-            marginBottom: "12px",
-            opacity: 0.8,
-          }}
-        >
-          INPUT IDEA
-        </div>
+      <div className="fg-input-zone">
+        <div className="fg-input-label">Input Idea</div>
         <textarea
           ref={textareaRef}
-          className="foa-textarea"
+          className="fg-textarea"
           value={idea}
           onChange={(e) => setIdea(e.target.value)}
           onKeyDown={handleKey}
           placeholder="Enter your idea here..."
           rows={3}
-          style={{
-            width: "100%",
-            backgroundColor: "transparent",
-            border: "none",
-            borderBottom: "1px solid #2a2a2a",
-            color: "#e0e0e0",
-            fontSize: "22px",
-            fontFamily: "'IBM Plex Mono', monospace",
-            fontWeight: "600",
-            letterSpacing: "0.03em",
-            lineHeight: "1.4",
-            resize: "none",
-            padding: "0 0 16px 0",
-            boxSizing: "border-box",
-          }}
         />
-        <div
-          style={{
-            marginTop: "20px",
-            display: "flex",
-            alignItems: "center",
-            gap: "24px",
-          }}
-        >
+        <div className="fg-input-actions">
           <button
+            className={`fg-btn${loading ? " fg-btn-loading" : ""}`}
             onClick={generate}
             disabled={loading || !idea.trim()}
-            style={{
-              backgroundColor: loading ? "#222" : "#FFE500",
-              color: loading ? "#555" : "#000",
-              border: "none",
-              padding: "12px 28px",
-              fontSize: "9px",
-              letterSpacing: "0.3em",
-              fontWeight: "700",
-              fontFamily: "'IBM Plex Mono', monospace",
-              cursor: loading || !idea.trim() ? "not-allowed" : "pointer",
-              transition: "all 0.15s",
-            }}
           >
-            {loading ? "GENERATING..." : "GENERATE ARTIFACTS"}
+            {loading ? "Generating..." : "Generate Artifacts"}
           </button>
-          <div
-            style={{
-              fontSize: "8px",
-              letterSpacing: "0.15em",
-              opacity: 0.3,
-            }}
-          >
-            ⌘ + ENTER
-          </div>
+          <span className="fg-shortcut">⌘ + Enter</span>
         </div>
         {loading && (
-          <div
-            style={{
-              marginTop: "24px",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-            }}
-          >
-            <div
-              style={{
-                width: "5px",
-                height: "5px",
-                backgroundColor: "#FFE500",
-                borderRadius: "50%",
-                animation: "pulse 1s infinite",
-              }}
-            />
-            <div
-              style={{
-                fontSize: "8px",
-                letterSpacing: "0.25em",
-                color: "#FFE500",
-                opacity: 0.7,
-              }}
-            >
-              FIELD ACTIVATION IN PROGRESS
-            </div>
+          <div className="fg-status">
+            <div className="fg-status-dot" />
+            <span>Field activation in progress</span>
           </div>
         )}
         {error && (
-          <div
-            style={{
-              marginTop: "16px",
-              fontSize: "9px",
-              letterSpacing: "0.15em",
-              color: "#CC2200",
-            }}
-          >
-            ERROR: {error}
-          </div>
+          <div className="fg-error">Error: {error}</div>
         )}
       </div>
 
       {/* Artifacts Grid */}
       {artifacts.length > 0 && (
-        <div style={{ padding: "40px" }}>
-          <div
-            style={{
-              fontSize: "8px",
-              letterSpacing: "0.25em",
-              color: "#FFE500",
-              marginBottom: "28px",
-              opacity: 0.7,
-            }}
-          >
-            ARTIFACT OUTPUT — {artifacts.length} SIGNALS GENERATED
+        <div className="fg-output">
+          <div className="fg-output-label">
+            Artifact Output — {artifacts.length} signals generated
           </div>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-              gap: "2px",
-            }}
-          >
+          <div className="fg-grid">
             {artifacts.map((artifact, i) => (
-              <ArtifactCard
-                key={i}
-                artifact={artifact}
-                index={i}
-                isNew={isNew}
-              />
+              <ArtifactCard key={i} artifact={artifact} index={i} isNew={isNew} />
             ))}
           </div>
         </div>
@@ -514,31 +198,9 @@ export default function FOAGenerator() {
 
       {/* Empty state */}
       {artifacts.length === 0 && !loading && (
-        <div
-          style={{
-            padding: "80px 40px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            opacity: 0.2,
-            textAlign: "center",
-            gap: "16px",
-          }}
-        >
-          <div
-            style={{
-              fontSize: "48px",
-              fontWeight: "900",
-              letterSpacing: "0.2em",
-              lineHeight: "1",
-            }}
-          >
-            ✺
-          </div>
-          <div style={{ fontSize: "9px", letterSpacing: "0.3em" }}>
-            ENTER AN IDEA TO BEGIN
-          </div>
+        <div className="fg-empty">
+          <div className="fg-empty-glyph">✺</div>
+          <div className="fg-empty-text">Enter an idea to begin</div>
         </div>
       )}
     </div>

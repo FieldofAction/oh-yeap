@@ -16,6 +16,7 @@ import PatternLanguage from "./components/PatternLanguage";
 import FieldConsole from "./components/FieldConsole";
 import IncandescantLab from "./components/IncandescantLab";
 import FOAGenerator from "./components/FOAGenerator";
+import PatioBeach from "./components/PatioBeach";
 import { DualLensToggle, DualLensBar } from "./components/PatternLens";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
@@ -163,6 +164,7 @@ export default function App() {
           {view === "lab" && <IncandescantLab asu={asu} />}
           {view === "patterns" && <PatternLanguage content={content} onOpen={openItem} fg={theme.fg} />}
           {view === "foa" && <FOAGenerator />}
+          {view === "patiobeach" && <PatioBeach />}
         </main>
 
           <SiteFooter />
