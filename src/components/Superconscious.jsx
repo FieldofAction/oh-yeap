@@ -88,10 +88,10 @@ export default function Superconscious() {
       {/* Context */}
       <section className="sc-narrative">
         <p className="sc-narr-body">
-          Over time something shifted. I stopped toggling between awareness and instinct and began holding both at once. Conscious of the mark being made while simultaneously surrendering to what wanted to emerge. The drawings became a record of that state. Not conscious. Not subconscious. Superconscious.
+          Over time something shifted. I stopped toggling between awareness and instinct and began holding both at once. Conscious of the mark being made while simultaneously surrendering to what wanted to emerge. The drawings became a record of that state. Conscious and Subconscious at once. Superconscious.
         </p>
         <p className="sc-narr-body">
-          These drawings came out of wanting to anchor myself. To not be thrown into the news cycle. Between 2019 and 2025, the world kept accelerating. Information, crisis, opinion. An endless loop designed to pull you out of yourself. I needed a practice that could hold me in place. Something slower than thought. Something the body could lead.
+          They came out of a desire to anchor myself. To resist being pulled into the churn of the news cycle. Between 2019 and 2025 the world kept accelerating. Information, crisis, and opinion. An endless loop designed to pull you out of yourself. This practice allowed a hold in place. Something slower than thought. Something the body could lead.
         </p>
         <p className="sc-narr-meta">
           Monoline white paint on black 9 × 11″ archival paper · 126 drawings · Showing 115
