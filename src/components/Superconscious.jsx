@@ -24,12 +24,13 @@ function Lightbox({ drawings, index, onClose, onNav }) {
         className="sc-lb-arrow sc-lb-prev"
       >&#8249;</button>
 
-      <img
-        src={d.full}
-        alt={`Drawing ${d.id}`}
-        onClick={(e) => e.stopPropagation()}
-        className="sc-lb-media"
-      />
+      <div className="sc-lb-crop" onClick={(e) => e.stopPropagation()}>
+        <img
+          src={d.full}
+          alt={`Drawing ${d.id}`}
+          className="sc-lb-media"
+        />
+      </div>
 
       <button
         onClick={(e) => { e.stopPropagation(); onNav(1); }}
