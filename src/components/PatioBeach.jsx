@@ -398,7 +398,7 @@ export default function PatioBeach() {
 
           {/* 7. Nest */}
           <NarrativeSection label="Nest">
-            <p className="pb-narr-body">Over time more than 500 photographs accumulated. Each one a fragment. A small record of something discarded. Together they form something else entirely. A nest built from the overlooked pieces of the city. Not as an archive of trash, but as a meditation on attention. The beauty, tension, and meaning hidden inside what we usually walk past. Because what we discard, ignore, or hide often tells the most honest story about who we are.</p>
+            <p className="pb-narr-body">Over time more than 500 photographs accumulated. Each one a fragment. A small record of something discarded. Together they form something else entirely. A nest built from the overlooked pieces of the city. Not as an archive of trash, but as a meditation on attention. The beauty, tension, and meaning hidden inside what we usually walk past. <strong>Because what we discard, ignore, or hide often tells the most honest story about who we are.</strong></p>
           </NarrativeSection>
 
           {/* CTA to archive */}
