@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 const MONTHS = {
   "2018-04": {
     label: "April 2018",
@@ -195,7 +196,7 @@ function Lightbox({ post, imageIndex, onClose, onNext, onPrev, onImageNav }) {
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [onClose, onNext, onPrev, imageIndex, onImageNav, post.i.length]);
-  return (
+  return createPortal(
     <div onClick={onClose} className="pb-lightbox">
       <button onClick={e=>{e.stopPropagation();onPrev();}} className="pb-lb-arrow pb-lb-prev">&#8249;</button>
       {isVideo ? (
@@ -217,7 +218,8 @@ function Lightbox({ post, imageIndex, onClose, onNext, onPrev, onImageNav }) {
       </div>
       <button onClick={e=>{e.stopPropagation();onNext();}} className="pb-lb-arrow pb-lb-next">&#8250;</button>
       <button onClick={onClose} className="pb-lb-close">&#10005;</button>
-    </div>
+    </div>,
+    document.body
   );
 }
 
