@@ -6,10 +6,10 @@ export default function Card({ item, delay, fg, onRelation, onOpen }) {
   const vi = useMemo(() => VIS[Math.abs(item.title.charCodeAt(0)) % VIS.length](fg), [item.title, fg]);
   return (
     <div className="card en" style={{ animationDelay: `${0.1+delay*0.06}s` }} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)} onClick={()=>onOpen(item)}>
-      {(item.hasVisual || item.coverImg) && (
+      {(item.hasVisual || item.cardImg || item.coverImg) && (
         <div className="card-v" style={{position:"relative"}}>
-          {item.coverImg ? (
-            <img src={item.coverImg} alt={item.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+          {(item.cardImg || item.coverImg) ? (
+            <img src={item.cardImg || item.coverImg} alt={item.title} style={{ width:"100%", height:"100%", objectFit:"cover" }} />
           ) : (
             <div dangerouslySetInnerHTML={{ __html: vi }} style={{ width:"100%", height:"100%" }} />
           )}

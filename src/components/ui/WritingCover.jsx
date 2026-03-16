@@ -9,8 +9,8 @@ export default function WritingCover({ item, delay, fg, onOpen }) {
       <div className="wr-cover-art">
         <div className={`wr-cover-stripe ${isMemo?"memo":"fn"}`} />
         <div className="wr-cover-img-zone">
-          {item.coverImg ? (
-            <img src={item.coverImg} alt={item.title} className="wr-cover-img" />
+          {(item.cardImg || item.coverImg) ? (
+            <img src={item.cardImg || item.coverImg} alt={item.title} className="wr-cover-img" />
           ) : (
             <div dangerouslySetInnerHTML={{ __html: vi }} className="wr-cover-vis" />
           )}
