@@ -318,12 +318,11 @@ export default function PatioBeach() {
         <div className="pb-narrative">
           {/* 1. Opening — The Premise */}
           <NarrativeSection>
-            <p className="pb-narr-lead">Discarded things have stories.</p>
+            <p className="pb-narr-lead">Discarded things have meaning.</p>
             <p className="pb-narr-body">This project began as a simple act of noticing.</p>
-            <p className="pb-narr-body">For several years I walked my son Mathis to preschool along the same route each morning — from Park Slope to Gowanus, Brooklyn. Along the way I began photographing objects that had been left behind: broken furniture, lost toys, crushed packaging, forgotten tools.</p>
-            <p className="pb-narr-body">At first it felt like a small curiosity.</p>
-            <p className="pb-narr-body">Over time I realized I was documenting something deeper — the quiet life of things the city had decided it no longer needed.</p>
-            <p className="pb-narr-body">And perhaps the things we decide the same about ourselves.</p>
+            <p className="pb-narr-body">For a few years I walked my son Mathis to preschool along the same route each morning. Park Slope to Gowanus in Brooklyn. Along the way I'd whip out my iPhone or my Fujifilm X100 and photograph objects that had been left behind: broken furniture, lost toys, crushed packaging, forgotten tools, and empty alcohol containers. Honestly, it felt like a wild party happened after dark. But every night. Chaos!</p>
+            <p className="pb-narr-body">One of the first images I took was of me in a thrown-out mirror. Funny looking back on it now. But it snowballed from there. At first it felt like a small curiosity or a way to sharpen my eye. Over time I realized the documenting was fun. New York is a dirty city. Lots of garbage and all types. Large and small. People throw away anything. The quiet life of things the city had decided it no longer needed. And perhaps the things we decide are the same about ourselves.</p>
+            <p className="pb-narr-body">I was not the first person to discover the hidden material of refuse. I'm reminded of Justin Gignac's <em>Garbage for Sale</em>, Young Blanks' legendary <em>Periodical Table of Trash</em>, and the <em>Noah Purifoy Outdoor Desert Art Museum</em> in Joshua Tree, a 10-acre open-air gallery featuring over 100 large-scale assemblage sculptures created from found desert, household, and industrial junk. Each person brings their own perspective. It hits everyone differently.</p>
           </NarrativeSection>
 
           {/* Photo cluster */}
@@ -331,16 +330,14 @@ export default function PatioBeach() {
 
           {/* 2. The Route */}
           <NarrativeSection label="The Route">
-            <p className="pb-narr-body">Every photograph in this project was taken along a short daily walk.</p>
+            <p className="pb-narr-body">The first several photos were taken along a short daily walk. Way before I knew it was anything. As time passed I branched out.</p>
             <p className="pb-narr-route">Park Slope → Gowanus</p>
             <p className="pb-narr-body pb-narr-quiet">A distance of less than two miles.</p>
 
             {/* Route map */}
-            <a href="https://www.google.com/maps/dir/302+5th+St,+Brooklyn,+NY+11215/Rivendell+School,+277+3rd+Ave,+Brooklyn,+NY+11215/@40.6742413,-73.9887454,17z" target="_blank" rel="noopener noreferrer" className="pb-route-map">
-              <div className="pb-route-map-inner">
-                <div className="pb-route-pin pb-route-pin-a">A</div>
-                <div className="pb-route-line" />
-                <div className="pb-route-pin pb-route-pin-b">B</div>
+            <a href="https://maps.app.goo.gl/doCvsJgNw5pvPuG89" target="_blank" rel="noopener noreferrer" className="pb-route-map">
+              <div className="pb-route-img">
+                <img src="media/nest/route-map.png" alt="Walking route from 302 5th St to Rivendell School, Park Slope to Gowanus" />
               </div>
               <div className="pb-route-labels">
                 <div className="pb-route-place">
@@ -352,24 +349,20 @@ export default function PatioBeach() {
                   <span className="pb-route-place-hood">277 3rd Ave, Gowanus</span>
                 </div>
               </div>
-              <div className="pb-route-meta">View route on Google Maps ↗</div>
+              <div className="pb-route-meta">
+                0.5 mi · 11 min walk · Open in Google Maps ↗
+              </div>
             </a>
 
-            <p className="pb-narr-body">What began as a routine gradually became a ritual.</p>
-            <p className="pb-narr-body">Walking the same streets every day created a kind of visual awareness. Small details surfaced. Patterns emerged. The ordinary started to feel like a field of signals.</p>
-            <p className="pb-narr-body">This route became the only space in my life at the time where I created purely from curiosity.</p>
-            <p className="pb-narr-body pb-narr-quiet">No brief. No client. No outcome required.</p>
-            <p className="pb-narr-body">Just attention.</p>
+            <p className="pb-narr-body">What began as a routine gradually became a ritual. Walking the same streets every day created a kind of visual awareness. Small details surfaced. Patterns emerged. The ordinary started to feel like signals.</p>
+            <p className="pb-narr-body">This route became the only space in my life at the time where I created purely from curiosity. No brief. No client. No outcome required.</p>
           </NarrativeSection>
 
           {/* 3. Gowanus */}
           <NarrativeSection label="Gowanus">
-            <p className="pb-narr-body">Many of the photographs were taken near the Gowanus Canal.</p>
-            <p className="pb-narr-body pb-narr-quiet">One of the most polluted waterways in America.</p>
-            <p className="pb-narr-body">For over a century the canal absorbed the industrial byproducts of New York — chemicals, waste, residue from manufacturing and shipping. Today it is a designated Superfund site, a place where the past remains visible in the environment.</p>
-            <p className="pb-narr-body">Walking along its edges each day, the objects I found began to feel less random.</p>
-            <p className="pb-narr-body">They felt like artifacts of the city's shadow.</p>
-            <p className="pb-narr-body pb-narr-quiet">Things removed from sight so the surface of life could appear clean and orderly.</p>
+            <p className="pb-narr-body">Many of the early photographs were taken near the Gowanus Canal. One of the most polluted waterways in America.</p>
+            <p className="pb-narr-body">For over a century the canal absorbed the industrial byproducts of New York: chemicals, waste, residue from manufacturing and shipping. Today it is a designated Superfund site, a place where the past remains visible in the environment.</p>
+            <p className="pb-narr-body">Walking along its edges each day, the objects I found began to feel less random. They felt like artifacts of the city's shadow. Things removed from sight so the surface of life could appear clean and orderly.</p>
           </NarrativeSection>
 
           {/* Photo cluster */}
@@ -377,36 +370,27 @@ export default function PatioBeach() {
 
           {/* 4. The Shadow */}
           <NarrativeSection label="The Shadow">
-            <p className="pb-narr-body">At some point I realized the photographs were not only about the city.</p>
-            <p className="pb-narr-body">They were also about me.</p>
-            <p className="pb-narr-body">The discarded objects reflected something internal — the parts of ourselves we quietly set aside because they no longer match the image we want to project.</p>
-            <p className="pb-narr-body pb-narr-quiet">Broken things. Unfinished things. Things that once mattered but were left behind.</p>
-            <p className="pb-narr-body">Carl Jung described this as the shadow — the hidden aspects of identity we ignore or suppress.</p>
-            <p className="pb-narr-body">The streets were full of it.</p>
-            <p className="pb-narr-body">And so was I.</p>
+            <p className="pb-narr-body">At some point I realized the photographs were not only about the city. They were also about me.</p>
+            <p className="pb-narr-body">It wasn't until I lost interest in the project that the real tension surfaced. I had so many photos and wanted to make something of them, maybe a book. But the photos had lost their appeal. They weren't beautiful in any conventional sense. I struggled with how or what to do with them. And that was the point. The photos were ugly, and in those moments I was able to see and connect with my uglier sides.</p>
+            <p className="pb-narr-body">The discarded objects reflected something internal. The parts of ourselves we quietly set aside because they no longer match the image we want to project. Broken things. Unfinished things. Things that once mattered but were left behind.</p>
+            <p className="pb-narr-body">Carl Jung described this as the shadow: the hidden aspects of identity we ignore or suppress. The streets were full of it. And so was I.</p>
           </NarrativeSection>
 
           {/* 5. The Bowerbird */}
           <NarrativeSection label="The Bowerbird">
-            <p className="pb-narr-body">Around this same time I learned about the bowerbird.</p>
-            <p className="pb-narr-body">A small bird known for building elaborate nests from objects it collects from the forest floor — flowers, shells, pieces of glass, bits of plastic, anything colorful or unusual.</p>
-            <p className="pb-narr-body">The bird arranges these fragments carefully, creating a structure meant to attract a mate.</p>
-            <p className="pb-narr-body pb-narr-quiet">Beauty assembled from what others overlook.</p>
-            <p className="pb-narr-body">I couldn't help but see the connection.</p>
-            <p className="pb-narr-body">Without realizing it, I had been doing something similar.</p>
-            <p className="pb-narr-body">Collecting the discarded fragments of the city.</p>
-            <p className="pb-narr-body">Building a visual nest.</p>
+            <div className="pb-narr-figure">
+              <img src="media/nest/bowerbird.jpg" alt="Satin bowerbird" className="pb-narr-figure-img" />
+              <div className="pb-narr-figure-cap">Satin bowerbird (<em>Ptilonorhynchus violaceus</em>)</div>
+            </div>
+            <p className="pb-narr-body">Around this same time I learned about the bowerbird. A small bird known for building elaborate nests from objects it collects from the forest floor. Flowers, shells, pieces of glass, bits of plastic. Anything colorful or unusual. The bird arranges these fragments carefully, creating a structure meant to attract a mate. Beauty assembled from what others overlook.</p>
+            <p className="pb-narr-body">I couldn't help but see the connection. Without realizing it, I had been doing something similar. Collecting the discarded fragments of the city. Building a visual nest.</p>
           </NarrativeSection>
 
           {/* 6. Mathis */}
           <NarrativeSection label="Mathis">
-            <p className="pb-narr-body">This project would not exist without my son.</p>
-            <p className="pb-narr-body">Walking him to school created the space where the photographs happened. But more importantly, his presence changed the way I saw the world.</p>
-            <p className="pb-narr-body pb-narr-quiet">Children notice things adults move past.</p>
-            <p className="pb-narr-body">A crushed toy. A strange object on the sidewalk. Something bright in the gutter.</p>
-            <p className="pb-narr-body">Walking with him slowed my attention.</p>
-            <p className="pb-narr-body">What began as visual curiosity eventually led to something else: a rediscovery of my own voice — first visually, then personally, and eventually through advocacy and action.</p>
-            <p className="pb-narr-body pb-narr-quiet">Awareness creates momentum.</p>
+            <p className="pb-narr-body">This project would not exist without my son. Walking him to school created the space where the photographs happened. But more importantly, his presence changed the way I saw the world. Children notice things adults move past. A crushed toy. A strange object on the sidewalk. Something bright in the gutter.</p>
+            <p className="pb-narr-body">Walking with him slowed my attention. Mathis came into the world with awareness, seeing the unacknowledged easily. He shared that gift with me through fatherhood and care.</p>
+            <p className="pb-narr-body">What began as visual curiosity eventually led to something else: a rediscovery of my own voice. First visually, then personally, and eventually through advocacy and action. Awareness creates momentum.</p>
           </NarrativeSection>
 
           {/* Contributors */}
