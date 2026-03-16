@@ -25,6 +25,7 @@ const NAV = [
     { group: "Archive", children: [
       { key: "lab", label: "Incandescent Lab" },
       { key: "patiobeach", label: "Patio Beach" },
+      { key: "superconscious", label: "Share Location" },
     ]},
   ]},
   { tier: "INFO", items: [

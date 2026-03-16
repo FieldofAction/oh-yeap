@@ -17,6 +17,7 @@ import FieldConsole from "./components/FieldConsole";
 import IncandescantLab from "./components/IncandescantLab";
 import FOAGenerator from "./components/FOAGenerator";
 import PatioBeach from "./components/PatioBeach";
+import Superconscious from "./components/Superconscious";
 import { DualLensToggle, DualLensBar } from "./components/PatternLens";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
@@ -51,7 +52,7 @@ export default function App() {
   const togglePatternLens = useCallback(() => setPatternLens(p => !p), []);
 
   // View-to-theme mapping: Work = dark, Canon = deep slate, Studio = light, Info = medium grey
-  const WORK_VIEWS = useMemo(() => new Set(["public"]), []);
+  const WORK_VIEWS = useMemo(() => new Set(["public", "superconscious"]), []);
   const CANON_VIEWS = useMemo(() => new Set(["canon"]), []);
   const INFO_VIEWS = useMemo(() => new Set(["about", "colophon"]), []);
 
@@ -165,6 +166,7 @@ export default function App() {
           {view === "patterns" && <PatternLanguage content={content} onOpen={openItem} fg={theme.fg} />}
           {view === "foa" && <FOAGenerator />}
           {view === "patiobeach" && <PatioBeach />}
+          {view === "superconscious" && <Superconscious />}
         </main>
 
           <SiteFooter />
