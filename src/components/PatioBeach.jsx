@@ -334,6 +334,27 @@ export default function PatioBeach() {
             <p className="pb-narr-body">Every photograph in this project was taken along a short daily walk.</p>
             <p className="pb-narr-route">Park Slope → Gowanus</p>
             <p className="pb-narr-body pb-narr-quiet">A distance of less than two miles.</p>
+
+            {/* Route map */}
+            <a href="https://www.google.com/maps/dir/302+5th+St,+Brooklyn,+NY+11215/Rivendell+School,+277+3rd+Ave,+Brooklyn,+NY+11215/@40.6742413,-73.9887454,17z" target="_blank" rel="noopener noreferrer" className="pb-route-map">
+              <div className="pb-route-map-inner">
+                <div className="pb-route-pin pb-route-pin-a">A</div>
+                <div className="pb-route-line" />
+                <div className="pb-route-pin pb-route-pin-b">B</div>
+              </div>
+              <div className="pb-route-labels">
+                <div className="pb-route-place">
+                  <span className="pb-route-place-name">302 5th St</span>
+                  <span className="pb-route-place-hood">Park Slope</span>
+                </div>
+                <div className="pb-route-place" style={{textAlign:"right"}}>
+                  <span className="pb-route-place-name">Rivendell School</span>
+                  <span className="pb-route-place-hood">277 3rd Ave, Gowanus</span>
+                </div>
+              </div>
+              <div className="pb-route-meta">View route on Google Maps ↗</div>
+            </a>
+
             <p className="pb-narr-body">What began as a routine gradually became a ritual.</p>
             <p className="pb-narr-body">Walking the same streets every day created a kind of visual awareness. Small details surfaced. Patterns emerged. The ordinary started to feel like a field of signals.</p>
             <p className="pb-narr-body">This route became the only space in my life at the time where I created purely from curiosity.</p>
