@@ -759,6 +759,23 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .pb-filter-year{display:flex;gap:4px;align-items:center}
 .pb-filter-yr-label{font-size:9px;color:var(--ff);margin-left:8px;margin-right:2px;font-weight:500;letter-spacing:0.06em}
 .pb-filter-count{font-size:9px;color:var(--ff);margin-left:auto;font-weight:500;letter-spacing:0.06em}
+
+/* ── Multi-dimensional filter bar ── */
+.pb-filter-dimensions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.pb-filter-dim-btn{font-family:var(--sans);font-size:9px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;padding:5px 12px;border:1px solid var(--bd);background:none;color:var(--fm);cursor:pointer;transition:all .2s;border-radius:2px;display:inline-flex;align-items:center;gap:6px}
+.pb-filter-dim-btn:hover{border-color:var(--fm)}
+.pb-filter-dim-btn.expanded{border-color:var(--fg);color:var(--fg)}
+.pb-filter-dim-btn.active{border-color:var(--fg);color:var(--fg);background:color-mix(in srgb,var(--fg) 6%,transparent)}
+.pb-filter-dim-val{font-size:8px;opacity:0.7;font-weight:400}
+.pb-filter-values{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-bottom:12px;padding:10px 12px;background:color-mix(in srgb,var(--fg) 3%,transparent);border:1px solid var(--bd);border-radius:2px}
+.pb-filter-empty{font-size:9px;color:var(--ff);font-style:italic;letter-spacing:0.04em}
+.pb-filter-summary{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.pb-filter-tag{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:500;letter-spacing:0.04em;padding:3px 8px;background:color-mix(in srgb,var(--fg) 8%,transparent);color:var(--fg);border-radius:2px}
+.pb-filter-tag-x{background:none;border:none;color:var(--fm);cursor:pointer;font-size:12px;padding:0 2px;line-height:1;transition:color .2s}
+.pb-filter-tag-x:hover{color:var(--fg)}
+.pb-filter-clear{font-family:var(--sans);font-size:8px;font-weight:400;letter-spacing:0.04em;text-transform:uppercase;padding:4px 8px;border:none;background:none;color:var(--ff);cursor:pointer;transition:color .2s;text-decoration:underline;text-underline-offset:2px}
+.pb-filter-clear:hover{color:var(--fg)}
+
 .pb-month-group{margin-bottom:40px}
 .pb-month-label{font-size:11px;font-weight:400;color:var(--ff);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--bd)}
 .pb-month-label span{color:var(--ff);margin-left:8px;opacity:0.5}

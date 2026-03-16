@@ -1,0 +1,2918 @@
+{
+  "1": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "2": {
+    "t": "Clothing",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "3": {
+    "t": "Misc",
+    "clr": "Black",
+    "mat": "Fabric",
+    "cnd": "Broken"
+  },
+  "4": {
+    "t": "Receptacles",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "5": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Scattered"
+  },
+  "6": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "7": {
+    "t": "Signage",
+    "clr": "Green",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "8": {
+    "t": "Packaging",
+    "clr": "Black",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "9": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "10": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Scattered"
+  },
+  "11": {
+    "t": "Packaging",
+    "clr": "Blue",
+    "mat": "Paper",
+    "cnd": "Scattered"
+  },
+  "12": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "13": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "14": {
+    "t": "Electronics",
+    "clr": "Black",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "15": {
+    "t": "Electronics",
+    "clr": "Black",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "16": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Scattered"
+  },
+  "17": {
+    "t": "Packaging",
+    "clr": "Green",
+    "mat": "Plastic",
+    "cnd": "Scattered"
+  },
+  "18": {
+    "t": "Food/Drink",
+    "clr": "Blue",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "19": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "20": {
+    "t": "Toys",
+    "clr": "Green",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "21": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "22": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Scattered"
+  },
+  "23": {
+    "t": "Receptacles",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "24": {
+    "t": "Misc",
+    "clr": "Pink",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "25": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "26": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Broken"
+  },
+  "27": {
+    "t": "Clothing",
+    "clr": "Brown",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "28": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "29": {
+    "t": "Signage",
+    "clr": "Orange",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "30": {
+    "t": "Clothing",
+    "clr": "White",
+    "mat": "Rubber",
+    "cnd": "Intact"
+  },
+  "31": {
+    "t": "Misc",
+    "clr": "Yellow",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "32": {
+    "t": "Furniture",
+    "clr": "Orange",
+    "mat": "Wood",
+    "cnd": "Intact"
+  },
+  "33": {
+    "t": "Signage",
+    "clr": "Yellow",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "34": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Organic",
+    "cnd": "Scattered"
+  },
+  "35": {
+    "t": "Clothing",
+    "clr": "Multi",
+    "mat": "Fabric",
+    "cnd": "Scattered"
+  },
+  "36": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "37": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Glass",
+    "cnd": "Intact"
+  },
+  "38": {
+    "t": "Receptacles",
+    "clr": "Black",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "39": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "40": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "41": {
+    "t": "Food/Drink",
+    "clr": "Blue",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "42": {
+    "t": "Food/Drink",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "43": {
+    "t": "Electronics",
+    "clr": "Black",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "44": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "45": {
+    "t": "Signage",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "46": {
+    "t": "Clothing",
+    "clr": "Brown",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "47": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Glass",
+    "cnd": "Intact"
+  },
+  "48": {
+    "t": "Furniture",
+    "clr": "Brown",
+    "mat": "Wood",
+    "cnd": "Intact"
+  },
+  "49": {
+    "t": "Food/Drink",
+    "clr": "Yellow",
+    "mat": "Organic",
+    "cnd": "Decayed"
+  },
+  "50": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "51": {
+    "t": "Misc",
+    "clr": "Purple",
+    "mat": "Rubber",
+    "cnd": "Intact"
+  },
+  "52": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "53": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "54": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Organic",
+    "cnd": "Decayed"
+  },
+  "55": {
+    "t": "Food/Drink",
+    "clr": "Brown",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "56": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "57": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "58": {
+    "t": "Food/Drink",
+    "clr": "Brown",
+    "mat": "Glass",
+    "cnd": "Intact"
+  },
+  "59": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "60": {
+    "t": "Clothing",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Arranged"
+  },
+  "61": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Glass",
+    "cnd": "Intact"
+  },
+  "62": {
+    "t": "Receptacles",
+    "clr": "Multi",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "63": {
+    "t": "Packaging",
+    "clr": "Pink",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "64": {
+    "t": "Food/Drink",
+    "clr": "Red",
+    "mat": "Organic",
+    "cnd": "Decayed"
+  },
+  "65": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Scattered"
+  },
+  "66": {
+    "t": "Electronics",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "67": {
+    "t": "Clothing",
+    "clr": "Black",
+    "mat": "Fabric",
+    "cnd": "Scattered"
+  },
+  "68": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "69": {
+    "t": "Misc",
+    "clr": "Blue",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "70": {
+    "t": "Toys",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "71": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "72": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Scattered"
+  },
+  "73": {
+    "t": "Packaging",
+    "clr": "Yellow",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "74": {
+    "t": "Clothing",
+    "clr": "Red",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "75": {
+    "t": "Misc",
+    "clr": "Pink",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "76": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "77": {
+    "t": "Receptacles",
+    "clr": "Red",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "78": {
+    "t": "Food/Drink",
+    "clr": "Yellow",
+    "mat": "Organic",
+    "cnd": "Scattered"
+  },
+  "79": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Organic",
+    "cnd": "Scattered"
+  },
+  "80": {
+    "t": "Food/Drink",
+    "clr": "Green",
+    "mat": "Glass",
+    "cnd": "Intact"
+  },
+  "81": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Organic",
+    "cnd": "Scattered"
+  },
+  "82": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Rubber",
+    "cnd": "Intact"
+  },
+  "83": {
+    "t": "Toys",
+    "clr": "Green",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "84": {
+    "t": "Food/Drink",
+    "clr": "Orange",
+    "mat": "Organic",
+    "cnd": "Intact"
+  },
+  "85": {
+    "t": "Receptacles",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "86": {
+    "t": "Toys",
+    "clr": "Brown",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "87": {
+    "t": "Electronics",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "88": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "89": {
+    "t": "Misc",
+    "clr": "Green",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "90": {
+    "t": "Receptacles",
+    "clr": "Brown",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "91": {
+    "t": "Electronics",
+    "clr": "Black",
+    "mat": "Plastic",
+    "cnd": "Arranged"
+  },
+  "92": {
+    "t": "Food/Drink",
+    "clr": "Orange",
+    "mat": "Organic",
+    "cnd": "Intact"
+  },
+  "93": {
+    "t": "Clothing",
+    "clr": "Blue",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "94": {
+    "t": "Clothing",
+    "clr": "Black",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "95": {
+    "t": "Misc",
+    "clr": "Black",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "96": {
+    "t": "Receptacles",
+    "clr": "Red",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "97": {
+    "t": "Packaging",
+    "clr": "Red",
+    "mat": "Plastic",
+    "cnd": "Crushed"
+  },
+  "98": {
+    "t": "Receptacles",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "99": {
+    "t": "Furniture",
+    "clr": "Brown",
+    "mat": "Wood",
+    "cnd": "Intact"
+  },
+  "100": {
+    "t": "Misc",
+    "clr": "Blue",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "101": {
+    "t": "Food/Drink",
+    "clr": "Brown",
+    "mat": "Glass",
+    "cnd": "Broken"
+  },
+  "102": {
+    "t": "Signage",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "103": {
+    "t": "Toys",
+    "clr": "Yellow",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "104": {
+    "t": "Misc",
+    "clr": "Red",
+    "mat": "Paper",
+    "cnd": "Scattered"
+  },
+  "105": {
+    "t": "Food/Drink",
+    "clr": "Orange",
+    "mat": "Organic",
+    "cnd": "Intact"
+  },
+  "106": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "107": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Broken"
+  },
+  "108": {
+    "t": "Furniture",
+    "clr": "Brown",
+    "mat": "Wood",
+    "cnd": "Arranged"
+  },
+  "109": {
+    "t": "Furniture",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "110": {
+    "t": "Signage",
+    "clr": "Blue",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "111": {
+    "t": "Misc",
+    "clr": "Red",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "112": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Glass",
+    "cnd": "Intact"
+  },
+  "113": {
+    "t": "Food/Drink",
+    "clr": "Green",
+    "mat": "Glass",
+    "cnd": "Intact"
+  },
+  "114": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "115": {
+    "t": "Misc",
+    "clr": "Blue",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "116": {
+    "t": "Toys",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "117": {
+    "t": "Toys",
+    "clr": "Red",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "118": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Crushed"
+  },
+  "119": {
+    "t": "Receptacles",
+    "clr": "Brown",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "120": {
+    "t": "Clothing",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "121": {
+    "t": "Clothing",
+    "clr": "Pink",
+    "mat": "Fabric",
+    "cnd": "Arranged"
+  },
+  "122": {
+    "t": "Electronics",
+    "clr": "Brown",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "123": {
+    "t": "Receptacles",
+    "clr": "Blue",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "124": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "125": {
+    "t": "Misc",
+    "clr": "Red",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "126": {
+    "t": "Food/Drink",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "127": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Glass",
+    "cnd": "Intact"
+  },
+  "128": {
+    "t": "Electronics",
+    "clr": "Black",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "129": {
+    "t": "Furniture",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "130": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Crushed"
+  },
+  "131": {
+    "t": "Clothing",
+    "clr": "Red",
+    "mat": "Fabric",
+    "cnd": "Broken"
+  },
+  "132": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "133": {
+    "t": "Clothing",
+    "clr": "Black",
+    "mat": "Fabric",
+    "cnd": "Arranged"
+  },
+  "134": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Decayed"
+  },
+  "135": {
+    "t": "Signage",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "136": {
+    "t": "Toys",
+    "clr": "Orange",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "137": {
+    "t": "Clothing",
+    "clr": "Green",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "138": {
+    "t": "Receptacles",
+    "clr": "Black",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "139": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "140": {
+    "t": "Misc",
+    "clr": "Yellow",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "141": {
+    "t": "Signage",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "142": {
+    "t": "Clothing",
+    "clr": "Black",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "143": {
+    "t": "Packaging",
+    "clr": "Brown",
+    "mat": "Paper",
+    "cnd": "Broken"
+  },
+  "144": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "145": {
+    "t": "Signage",
+    "clr": "Green",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "146": {
+    "t": "Electronics",
+    "clr": "Black",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "147": {
+    "t": "Electronics",
+    "clr": "Black",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "148": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "149": {
+    "t": "Receptacles",
+    "clr": "Red",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "150": {
+    "t": "Food/Drink",
+    "clr": "Red",
+    "mat": "Metal",
+    "cnd": "Crushed"
+  },
+  "151": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Broken"
+  },
+  "152": {
+    "t": "Toys",
+    "clr": "Pink",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "153": {
+    "t": "Electronics",
+    "clr": "Black",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "154": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Glass",
+    "cnd": "Intact"
+  },
+  "155": {
+    "t": "Furniture",
+    "clr": "Brown",
+    "mat": "Wood",
+    "cnd": "Intact"
+  },
+  "156": {
+    "t": "Food/Drink",
+    "clr": "White",
+    "mat": "Organic",
+    "cnd": "Intact"
+  },
+  "157": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Glass",
+    "cnd": "Intact"
+  },
+  "158": {
+    "t": "Food/Drink",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "159": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Organic",
+    "cnd": "Broken"
+  },
+  "160": {
+    "t": "Misc",
+    "clr": "Blue",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "161": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Decayed"
+  },
+  "162": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "163": {
+    "t": "Clothing",
+    "clr": "Blue",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "164": {
+    "t": "Furniture",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "165": {
+    "t": "Furniture",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Arranged"
+  },
+  "166": {
+    "t": "Furniture",
+    "clr": "Brown",
+    "mat": "Wood",
+    "cnd": "Broken"
+  },
+  "167": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "168": {
+    "t": "Receptacles",
+    "clr": "Black",
+    "mat": "Plastic",
+    "cnd": "Scattered"
+  },
+  "169": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "170": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "171": {
+    "t": "Food/Drink",
+    "clr": "Green",
+    "mat": "Glass",
+    "cnd": "Intact"
+  },
+  "172": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Arranged"
+  },
+  "173": {
+    "t": "Toys",
+    "clr": "Brown",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "174": {
+    "t": "Tools",
+    "clr": "Yellow",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "175": {
+    "t": "Signage",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "176": {
+    "t": "Toys",
+    "clr": "Red",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "177": {
+    "t": "Food/Drink",
+    "clr": "Brown",
+    "mat": "Organic",
+    "cnd": "Intact"
+  },
+  "178": {
+    "t": "Food/Drink",
+    "clr": "Red",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "179": {
+    "t": "Misc",
+    "clr": "Black",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "180": {
+    "t": "Toys",
+    "clr": "Brown",
+    "mat": "Rubber",
+    "cnd": "Intact"
+  },
+  "181": {
+    "t": "Receptacles",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "182": {
+    "t": "Furniture",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "183": {
+    "t": "Receptacles",
+    "clr": "Blue",
+    "mat": "Metal",
+    "cnd": "Broken"
+  },
+  "184": {
+    "t": "Electronics",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "185": {
+    "t": "Toys",
+    "clr": "Green",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "186": {
+    "t": "Food/Drink",
+    "clr": "Green",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "187": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "188": {
+    "t": "Clothing",
+    "clr": "Brown",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "189": {
+    "t": "Clothing",
+    "clr": "Brown",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "190": {
+    "t": "Clothing",
+    "clr": "Black",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "191": {
+    "t": "Furniture",
+    "clr": "Brown",
+    "mat": "Wood",
+    "cnd": "Broken"
+  },
+  "192": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Arranged"
+  },
+  "193": {
+    "t": "Electronics",
+    "clr": "Black",
+    "mat": "Mixed",
+    "cnd": "Arranged"
+  },
+  "194": {
+    "t": "Furniture",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "195": {
+    "t": "Packaging",
+    "clr": "Yellow",
+    "mat": "Mixed",
+    "cnd": "Crushed"
+  },
+  "196": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "197": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "198": {
+    "t": "Misc",
+    "clr": "Black",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "199": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "200": {
+    "t": "Electronics",
+    "clr": "Grey",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "201": {
+    "t": "Packaging",
+    "clr": "Blue",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "202": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "203": {
+    "t": "Receptacles",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "204": {
+    "t": "Signage",
+    "clr": "Orange",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "205": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "206": {
+    "t": "Clothing",
+    "clr": "White",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "207": {
+    "t": "Signage",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "208": {
+    "t": "Food/Drink",
+    "clr": "Red",
+    "mat": "Organic",
+    "cnd": "Intact"
+  },
+  "209": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Organic",
+    "cnd": "Arranged"
+  },
+  "210": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "211": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Organic",
+    "cnd": "Broken"
+  },
+  "212": {
+    "t": "Packaging",
+    "clr": "Purple",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "213": {
+    "t": "Clothing",
+    "clr": "Blue",
+    "mat": "Fabric",
+    "cnd": "Scattered"
+  },
+  "214": {
+    "t": "Food/Drink",
+    "clr": "Green",
+    "mat": "Plastic",
+    "cnd": "Crushed"
+  },
+  "215": {
+    "t": "Misc",
+    "clr": "Grey",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "216": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "217": {
+    "t": "Receptacles",
+    "clr": "Blue",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "218": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "219": {
+    "t": "Tools",
+    "clr": "Black",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "220": {
+    "t": "Food/Drink",
+    "clr": "Brown",
+    "mat": "Glass",
+    "cnd": "Intact"
+  },
+  "221": {
+    "t": "Clothing",
+    "clr": "Red",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "222": {
+    "t": "Electronics",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "223": {
+    "t": "Clothing",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "224": {
+    "t": "Receptacles",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "225": {
+    "t": "Furniture",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "226": {
+    "t": "Electronics",
+    "clr": "Black",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "227": {
+    "t": "Furniture",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "228": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "229": {
+    "t": "Furniture",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "230": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "231": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Organic",
+    "cnd": "Scattered"
+  },
+  "232": {
+    "t": "Electronics",
+    "clr": "Grey",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "233": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "234": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "235": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "236": {
+    "t": "Signage",
+    "clr": "Yellow",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "237": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "238": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "239": {
+    "t": "Signage",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "240": {
+    "t": "Tools",
+    "clr": "Brown",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "241": {
+    "t": "Packaging",
+    "clr": "Orange",
+    "mat": "Plastic",
+    "cnd": "Scattered"
+  },
+  "242": {
+    "t": "Packaging",
+    "clr": "Red",
+    "mat": "Paper",
+    "cnd": "Crushed"
+  },
+  "243": {
+    "t": "Food/Drink",
+    "clr": "Brown",
+    "mat": "Organic",
+    "cnd": "Decayed"
+  },
+  "244": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Glass",
+    "cnd": "Intact"
+  },
+  "245": {
+    "t": "Clothing",
+    "clr": "Grey",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "246": {
+    "t": "Furniture",
+    "clr": "Brown",
+    "mat": "Wood",
+    "cnd": "Intact"
+  },
+  "247": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Rubber",
+    "cnd": "Scattered"
+  },
+  "248": {
+    "t": "Furniture",
+    "clr": "Black",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "249": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "250": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Arranged"
+  },
+  "251": {
+    "t": "Signage",
+    "clr": "Pink",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "252": {
+    "t": "Packaging",
+    "clr": "Blue",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "253": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "254": {
+    "t": "Furniture",
+    "clr": "Red",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "255": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "256": {
+    "t": "Furniture",
+    "clr": "Brown",
+    "mat": "Wood",
+    "cnd": "Intact"
+  },
+  "257": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "258": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "259": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "260": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "261": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Arranged"
+  },
+  "262": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "263": {
+    "t": "Electronics",
+    "clr": "White",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "264": {
+    "t": "Furniture",
+    "clr": "Brown",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "265": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "266": {
+    "t": "Furniture",
+    "clr": "Brown",
+    "mat": "Wood",
+    "cnd": "Broken"
+  },
+  "267": {
+    "t": "Food/Drink",
+    "clr": "Brown",
+    "mat": "Glass",
+    "cnd": "Intact"
+  },
+  "268": {
+    "t": "Toys",
+    "clr": "Blue",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "269": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "270": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "271": {
+    "t": "Clothing",
+    "clr": "Blue",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "272": {
+    "t": "Clothing",
+    "clr": "Multi",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "273": {
+    "t": "Misc",
+    "clr": "Black",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "274": {
+    "t": "Toys",
+    "clr": "Red",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "275": {
+    "t": "Furniture",
+    "clr": "Green",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "276": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "277": {
+    "t": "Tools",
+    "clr": "Brown",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "278": {
+    "t": "Clothing",
+    "clr": "Blue",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "279": {
+    "t": "Tools",
+    "clr": "Blue",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "280": {
+    "t": "Tools",
+    "clr": "Black",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "281": {
+    "t": "Furniture",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "282": {
+    "t": "Clothing",
+    "clr": "Brown",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "283": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Rubber",
+    "cnd": "Intact"
+  },
+  "284": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "285": {
+    "t": "Electronics",
+    "clr": "Brown",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "286": {
+    "t": "Signage",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "287": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Arranged"
+  },
+  "288": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "289": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Scattered"
+  },
+  "290": {
+    "t": "Signage",
+    "clr": "Yellow",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "291": {
+    "t": "Clothing",
+    "clr": "Red",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "292": {
+    "t": "Electronics",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Decayed"
+  },
+  "293": {
+    "t": "Toys",
+    "clr": "Pink",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "294": {
+    "t": "Clothing",
+    "clr": "Brown",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "295": {
+    "t": "Furniture",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "296": {
+    "t": "Furniture",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "297": {
+    "t": "Electronics",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "298": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Scattered"
+  },
+  "299": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "300": {
+    "t": "Food/Drink",
+    "clr": "Green",
+    "mat": "Organic",
+    "cnd": "Intact"
+  },
+  "301": {
+    "t": "Food/Drink",
+    "clr": "Blue",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "302": {
+    "t": "Tools",
+    "clr": "Brown",
+    "mat": "Wood",
+    "cnd": "Broken"
+  },
+  "303": {
+    "t": "Furniture",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "304": {
+    "t": "Clothing",
+    "clr": "Blue",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "305": {
+    "t": "Misc",
+    "clr": "Red",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "306": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Arranged"
+  },
+  "307": {
+    "t": "Packaging",
+    "clr": "Red",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "308": {
+    "t": "Clothing",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "309": {
+    "t": "Food/Drink",
+    "clr": "Orange",
+    "mat": "Organic",
+    "cnd": "Broken"
+  },
+  "310": {
+    "t": "Misc",
+    "clr": "Black",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "311": {
+    "t": "Electronics",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "312": {
+    "t": "Furniture",
+    "clr": "Black",
+    "mat": "Wood",
+    "cnd": "Intact"
+  },
+  "313": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "314": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "315": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "316": {
+    "t": "Food/Drink",
+    "clr": "Blue",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "317": {
+    "t": "Toys",
+    "clr": "Red",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "318": {
+    "t": "Toys",
+    "clr": "Blue",
+    "mat": "Rubber",
+    "cnd": "Intact"
+  },
+  "319": {
+    "t": "Receptacles",
+    "clr": "Red",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "320": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "321": {
+    "t": "Clothing",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "322": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "323": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "324": {
+    "t": "Furniture",
+    "clr": "Brown",
+    "mat": "Wood",
+    "cnd": "Intact"
+  },
+  "325": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Scattered"
+  },
+  "326": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "327": {
+    "t": "Electronics",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "328": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "329": {
+    "t": "Furniture",
+    "clr": "Brown",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "330": {
+    "t": "Toys",
+    "clr": "Pink",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "331": {
+    "t": "Clothing",
+    "clr": "Multi",
+    "mat": "Fabric",
+    "cnd": "Scattered"
+  },
+  "332": {
+    "t": "Electronics",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "333": {
+    "t": "Receptacles",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "334": {
+    "t": "Signage",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Broken"
+  },
+  "335": {
+    "t": "Clothing",
+    "clr": "Black",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "336": {
+    "t": "Toys",
+    "clr": "Red",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "337": {
+    "t": "Furniture",
+    "clr": "Brown",
+    "mat": "Wood",
+    "cnd": "Intact"
+  },
+  "338": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "339": {
+    "t": "Toys",
+    "clr": "Orange",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "340": {
+    "t": "Receptacles",
+    "clr": "Green",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "341": {
+    "t": "Misc",
+    "clr": "Blue",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "342": {
+    "t": "Toys",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "343": {
+    "t": "Signage",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "344": {
+    "t": "Food/Drink",
+    "clr": "Red",
+    "mat": "Organic",
+    "cnd": "Intact"
+  },
+  "345": {
+    "t": "Signage",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "346": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "347": {
+    "t": "Clothing",
+    "clr": "Red",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "348": {
+    "t": "Misc",
+    "clr": "Green",
+    "mat": "Organic",
+    "cnd": "Intact"
+  },
+  "349": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Wood",
+    "cnd": "Intact"
+  },
+  "350": {
+    "t": "Clothing",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "351": {
+    "t": "Misc",
+    "clr": "Blue",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "352": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "353": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "354": {
+    "t": "Receptacles",
+    "clr": "Black",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "355": {
+    "t": "Electronics",
+    "clr": "Blue",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "356": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "357": {
+    "t": "Food/Drink",
+    "clr": "Orange",
+    "mat": "Organic",
+    "cnd": "Intact"
+  },
+  "358": {
+    "t": "Toys",
+    "clr": "Red",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "359": {
+    "t": "Electronics",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Arranged"
+  },
+  "360": {
+    "t": "Clothing",
+    "clr": "Black",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "361": {
+    "t": "Misc",
+    "clr": "Brown",
+    "mat": "Wood",
+    "cnd": "Intact"
+  },
+  "362": {
+    "t": "Signage",
+    "clr": "Blue",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "363": {
+    "t": "Packaging",
+    "clr": "Red",
+    "mat": "Plastic",
+    "cnd": "Scattered"
+  },
+  "364": {
+    "t": "Toys",
+    "clr": "Orange",
+    "mat": "Rubber",
+    "cnd": "Broken"
+  },
+  "365": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "366": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Broken"
+  },
+  "367": {
+    "t": "Toys",
+    "clr": "Red",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "368": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "369": {
+    "t": "Packaging",
+    "clr": "Brown",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "370": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "371": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "372": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "373": {
+    "t": "Packaging",
+    "clr": "Yellow",
+    "mat": "Paper",
+    "cnd": "Crushed"
+  },
+  "374": {
+    "t": "Food/Drink",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "375": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "376": {
+    "t": "Packaging",
+    "clr": "Red",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "377": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "378": {
+    "t": "Misc",
+    "clr": "Brown",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "379": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "380": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "381": {
+    "t": "Packaging",
+    "clr": "Red",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "382": {
+    "t": "Food/Drink",
+    "clr": "Orange",
+    "mat": "Organic",
+    "cnd": "Arranged"
+  },
+  "383": {
+    "t": "Misc",
+    "clr": "Black",
+    "mat": "Rubber",
+    "cnd": "Intact"
+  },
+  "384": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "385": {
+    "t": "Furniture",
+    "clr": "Grey",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "386": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "387": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "388": {
+    "t": "Clothing",
+    "clr": "Black",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "389": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "390": {
+    "t": "Misc",
+    "clr": "Black",
+    "mat": "Rubber",
+    "cnd": "Intact"
+  },
+  "391": {
+    "t": "Misc",
+    "clr": "Brown",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "392": {
+    "t": "Misc",
+    "clr": "Grey",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "393": {
+    "t": "Misc",
+    "clr": "Red",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "394": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "395": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "396": {
+    "t": "Clothing",
+    "clr": "Yellow",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "397": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "398": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "399": {
+    "t": "Clothing",
+    "clr": "Pink",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "400": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "401": {
+    "t": "Misc",
+    "clr": "Red",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "402": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "403": {
+    "t": "Toys",
+    "clr": "Pink",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "404": {
+    "t": "Tools",
+    "clr": "Yellow",
+    "mat": "Wood",
+    "cnd": "Broken"
+  },
+  "405": {
+    "t": "Misc",
+    "clr": "Brown",
+    "mat": "Wood",
+    "cnd": "Intact"
+  },
+  "406": {
+    "t": "Tools",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "407": {
+    "t": "Food/Drink",
+    "clr": "Green",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "408": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "409": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Wood",
+    "cnd": "Broken"
+  },
+  "410": {
+    "t": "Misc",
+    "clr": "Black",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "411": {
+    "t": "Clothing",
+    "clr": "Brown",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "412": {
+    "t": "Clothing",
+    "clr": "Multi",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "413": {
+    "t": "Electronics",
+    "clr": "Grey",
+    "mat": "Mixed",
+    "cnd": "Arranged"
+  },
+  "414": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "415": {
+    "t": "Furniture",
+    "clr": "White",
+    "mat": "Wood",
+    "cnd": "Intact"
+  },
+  "416": {
+    "t": "Food/Drink",
+    "clr": "Red",
+    "mat": "Organic",
+    "cnd": "Intact"
+  },
+  "417": {
+    "t": "Furniture",
+    "clr": "Multi",
+    "mat": "Wood",
+    "cnd": "Intact"
+  },
+  "418": {
+    "t": "Electronics",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "419": {
+    "t": "Misc",
+    "clr": "Red",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "420": {
+    "t": "Clothing",
+    "clr": "Black",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "421": {
+    "t": "Misc",
+    "clr": "Brown",
+    "mat": "Organic",
+    "cnd": "Intact"
+  },
+  "422": {
+    "t": "Packaging",
+    "clr": "Orange",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "423": {
+    "t": "Clothing",
+    "clr": "Pink",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "424": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "425": {
+    "t": "Misc",
+    "clr": "Grey",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "426": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "427": {
+    "t": "Receptacles",
+    "clr": "Black",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "428": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "429": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "430": {
+    "t": "Electronics",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "431": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Scattered"
+  },
+  "432": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "433": {
+    "t": "Toys",
+    "clr": "Brown",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "434": {
+    "t": "Receptacles",
+    "clr": "Black",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "435": {
+    "t": "Packaging",
+    "clr": "Blue",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "436": {
+    "t": "Receptacles",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "437": {
+    "t": "Misc",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Arranged"
+  },
+  "438": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "439": {
+    "t": "Clothing",
+    "clr": "Black",
+    "mat": "Fabric",
+    "cnd": "Broken"
+  },
+  "440": {
+    "t": "Receptacles",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "441": {
+    "t": "Food/Drink",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Crushed"
+  },
+  "442": {
+    "t": "Signage",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "443": {
+    "t": "Misc",
+    "clr": "Orange",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "444": {
+    "t": "Signage",
+    "clr": "Red",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "445": {
+    "t": "Packaging",
+    "clr": "Black",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "446": {
+    "t": "Packaging",
+    "clr": "Blue",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "447": {
+    "t": "Furniture",
+    "clr": "Orange",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "448": {
+    "t": "Receptacles",
+    "clr": "Blue",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "449": {
+    "t": "Toys",
+    "clr": "Multi",
+    "mat": "Rubber",
+    "cnd": "Intact"
+  },
+  "450": {
+    "t": "Misc",
+    "clr": "Blue",
+    "mat": "Mixed",
+    "cnd": "Scattered"
+  },
+  "451": {
+    "t": "Toys",
+    "clr": "Red",
+    "mat": "Rubber",
+    "cnd": "Arranged"
+  },
+  "452": {
+    "t": "Misc",
+    "clr": "Green",
+    "mat": "Organic",
+    "cnd": "Intact"
+  },
+  "453": {
+    "t": "Clothing",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "454": {
+    "t": "Misc",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "455": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "456": {
+    "t": "Packaging",
+    "clr": "Blue",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "457": {
+    "t": "Signage",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Decayed"
+  },
+  "458": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "459": {
+    "t": "Receptacles",
+    "clr": "Green",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "460": {
+    "t": "Signage",
+    "clr": "Blue",
+    "mat": "Paper",
+    "cnd": "Intact"
+  },
+  "461": {
+    "t": "Receptacles",
+    "clr": "Blue",
+    "mat": "Plastic",
+    "cnd": "Broken"
+  },
+  "462": {
+    "t": "Receptacles",
+    "clr": "Pink",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "463": {
+    "t": "Furniture",
+    "clr": "White",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "464": {
+    "t": "Furniture",
+    "clr": "Blue",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "465": {
+    "t": "Packaging",
+    "clr": "Multi",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "466": {
+    "t": "Furniture",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Arranged"
+  },
+  "467": {
+    "t": "Furniture",
+    "clr": "Pink",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "468": {
+    "t": "Receptacles",
+    "clr": "Red",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "469": {
+    "t": "Furniture",
+    "clr": "Blue",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "470": {
+    "t": "Furniture",
+    "clr": "White",
+    "mat": "Mixed",
+    "cnd": "Broken"
+  },
+  "471": {
+    "t": "Furniture",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "472": {
+    "t": "Furniture",
+    "clr": "Blue",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "473": {
+    "t": "Electronics",
+    "clr": "Blue",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "474": {
+    "t": "Clothing",
+    "clr": "Multi",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "475": {
+    "t": "Electronics",
+    "clr": "Black",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "476": {
+    "t": "Furniture",
+    "clr": "Multi",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "477": {
+    "t": "Misc",
+    "clr": "Grey",
+    "mat": "Fabric",
+    "cnd": "Broken"
+  },
+  "478": {
+    "t": "Electronics",
+    "clr": "Blue",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "479": {
+    "t": "Furniture",
+    "clr": "Grey",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "480": {
+    "t": "Furniture",
+    "clr": "Red",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "481": {
+    "t": "Furniture",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Intact"
+  },
+  "482": {
+    "t": "Furniture",
+    "clr": "Multi",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "483": {
+    "t": "Furniture",
+    "clr": "Multi",
+    "mat": "Mixed",
+    "cnd": "Intact"
+  },
+  "484": {
+    "t": "Furniture",
+    "clr": "Pink",
+    "mat": "Fabric",
+    "cnd": "Intact"
+  },
+  "485": {
+    "t": "Toys",
+    "clr": "Red",
+    "mat": "Metal",
+    "cnd": "Intact"
+  },
+  "486": {
+    "t": "Packaging",
+    "clr": "White",
+    "mat": "Plastic",
+    "cnd": "Scattered"
+  }
+}
