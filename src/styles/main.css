@@ -836,7 +836,13 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .fg-card{background:var(--sf);border:1px solid var(--bd);padding:32px;position:relative;overflow:hidden;font-family:var(--sans)}
 .fg-card-in{animation:fg-slideIn 0.5s ease forwards;opacity:0}
 @keyframes fg-slideIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.fg-card-idx{position:absolute;top:12px;right:16px;font-size:9px;color:var(--ff);letter-spacing:0.1em}
+.fg-card-idx{position:absolute;top:12px;right:16px;font-size:9px;color:var(--ff);letter-spacing:0.1em;display:flex;align-items:center;gap:8px}
+.fg-card-dl{background:none;border:1px solid var(--bd);color:var(--ff);font-size:10px;cursor:pointer;padding:2px 6px;border-radius:3px;opacity:0;transition:opacity .2s}
+.fg-card:hover .fg-card-dl{opacity:1}
+.fg-card-dl:hover{color:var(--fg);border-color:var(--fg)}
+.fg-dl-all{background:none;border:1px solid var(--bd);color:var(--ff);font-size:10px;cursor:pointer;padding:4px 10px;border-radius:3px;letter-spacing:0.05em;transition:all .2s}
+.fg-dl-all:hover{color:var(--fg);border-color:var(--fg)}
+.fg-output-label{display:flex;align-items:center;justify-content:space-between}
 .fg-card-meta{font-size:9px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--fg);margin-bottom:4px}
 .fg-card-label{font-size:8px;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:var(--ff);margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--bd)}
 .fg-card-thesis{margin-bottom:24px;font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:-0.01em;line-height:1.3;color:var(--fg)}

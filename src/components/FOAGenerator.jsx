@@ -1,4 +1,5 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
+import html2canvas from "html2canvas";
 
 const SYSTEM_PROMPT = `You are generating Field of Action (FOA) typographic artifacts.
 These artifacts behave like system signals, research posters, or engineering stamps, not marketing graphics.
@@ -33,16 +34,83 @@ Each object must have exactly these keys:
 - "authority": string (2 lines, all caps, newline separated with \\n)
 - "temporal": string (short activation phrase, all caps)`;
 
-function ArtifactCard({ artifact, index, isNew }) {
+async function downloadCardAsPng(cardEl, index) {
+  try {
+    // Inline all computed styles so html2canvas captures everything
+    const elements = [cardEl, ...cardEl.querySelectorAll("*")];
+    const originals = [];
+    elements.forEach((el) => {
+      const computed = getComputedStyle(el);
+      originals.push(el.getAttribute("style") || "");
+      const styles = [
+        `color:${computed.color}`,
+        `background-color:${computed.backgroundColor}`,
+        `font-family:${computed.fontFamily}`,
+        `font-size:${computed.fontSize}`,
+        `font-weight:${computed.fontWeight}`,
+        `font-style:${computed.fontStyle}`,
+        `letter-spacing:${computed.letterSpacing}`,
+        `text-transform:${computed.textTransform}`,
+        `line-height:${computed.lineHeight}`,
+        `padding:${computed.padding}`,
+        `margin:${computed.margin}`,
+        `border:${computed.border}`,
+        `opacity:${computed.opacity}`,
+        `position:${computed.position}`,
+        `top:${computed.top}`,
+        `right:${computed.right}`,
+        `display:${computed.display}`,
+      ].join(";");
+      el.setAttribute("style", (el.getAttribute("style") || "") + ";" + styles);
+    });
+
+    const canvas = await html2canvas(cardEl, {
+      scale: 3,
+      backgroundColor: null,
+      useCORS: true,
+    });
+
+    // Restore original styles
+    elements.forEach((el, i) => {
+      if (originals[i]) el.setAttribute("style", originals[i]);
+      else el.removeAttribute("style");
+    });
+
+    const link = document.createElement("a");
+    link.download = `foa-artifact-${String(index + 1).padStart(2, "0")}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  } catch (e) {
+    alert("PNG export failed: " + e.message);
+  }
+}
+
+function downloadAllAsJson(artifacts, idea) {
+  const payload = {
+    idea,
+    generated: new Date().toISOString(),
+    artifacts,
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const link = document.createElement("a");
+  link.download = `foa-artifacts-${Date.now()}.json`;
+  link.href = URL.createObjectURL(blob);
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+function ArtifactCard({ artifact, index, isNew, onDownload }) {
+  const cardRef = useRef(null);
   const thesis = artifact.thesis?.split("\\n") || [];
   const orientation = artifact.orientation?.split("\\n") || [];
   const authority = artifact.authority?.split("\\n") || [];
   const signalWords = artifact.signal?.split(" ") || [];
 
   return (
-    <div className={`fg-card${isNew ? " fg-card-in" : ""}`} style={{ animationDelay: `${index * 0.07}s` }}>
+    <div ref={cardRef} className={`fg-card${isNew ? " fg-card-in" : ""}`} style={{ animationDelay: `${index * 0.07}s` }}>
       <div className="fg-card-idx">
         {String(index + 1).padStart(2, "0")} / 08
+        <button className="fg-card-dl" onClick={(e) => { e.stopPropagation(); if (cardRef.current) downloadCardAsPng(cardRef.current, index); }} title="Download as PNG">↓</button>
       </div>
 
       <div className="fg-card-meta">{artifact.metadata}</div>
@@ -186,7 +254,8 @@ export default function FOAGenerator() {
       {artifacts.length > 0 && (
         <div className="fg-output">
           <div className="fg-output-label">
-            Artifact Output — {artifacts.length} signals generated
+            <span>Artifact Output — {artifacts.length} signals generated</span>
+            <button className="fg-dl-all" onClick={() => downloadAllAsJson(artifacts, idea)}>↓ Download JSON</button>
           </div>
           <div className="fg-grid">
             {artifacts.map((artifact, i) => (
