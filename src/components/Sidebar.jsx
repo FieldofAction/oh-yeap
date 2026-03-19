@@ -18,6 +18,7 @@ const NAV = [
     { group: "Interfaces", children: [
       { key: "console", label: "Console" },
       { key: "foa", label: "FOA Generator" },
+      { key: "breakground", label: "Breakground" },
     ]},
     { group: "Research", children: [
       { key: "backstage", label: "Backstage" },
@@ -65,7 +66,6 @@ export default function Sidebar({ view, navigateTo, filter, setFilter }) {
     <>
       <div className="topbar">
         <button className="sb-toggle" onClick={() => setMobileOpen(p => !p)} aria-label="Menu">
-          <span className="sb-toggle-bar" />
           <span className="sb-toggle-bar" />
           <span className="sb-toggle-bar" />
         </button>
