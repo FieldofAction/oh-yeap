@@ -445,11 +445,14 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 /* ── Case Study Detail ── */
 .cs-overlay{position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;animation:rdOpen .3s ease both}
 .cs-overlay.closing{animation:rdClose .3s ease both}
-.cs-inner{max-width:720px;margin:0 auto;padding:100px 40px 160px}
+.cs-inner{max-width:900px;margin:0 auto;padding:100px 40px 160px;display:grid;grid-template-columns:minmax(0,600px) minmax(0,220px);gap:0 48px}
+.cs-inner>*{grid-column:1/-1}
+.cs-col-text{grid-column:1/2}
+@media(max-width:900px){.cs-inner{grid-template-columns:1fr;max-width:680px;gap:0}}
 @media(max-width:768px){.cs-inner{padding:80px 20px 120px}}
 
 /* Header */
-.cs-header{margin-bottom:16px}
+.cs-header{margin-bottom:16px;grid-column:1/2}
 .cs-title{font-family:var(--display);font-size:clamp(40px,6vw,64px);font-weight:600;letter-spacing:-0.02em;line-height:1.04;margin-bottom:12px;color:var(--fg)}
 .cs-subtitle{font-family:var(--display);font-size:clamp(16px,2.5vw,22px);font-weight:400;color:var(--fm);line-height:1.4;margin-bottom:40px}
 .cs-meta-row{display:flex;gap:32px;flex-wrap:wrap}
@@ -458,31 +461,92 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .cs-meta-label{font-size:11px;font-weight:500;letter-spacing:.01em;color:var(--fm)}
 .cs-meta-val{font-size:13px;font-weight:300;color:var(--fm);line-height:1.4;max-width:280px}
 
-/* Hero — full bleed */
-.cs-hero{width:calc(100% + 80px);margin-left:-40px;aspect-ratio:3/2;background:var(--sf);margin-top:48px;margin-bottom:72px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
-@media(max-width:768px){.cs-hero{width:calc(100% + 40px);margin-left:-20px}}
-.cs-hero svg{width:100%;height:100%}
-.cs-hero-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(47,91,255,0.04) 0%,transparent 70%);pointer-events:none}
+/* ── Editorial Blocks ── */
 
-/* Section labels */
-.cs-section-label{font-size:13px;font-weight:600;letter-spacing:.01em;color:var(--fm);margin-bottom:20px}
+/* Block — base spacing */
+.cs-block{margin-bottom:64px}
 
-/* Narrative sections */
-.cs-narrative{margin-bottom:48px}
+/* Hero — full bleed, edge to edge */
+.cs-block--hero{width:calc(100% + 80px);margin-left:-40px;margin-top:48px;margin-bottom:72px;position:relative;overflow:hidden}
+.cs-block--hero .cs-block-img{width:100%;aspect-ratio:16/9;background:var(--sf);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cs-block--hero .cs-block-img img{width:100%;height:100%;object-fit:cover}
+.cs-block--hero .cs-block-img svg{width:100%;height:100%}
+.cs-block--hero .cs-block-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(47,91,255,0.04) 0%,transparent 70%);pointer-events:none}
+@media(max-width:768px){.cs-block--hero{width:calc(100% + 40px);margin-left:-20px}}
+
+/* Figure — single full-width image */
+.cs-block--figure{width:calc(100% + 80px);margin-left:-40px}
+.cs-block--figure .cs-block-img{width:100%;aspect-ratio:3/2;background:var(--sf);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.cs-block--figure .cs-block-img img{width:100%;height:100%;object-fit:cover}
+.cs-block--figure .cs-block-img svg{width:100%;height:100%}
+.cs-block--figure .cs-block-glow{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(47,91,255,0.04) 0%,transparent 60%);pointer-events:none}
+@media(max-width:768px){.cs-block--figure{width:calc(100% + 40px);margin-left:-20px}}
+
+/* Two-up — side by side */
+.cs-block--two-up{width:calc(100% + 80px);margin-left:-40px;display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.cs-block--two-up .cs-block-img{aspect-ratio:4/3;background:var(--sf);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.cs-block--two-up .cs-block-img img{width:100%;height:100%;object-fit:cover}
+.cs-block--two-up .cs-block-img svg{width:100%;height:100%}
+.cs-block--two-up .cs-block-cap{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:0 40px}
+@media(max-width:768px){.cs-block--two-up{width:calc(100% + 40px);margin-left:-20px;grid-template-columns:1fr}.cs-block--two-up .cs-block-cap{grid-template-columns:1fr;padding:0 20px}}
+
+/* Three-up — three in a row */
+.cs-block--three-up{width:calc(100% + 80px);margin-left:-40px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
+.cs-block--three-up .cs-block-img{aspect-ratio:1;background:var(--sf);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.cs-block--three-up .cs-block-img img{width:100%;height:100%;object-fit:cover}
+.cs-block--three-up .cs-block-img svg{width:100%;height:100%}
+.cs-block--three-up .cs-block-cap{grid-column:1/-1;padding:0 40px}
+@media(max-width:768px){.cs-block--three-up{width:calc(100% + 40px);margin-left:-20px;grid-template-columns:1fr 1fr}.cs-block--three-up .cs-block-cap{padding:0 20px}}
+
+/* Inline — image floats within text column */
+.cs-block--inline{grid-column:1/2;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.cs-block--inline .cs-block-img{aspect-ratio:3/4;background:var(--sf);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.cs-block--inline .cs-block-img img{width:100%;height:100%;object-fit:cover}
+.cs-block--inline .cs-block-img svg{width:100%;height:100%}
+.cs-block--inline .cs-block-inline-text{font-size:17px;font-weight:400;line-height:1.9;color:color-mix(in srgb,var(--fg) 85%,var(--fm))}
+.cs-block--inline .cs-block-inline-text p{margin-bottom:20px}
+.cs-block--inline .cs-block-inline-text p:last-child{margin-bottom:0}
+.cs-block--inline.cs-block--inline-right{direction:rtl}
+.cs-block--inline.cs-block--inline-right>*{direction:ltr}
+@media(max-width:768px){.cs-block--inline{grid-template-columns:1fr}.cs-block--inline.cs-block--inline-right{direction:ltr}}
+
+/* Caption — editorial style */
+.cs-cap{font-size:11px;font-weight:400;color:var(--ff);line-height:1.5;margin-top:10px;letter-spacing:.01em}
+.cs-cap em{font-style:normal;color:var(--fm);font-weight:500}
+.cs-block--hero .cs-cap,.cs-block--figure .cs-cap{padding:0 40px}
+@media(max-width:768px){.cs-block--hero .cs-cap,.cs-block--figure .cs-cap{padding:0 20px}}
+
+/* Section header — editorial */
+.cs-block--section{grid-column:1/2;margin-bottom:24px;padding-bottom:0;border:none}
+.cs-block--section-label{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ff);margin-bottom:0;line-height:1}
+.cs-block--section-rule{width:32px;height:1px;background:var(--bd);margin-top:12px}
+
+/* Body — text column */
+.cs-block--body{grid-column:1/2}
 .cs-body{font-size:17px;font-weight:400;line-height:1.9;color:color-mix(in srgb,var(--fg) 85%,var(--fm))}
 .cs-body p{margin-bottom:20px}
 .cs-body p:last-child{margin-bottom:0}
-.cs-body p::first-line{font-weight:500}
+
+/* Pull quote — text as image */
+.cs-block--pull-quote{padding:80px 0;text-align:center;position:relative}
+.cs-block--pull-quote-text{font-family:var(--display);font-size:clamp(28px,4.5vw,44px);font-weight:500;color:var(--fg);line-height:1.15;letter-spacing:-0.015em;max-width:680px;margin:0 auto}
+.cs-block--pull-quote-rule{width:40px;height:1px;background:var(--bd);margin:0 auto 24px}
+.cs-block--pull-quote-attr{font-size:11px;font-weight:400;color:var(--ff);margin-top:20px;letter-spacing:.02em}
+
+/* Section labels (legacy compat) */
+.cs-section-label{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ff);margin-bottom:20px}
+
+/* Narrative sections */
+.cs-narrative{margin-bottom:48px;grid-column:1/2}
 
 /* Bullet points */
 .cs-points{list-style:none;padding:0;margin:16px 0}
 .cs-points li{font-size:14px;font-weight:400;color:var(--fm);line-height:1.7;padding:8px 0 8px 16px;border-left:2px solid var(--ac1)}
 
-
-/* Pull quotes — full width, big type */
+/* Pull quotes — legacy */
 .cs-pullquote{font-family:var(--display);font-size:clamp(28px,4.5vw,44px);font-weight:500;color:var(--fg);line-height:1.15;letter-spacing:-0.01em;padding:64px 0;text-align:center}
 
-/* Figures — full bleed, tall, immersive */
+/* Figures — legacy */
 .cs-fig{margin:72px 0}
 .cs-full-img{width:calc(100% + 80px);margin-left:-40px;aspect-ratio:3/2;background:var(--sf);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
 @media(max-width:768px){.cs-full-img{width:calc(100% + 40px);margin-left:-20px;aspect-ratio:4/3}}
