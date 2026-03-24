@@ -170,15 +170,17 @@ function ImageCard({ src, index, onClick, isMulti, by, caption }) {
   const isVideo = src.endsWith(".mp4");
   return (
     <div onClick={onClick} className="pb-card">
-      {error ? (
-        <div className="pb-card-err">—</div>
-      ) : isVideo ? (
-        <video src={src} muted loop playsInline onLoadedData={()=>setLoaded(true)} onError={()=>setError(true)} onMouseEnter={e=>e.target.play()} onMouseLeave={e=>{e.target.pause();e.target.currentTime=0;}} className="pb-card-media" style={{ opacity:loaded?1:0.4 }} />
-      ) : (
-        <img src={src} alt="" loading="lazy" onLoad={()=>setLoaded(true)} onError={()=>setError(true)} className="pb-card-media pb-card-img" style={{ opacity:loaded?1:0.4 }} />
-      )}
-      {isMulti && <div className="pb-card-multi">+</div>}
-      {by && <div className="pb-card-by">{by}</div>}
+      <div className="pb-card-thumb">
+        {error ? (
+          <div className="pb-card-err">—</div>
+        ) : isVideo ? (
+          <video src={src} muted loop playsInline onLoadedData={()=>setLoaded(true)} onError={()=>setError(true)} onMouseEnter={e=>e.target.play()} onMouseLeave={e=>{e.target.pause();e.target.currentTime=0;}} className="pb-card-media" style={{ opacity:loaded?1:0.4 }} />
+        ) : (
+          <img src={src} alt="" loading="lazy" onLoad={()=>setLoaded(true)} onError={()=>setError(true)} className="pb-card-media pb-card-img" style={{ opacity:loaded?1:0.4 }} />
+        )}
+        {isMulti && <div className="pb-card-multi">+</div>}
+        {by && <div className="pb-card-by">{by}</div>}
+      </div>
       {caption && <div className="pb-card-hover"><span>{caption}</span></div>}
     </div>
   );

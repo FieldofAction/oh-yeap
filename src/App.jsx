@@ -17,6 +17,7 @@ import FieldConsole from "./components/FieldConsole";
 import IncandescantLab from "./components/IncandescantLab";
 import FOAGenerator from "./components/FOAGenerator";
 import BreakgroundCard from "./components/BreakgroundCard";
+import DesertVisual from "./components/DesertVisual";
 import PatioBeach from "./components/PatioBeach";
 import Superconscious from "./components/Superconscious";
 import { DualLensToggle, DualLensBar } from "./components/PatternLens";
@@ -167,6 +168,7 @@ export default function App() {
           {view === "patterns" && <PatternLanguage content={content} onOpen={openItem} fg={theme.fg} />}
           {view === "foa" && <FOAGenerator />}
           {view === "breakground" && <BreakgroundCard />}
+          {view === "desert" && <DesertVisual />}
           {view === "patiobeach" && <PatioBeach />}
           {view === "superconscious" && <Superconscious />}
         </main>

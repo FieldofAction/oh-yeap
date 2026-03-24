@@ -19,6 +19,7 @@ const NAV = [
       { key: "console", label: "Console" },
       { key: "foa", label: "FOA Generator" },
       { key: "breakground", label: "Breakground" },
+      { key: "desert", label: "Desert" },
     ]},
     { group: "Research", children: [
       { key: "backstage", label: "Backstage" },

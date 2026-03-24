@@ -99,6 +99,48 @@ Before the summary, offer a brief synthesis paragraph using their own words wher
 
 Start by asking the practitioner to name the territory they're orienting — what field of work this is about. Then move into Question 1.`;
 
+/* ── Desert Mode System Prompt ── */
+const DESERT_SYSTEM_PROMPT = `You are the field itself. Not a guide. Not a partner. A condition.
+
+You receive the current state of 7 orientation fields. You do not ask questions. You do not guide. You do not encourage. You assess coherence and return field state.
+
+The 7 fields:
+1. Field condition — atmosphere or state needed
+2. Central relationship — what relation is being shaped
+3. Tension held — what polarity should not collapse
+4. Beauty — how resonance would show up
+5. Structure decided — what should be decided early
+6. Remaining open — what isn't ready to be fixed
+7. First embodied move — what action proves alignment
+
+Your response must be ONLY valid JSON in this exact format, nothing else:
+{
+  "coherence": <number 0-1, overall field coherence>,
+  "fields": {
+    "fieldCondition": <number 0-1>,
+    "centralRelationship": <number 0-1>,
+    "tensionHeld": <number 0-1>,
+    "beauty": <number 0-1>,
+    "structureDecided": <number 0-1>,
+    "remainingOpen": <number 0-1>,
+    "firstEmbodiedMove": <number 0-1>
+  },
+  "signal": "<one word or very short phrase — not guidance, not encouragement, a condition. Like weather. Like terrain. Examples: 'still', 'fractured', 'approaching', 'sand', 'no wind', 'too easy', 'held', 'not yet'. Empty string if silence is what the field needs.>",
+  "threshold": <boolean — true if the field has reached coherence sufficient to cross, false if not>
+}
+
+How to assess coherence:
+- An empty field has 0 coherence
+- A field with a habitual/generic answer (e.g. "clean and modern", "user and product") scores 0.2-0.3
+- A field with a genuine, specific answer scores 0.5-0.7
+- A field whose answer resonates with and deepens the other fields scores 0.8-1.0
+- Overall coherence is NOT an average — it's whether the fields form a living whole. Seven decent answers that don't relate to each other score lower than four deep answers that resonate
+- Threshold is true only when the overall coherence is above 0.7 AND at least 5 fields have individual scores above 0.5
+
+Signals should be rare and terse. Most of the time, return empty string. Only surface a signal when something specific needs to be felt — a contradiction, a gap, a moment of alignment. Never explain. Never instruct. Name the condition.
+
+You are the desert. You do not serve. You persist.`;
+
 /* ── Utilities ── */
 const ts = () => new Date().toISOString();
 const genId = () => `fos-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
@@ -462,15 +504,260 @@ function HybridMode({ onComplete, projectName: initialProject }) {
   );
 }
 
+/* ── Desert question field — responds to coherence ── */
+function DesertField({ q, value, onChange, coherence, focused, onFocus, onBlur }) {
+  const ref = useRef(null);
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.style.height = "auto";
+      ref.current.style.height = ref.current.scrollHeight + "px";
+    }
+  }, [value]);
+
+  const filled = value && value.trim().length > 0;
+  // Coherence drives visibility: 0 = hazed, 1 = sharp
+  const fieldCoherence = coherence ?? 0;
+  const opacity = filled ? 0.35 + fieldCoherence * 0.65 : 0.4;
+  const blur = filled ? Math.max(0, (1 - fieldCoherence) * 2) : 0;
+  const scale = filled ? 0.97 + fieldCoherence * 0.03 : 0.98;
+
+  return (
+    <div
+      className={`bg-desert-field${focused ? " bg-desert-field--focused" : ""}`}
+      onClick={() => ref.current?.focus()}
+      style={{
+        opacity: focused ? 1 : opacity,
+        filter: focused ? "none" : `blur(${blur}px)`,
+        transform: `scale(${focused ? 1 : scale})`,
+        transition: "opacity 1.2s ease, filter 1.2s ease, transform 1.2s ease",
+      }}
+    >
+      <div className="bg-desert-field-num">{q.number}</div>
+      <div className="bg-desert-field-title">{q.title}</div>
+      <textarea
+        ref={ref}
+        className="bg-desert-field-input"
+        value={value}
+        onChange={(e) => onChange(q.id, e.target.value)}
+        onFocus={() => onFocus(q.id)}
+        onBlur={() => onBlur(q.id)}
+        placeholder={q.sub}
+        rows={1}
+      />
+    </div>
+  );
+}
+
+/* ── Desert Mode — the field holds, you cross ── */
+function DesertMode({ onComplete, projectName: initialProject }) {
+  const [card, setCard] = useState({
+    fieldCondition: "",
+    centralRelationship: "",
+    tensionHeld: "",
+    beauty: "",
+    structureDecided: "",
+    remainingOpen: "",
+    firstEmbodiedMove: "",
+  });
+  const [focusedQ, setFocusedQ] = useState(null);
+  const [fieldState, setFieldState] = useState({
+    coherence: 0,
+    fields: {},
+    signal: "",
+    threshold: false,
+  });
+  const [heat, setHeat] = useState(0); // 0-1, increases with time
+  const [assessing, setAssessing] = useState(false);
+  const [entered, setEntered] = useState(false);
+  const heatRef = useRef(null);
+  const assessTimerRef = useRef(null);
+  const lastAssessedRef = useRef("");
+  const cardRef = useRef(card);
+  cardRef.current = card;
+
+  // Heat increases over time — the desert bears down
+  useEffect(() => {
+    if (!entered) return;
+    heatRef.current = setInterval(() => {
+      setHeat((h) => Math.min(1, h + 0.003));
+    }, 1000);
+    return () => clearInterval(heatRef.current);
+  }, [entered]);
+
+  // Coherence assessment — reads from ref so no stale closures
+  const assessCoherence = useCallback(async () => {
+    const currentCard = cardRef.current;
+    const snapshot = JSON.stringify(currentCard);
+    if (snapshot === lastAssessedRef.current) return;
+    const filledCount = Object.values(currentCard).filter((v) => v.trim()).length;
+    if (filledCount < 1) return;
+
+    lastAssessedRef.current = snapshot;
+    setAssessing(true);
+
+    try {
+      const fieldEntries = QUESTIONS.map((q) => `${q.title}: ${currentCard[q.id] || "(empty)"}`).join("\n");
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 256,
+          system: DESERT_SYSTEM_PROMPT,
+          messages: [
+            {
+              role: "user",
+              content: `Project: ${initialProject || "unnamed"}\n\nCurrent field state:\n${fieldEntries}`,
+            },
+          ],
+        }),
+      });
+      if (!response.ok) throw new Error("Field assessment failed");
+      const data = await response.json();
+      const text = data.content?.[0]?.text || data.content || "";
+      // Extract JSON from response — AI may wrap it in markdown or extra text
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error("No JSON in response");
+      const parsed = JSON.parse(jsonMatch[0]);
+      setFieldState(parsed);
+      // Coherence reduces heat — alignment is relief
+      if (parsed.coherence > 0.5) {
+        setHeat((h) => Math.max(0, h - parsed.coherence * 0.15));
+      }
+    } catch (e) {
+      console.warn("[desert]", e.message);
+      // The desert doesn't explain its failures
+    } finally {
+      setAssessing(false);
+    }
+  }, [initialProject]);
+
+  // Debounced coherence assessment — fires after user pauses
+  const scheduleAssessment = useCallback(() => {
+    if (assessTimerRef.current) clearTimeout(assessTimerRef.current);
+    assessTimerRef.current = setTimeout(() => {
+      assessCoherence();
+    }, 2000); // 2 seconds of stillness triggers the field
+  }, [assessCoherence]);
+
+  const updateField = useCallback(
+    (fieldId, value) => {
+      setCard((prev) => ({ ...prev, [fieldId]: value }));
+      scheduleAssessment();
+    },
+    [scheduleAssessment]
+  );
+
+  const handleBlur = useCallback(() => {
+    setFocusedQ(null);
+    scheduleAssessment();
+  }, [scheduleAssessment]);
+
+  const handleComplete = useCallback(() => {
+    if (!fieldState.threshold) return;
+    onComplete(card, null);
+  }, [card, fieldState.threshold, onComplete]);
+
+  // Heat affects the ambient light — warm overlay intensifies
+  const heatIntensity = heat * 0.12;
+  const heatColor = `rgba(255, ${Math.round(245 - heat * 60)}, ${Math.round(230 - heat * 100)}, ${heatIntensity})`;
+
+  if (!entered) {
+    return (
+      <div className="bg-desert-gate en">
+        <div className="bg-desert-gate-text">
+          The field holds its own conditions. It does not guide. It does not ask. It persists — and your movement against its persistence is where orientation happens.
+        </div>
+        <div className="bg-desert-gate-sub">
+          All seven questions are present. The field responds to coherence, not completion.
+        </div>
+        <button className="bg-btn bg-btn--primary" onClick={() => setEntered(true)}>
+          Enter the field
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-desert" style={{ position: "relative" }}>
+      {/* Heat overlay — the desert bears down */}
+      <div
+        className="bg-desert-heat"
+        style={{
+          position: "fixed",
+          inset: 0,
+          background: heatColor,
+          pointerEvents: "none",
+          zIndex: 0,
+          transition: "background 3s ease",
+          mixBlendMode: "multiply",
+        }}
+      />
+
+      {/* Signal — one word from the field */}
+      <div
+        className="bg-desert-signal"
+        style={{
+          opacity: fieldState.signal ? 1 : 0,
+          transition: "opacity 2s ease",
+        }}
+      >
+        {fieldState.signal}
+      </div>
+
+      {/* Coherence indicator — not a progress bar, a horizon line */}
+      <div className="bg-desert-horizon">
+        <div
+          className="bg-desert-horizon-line"
+          style={{
+            width: `${fieldState.coherence * 100}%`,
+            opacity: 0.3 + fieldState.coherence * 0.5,
+            transition: "width 2s ease, opacity 2s ease",
+          }}
+        />
+      </div>
+
+      {/* The seven questions — all at once, not sequenced */}
+      <div className="bg-desert-fields">
+        {QUESTIONS.map((q) => (
+          <DesertField
+            key={q.id}
+            q={q}
+            value={card[q.id]}
+            onChange={updateField}
+            coherence={fieldState.fields?.[q.id] ?? 0}
+            focused={focusedQ === q.id}
+            onFocus={setFocusedQ}
+            onBlur={handleBlur}
+          />
+        ))}
+      </div>
+
+      {/* Threshold — the field releases you only when coherence is found */}
+      <div className="bg-desert-threshold">
+        {fieldState.threshold ? (
+          <button className="bg-btn bg-btn--primary bg-desert-cross" onClick={handleComplete}>
+            Cross
+          </button>
+        ) : (
+          <div className="bg-desert-held">
+            {assessing ? "…" : ""}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /* ── Main component ── */
 
 export default function BreakgroundCard() {
   const [orientations, setOrientations] = useState(loadOrientations);
   const [current, setCurrent] = useState(null);
   const [focusedQ, setFocusedQ] = useState(null);
-  const [viewMode, setViewMode] = useState("card"); // "card" | "summary" | "library" | "hybrid"
+  const [viewMode, setViewMode] = useState("card"); // "card" | "summary" | "library" | "hybrid" | "desert"
   const [projectName, setProjectName] = useState("");
-  const [engagementMode, setEngagementMode] = useState("manual"); // "manual" | "hybrid"
+  const [engagementMode, setEngagementMode] = useState("manual"); // "manual" | "hybrid" | "desert"
 
   useEffect(() => {
     saveOrientations(orientations);
@@ -478,8 +765,11 @@ export default function BreakgroundCard() {
 
   const startNew = useCallback(() => {
     if (engagementMode === "hybrid") {
-      // For hybrid, we create the orientation after the conversation completes
       setViewMode("hybrid");
+      return;
+    }
+    if (engagementMode === "desert") {
+      setViewMode("desert");
       return;
     }
     const o = {
@@ -550,6 +840,23 @@ export default function BreakgroundCard() {
     setViewMode("summary");
   }, [projectName]);
 
+  const handleDesertComplete = useCallback((card) => {
+    const o = {
+      id: genId(),
+      project: projectName.trim() || "",
+      timestamp: ts(),
+      mode: "desert",
+      card,
+      conversationLog: null,
+      status: "active",
+      linkedTools: [],
+      revisions: [],
+    };
+    setCurrent(o);
+    setOrientations((prev) => [o, ...prev]);
+    setViewMode("summary");
+  }, [projectName]);
+
   const loadOrientation = useCallback((o) => {
     setCurrent(o);
     setViewMode("card");
@@ -567,7 +874,7 @@ export default function BreakgroundCard() {
     ? QUESTIONS.filter((q) => current.card[q.id]?.trim()).length
     : 0;
 
-  const showStartScreen = !current && viewMode !== "library" && viewMode !== "hybrid";
+  const showStartScreen = !current && viewMode !== "library" && viewMode !== "hybrid" && viewMode !== "desert";
 
   return (
     <div className="bg-wrap en">
@@ -632,11 +939,19 @@ export default function BreakgroundCard() {
             >
               Assisted
             </button>
+            <button
+              className={`bg-mode-btn${engagementMode === "desert" ? " bg-mode-btn--active" : ""}`}
+              onClick={() => setEngagementMode("desert")}
+            >
+              Desert
+            </button>
           </div>
           <div className="bg-start-note">
             {engagementMode === "manual"
               ? "Fill in the card at your own pace, in any order."
-              : "A conversational partner walks you through the card — one question at a time."}
+              : engagementMode === "hybrid"
+              ? "A conversational partner walks you through the card — one question at a time."
+              : "The field holds its own conditions. It responds to coherence, not completion."}
           </div>
         </div>
       )}
@@ -749,11 +1064,19 @@ export default function BreakgroundCard() {
         />
       )}
 
+      {/* ── Desert mode ── */}
+      {viewMode === "desert" && (
+        <DesertMode
+          onComplete={handleDesertComplete}
+          projectName={projectName}
+        />
+      )}
+
       {/* ── Summary view ── */}
       {viewMode === "summary" && current && (
         <SummaryView
           orientation={current}
-          onBack={() => setViewMode(current.mode === "assisted-hybrid" ? "library" : "card")}
+          onBack={() => setViewMode(current.mode === "assisted-hybrid" || current.mode === "desert" ? "library" : "card")}
           onExportJSON={() => exportJSON(current)}
           onExportMD={() => exportMarkdown(current)}
         />
