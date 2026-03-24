@@ -23,6 +23,7 @@ const NAV = [
     ]},
     { group: "Research", children: [
       { key: "backstage", label: "Backstage" },
+      { key: "editor", label: "Exploration Editor" },
     ]},
     { group: "Archive", children: [
       { key: "lab", label: "Incandescent Lab" },

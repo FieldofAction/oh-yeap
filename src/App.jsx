@@ -18,6 +18,8 @@ import IncandescantLab from "./components/IncandescantLab";
 import FOAGenerator from "./components/FOAGenerator";
 import BreakgroundCard from "./components/BreakgroundCard";
 import DesertVisual from "./components/DesertVisual";
+import ExplorationEditor from "./components/ExplorationEditor";
+import useExplorationStore from "./store/useExplorationStore";
 import PatioBeach from "./components/PatioBeach";
 import Superconscious from "./components/Superconscious";
 import { DualLensToggle, DualLensBar } from "./components/PatternLens";
@@ -47,6 +49,14 @@ export default function App() {
   const [showGraph, setShowGraph] = useState(false);
   const [activeItem, setActiveItem] = useState(null);
   const [closing, setClosing] = useState(false);
+  const explorationStore = useExplorationStore();
+
+  // Enrich activeItem with exploration store overrides
+  const enrichedActiveItem = useMemo(() => {
+    if (!activeItem?.sketch) return activeItem;
+    const merged = explorationStore.getExploration(activeItem.title);
+    return merged || activeItem;
+  }, [activeItem, explorationStore]);
   const [transitioning, setTransitioning] = useState(false);
   const asu = useASUStore();
   const theme = THEMES[themeKey];
@@ -169,6 +179,7 @@ export default function App() {
           {view === "foa" && <FOAGenerator />}
           {view === "breakground" && <BreakgroundCard />}
           {view === "desert" && <DesertVisual />}
+          {view === "editor" && <ExplorationEditor />}
           {view === "patiobeach" && <PatioBeach />}
           {view === "superconscious" && <Superconscious />}
         </main>
@@ -183,7 +194,7 @@ export default function App() {
       {activeItem && activeItem.caseStudy && <CaseStudyDetail item={activeItem} closing={closing} onClose={closeItem} fg={theme.fg} lens={lens} patternLens={patternLens} />}
 
       {/* Exploration sketchbook overlay */}
-      {activeItem && activeItem.sketch && <SketchbookDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} fg={theme.fg} lens={lens} patternLens={patternLens} />}
+      {activeItem && activeItem.sketch && <SketchbookDetail item={enrichedActiveItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} fg={theme.fg} lens={lens} patternLens={patternLens} />}
 
       {/* Theory detail overlay */}
       {activeItem && activeItem.theory && <TheoryDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} onRelation={handleRelation} fg={theme.fg} lens={lens} patternLens={patternLens} />}

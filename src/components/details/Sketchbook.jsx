@@ -57,9 +57,20 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
         {item.sketch?.openQuestions?.length > 0 && (
           <div className="sk-oq dc dc6">
             <div className="sk-oq-label">Open Questions</div>
-            {item.sketch.openQuestions.map((q, i) => (
-              <div key={i} className="sk-oq-item">{q}</div>
-            ))}
+            {item.sketch.openQuestions.map((q, i) => {
+              const text = typeof q === "string" ? q : q.text;
+              const resolved = typeof q === "object" && q.status && q.status !== "open";
+              return (
+                <div key={i} className={`sk-oq-item${resolved ? " sk-oq-item--resolved" : ""}`}>
+                  {text}
+                  {resolved && q.note && (
+                    <div className="sk-oq-resolution">
+                      <span className="sk-oq-rstatus">{q.status}</span> — {q.note}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
         {item.sketch?.connections?.length > 0 && (
