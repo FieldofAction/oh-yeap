@@ -23,6 +23,7 @@ import useExplorationStore from "./store/useExplorationStore";
 import PatioBeach from "./components/PatioBeach";
 import Superconscious from "./components/Superconscious";
 import { DualLensToggle, DualLensBar } from "./components/PatternLens";
+import RelationalXRay from "./components/RelationalXRay";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
 import SketchbookDetail from "./components/details/Sketchbook";
@@ -49,6 +50,7 @@ export default function App() {
   const [showGraph, setShowGraph] = useState(false);
   const [activeItem, setActiveItem] = useState(null);
   const [closing, setClosing] = useState(false);
+  const [xray, setXray] = useState(false);
   const explorationStore = useExplorationStore();
 
   // Enrich activeItem with exploration store overrides
@@ -106,9 +108,11 @@ export default function App() {
       if ((e.key === "m" || e.key === "M") && !e.ctrlKey && !e.metaKey && !isInput) setLens(p => !p);
       if ((e.key === "p" || e.key === "P") && !e.ctrlKey && !e.metaKey && !isInput) setPatternLens(p => !p);
       if ((e.key === "g" || e.key === "G") && !e.ctrlKey && !e.metaKey && !isInput) setShowGraph(p => !p);
+      if ((e.altKey) && (e.key === "x" || e.key === "X")) { e.preventDefault(); setXray(p => !p); }
       if (e.key === "Escape") {
         setEgg(false);
         setShowGraph(false);
+        setXray(false);
         setRelFilter(null);
         if (activeItem) {
           setClosing(true);
@@ -204,6 +208,10 @@ export default function App() {
 
       {/* Dual lens toggle — floating button pair */}
       {view !== "models" && view !== "patterns" && <DualLensToggle modelActive={lens} patternActive={patternLens} onToggleModel={toggleLens} onTogglePattern={togglePatternLens} />}
+
+      {/* X-Ray overlay — Option+X to toggle */}
+      {xray && <RelationalXRay onClose={() => setXray(false)} />}
+      {!xray && <div className="xr-hint" onClick={() => setXray(true)}><span className="xr-hint-dot" /><span>X-Ray</span></div>}
 
       {/* Easter egg overlay — press ? to toggle */}
       {egg && (
