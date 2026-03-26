@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { SEED } from "../data/seed";
 
 const SECTIONS = [
@@ -9,17 +9,77 @@ const SECTIONS = [
   { id: "works-cited", label: "Works Cited" },
 ];
 
+/* ── X-Ray diagnostic data mapped to theory sections ── */
+const XRAY_DATA = {
+  overview: [
+    { type: "signal", title: "Core conviction is generative", body: "The central idea — design conditions, not outcomes — has produced real work, organized real thinking, and attracted collaborators organically.", tell: null },
+    { type: "shadow", title: "Can become theology if untested", body: "A framework that cannot acknowledge its failure modes is not a framework. It is a theology.", tell: "The theory feels complete and self-reinforcing. When was it last challenged by someone who doesn't share the worldview?" },
+  ],
+  philosophy: {
+    "Form to Field": [
+      { type: "signal", title: "Real paradigm shift", body: "Moving from fixed form to dynamic field conditions represents a genuine epistemic contribution.", tell: null },
+      { type: "inflation", title: "Scale effects thin the model", body: "Field-centered design was developed at the scale of human attention. The framework thins when the field exceeds what one designer's awareness can hold.", tell: "Things worked at 6 people and broke at 60." },
+    ],
+    "Enter Relational Intelligence": [
+      { type: "signal", title: "Genuine epistemic contribution", body: "Intelligence as emergent within relationships rather than residing in entities. This reframe has real explanatory power.", tell: null },
+      { type: "inflation", title: "Power asymmetry not modeled", body: "The relational frame models the field as though participants have equivalent agency. Almost no field operates this way.", tell: "Conditions set, no movement. Ask who doesn't feel permission to enter the field." },
+      { type: "shadow", title: "Hidden control through conditions", body: "The designer 'creates conditions' but conditions can be manipulated. Invisible authorship dressed as openness.", tell: "You are surprised when the field produces something you didn't want. That surprise is data." },
+    ],
+    "Aesthetics as Condition": [
+      { type: "signal", title: "Beauty as resonance works", body: "Redefining aesthetics as field coherence rather than surface form is productive and actionable.", tell: null },
+      { type: "shadow", title: "Moral aestheticization", body: "The tendency to prefer the framework's elegance over the messiness of the actual situation. When the approach becomes more important than the outcome.", tell: "The work looks right but is not producing results." },
+    ],
+    "Human-Centered to Field-Centered Design": [
+      { type: "signal", title: "Opens design beyond the individual", body: "Distributing subjectivity across human, non-human, and environmental participants reflects how systems actually work.", tell: null },
+      { type: "inflation", title: "Hidden incentives unaccounted", body: "People are also optimizing for career, relationships, fear of exposure. The relational frame cannot see these variables.", tell: "Coherent conditions, incoherent behavior. People are playing a different game." },
+      { type: "shadow", title: "Infinite deferral", body: "The deepest shadow: using 'the conditions are not ready' as a permanent holding pattern. Infinite justification for waiting.", tell: "You have been in preparation longer than the preparation could possibly require." },
+    ],
+    "Relational Turn": [
+      { type: "signal", title: "Living system orientation", body: "Pattern, rhythm, and resonance replacing static form as primary units of meaning aligns with contemporary thought across disciplines.", tell: null },
+      { type: "inflation", title: "Adversarial conditions not modeled", body: "The framework welcomes productive friction but has less purchase on pure adversarial intent. Somewhat naive in the presence of bad actors.", tell: "You keep designing better conditions and they keep getting undermined." },
+      { type: "shadow", title: "Fragility to speed", body: "In contexts that demand speed — a decision that has to happen today — the framework can become paralytic.", tell: "The speed of the situation is exceeding the speed of the framework." },
+    ],
+    "Toward Transrelational Intelligence": [
+      { type: "signal", title: "Forward-facing vision", body: "Agency operating across boundaries through collective fields of emotion, information, and energy. Compelling direction.", tell: null },
+      { type: "inflation", title: "Scale + adversarial gaps compound", body: "As systems scale toward transrelational intelligence, both scale effects and adversarial conditions intensify.", tell: null },
+    ],
+  },
+  principles: [
+    { type: "signal", title: "Each principle carries signal", body: "The 8 principles form a coherent, actionable framework. They are not abstract — they can be applied.", tell: null },
+    { type: "shadow", title: "Each has a shadow cost", body: "Patience becomes deferral. Openness becomes hidden control. Attunement becomes fragility. The cost is not a bug — it is the price of the thing itself.", tell: "The shadow of any strength is simply that strength, deployed past the point where it is still a strength." },
+  ],
+};
+
+const TYPE_COLORS = { signal: "#2e6b4f", inflation: "#a06828", shadow: "#6a5aaa" };
+const TYPE_LABELS = { signal: "Signal", inflation: "Inflation", shadow: "Shadow" };
+
+/* ── Diagnostic card ── */
+function XRayCard({ item, delay }) {
+  return (
+    <div
+      className={`cn-xr-card cn-xr-card--${item.type}`}
+      style={{ "--xr-c": TYPE_COLORS[item.type], animationDelay: `${delay}ms` }}
+    >
+      <div className="cn-xr-card-label">{TYPE_LABELS[item.type]}</div>
+      <div className="cn-xr-card-title">{item.title}</div>
+      <div className="cn-xr-card-body">{item.body}</div>
+      {item.tell && <div className="cn-xr-card-tell"><strong>Tell:</strong> {item.tell}</div>}
+    </div>
+  );
+}
+
 export default function Canon() {
   const rdItem = SEED.find(c => c.title === "Relational Design");
   const theory = rdItem?.theory;
   const [active, setActive] = useState("overview");
+  const [xrayMode, setXrayMode] = useState(false);
+  const [xrayFilter, setXrayFilter] = useState("all"); // "all" | "signal" | "inflation" | "shadow"
   const sectionRefs = useRef({});
 
-  /* Scroll-spy — IntersectionObserver tracks which section is in view */
+  /* Scroll-spy */
   useEffect(() => {
     const observers = [];
     const entries = new Map();
-
     SECTIONS.forEach(({ id }) => {
       const el = sectionRefs.current[id];
       if (!el) return;
@@ -38,30 +98,83 @@ export default function Canon() {
       obs.observe(el);
       observers.push(obs);
     });
-
     return () => observers.forEach(o => o.disconnect());
   }, []);
+
+  /* X key toggles X-Ray mode */
+  useEffect(() => {
+    const handler = (e) => {
+      const tag = e.target.tagName;
+      const isInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || e.target.isContentEditable;
+      if (isInput) return;
+      if ((e.key === "x" || e.key === "X") && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        setXrayMode(p => !p);
+      }
+      if (e.key === "Escape" && xrayMode) {
+        setXrayMode(false);
+      }
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [xrayMode]);
 
   const scrollTo = (id) => {
     const el = sectionRefs.current[id];
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
+  const filterCards = useCallback((cards) => {
+    if (xrayFilter === "all") return cards;
+    return cards.filter(c => c.type === xrayFilter);
+  }, [xrayFilter]);
+
+  const renderCards = useCallback((cards, baseDelay = 0) => {
+    if (!xrayMode || !cards) return null;
+    const filtered = filterCards(cards);
+    if (filtered.length === 0) return null;
+    return (
+      <div className="cn-xr-cards">
+        {filtered.map((item, i) => (
+          <XRayCard key={i} item={item} delay={baseDelay + i * 60} />
+        ))}
+      </div>
+    );
+  }, [xrayMode, filterCards]);
+
   if (!theory) return null;
 
   return (
-    <div className="ph en">
-      {/* ── Sticky Sub-Nav ── */}
+    <div className={`ph en${xrayMode ? " cn-xray-active" : ""}`}>
+      {/* ── Sub-Nav / X-Ray Toolbar ── */}
       <nav className="cn-subnav">
-        {SECTIONS.map(({ id, label }) => (
-          <button
-            key={id}
-            className={`cn-subnav-link${active === id ? " on" : ""}`}
-            onClick={() => scrollTo(id)}
-          >
-            {label}
-          </button>
-        ))}
+        {xrayMode ? (
+          <>
+            <div className="cn-xr-bar-label">Relational X-Ray</div>
+            <div className="cn-xr-filters">
+              {["all", "signal", "inflation", "shadow"].map(f => (
+                <button
+                  key={f}
+                  className={`cn-xr-filter-btn${xrayFilter === f ? " on" : ""}`}
+                  onClick={() => setXrayFilter(f)}
+                  style={f !== "all" ? { "--xr-fc": TYPE_COLORS[f] } : undefined}
+                >
+                  {f === "all" ? "All" : TYPE_LABELS[f]}
+                </button>
+              ))}
+            </div>
+            <button className="cn-xr-close" onClick={() => setXrayMode(false)}>&times;</button>
+          </>
+        ) : (
+          SECTIONS.map(({ id, label }) => (
+            <button
+              key={id}
+              className={`cn-subnav-link${active === id ? " on" : ""}`}
+              onClick={() => scrollTo(id)}
+            >
+              {label}
+            </button>
+          ))
+        )}
       </nav>
 
       {/* ── 1. Overview ── */}
@@ -86,6 +199,8 @@ export default function Canon() {
           <p className="ph-canon-at">The system demonstrates aliveness through responsiveness, not performance. State is visible. Change is legible. Stillness and motion are both evidence of attention.</p>
         </div>
       </div>
+
+      {renderCards(XRAY_DATA.overview)}
 
       <div className="ph-section en d3">
         <div className="ph-sl">Introduction</div>
@@ -118,6 +233,7 @@ export default function Canon() {
               <p key={j} className="ph-body-text">{p}</p>
             ))}
             {sec.caption && <div className="ph-body-caption">{sec.caption}</div>}
+            {renderCards(XRAY_DATA.philosophy?.[sec.heading], i * 40)}
           </div>
         ))}
       </div>
@@ -137,10 +253,13 @@ export default function Canon() {
           </div>
         </div>
 
+        {renderCards(XRAY_DATA.principles)}
+
         {/* Lens Mode acknowledgment */}
         <div className="cn-lens-note">
           <em>Model Lens</em> — reveal mental model relationships across work. Press <kbd>M</kbd> to activate.
           <em>Pattern Lens</em> — overlay Alexander's architectural patterns. Press <kbd>P</kbd> to activate.
+          {!xrayMode && <><br /><em>X-Ray</em> — field diagnostic overlay. Press <kbd>X</kbd> to activate.</>}
         </div>
       </div>
 
