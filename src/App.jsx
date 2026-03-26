@@ -108,7 +108,7 @@ export default function App() {
       if ((e.key === "m" || e.key === "M") && !e.ctrlKey && !e.metaKey && !isInput) setLens(p => !p);
       if ((e.key === "p" || e.key === "P") && !e.ctrlKey && !e.metaKey && !isInput) setPatternLens(p => !p);
       if ((e.key === "g" || e.key === "G") && !e.ctrlKey && !e.metaKey && !isInput) setShowGraph(p => !p);
-      if ((e.altKey) && (e.key === "x" || e.key === "X")) { e.preventDefault(); setXray(p => !p); }
+      if ((e.key === "x" || e.key === "X") && !e.ctrlKey && !e.metaKey && !e.altKey && !isInput) setXray(p => !p);
       if (e.key === "Escape") {
         setEgg(false);
         setShowGraph(false);
