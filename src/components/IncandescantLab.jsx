@@ -17,7 +17,7 @@ export default function IncandescantLab({ asu }) {
     <div className="il en">
       <div className="il-header dc dc1">
         <h1 className="il-title">Incandescent Lab</h1>
-        <p className="il-sub">Behind the scenes of the creative process — completed idea runs from the Backstage pipeline, exhibited as process artifacts.</p>
+        <p className="il-sub">Behind the scenes of the creative process. Completed idea runs from the Backstage pipeline, exhibited as process artifacts.</p>
       </div>
 
       {completedIdeas.length === 0 ? (

@@ -34,7 +34,7 @@ const DEFAULT_STORE = {
   // System
   system: {
     condition: "Threshold",
-    reading: "Steps to an Ecology of Mind — Bateson",
+    reading: "Steps to an Ecology of Mind, Bateson",
     building: "Governed Surface v5",
     working: "TV",
   },
@@ -124,14 +124,14 @@ function useASUStore() {
       const dominant = PILLARS.reduce((a,b) => pb.pillars[a.key]>=pb.pillars[b.key]?a:b, PILLARS[0]);
       let ctx = "";
       if (hasPb) {
-        ctx += `\n\nACTIVE PROJECT CONTEXT — shape your response to fit this:\n${pb.project.name?`Project: ${pb.project.name}`:""} ${pb.project.client?`| Client: ${pb.project.client}`:""}\n${pb.project.brief?`Brief: ${pb.project.brief}\n`:""}Dominant Pillar: ${dominant.label} (${dominant.desc})\nPillar Targets — System: ${pb.pillars.system}/100, Scenography: ${pb.pillars.scenography}/100, Soul: ${pb.pillars.soul}/100, Relational: ${pb.pillars.relational}/100${pb.emotion?`\nEmotional Register: ${pb.emotion} — lean into this tone and atmosphere`:""}${pb.application.bigMove?`\nBig Move: ${pb.application.bigMove}`:""}\n\nIMPORTANT: Let the pillar targets shape your output. ${pb.pillars.scenography>65?"Emphasize immersive, monumental, cinematic qualities. ":""}${pb.pillars.soul>65?"Emphasize atmospheric, emotional, resonant qualities. ":""}${pb.pillars.system>65?"Emphasize structural clarity, proportion, and systematic logic. ":""}${pb.pillars.relational>65?"Emphasize connection, choreography, and how things relate. ":""}${pb.emotion?`Set the tone to ${pb.emotion}.`:""}`;
+        ctx += `\n\nACTIVE PROJECT CONTEXT: shape your response to fit this:\n${pb.project.name?`Project: ${pb.project.name}`:""} ${pb.project.client?`| Client: ${pb.project.client}`:""}\n${pb.project.brief?`Brief: ${pb.project.brief}\n`:""}Dominant Pillar: ${dominant.label} (${dominant.desc})\nPillar Targets: System: ${pb.pillars.system}/100, Scenography: ${pb.pillars.scenography}/100, Soul: ${pb.pillars.soul}/100, Relational: ${pb.pillars.relational}/100${pb.emotion?`\nEmotional Register: ${pb.emotion}. Lean into this tone and atmosphere`:""}${pb.application.bigMove?`\nBig Move: ${pb.application.bigMove}`:""}\n\nIMPORTANT: Let the pillar targets shape your output. ${pb.pillars.scenography>65?"Emphasize immersive, monumental, cinematic qualities. ":""}${pb.pillars.soul>65?"Emphasize atmospheric, emotional, resonant qualities. ":""}${pb.pillars.system>65?"Emphasize structural clarity, proportion, and systematic logic. ":""}${pb.pillars.relational>65?"Emphasize connection, choreography, and how things relate. ":""}${pb.emotion?`Set the tone to ${pb.emotion}.`:""}`;
       }
       if (hasAom) {
         const ver = aom.activeVersion;
         const model = AOM_VERSIONS[ver];
         const filled = model.steps.filter(s => activeAom[s.n]?.trim());
         if (filled.length > 0) {
-          ctx += `\n\nART OF MODEL (${ver}) — the foundational thinking shaping this work:\n`;
+          ctx += `\n\nART OF MODEL (${ver}): the foundational thinking shaping this work:\n`;
           filled.forEach(s => { ctx += `${s.title}: ${activeAom[s.n]}\n`; });
           if (aom.synthesis[ver]) ctx += `Synthesis: ${aom.synthesis[ver]}\n`;
         }

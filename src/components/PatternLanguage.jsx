@@ -88,7 +88,7 @@ export default function PatternLanguage({ content, onOpen, fg }) {
         <h1 className="pa-h">Pattern Language</h1>
         <p className="pa-sub">
           A numbered index of {totalPatterns} architectural patterns from
-          Christopher Alexander et al. &mdash; organized across {SCALES.length} scales
+          Christopher Alexander et al., organized across {SCALES.length} scales
           from towns to construction details.
         </p>
       </div>
@@ -99,7 +99,7 @@ export default function PatternLanguage({ content, onOpen, fg }) {
         <p className="pa-body">
           Each pattern describes a problem which occurs over and over again in our
           environment, and then describes the core of the solution to that problem.
-          Together the 253 patterns form a language &mdash; a network of connected
+          Together the 253 patterns form a language: a network of connected
           ideas that move from the largest scales of region and town, through
           buildings and rooms, down to the smallest details of construction.
         </p>

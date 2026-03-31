@@ -12,7 +12,7 @@ export default function Playbook({ asu }) {
 
   const exportText = useMemo(() => {
     const lines = [
-      `PROJECT BRIEF — ${project.name || "Untitled"}`,
+      `PROJECT BRIEF: ${project.name || "Untitled"}`,
       `Client: ${project.client || "—"}`,
       `Date: ${new Date().toLocaleDateString()}`,
       ``,
@@ -26,7 +26,7 @@ export default function Playbook({ asu }) {
       ``,
       `PILLAR TARGETS`,
       ...PILLARS.map(p => `  ${p.label}: ${pillars[p.key]}/100`),
-      `  Dominant: ${dominant.label} — ${dominant.desc}`,
+      `  Dominant: ${dominant.label}. ${dominant.desc}`,
       ``,
       `EMOTIONAL SYSTEM: ${emotion || "—"}`,
       ``,
@@ -39,9 +39,9 @@ export default function Playbook({ asu }) {
       ...STEPS.map((s,i)=>`  [${steps[i]?"✓":" "}] ${s.title}: ${s.desc}`),
       ``,
       `REFERENCE MATRIX`,
-      ...REFS.map(r => `  ${r.name} — ${r.principle}`),
+      ...REFS.map(r => `  ${r.name}: ${r.principle}`),
       ``,
-      `— Action Systems Universal`,
+      `Action Systems Universal`,
     ];
     return lines.join("\n");
   }, [project, pillars, emotion, app, steps, dominant]);
@@ -49,35 +49,35 @@ export default function Playbook({ asu }) {
   return (
     <div className="pb en">
       <div className="pb-h">Playbook</div>
-      <div className="pb-sub">Field of Action Method — a living framework for designing worlds through systematic clarity, scenographic spectacle, soulful atmosphere, and relational design.</div>
+      <div className="pb-sub">Field of Action Method: a living framework for designing worlds through systematic clarity, scenographic spectacle, soulful atmosphere, and relational design.</div>
 
       {/* Field of Action Method */}
       <div className="pb-method">
         <div className="pb-method-h">Field of Action Method</div>
-        <div className="pb-method-d">A framework for designing worlds through System, Scenography, Soul, and Relational Design. Each part acts like a pavilion in a world expo — distinct but unified by shared vision.</div>
+        <div className="pb-method-d">A framework for designing worlds through System, Scenography, Soul, and Relational Design. Each part acts like a pavilion in a world expo, distinct but unified by shared vision.</div>
         <div className="pb-mpillars">
           <div className="pb-mpill"><div className="pb-mpill-bar" style={{background:"#6b8fa3"}} /><div className="pb-mpill-n">System</div><div className="pb-mpill-d">Clarity of structure, proportion, and function.</div></div>
           <div className="pb-mpill"><div className="pb-mpill-bar" style={{background:"#a3896b"}} /><div className="pb-mpill-n">Scenography</div><div className="pb-mpill-d">Immersive staging and monumental spectacle.</div></div>
           <div className="pb-mpill"><div className="pb-mpill-bar" style={{background:"#8c6ba3"}} /><div className="pb-mpill-n">Soul</div><div className="pb-mpill-d">Emotional registers that create atmosphere and resonance.</div></div>
-          <div className="pb-mpill"><div className="pb-mpill-bar" style={{background:"#6ba37a"}} /><div className="pb-mpill-n">Relational</div><div className="pb-mpill-d">Choreography of connection — how people, agents, and environments interact.</div></div>
+          <div className="pb-mpill"><div className="pb-mpill-bar" style={{background:"#6ba37a"}} /><div className="pb-mpill-n">Relational</div><div className="pb-mpill-d">Choreography of connection: how people, agents, and environments interact.</div></div>
         </div>
-        <div className="pb-method-sentence">"Field of Action Method is my approach to design — blending systematic clarity, scenographic spectacle, soulful atmosphere, and relational design to build worlds that are both disciplined and alive."</div>
+        <div className="pb-method-sentence">"Field of Action Method is my approach to design: blending systematic clarity, scenographic spectacle, soulful atmosphere, and relational design to build worlds that are both disciplined and alive."</div>
       </div>
 
       {/* Agents as Action Systems */}
       <div className="pb-section">
         <div className="pb-sl">Agents as Action Systems</div>
         <div className="pb-card">
-          <div style={{fontSize:11,color:"var(--fm)",lineHeight:1.6,marginBottom:16}}>Each agent is a pavilion inside the larger ecosystem. They don't just hold an identity — they act on inputs and expand them. Inputs are never static — they are constantly acted upon, reframed, and elevated.</div>
-          <div className="pb-agents-h">Ring 1 — Operational Cycle</div>
+          <div style={{fontSize:11,color:"var(--fm)",lineHeight:1.6,marginBottom:16}}>Each agent is a pavilion inside the larger ecosystem. They don't just hold an identity. They act on inputs and expand them. Inputs are never static. They are constantly acted upon, reframed, and elevated.</div>
+          <div className="pb-agents-h">Ring 1: Operational Cycle</div>
           {[
             {name:"Field",input:"Phenomena, signals, patterns",action:"Senses signals in the environment and translates into frameworks"},
             {name:"Works in Progress",input:"Emerging ideas, raw material",action:"Investigates, prototypes, and structures into working models"},
-            {name:"Action",input:"Structured ideas, briefs",action:"Produces concrete artifacts — systems, interfaces, objects"},
+            {name:"Action",input:"Structured ideas, briefs",action:"Produces concrete artifacts: systems, interfaces, objects"},
             {name:"Cache",input:"Completed artifacts, narrative",action:"Preserves as durable, portable, stand-alone forms"},
             {name:"Atlas",input:"Archive, accumulated work",action:"Maps relationships, lineages, and recurring patterns"},
-            {name:"Grace",input:"Artifacts ready for release",action:"Determines placement — audience, timing, channel, conditions"},
-            {name:"Open",input:"Unresolved questions, tensions",action:"Holds what has not yet taken form — emergence space"},
+            {name:"Grace",input:"Artifacts ready for release",action:"Determines placement: audience, timing, channel, conditions"},
+            {name:"Open",input:"Unresolved questions, tensions",action:"Holds what has not yet taken form, emergence space"},
           ].map((a,i) => (
             <div key={i} className="pb-agent-row">
               <div className="pb-agent-name">{a.name}</div>
@@ -86,7 +86,7 @@ export default function Playbook({ asu }) {
               <div className="pb-agent-io">{a.action}</div>
             </div>
           ))}
-          <div className="pb-agents-h">Ring 2 — Practice Layer</div>
+          <div className="pb-agents-h">Ring 2: Practice Layer</div>
           {[
             {name:"Art Practice",input:"Concepts, aesthetic material",action:"Sustains experimentation and personal mastery"},
             {name:"Hotel",input:"Lifestyle cues, objects",action:"Produces lifestyle artifacts and experiential environments"},
@@ -98,7 +98,7 @@ export default function Playbook({ asu }) {
               <div className="pb-agent-io">{a.action}</div>
             </div>
           ))}
-          <div className="pb-agents-h">Ring 3 — Governance Layer</div>
+          <div className="pb-agents-h">Ring 3: Governance Layer</div>
           {[
             {name:"CLSSM",input:"Deep patterns, axioms",action:"Generates conceptual primitives and structural source"},
             {name:"Freedom Embassy",input:"System proposals, direction",action:"Establishes governance and system boundaries"},
@@ -136,7 +136,7 @@ export default function Playbook({ asu }) {
             <input className="pb-input" placeholder="Project name" value={project.name} onChange={e=>asu.set_project_brief({name:e.target.value})} />
             <input className="pb-input" placeholder="Client" value={project.client} onChange={e=>asu.set_project_brief({client:e.target.value})} />
           </div>
-          <textarea className="pb-input pb-ta" placeholder="Brief — what's the ask, what are the constraints, what does success look like?" value={project.brief} onChange={e=>asu.set_project_brief({brief:e.target.value})} />
+          <textarea className="pb-input pb-ta" placeholder="Brief: what's the ask, what are the constraints, what does success look like?" value={project.brief} onChange={e=>asu.set_project_brief({brief:e.target.value})} />
         </div>
       </div>
 
@@ -156,7 +156,7 @@ export default function Playbook({ asu }) {
             ))}
           </div>
           <div style={{marginTop:10,fontSize:10,color:"var(--ff)"}}>
-            Dominant: <strong style={{color:dominant.color}}>{dominant.label}</strong> — {dominant.desc}
+            Dominant: <strong style={{color:dominant.color}}>{dominant.label}</strong>. {dominant.desc}
           </div>
         </div>
       </div>

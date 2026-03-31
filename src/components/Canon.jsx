@@ -12,7 +12,7 @@ const SECTIONS = [
 /* ── X-Ray diagnostic data mapped to theory sections ── */
 const XRAY_DATA = {
   overview: [
-    { type: "signal", title: "Core conviction is generative", body: "The central idea — design conditions, not outcomes — has produced real work, organized real thinking, and attracted collaborators organically.", tell: null },
+    { type: "signal", title: "Core conviction is generative", body: "The central idea, design conditions not outcomes, has produced real work, organized real thinking, and attracted collaborators organically.", tell: null },
     { type: "shadow", title: "Can become theology if untested", body: "A framework that cannot acknowledge its failure modes is not a framework. It is a theology.", tell: "The theory feels complete and self-reinforcing. When was it last challenged by someone who doesn't share the worldview?" },
   ],
   philosophy: {
@@ -37,7 +37,7 @@ const XRAY_DATA = {
     "Relational Turn": [
       { type: "signal", title: "Living system orientation", body: "Pattern, rhythm, and resonance replacing static form as primary units of meaning aligns with contemporary thought across disciplines.", tell: null },
       { type: "inflation", title: "Adversarial conditions not modeled", body: "The framework welcomes productive friction but has less purchase on pure adversarial intent. Somewhat naive in the presence of bad actors.", tell: "You keep designing better conditions and they keep getting undermined." },
-      { type: "shadow", title: "Fragility to speed", body: "In contexts that demand speed — a decision that has to happen today — the framework can become paralytic.", tell: "The speed of the situation is exceeding the speed of the framework." },
+      { type: "shadow", title: "Fragility to speed", body: "In contexts that demand speed, a decision that has to happen today, the framework can become paralytic.", tell: "The speed of the situation is exceeding the speed of the framework." },
     ],
     "Toward Transrelational Intelligence": [
       { type: "signal", title: "Forward-facing vision", body: "Agency operating across boundaries through collective fields of emotion, information, and energy. Compelling direction.", tell: null },
@@ -45,8 +45,8 @@ const XRAY_DATA = {
     ],
   },
   principles: [
-    { type: "signal", title: "Each principle carries signal", body: "The 8 principles form a coherent, actionable framework. They are not abstract — they can be applied.", tell: null },
-    { type: "shadow", title: "Each has a shadow cost", body: "Patience becomes deferral. Openness becomes hidden control. Attunement becomes fragility. The cost is not a bug — it is the price of the thing itself.", tell: "The shadow of any strength is simply that strength, deployed past the point where it is still a strength." },
+    { type: "signal", title: "Each principle carries signal", body: "The 8 principles form a coherent, actionable framework. They are concrete and can be applied.", tell: null },
+    { type: "shadow", title: "Each has a shadow cost", body: "Patience becomes deferral. Openness becomes hidden control. Attunement becomes fragility. The cost is the price of the thing itself.", tell: "The shadow of any strength is simply that strength, deployed past the point where it is still a strength." },
   ],
 };
 
@@ -185,7 +185,7 @@ export default function Canon() {
       </div>
 
       <div className="ph-canon en d2">
-        <p className="ph-canon-p">A practice of designing conditions &mdash; not outcomes. Orientation and shared language for work that holds complexity without collapsing it.</p>
+        <p className="ph-canon-p">A practice of designing conditions, not outcomes. Orientation and shared language for work that holds complexity without collapsing it.</p>
         <div className="ph-canon-ax">
           <span className="ph-canon-al">Governing Principle</span>
           <p className="ph-canon-at">Embodied action precedes alignment. You do not act to become aligned. You act because alignment has already taken form.</p>
@@ -257,9 +257,9 @@ export default function Canon() {
 
         {/* Lens Mode acknowledgment */}
         <div className="cn-lens-note">
-          <em>Model Lens</em> — reveal mental model relationships across work. Press <kbd>M</kbd> to activate.
-          <em>Pattern Lens</em> — overlay Alexander's architectural patterns. Press <kbd>P</kbd> to activate.
-          {!xrayMode && <><br /><em>X-Ray</em> — field diagnostic overlay. Press <kbd>X</kbd> to activate.</>}
+          <em>Model Lens</em>: reveal mental model relationships across work. Press <kbd>M</kbd> to activate.
+          <em>Pattern Lens</em>: overlay Alexander's architectural patterns. Press <kbd>P</kbd> to activate.
+          {!xrayMode && <><br /><em>X-Ray</em>: field diagnostic overlay. Press <kbd>X</kbd> to activate.</>}
         </div>
       </div>
 

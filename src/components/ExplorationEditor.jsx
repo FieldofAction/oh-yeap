@@ -33,7 +33,7 @@ function NewExplorationForm({ onCreate, onCancel }) {
       <div className="ee-new-title">New Exploration</div>
       <input className="ee-input" value={title} onChange={e => setTitle(e.target.value)} placeholder="Title" autoFocus />
       <input className="ee-input" value={subtitle} onChange={e => setSubtitle(e.target.value)} placeholder="Subtitle (optional)" />
-      <textarea className="ee-textarea" value={hypothesis} onChange={e => setHypothesis(e.target.value)} placeholder="Hypothesis — the driving question" rows={3} />
+      <textarea className="ee-textarea" value={hypothesis} onChange={e => setHypothesis(e.target.value)} placeholder="Hypothesis: the driving question" rows={3} />
       <input className="ee-input" value={tags} onChange={e => setTags(e.target.value)} placeholder="Tags (comma separated)" />
       <div className="ee-new-actions">
         <button className="ee-btn ee-btn--ghost" onClick={onCancel}>Cancel</button>
@@ -236,7 +236,7 @@ function ExplorationDetail({ exploration, store, onBack }) {
                 {q.status !== "open" && (
                   <div className="ee-q-resolution">
                     <span className="ee-q-status">{q.status}</span>
-                    {q.note && <span className="ee-q-note"> — {q.note}</span>}
+                    {q.note && <span className="ee-q-note">: {q.note}</span>}
                     {q.date && <span className="ee-q-date"> ({q.date})</span>}
                   </div>
                 )}
@@ -317,7 +317,7 @@ export default function ExplorationEditor() {
       <div className="ee-header">
         <div>
           <h1 className="ee-title">Exploration Editor</h1>
-          <div className="ee-subtitle">Research journal — add fragments, track questions, export data</div>
+          <div className="ee-subtitle">Research journal: add fragments, track questions, export data</div>
         </div>
         <div className="ee-header-actions">
           <button className="ee-btn ee-btn--ghost" onClick={store.downloadJSON}>Export JSON</button>

@@ -25,7 +25,7 @@ export const REFS = [
 export const STEPS = [
   {title:"Pick the Pillar",desc:"Which is primary for this project? System, Scenography, Soul, or Relational?"},
   {title:"Select Emotional System",desc:"What emotional register? Fun, Drama, Mellow, Sad, Sex, or Desire?"},
-  {title:"Apply Craft Checklist",desc:"Typography, spacing, motion, imagery — check each against pillar targets."},
+  {title:"Apply Craft Checklist",desc:"Typography, spacing, motion, imagery: check each against pillar targets."},
   {title:"Anchor with One Big Move",desc:"One monolithic flourish or scenographic set-piece that carries the whole project."},
   {title:"Layer in Whimsy",desc:"A playful accent that humanizes the system."},
   {title:"Design for Connection",desc:"How does this foster or choreograph relationships?"},

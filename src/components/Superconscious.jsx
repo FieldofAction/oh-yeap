@@ -82,7 +82,7 @@ export default function Superconscious() {
       <header className="sc-header">
         <h1 className="sc-title">Share Location</h1>
         <p className="sc-subtitle">Superconscious Drawings</p>
-        <p className="sc-date">2019 — 2025</p>
+        <p className="sc-date">2019–2025</p>
       </header>
 
       {/* Context */}

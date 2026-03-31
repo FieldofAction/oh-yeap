@@ -65,7 +65,7 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
                   {text}
                   {resolved && q.note && (
                     <div className="sk-oq-resolution">
-                      <span className="sk-oq-rstatus">{q.status}</span> — {q.note}
+                      <span className="sk-oq-rstatus">{q.status}</span>: {q.note}
                     </div>
                   )}
                 </div>

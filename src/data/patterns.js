@@ -74,7 +74,7 @@ export const PATTERNS = [
   { id:"pl-011", num:11, title:"Local Transport Areas", scale:"towns", group:"city-policies", desc:"Organize communities around small local transport areas with minimal car intrusion.", appliedIn:[], notes:"" },
 
   // ── Towns: Communities ──
-  { id:"pl-012", num:12, title:"Community of 7000", scale:"towns", group:"communities", desc:"Communities function best at roughly 5,000 to 10,000 people — large enough for diversity, small enough for connection.", appliedIn:[], notes:"" },
+  { id:"pl-012", num:12, title:"Community of 7000", scale:"towns", group:"communities", desc:"Communities function best at roughly 5,000 to 10,000 people, large enough for diversity, small enough for connection.", appliedIn:[], notes:"" },
   { id:"pl-013", num:13, title:"Subculture Boundary", scale:"towns", group:"communities", desc:"Mark distinct boundaries between different cultural neighborhoods to strengthen each one's identity.", appliedIn:["Apple Music"], notes:"" },
   { id:"pl-014", num:14, title:"Identifiable Neighborhood", scale:"towns", group:"communities", desc:"Neighborhoods need clear identity through natural boundaries, names, and recognizable centers.", appliedIn:["Apple Music","Google Cloud"], notes:"" },
   { id:"pl-015", num:15, title:"Neighborhood Boundary", scale:"towns", group:"communities", desc:"Define neighborhood edges with gateways, natural features, or changes in street character.", appliedIn:[], notes:"" },
@@ -92,7 +92,7 @@ export const PATTERNS = [
   { id:"pl-023", num:23, title:"Parallel Roads", scale:"towns", group:"community-policies", desc:"Separate local access roads from through-traffic with parallel route systems.", appliedIn:[], notes:"" },
   { id:"pl-024", num:24, title:"Sacred Sites", scale:"towns", group:"community-policies", desc:"Protect places that hold special historical, spiritual, or emotional significance for the community.", appliedIn:["Art of Tolerance"], notes:"" },
   { id:"pl-025", num:25, title:"Access to Water", scale:"towns", group:"community-policies", desc:"Give all communities access to rivers, lakes, or the sea for recreation and renewal.", appliedIn:["After the Bridge"], notes:"" },
-  { id:"pl-026", num:26, title:"Life Cycle", scale:"towns", group:"community-policies", desc:"Provide settings for all stages of life — birth, growth, maturity, and aging — within each community.", appliedIn:["Beyond Productivity","Beyond Age"], notes:"" },
+  { id:"pl-026", num:26, title:"Life Cycle", scale:"towns", group:"community-policies", desc:"Provide settings for all stages of life, birth, growth, maturity, and aging, within each community.", appliedIn:["Beyond Productivity","Beyond Age"], notes:"" },
   { id:"pl-027", num:27, title:"Men and Women", scale:"towns", group:"community-policies", desc:"Create spaces where people can find the social balance and autonomy they need.", appliedIn:[], notes:"" },
 
   // ── Towns: Local Centers ──
@@ -105,7 +105,7 @@ export const PATTERNS = [
   { id:"pl-034", num:34, title:"Interchange", scale:"towns", group:"local-centers", desc:"Design transit stops as active places of exchange between modes of transport and daily life.", appliedIn:[], notes:"" },
 
   // ── Towns: Housing Clusters ──
-  { id:"pl-035", num:35, title:"Household Mix", scale:"towns", group:"housing-clusters", desc:"Provide a mix of household types — families, couples, singles, elderly — in every neighborhood.", appliedIn:[], notes:"" },
+  { id:"pl-035", num:35, title:"Household Mix", scale:"towns", group:"housing-clusters", desc:"Provide a mix of household types, families, couples, singles, elderly, in every neighborhood.", appliedIn:[], notes:"" },
   { id:"pl-036", num:36, title:"Degrees of Publicness", scale:"towns", group:"housing-clusters", desc:"Arrange spaces in a gradient from fully public to increasingly private realms.", appliedIn:["Apple Music","Terms of Visibility","Safety Trap"], notes:"" },
   { id:"pl-037", num:37, title:"House Cluster", scale:"towns", group:"housing-clusters", desc:"Group houses around shared common land in intimate clusters of eight to twelve.", appliedIn:["Freedom"], notes:"" },
   { id:"pl-038", num:38, title:"Row Houses", scale:"towns", group:"housing-clusters", desc:"Connect houses in long rows that face pedestrian paths and shared gardens.", appliedIn:[], notes:"" },
@@ -137,7 +137,7 @@ export const PATTERNS = [
   { id:"pl-058", num:58, title:"Carnival", scale:"towns", group:"community-recreation", desc:"Set aside community space and time for periodic festive celebrations and shared joy.", appliedIn:["Tribeca Festival","Reshaping Players"], notes:"" },
   { id:"pl-059", num:59, title:"Quiet Backs", scale:"towns", group:"community-recreation", desc:"Protect peaceful areas behind buildings as retreats from the intensity of street activity.", appliedIn:["Art of Tolerance"], notes:"" },
   { id:"pl-060", num:60, title:"Accessible Green", scale:"towns", group:"community-recreation", desc:"Ensure every household has open green space within a three-minute walk.", appliedIn:[], notes:"" },
-  { id:"pl-061", num:61, title:"Small Public Squares", scale:"towns", group:"community-recreation", desc:"Create intimate public squares — no larger than about 70 feet across — for gathering.", appliedIn:["Tribeca Festival"], notes:"" },
+  { id:"pl-061", num:61, title:"Small Public Squares", scale:"towns", group:"community-recreation", desc:"Create intimate public squares, no larger than about 70 feet across, for gathering.", appliedIn:["Tribeca Festival"], notes:"" },
   { id:"pl-062", num:62, title:"High Places", scale:"towns", group:"community-recreation", desc:"Provide accessible elevated points where people can survey the landscape and gain perspective.", appliedIn:[], notes:"" },
   { id:"pl-063", num:63, title:"Dancing in the Street", scale:"towns", group:"community-recreation", desc:"Design outdoor spaces that invite spontaneous performance, music, and dance.", appliedIn:["Tribeca Festival"], notes:"" },
   { id:"pl-064", num:64, title:"Pools and Streams", scale:"towns", group:"community-recreation", desc:"Incorporate natural water features into public spaces for beauty and engagement.", appliedIn:[], notes:"" },
@@ -194,7 +194,7 @@ export const PATTERNS = [
   // ── Buildings: Siting the Buildings ──
   { id:"pl-104", num:104, title:"Site Repair", scale:"buildings", group:"siting", desc:"Build on the worst parts of a site and preserve the most beautiful areas for outdoor use.", appliedIn:["Foundation","Loud Goodbye"], notes:"" },
   { id:"pl-105", num:105, title:"South Facing Outdoors", scale:"buildings", group:"siting", desc:"Orient outdoor spaces to face the sun for warmth, light, and year-round usability.", appliedIn:[], notes:"" },
-  { id:"pl-106", num:106, title:"Positive Outdoor Space", scale:"buildings", group:"siting", desc:"Shape outdoor areas as deliberately as indoor rooms — with defined edges and purpose.", appliedIn:["Relational Design","Architecture of Coherence","Relational Field Model"], notes:"" },
+  { id:"pl-106", num:106, title:"Positive Outdoor Space", scale:"buildings", group:"siting", desc:"Shape outdoor areas as deliberately as indoor rooms, with defined edges and purpose.", appliedIn:["Relational Design","Architecture of Coherence","Relational Field Model"], notes:"" },
   { id:"pl-107", num:107, title:"Wings of Light", scale:"buildings", group:"siting", desc:"Extend buildings in narrow wings so every room can receive natural light from two sides.", appliedIn:[], notes:"" },
   { id:"pl-108", num:108, title:"Connected Buildings", scale:"buildings", group:"siting", desc:"Link separate buildings with covered walks, bridges, or shared spaces to form a whole.", appliedIn:["Freedom"], notes:"" },
   { id:"pl-109", num:109, title:"Long Thin House", scale:"buildings", group:"siting", desc:"Shape houses as long, narrow forms to maximize access to light and garden views.", appliedIn:[], notes:"" },
@@ -212,13 +212,13 @@ export const PATTERNS = [
 
   // ── Buildings: Between the Buildings ──
   { id:"pl-119", num:119, title:"Arcades", scale:"buildings", group:"between-buildings", desc:"Create covered walkways along building edges as transitional spaces between inside and outside.", appliedIn:[], notes:"" },
-  { id:"pl-120", num:120, title:"Paths and Goals", scale:"buildings", group:"between-buildings", desc:"Lay paths to connect specific destinations — every path should lead somewhere meaningful.", appliedIn:["Apple Music"], notes:"" },
+  { id:"pl-120", num:120, title:"Paths and Goals", scale:"buildings", group:"between-buildings", desc:"Lay paths to connect specific destinations. Every path should lead somewhere meaningful.", appliedIn:["Apple Music"], notes:"" },
   { id:"pl-121", num:121, title:"Path Shape", scale:"buildings", group:"between-buildings", desc:"Curve paths slightly and vary their width to create spatial interest and a sense of discovery.", appliedIn:["Way of the Wave","The False Step"], notes:"" },
   { id:"pl-122", num:122, title:"Building Fronts", scale:"buildings", group:"between-buildings", desc:"Face the main sides of buildings toward public paths to create active, inviting street edges.", appliedIn:["Vevo","Terms of Visibility"], notes:"" },
   { id:"pl-123", num:123, title:"Pedestrian Density", scale:"buildings", group:"between-buildings", desc:"Concentrate pedestrian activity to maintain the lively foot traffic that makes streets feel alive.", appliedIn:[], notes:"" },
   { id:"pl-124", num:124, title:"Activity Pockets", scale:"buildings", group:"between-buildings", desc:"Create small, recessed areas along public paths where people pause for activities.", appliedIn:["Tribeca Festival","Reshaping Players"], notes:"" },
   { id:"pl-125", num:125, title:"Stair Seats", scale:"buildings", group:"between-buildings", desc:"Design wide outdoor stairs that double as informal amphitheater seating.", appliedIn:[], notes:"" },
-  { id:"pl-126", num:126, title:"Something Roughly in the Middle", scale:"buildings", group:"between-buildings", desc:"Place a focal element — a tree, fountain, or sculpture — near the center of each public space.", appliedIn:[], notes:"" },
+  { id:"pl-126", num:126, title:"Something Roughly in the Middle", scale:"buildings", group:"between-buildings", desc:"Place a focal element, a tree, fountain, or sculpture, near the center of each public space.", appliedIn:[], notes:"" },
 
   // ── Buildings: Light and Space ──
   { id:"pl-127", num:127, title:"Intimacy Gradient", scale:"buildings", group:"light-and-space", desc:"Arrange spaces in a sequence from most public at the entrance to most private at the interior.", appliedIn:["Apple Music","Freedom","Relational Design"], notes:"" },
@@ -232,14 +232,14 @@ export const PATTERNS = [
   { id:"pl-135", num:135, title:"Tapestry of Light and Dark", scale:"buildings", group:"light-and-space", desc:"Alternate brightly lit and dimly lit spaces throughout the building to create rhythm and atmosphere.", appliedIn:["Internet and the Age of Emotion","Art of Tolerance"], notes:"" },
 
   // ── Buildings: Private Rooms ──
-  { id:"pl-136", num:136, title:"Couple's Realm", scale:"buildings", group:"private-rooms", desc:"Give couples a private domain within the home — a sanctuary for their relationship.", appliedIn:[], notes:"" },
+  { id:"pl-136", num:136, title:"Couple's Realm", scale:"buildings", group:"private-rooms", desc:"Give couples a private domain within the home, a sanctuary for their relationship.", appliedIn:[], notes:"" },
   { id:"pl-137", num:137, title:"Children's Realm", scale:"buildings", group:"private-rooms", desc:"Provide children with their own connected area where they can play and grow with some autonomy.", appliedIn:[], notes:"" },
   { id:"pl-138", num:138, title:"Sleeping to the East", scale:"buildings", group:"private-rooms", desc:"Place bedrooms on the eastern side of the building to wake with morning light.", appliedIn:[], notes:"" },
   { id:"pl-139", num:139, title:"Farmhouse Kitchen", scale:"buildings", group:"private-rooms", desc:"Make the kitchen a large, warm room at the center of family life, not a galley to hide in.", appliedIn:[], notes:"" },
   { id:"pl-140", num:140, title:"Private Terrace on the Street", scale:"buildings", group:"private-rooms", desc:"Give each home a semi-private outdoor area that faces the street for casual social contact.", appliedIn:[], notes:"" },
   { id:"pl-141", num:141, title:"A Room of One's Own", scale:"buildings", group:"private-rooms", desc:"Ensure every person in the household has a private room they can retreat to.", appliedIn:["Safety Trap"], notes:"" },
-  { id:"pl-142", num:142, title:"Sequence of Sitting Spaces", scale:"buildings", group:"private-rooms", desc:"Offer a variety of sitting places with different characters — from intimate nooks to open communal spots.", appliedIn:[], notes:"" },
-  { id:"pl-143", num:143, title:"Bed Cluster", scale:"buildings", group:"private-rooms", desc:"Group the bedroom with adjacent private spaces — dressing area, bathroom — into a sleeping cluster.", appliedIn:[], notes:"" },
+  { id:"pl-142", num:142, title:"Sequence of Sitting Spaces", scale:"buildings", group:"private-rooms", desc:"Offer a variety of sitting places with different characters, from intimate nooks to open communal spots.", appliedIn:[], notes:"" },
+  { id:"pl-143", num:143, title:"Bed Cluster", scale:"buildings", group:"private-rooms", desc:"Group the bedroom with adjacent private spaces, dressing area and bathroom, into a sleeping cluster.", appliedIn:[], notes:"" },
   { id:"pl-144", num:144, title:"Bathing Room", scale:"buildings", group:"private-rooms", desc:"Design the bathroom as a generous, pleasurable room rather than a minimal utility space.", appliedIn:[], notes:"" },
   { id:"pl-145", num:145, title:"Bulk Storage", scale:"buildings", group:"private-rooms", desc:"Provide large, accessible storage areas for seasonal items and seldom-used belongings.", appliedIn:[], notes:"" },
 
@@ -248,7 +248,7 @@ export const PATTERNS = [
   { id:"pl-147", num:147, title:"Communal Eating", scale:"buildings", group:"public-rooms", desc:"Design a central eating space that naturally brings people together for shared meals.", appliedIn:[], notes:"" },
   { id:"pl-148", num:148, title:"Small Work Groups", scale:"buildings", group:"public-rooms", desc:"Arrange workspaces so groups of eight or fewer can work together with their own identity.", appliedIn:["Hybrid Intelligence"], notes:"" },
   { id:"pl-149", num:149, title:"Reception Welcomes You", scale:"buildings", group:"public-rooms", desc:"Design the first space visitors encounter to feel warm, personal, and genuinely welcoming.", appliedIn:[], notes:"" },
-  { id:"pl-150", num:150, title:"A Place to Wait", scale:"buildings", group:"public-rooms", desc:"Provide comfortable, dignified spaces for people who must wait — not sterile holding areas.", appliedIn:[], notes:"" },
+  { id:"pl-150", num:150, title:"A Place to Wait", scale:"buildings", group:"public-rooms", desc:"Provide comfortable, dignified spaces for people who must wait, not sterile holding areas.", appliedIn:[], notes:"" },
   { id:"pl-151", num:151, title:"Small Meeting Rooms", scale:"buildings", group:"public-rooms", desc:"Provide intimate rooms for small groups of two to eight to meet informally.", appliedIn:[], notes:"" },
   { id:"pl-152", num:152, title:"Half-Private Office", scale:"buildings", group:"public-rooms", desc:"Give each worker a partially enclosed space that balances privacy with visual connection.", appliedIn:[], notes:"" },
 
@@ -325,7 +325,7 @@ export const PATTERNS = [
   // ── Construction: Structural Layout ──
   { id:"pl-209", num:209, title:"Roof Layout", scale:"construction", group:"structural-layout", desc:"Derive the roof plan directly from the plan of the rooms below so the roof expresses the building's life.", appliedIn:[], notes:"" },
   { id:"pl-210", num:210, title:"Floor and Ceiling Layout", scale:"construction", group:"structural-layout", desc:"Express the floor and ceiling structure as visible spatial elements rather than hiding them.", appliedIn:["Leveling Game"], notes:"" },
-  { id:"pl-211", num:211, title:"Thickening the Outer Walls", scale:"construction", group:"structural-layout", desc:"Gradually thicken external walls with layers of function — insulation, storage, planting.", appliedIn:[], notes:"" },
+  { id:"pl-211", num:211, title:"Thickening the Outer Walls", scale:"construction", group:"structural-layout", desc:"Gradually thicken external walls with layers of function: insulation, storage, planting.", appliedIn:[], notes:"" },
   { id:"pl-212", num:212, title:"Columns at the Corners", scale:"construction", group:"structural-layout", desc:"Place structural columns at the corners of rooms where they reinforce spatial edges.", appliedIn:[], notes:"" },
   { id:"pl-213", num:213, title:"Final Column Distribution", scale:"construction", group:"structural-layout", desc:"Refine column positions to create a coherent structural rhythm across the building.", appliedIn:[], notes:"" },
 
@@ -350,13 +350,13 @@ export const PATTERNS = [
   { id:"pl-227", num:227, title:"Column Connections", scale:"construction", group:"frame-adjustments", desc:"Join columns to beams and walls with visible, expressive structural connections.", appliedIn:[], notes:"" },
   { id:"pl-228", num:228, title:"Stair Vault", scale:"construction", group:"frame-adjustments", desc:"Build stairways as self-supporting vaulted structures that require no separate framing.", appliedIn:[], notes:"" },
   { id:"pl-229", num:229, title:"Duct Space", scale:"construction", group:"frame-adjustments", desc:"Integrate mechanical systems and ducts into the building's structural thickness.", appliedIn:[], notes:"" },
-  { id:"pl-230", num:230, title:"Radiant Heat", scale:"construction", group:"frame-adjustments", desc:"Heat spaces from warm surfaces — floors, walls, ceilings — rather than blowing forced air.", appliedIn:[], notes:"" },
+  { id:"pl-230", num:230, title:"Radiant Heat", scale:"construction", group:"frame-adjustments", desc:"Heat spaces from warm surfaces, floors, walls, ceilings, rather than blowing forced air.", appliedIn:[], notes:"" },
   { id:"pl-231", num:231, title:"Dormer Windows", scale:"construction", group:"frame-adjustments", desc:"Add dormer windows to bring natural light and air into upper-story and attic spaces.", appliedIn:[], notes:"" },
   { id:"pl-232", num:232, title:"Roof Caps", scale:"construction", group:"frame-adjustments", desc:"Cap roof vaults at their highest points with small ventilating openings for air flow.", appliedIn:[], notes:"" },
 
   // ── Construction: Interior Details ──
   { id:"pl-233", num:233, title:"Floor Surface", scale:"construction", group:"interior-details", desc:"Choose floor surfaces that are warm, slightly soft, and inviting underfoot.", appliedIn:[], notes:"" },
-  { id:"pl-234", num:234, title:"Lapped Outside Walls", scale:"construction", group:"interior-details", desc:"Clad exterior walls with overlapping layers — shingles, boards, tiles — that shed water naturally.", appliedIn:[], notes:"" },
+  { id:"pl-234", num:234, title:"Lapped Outside Walls", scale:"construction", group:"interior-details", desc:"Clad exterior walls with overlapping layers, shingles, boards, tiles, that shed water naturally.", appliedIn:[], notes:"" },
   { id:"pl-235", num:235, title:"Soft Inside Walls", scale:"construction", group:"interior-details", desc:"Finish interior walls with soft, paintable surfaces that accept nails and show human marks.", appliedIn:[], notes:"" },
   { id:"pl-236", num:236, title:"Windows Which Open Wide", scale:"construction", group:"interior-details", desc:"Hinge windows so they open fully to erase the boundary between inside and outside.", appliedIn:[], notes:"" },
   { id:"pl-237", num:237, title:"Solid Doors with Glass", scale:"construction", group:"interior-details", desc:"Make doors mostly solid with small glass panels for borrowed light and visual preview.", appliedIn:[], notes:"" },

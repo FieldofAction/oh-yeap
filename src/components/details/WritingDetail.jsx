@@ -114,7 +114,7 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
           <div className="rd-hero-art-glow" />
         </div>
         <div className="rd-caption dc dc5">
-          {item.subtitle || item.section} — {item.title}
+          {item.subtitle || item.section}: {item.title}
         </div>
         {item.body?.map((block, i) => {
           if (block.type === "text") {

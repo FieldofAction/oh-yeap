@@ -8,12 +8,12 @@ They must feel inspired by:
 But the output must feel clean, conceptual, and system-oriented.
 Artifact Structure
 Each artifact must contain these components:
-1. Metadata Row — Small system classification text.
-2. Thesis — Large headline that communicates the core idea.
-3. Signal Layer — A word repeated three times (e.g., ACTION ACTION ACTION).
-4. Orientation Phrase — A philosophical or poetic statement.
-5. Authority Layer — Field of Action system certification.
-6. Temporal Signal — A phrase that suggests activation or timing.
+1. Metadata Row: Small system classification text.
+2. Thesis: Large headline that communicates the core idea.
+3. Signal Layer: A word repeated three times (e.g., ACTION ACTION ACTION).
+4. Orientation Phrase: A philosophical or poetic statement.
+5. Authority Layer: Field of Action system certification.
+6. Temporal Signal: A phrase that suggests activation or timing.
 Behavior Rules
 1. Typography should feel architectural and structured.
 2. Use uppercase for major signals.
@@ -212,7 +212,7 @@ export default function FOAGenerator() {
       <div className="fg-header">
         <div>
           <div className="fg-header-label">Artifact Generator</div>
-          <div className="fg-header-sub">Field of Action — Relational Design Practice</div>
+          <div className="fg-header-sub">Field of Action: Relational Design Practice</div>
         </div>
         <div className="fg-header-ver">V.02 / 2026</div>
       </div>
@@ -254,7 +254,7 @@ export default function FOAGenerator() {
       {artifacts.length > 0 && (
         <div className="fg-output">
           <div className="fg-output-label">
-            <span>Artifact Output — {artifacts.length} signals generated</span>
+            <span>Artifact Output: {artifacts.length} signals generated</span>
             <button className="fg-dl-all" onClick={() => downloadAllAsJson(artifacts, idea)}>↓ Download JSON</button>
           </div>
           <div className="fg-grid">

@@ -26,7 +26,7 @@ export default function ArtOfModel({ asu }) {
     if (!allFilled || synthesizing) return;
     setSynthesizing(true);
     const stepsText = inputSteps.filter(s => r[s.n]).map(s => `${s.title} (${s.layer}): ${r[s.n]}`).join("\n");
-    const prompt = `You are analyzing responses to The Art of Model (${ver}) — "${model.subtitle}"${model.shift ? ` (${model.shift})` : ""}.
+    const prompt = `You are analyzing responses to The Art of Model (${ver}): "${model.subtitle}"${model.shift ? ` (${model.shift})` : ""}.
 
 The user has completed all steps:
 ${stepsText}
@@ -50,18 +50,18 @@ Respond with ONLY the synthesis text, no preamble.`;
       const text = d.content?.map(b => b.text||"").join("") || "";
       asu.set_aom_synthesis(ver, text);
     } catch(err) {
-      asu.set_aom_synthesis(ver, `Synthesis unavailable — ${err.message}. Your completed model is still stored and feeding into the Playbook and Backstage.`);
+      asu.set_aom_synthesis(ver, `Synthesis unavailable. ${err.message}. Your completed model is still stored and feeding into the Playbook and Backstage.`);
     }
     setSynthesizing(false);
   }, [allFilled, synthesizing, model, ver, r, asu, inputSteps]);
 
   const exportText = useMemo(() => {
     const lines = [
-      `THE ART OF MODEL — ${ver.toUpperCase()}`, model.subtitle,
+      `THE ART OF MODEL: ${ver.toUpperCase()}`, model.subtitle,
       model.shift ? `(${model.shift})` : "", `Date: ${new Date().toLocaleDateString()}`, ``,
       ...model.steps.flatMap(s => [`${s.n}. ${s.title}`, s.question ? `   Q: ${s.question}` : "", r[s.n] ? `   A: ${r[s.n]}` : `   A: —`, `   Layer: ${s.layer}`, ``]),
       `Flow: ${model.flow.join(" → ")}`, ``,
-      synthesis ? `SYNTHESIS\n${synthesis}\n` : "", `— Action Systems Universal`,
+      synthesis ? `SYNTHESIS\n${synthesis}\n` : "", `Action Systems Universal`,
     ];
     return lines.filter(l => l !== "").join("\n");
   }, [ver, r, model, synthesis]);
@@ -75,7 +75,7 @@ Respond with ONLY the synthesis text, no preamble.`;
       <div className="aom-vtoggle">
         {Object.entries(AOM_VERSIONS).map(([k,v]) => (
           <button key={k} className={`aom-vbtn ${ver===k?"on":""}`} onClick={()=>asu.set_aom_version(k)}>
-            {v.label} — {k==="v1"?"Intervention":k==="v2"?"Authorship":"Infrastructure"}
+            {v.label}: {k==="v1"?"Intervention":k==="v2"?"Authorship":"Infrastructure"}
           </button>
         ))}
       </div>
@@ -145,9 +145,9 @@ Respond with ONLY the synthesis text, no preamble.`;
       <div className="aom-compare">
         <div className="aom-compare-h">The Core Difference</div>
         <div className="aom-compare-grid">
-          <div className="aom-compare-cell" style={{borderLeft:ver==="v1"?"2px solid var(--fg)":"none"}}><h5>v1 — Intervention</h5><p>Artifact-focused. Responsible act. Make something.</p></div>
-          <div className="aom-compare-cell" style={{borderLeft:ver==="v2"?"2px solid var(--fg)":"none"}}><h5>v2 — Authorship</h5><p>Field-focused. Sustainable signal. Become something.</p></div>
-          <div className="aom-compare-cell" style={{borderLeft:ver==="v3"?"2px solid var(--fg)":"none"}}><h5>v3 — Infrastructure</h5><p>Identity-focused. Recursive system. Run something.</p></div>
+          <div className="aom-compare-cell" style={{borderLeft:ver==="v1"?"2px solid var(--fg)":"none"}}><h5>v1: Intervention</h5><p>Artifact-focused. Responsible act. Make something.</p></div>
+          <div className="aom-compare-cell" style={{borderLeft:ver==="v2"?"2px solid var(--fg)":"none"}}><h5>v2: Authorship</h5><p>Field-focused. Sustainable signal. Become something.</p></div>
+          <div className="aom-compare-cell" style={{borderLeft:ver==="v3"?"2px solid var(--fg)":"none"}}><h5>v3: Infrastructure</h5><p>Identity-focused. Recursive system. Run something.</p></div>
         </div>
       </div>
 

@@ -379,7 +379,7 @@ export default function PatioBeach() {
       <div className="pb-header">
         <div className="pb-header-label">Archive</div>
         <h1 className="pb-title">Nest</h1>
-        <p className="pb-subtitle">486 posts — 556 images — 2018–2021</p>
+        <p className="pb-subtitle">486 posts, 556 images, 2018–2021</p>
         <div className="pb-view-toggle">
           <button className={`pb-view-btn${view==="narrative"?" on":""}`} onClick={()=>setView("narrative")}>About</button>
           <button className={`pb-view-btn${view==="archive"?" on":""}`} onClick={()=>setView("archive")}>Archive</button>

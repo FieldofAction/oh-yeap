@@ -21,10 +21,10 @@ export default function About({ theme }) {
       <div className="ab-section en d2">
         <div className="ab-sl">Position</div>
         <p className="ab-display">
-          A creative director working at the intersection of design systems, relational theory, and emerging technology &mdash; building conditions for coherence across brand, product, and culture.
+          A creative director working at the intersection of design systems, relational theory, and emerging technology. Building conditions for coherence across brand, product, and culture.
         </p>
         <p className="ab-body">
-          The work moves between applied design leadership and theoretical research. Current focus: how relational awareness reshapes what design can be &mdash; from outputs to field conditions.
+          The work moves between applied design leadership and theoretical research. Current focus: how relational awareness reshapes what design can be, from outputs to field conditions.
         </p>
       </div>
 
@@ -49,11 +49,11 @@ export default function About({ theme }) {
           The practice evolves through three frameworks. The Art of Model began as a tool for designing meaningful intervention, then deepened into a system for generative authorship, and is now becoming an operating system for generative identity. Each version represents a shift: from acting on a system, to authoring within one, to becoming infrastructure.
         </p>
         <p className="ab-body" style={{ marginTop:20 }}>
-          <span style={{ fontFamily:"var(--display)", fontWeight:300, color:"var(--fg)" }}>v1 &mdash; Intervention.</span>{" "}
+          <span style={{ fontFamily:"var(--display)", fontWeight:300, color:"var(--fg)" }}>v1: Intervention.</span>{" "}
           {AOM_VERSIONS.v1.subtitle}<br/>
-          <span style={{ fontFamily:"var(--display)", fontWeight:300, color:"var(--fg)" }}>v2 &mdash; Authorship.</span>{" "}
+          <span style={{ fontFamily:"var(--display)", fontWeight:300, color:"var(--fg)" }}>v2: Authorship.</span>{" "}
           {AOM_VERSIONS.v2.subtitle}<br/>
-          <span style={{ fontFamily:"var(--display)", fontWeight:300, color:"var(--fg)" }}>v3 &mdash; Infrastructure.</span>{" "}
+          <span style={{ fontFamily:"var(--display)", fontWeight:300, color:"var(--fg)" }}>v3: Infrastructure.</span>{" "}
           {AOM_VERSIONS.v3.subtitle}
         </p>
       </div>
@@ -62,7 +62,7 @@ export default function About({ theme }) {
       <div className="ab-section en d5">
         <div className="ab-sl">Action Systems Universal</div>
         <p className="ab-body" style={{ marginBottom:24 }}>
-          An eleven-agent architecture organized in three rings &mdash; an operational cycle for production and interpretation, a practice layer for creative vitality, and a governance layer for structural authority. Each agent holds a distinct orientation on the same input.
+          An eleven-agent architecture organized in three rings: an operational cycle for production and interpretation, a practice layer for creative vitality, and a governance layer for structural authority. Each agent holds a distinct orientation on the same input.
         </p>
         <div className="ab-agents">
           {[1,2,3].map(ring => (
