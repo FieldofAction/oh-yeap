@@ -545,7 +545,7 @@ export default function PatioBeach() {
             </div>
           )}
 
-          <div className="pb-grid-wrap">
+          <div className={`pb-grid-wrap${activeFilterCount > 0 ? " pb-filtered" : ""}`}>
             {activeFilterCount === 0 ? Object.entries(MONTHS).map(([monthKey, monthData]) => (
               <div key={monthKey} className="pb-month-group">
                 <div className="pb-month-label">{monthData.label}<span>{monthData.posts.length}</span></div>
