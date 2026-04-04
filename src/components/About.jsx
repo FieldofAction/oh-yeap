@@ -36,7 +36,7 @@ export default function About({ theme }) {
           Nearly two decades across music, technology, entertainment, and culture. Design systems and product surfaces at Apple Music. Cloud infrastructure identity at Google. Brand-building at Vevo during its formative era. Experience design and visual identity for the Tribeca Festival.
         </p>
         <p className="ab-body">
-          Based in Los Angeles, CA. Working under the studio name Field of Action.
+          Based in Los Angeles, CA, working as Field of Action.
         </p>
       </div>
 
