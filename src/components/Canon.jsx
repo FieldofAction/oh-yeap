@@ -243,8 +243,8 @@ export default function Canon() {
             {sec.body.split("\n\n").map((p, j) => (
               <p key={j} className="ph-body-text">{p}</p>
             ))}
-            {sec.caption && <div className="ph-body-caption">{sec.caption}</div>}
             {SECTION_DIAGRAMS[sec.heading] && <img src={SECTION_DIAGRAMS[sec.heading]} alt={`${sec.heading} diagram`} className="cn-diagram" loading="lazy" />}
+            {sec.caption && <div className="cn-diagram-caption">{sec.caption}</div>}
             {renderCards(XRAY_DATA.philosophy?.[sec.heading], i * 40)}
           </div>
         ))}
