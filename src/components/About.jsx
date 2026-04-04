@@ -13,8 +13,11 @@ export default function About({ theme }) {
       {/* Position */}
       <div className="ab-section en d2">
         <div className="ab-sl">Position</div>
+        <p className="ab-display">
+          Design leadership and generative research as one practice. Twenty years building across entertainment and technology. Toward the conditions that make coherent action possible.
+        </p>
         <p className="ab-body">
-          Design leadership and generative research as one practice. Twenty years building across entertainment and technology. Toward the conditions that make coherent action possible. Current focus: how relational awareness reshapes what design can be and what it should be for.
+          Current focus: how relational awareness reshapes what design can be and what it should be for.
         </p>
       </div>
 
