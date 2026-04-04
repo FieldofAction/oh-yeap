@@ -4,19 +4,19 @@ const TECH = [
   { h:"React 19", v:"Functional components, hooks, no class components" },
   { h:"Vite 7", v:"Dev server and production builds" },
   { h:"State Management", v:"Custom hook (useASUStore) backed by localStorage" },
-  { h:"Routing", v:"None \u2014 state-based view switching, no URL routing" },
+  { h:"Routing", v:"State-based view switching, no URL routing" },
   { h:"Styling", v:"Single CSS file with custom properties for theming" },
   { h:"AI Integration", v:"Anthropic API (Claude) for synthesis generation" },
   { h:"Themes", v:"Two themes: Threshold (dark) and Light, switched at runtime" },
-  { h:"Persistence", v:"Client-side localStorage \u2014 no database, no server" },
+  { h:"Persistence", v:"Client-side localStorage. No database, no server" },
 ];
 
 const PRINCIPLES = [
   "Two typefaces only: Inter for display and body, Space Mono for code.",
-  "CSS custom properties drive theming \u2014 every color is a variable.",
+  "CSS custom properties drive theming. Every color is a variable.",
   "Entrance animations with staggered delays create rhythm on load.",
   "Responsive breakpoints at 480px, 600px, 768px, and 900px.",
-  "No framework, no utility classes \u2014 hand-written CSS for every component.",
+  "No framework, no utility classes. Hand-written CSS for every component.",
   "Maximum restraint: whitespace, subtle transitions, minimal ornamentation.",
 ];
 
