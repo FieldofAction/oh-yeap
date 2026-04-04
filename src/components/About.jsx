@@ -22,10 +22,13 @@ export default function About({ theme }) {
       <div className="ab-section en d2">
         <div className="ab-sl">Position</div>
         <p className="ab-display">
-          Design leadership and generative research as one practice. Twenty years building across entertainment and technology. Toward the conditions that make coherent action possible.
+          Design leader working across systems, brand, and emerging technology, with 15+ years of building in entertainment and technology.
         </p>
         <p className="ab-body">
-          Current focus: how relational awareness reshapes what design can be and what it should be for.
+          My practice combines design leadership and generative research to shape the conditions for aligned teams, clear decisions, and coherent creative output. I build frameworks and systems that translate ideas into action.
+        </p>
+        <p className="ab-body">
+          Current focus: applying Relational Design to collaboration, tooling, and ML-driven design environments.
         </p>
       </div>
 
