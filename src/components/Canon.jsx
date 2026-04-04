@@ -195,18 +195,18 @@ export default function Canon() {
       </div>
 
       <div className="ph-canon en d2">
-        <p className="ph-canon-p">A practice of designing conditions, not outcomes. Orientation and shared language for work that holds complexity without collapsing it.</p>
+        <p className="ph-canon-p">A practice of designing conditions. Orientation and shared language for work that holds complexity without collapsing it.</p>
         <div className="ph-canon-ax">
           <span className="ph-canon-al">Governing Principle</span>
-          <p className="ph-canon-at">Embodied action precedes alignment. You do not act to become aligned. You act because alignment has already taken form.</p>
+          <p className="ph-canon-at">Embodied action precedes alignment. You act because alignment has already taken form.</p>
         </div>
         <div className="ph-canon-ax">
           <span className="ph-canon-al">System Invariant</span>
-          <p className="ph-canon-at">Practice precedes documentation. Documentation never leads offerings. Silence is allowed.</p>
+          <p className="ph-canon-at">Practice precedes documentation.</p>
         </div>
         <div className="ph-canon-ax">
           <span className="ph-canon-al">Aliveness</span>
-          <p className="ph-canon-at">The system demonstrates aliveness through responsiveness, not performance. State is visible. Change is legible. Stillness and motion are both evidence of attention.</p>
+          <p className="ph-canon-at">The system demonstrates aliveness through responsiveness, instead of performance. State is visible. Change is legible. Stillness and motion are both evidence of attention.</p>
         </div>
       </div>
 
