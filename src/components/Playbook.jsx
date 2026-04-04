@@ -41,7 +41,7 @@ export default function Playbook({ asu }) {
       `REFERENCE MATRIX`,
       ...REFS.map(r => `  ${r.name}: ${r.principle}`),
       ``,
-      `Action Systems Universal`,
+      `Field of Action`,
     ];
     return lines.join("\n");
   }, [project, pillars, emotion, app, steps, dominant]);

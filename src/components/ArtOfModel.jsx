@@ -61,7 +61,7 @@ Respond with ONLY the synthesis text, no preamble.`;
       model.shift ? `(${model.shift})` : "", `Date: ${new Date().toLocaleDateString()}`, ``,
       ...model.steps.flatMap(s => [`${s.n}. ${s.title}`, s.question ? `   Q: ${s.question}` : "", r[s.n] ? `   A: ${r[s.n]}` : `   A: —`, `   Layer: ${s.layer}`, ``]),
       `Flow: ${model.flow.join(" → ")}`, ``,
-      synthesis ? `SYNTHESIS\n${synthesis}\n` : "", `Action Systems Universal`,
+      synthesis ? `SYNTHESIS\n${synthesis}\n` : "", `Field of Action`,
     ];
     return lines.filter(l => l !== "").join("\n");
   }, [ver, r, model, synthesis]);

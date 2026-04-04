@@ -35,7 +35,7 @@ export default function About({ theme }) {
           Nearly two decades across music, technology, entertainment, and culture. Design systems and product surfaces at Apple Music. Cloud infrastructure identity at Google. Brand-building at Vevo during its formative era. Experience design and visual identity for the Tribeca Festival.
         </p>
         <p className="ab-body">
-          Based in Los Angeles, CA. Working under the studio name Action Systems Universal.
+          Based in Los Angeles, CA. Working under the studio name Field of Action.
         </p>
       </div>
 
@@ -60,7 +60,7 @@ export default function About({ theme }) {
 
       {/* Agents */}
       <div className="ab-section en d5">
-        <div className="ab-sl">Action Systems Universal</div>
+        <div className="ab-sl">Field of Action</div>
         <p className="ab-body" style={{ marginBottom:24 }}>
           An eleven-agent architecture organized in three rings: an operational cycle for production and interpretation, a practice layer for creative vitality, and a governance layer for structural authority. Each agent holds a distinct orientation on the same input.
         </p>

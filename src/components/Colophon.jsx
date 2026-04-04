@@ -86,7 +86,7 @@ export default function Colophon() {
         <div className="co-sl">Credits</div>
         <div className="co-credits">
           <strong>Alfred Daniel Dickson II</strong><br/>
-          Action Systems Universal<br/>
+          Field of Action<br/>
           Los Angeles, CA<br/>
           2024&ndash;2026
         </div>

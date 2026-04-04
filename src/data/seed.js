@@ -518,7 +518,7 @@ export const SEED = [
       // inter5:"/images/theory/relational-design-inter-5.jpg",
       // inter6:"/images/theory/relational-design-inter-6.jpg",
     },
-    colophon:{author:"Alfred Daniel Dickson II",org:"Action Systems Universal",location:"Los Angeles, CA",period:"2024–2026",contribution:"With contributions in theory, diagrams, and methodology from ongoing work within Action Systems Universal"},
+    colophon:{author:"Alfred Daniel Dickson II",org:"Field of Action",location:"Los Angeles, CA",period:"2024–2026",contribution:"With contributions in theory, diagrams, and methodology from ongoing work within Field of Action"},
   }},
   { id:uid(), section:"exploration", title:"GSL", subtitle:"Generative Simulation Layer", desc:"Condition-first design experiments. Procedural logic meets visual systems.", year:"Active", status:"wip", tags:["Procedural","Simulation"], relations:["Relational Design"], hasVisual:true, sketch:{
     hypothesis:"What happens when you design from conditions instead of components? Can procedural logic generate visual systems that feel coherent without being manually composed?",
