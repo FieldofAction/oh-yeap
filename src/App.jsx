@@ -22,6 +22,7 @@ import ExplorationEditor from "./components/ExplorationEditor";
 import useExplorationStore from "./store/useExplorationStore";
 import PatioBeach from "./components/PatioBeach";
 import Superconscious from "./components/Superconscious";
+import Studio from "./components/Studio";
 import { DualLensToggle, DualLensBar } from "./components/PatternLens";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
@@ -64,7 +65,7 @@ export default function App() {
   const togglePatternLens = useCallback(() => setPatternLens(p => !p), []);
 
   // View-to-theme mapping: Work = dark, Canon = deep slate, Studio = light, Info = medium grey
-  const WORK_VIEWS = useMemo(() => new Set(["public", "superconscious"]), []);
+  const WORK_VIEWS = useMemo(() => new Set(["public", "superconscious", "patiobeach"]), []);
   const CANON_VIEWS = useMemo(() => new Set(["canon"]), []);
   const INFO_VIEWS = useMemo(() => new Set(["about", "colophon"]), []);
 
@@ -180,6 +181,7 @@ export default function App() {
           {view === "breakground" && <BreakgroundCard />}
           {view === "desert" && <DesertVisual />}
           {view === "editor" && <ExplorationEditor />}
+          {view === "studio" && <Studio navigateTo={navigateTo} />}
           {view === "patiobeach" && <PatioBeach />}
           {view === "superconscious" && <Superconscious />}
         </main>

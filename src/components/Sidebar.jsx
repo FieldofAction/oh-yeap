@@ -6,30 +6,14 @@ const NAV = [
     { key: "public", label: "Writing", filter: "Writing" },
     { key: "public", label: "Exploration", filter: "Exploration" },
     { key: "public", label: "Artifacts", filter: "Artifacts" },
+    { key: "patiobeach", label: "Patio Beach" },
+    { key: "superconscious", label: "Share Location" },
   ]},
   { tier: "CANON", items: [
     { key: "canon", label: "Relational Design" },
   ]},
   { tier: "STUDIO", items: [
-    { group: "Methods", children: [
-      { key: "model", label: "Art of Model" },
-      { key: "playbook", label: "Playbook" },
-    ]},
-    { group: "Interfaces", children: [
-      { key: "console", label: "Console" },
-      { key: "foa", label: "FOA Generator" },
-      { key: "breakground", label: "Breakground" },
-      { key: "desert", label: "Desert" },
-    ]},
-    { group: "Research", children: [
-      { key: "backstage", label: "Backstage" },
-      { key: "editor", label: "Exploration Editor" },
-    ]},
-    { group: "Archive", children: [
-      { key: "lab", label: "Incandescent Lab" },
-      { key: "patiobeach", label: "Patio Beach" },
-      { key: "superconscious", label: "Share Location" },
-    ]},
+    { key: "studio", label: "Studio" },
   ]},
   { tier: "INFO", items: [
     { key: "about", label: "About" },
@@ -57,10 +41,13 @@ export default function Sidebar({ view, navigateTo, filter, setFilter }) {
     setMobileOpen(false);
   };
 
+  const STUDIO_VIEWS = new Set(["studio", "model", "playbook", "console", "foa", "breakground", "desert", "backstage", "editor", "lab"]);
+
   const isActive = (item) => {
     if (item.href) return false;
     if (item.filter) return view === "public" && filter === item.filter;
     if (item.key === "public" && !item.filter) return view === "public" && (filter === "All" || !filter);
+    if (item.key === "studio") return STUDIO_VIEWS.has(view);
     return view === item.key;
   };
 
