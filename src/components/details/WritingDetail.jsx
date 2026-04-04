@@ -118,9 +118,18 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
         </div>
         {item.body?.map((block, i) => {
           if (block.type === "text") {
+            const paras = block.content.split("\n\n");
             return (
               <div key={i} className={`rd-body-text${fn} dc`} style={{animationDelay:`${0.5 + i * 0.06}s`}}>
-                {block.content.split("\n\n").map((para, j) => <p key={j}>{para}</p>)}
+                {(() => { let firstPara = (i === 0); return paras.map((para, j) => {
+                  const trimmed = para.trim();
+                  const isHeader = trimmed.length < 60 && trimmed.length > 2 && !/[.,;:!?)"]$/.test(trimmed) && trimmed.split(/\s+/).length > 1;
+                  const isPullQuote = !isHeader && trimmed.length >= 20 && trimmed.length <= 140 && /\.$/.test(trimmed) && (trimmed.match(/\./g) || []).length <= 2 && j > 0 && j < paras.length - 1 && paras[j - 1]?.trim().length > 140;
+                  if (isHeader) return <h3 key={j} className="rd-section-heading">{trimmed}</h3>;
+                  if (isPullQuote) return <blockquote key={j} className="rd-pullquote">{trimmed}</blockquote>;
+                  if (firstPara && !isHeader) { firstPara = false; return <p key={j} className="rd-dropcap">{para}</p>; }
+                  return <p key={j}>{para}</p>;
+                }); })()}
               </div>
             );
           }
