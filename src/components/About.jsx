@@ -1,7 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
+import { AGENTS, RING_LABELS } from "../data/agents";
 import { AOM_VERSIONS } from "../data/aom-versions";
 
+function agentRole(prompt) {
+  const m = prompt.match(/Your (?:role|orientation) is ([^.]+)/);
+  return m ? m[1].trim() : "";
+}
+
 export default function About({ theme }) {
+  const [showAgents, setShowAgents] = useState(false);
+
   return (
     <div className="ab en">
       <div className="ab-header en d1">
@@ -54,9 +62,24 @@ export default function About({ theme }) {
       {/* Infrastructure */}
       <div className="ab-section en d5">
         <div className="ab-sl">Infrastructure</div>
-        <p className="ab-body">
+        <p className="ab-body" style={{ cursor: "pointer" }} onClick={() => setShowAgents(p => !p)}>
           The practice runs on an eleven-agent architecture organized in three rings. An operational cycle for production and interpretation. A practice layer for creative vitality. A governance layer for structural authority. Each agent holds a distinct orientation on the same input.
         </p>
+        {showAgents && (
+          <div className="ab-agents" style={{ animation: "en .4s ease" }}>
+            {[1,2,3].map(ring => (
+              <React.Fragment key={ring}>
+                <div className="ab-ring-label">{RING_LABELS[ring].name}</div>
+                {AGENTS.filter(a => a.ring === ring).map(a => (
+                  <div key={a.key} className="ab-agent">
+                    <div className="ab-agent-name">{a.name}</div>
+                    <div className="ab-agent-role">{agentRole(a.prompt)}</div>
+                  </div>
+                ))}
+              </React.Fragment>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* CTA */}
