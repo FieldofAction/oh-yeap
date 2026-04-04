@@ -53,7 +53,7 @@ export default function Colophon() {
       </div>
 
       <div className="co-section en d3">
-        <div className="co-sl">Design Principles</div>
+        <div className="co-sl">Design Rules</div>
         {PRINCIPLES.map((p, i) => (
           <p key={i} className="co-item-v" style={{ marginBottom:8, paddingLeft:12, borderLeft:"1px solid var(--bd)" }}>{p}</p>
         ))}
