@@ -50,6 +50,16 @@ const XRAY_DATA = {
   ],
 };
 
+/* ── Section diagrams ── */
+const SECTION_DIAGRAMS = {
+  "Form to Field": "/images/theory/canon-form-to-field.png",
+  "Enter Relational Intelligence": "/images/theory/canon-relational-intelligence.png",
+  "Aesthetics as Condition": "/images/theory/canon-aesthetics.png",
+  "Human-Centered to Field-Centered Design": "/images/theory/canon-field-centered.png",
+  "Relational Turn": "/images/theory/canon-relational-turn.png",
+  "Toward Transrelational Intelligence": "/images/theory/canon-transrelational.png",
+};
+
 const TYPE_COLORS = { signal: "#2e6b4f", inflation: "#a06828", shadow: "#6a5aaa" };
 const TYPE_LABELS = { signal: "Signal", inflation: "Inflation", shadow: "Shadow" };
 
@@ -210,6 +220,7 @@ export default function Canon() {
       <div className="ph-abstract en d4">
         <div className="ph-sl">Abstract</div>
         <p className="ph-abstract-text">{theory.abstract}</p>
+        <img src="/images/theory/canon-abstract.png" alt="Relational Design abstract diagram" className="cn-diagram" loading="lazy" />
       </div>
 
       {/* ── 2. Philosophy ── */}
@@ -233,6 +244,7 @@ export default function Canon() {
               <p key={j} className="ph-body-text">{p}</p>
             ))}
             {sec.caption && <div className="ph-body-caption">{sec.caption}</div>}
+            {SECTION_DIAGRAMS[sec.heading] && <img src={SECTION_DIAGRAMS[sec.heading]} alt={`${sec.heading} diagram`} className="cn-diagram" loading="lazy" />}
             {renderCards(XRAY_DATA.philosophy?.[sec.heading], i * 40)}
           </div>
         ))}

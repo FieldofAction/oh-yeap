@@ -68,6 +68,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .cn-subnav-link.on{color:var(--fg);font-weight:500;border-bottom-color:var(--fg)}
 
 /* ── Canon lens mode note ── */
+.cn-diagram{width:100%;height:auto;display:block;margin:32px 0 16px;opacity:.85}
 .cn-lens-note{font-size:11px;font-weight:300;color:var(--ff);line-height:1.7;padding:24px 0;border-top:1px solid var(--bd);margin-top:24px;margin-bottom:40px}
 .cn-lens-note em{font-style:normal;font-weight:500;color:var(--fm)}
 .cn-lens-note kbd{font-family:var(--mono);font-size:10px;background:var(--sf);padding:2px 6px;border:1px solid var(--bd);border-radius:3px;color:var(--fm)}
