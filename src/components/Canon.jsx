@@ -226,17 +226,6 @@ export default function Canon() {
 
       {/* ── 2. Philosophy ── */}
       <div ref={el => sectionRefs.current["philosophy"] = el} id="canon-philosophy" style={{ scrollMarginTop: 56 }}>
-        <div className="ph-process en d5">
-          <div className="ph-sl">Process</div>
-          <div className="ph-process-ring">
-            {theory.processDiagram.map((step, i) => (
-              <div key={i} className="ph-process-step">
-                <div className="ph-process-dot" />
-                <div className="ph-process-name">{step}</div>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {theory.sections.map((sec, i) => (
           <div key={i} className="ph-section en">
