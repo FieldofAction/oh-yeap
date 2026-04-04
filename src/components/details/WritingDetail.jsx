@@ -127,7 +127,7 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
                   const isPullQuote = !isHeader && trimmed.length >= 20 && trimmed.length <= 140 && /\.$/.test(trimmed) && (trimmed.match(/\./g) || []).length <= 2 && j > 0 && j < paras.length - 1 && paras[j - 1]?.trim().length > 140;
                   if (isHeader) return <h3 key={j} className="rd-section-heading">{trimmed}</h3>;
                   if (isPullQuote) return <blockquote key={j} className="rd-pullquote">{trimmed}</blockquote>;
-                  if (firstPara && !isHeader) { firstPara = false; return <p key={j} className="rd-dropcap">{para}</p>; }
+                  if (firstPara && !isHeader) { firstPara = false; }
                   return <p key={j}>{para}</p>;
                 }); })()}
               </div>
