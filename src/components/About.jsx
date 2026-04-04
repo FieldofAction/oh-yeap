@@ -22,7 +22,7 @@ export default function About({ theme }) {
       <div className="ab-section en d2">
         <div className="ab-sl">Position</div>
         <p className="ab-display">
-          Design leader working across systems, brand, and emerging technology, with 15+ years of building in entertainment and technology.
+          Design leader working across systems, brand, and emerging technology.
         </p>
         <p className="ab-body">
           My practice combines design leadership and generative research to shape the conditions for aligned teams, clear decisions, and coherent creative output. I build frameworks and systems that translate ideas into action.
@@ -36,7 +36,10 @@ export default function About({ theme }) {
       <div className="ab-section en d3">
         <div className="ab-sl">Background</div>
         <p className="ab-body">
-          Nearly two decades across music, technology, entertainment, and culture. Design systems and product surfaces at Apple Music. Cloud infrastructure identity at Google. Brand-building at Vevo during its formative era. Experience design and visual identity for the Tribeca Festival.
+          Work spans music, technology, entertainment, and culture. Shaping design systems, product surfaces, and brand at the scale of details required.
+        </p>
+        <p className="ab-body">
+          Brand and design systems affecting product surfaces and meaning at Apple Music. Cloud infrastructure identity at Google. Brand-building at Vevo during its formative era. Experience design and visual identity for the Tribeca Festival.
         </p>
         <p className="ab-body">
           Based in Los Angeles, CA, working as Field of Action.
