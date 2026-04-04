@@ -1,12 +1,5 @@
 import React from "react";
-import { AGENTS, RING_LABELS } from "../data/agents";
 import { AOM_VERSIONS } from "../data/aom-versions";
-
-/* extract a concise role from each agent's prompt (first sentence after "Your role is") */
-function agentRole(prompt) {
-  const m = prompt.match(/Your (?:role|orientation) is ([^.—]+)/);
-  return m ? m[1].trim() : "";
-}
 
 export default function About({ theme }) {
   return (
@@ -17,14 +10,11 @@ export default function About({ theme }) {
         <p className="ab-sub">Position + Practice</p>
       </div>
 
-      {/* Position — moved from Public.jsx ethos */}
+      {/* Position */}
       <div className="ab-section en d2">
         <div className="ab-sl">Position</div>
-        <p className="ab-display">
-          A creative director working at the intersection of design systems, relational theory, and emerging technology. Building conditions for coherence across brand, product, and culture.
-        </p>
         <p className="ab-body">
-          The work moves between applied design leadership and theoretical research. Current focus: how relational awareness reshapes what design can be, from outputs to field conditions.
+          Design leadership and generative research as one practice. Twenty years building across entertainment and technology. Toward the conditions that make coherent action possible. Current focus: how relational awareness reshapes what design can be and what it should be for.
         </p>
       </div>
 
@@ -58,31 +48,18 @@ export default function About({ theme }) {
         </p>
       </div>
 
-      {/* Agents */}
+      {/* Infrastructure */}
       <div className="ab-section en d5">
-        <div className="ab-sl">Field of Action</div>
-        <p className="ab-body" style={{ marginBottom:24 }}>
-          An eleven-agent architecture organized in three rings: an operational cycle for production and interpretation, a practice layer for creative vitality, and a governance layer for structural authority. Each agent holds a distinct orientation on the same input.
+        <div className="ab-sl">Infrastructure</div>
+        <p className="ab-body">
+          The practice runs on an eleven-agent architecture organized in three rings. An operational cycle for production and interpretation. A practice layer for creative vitality. A governance layer for structural authority. Each agent holds a distinct orientation on the same input.
         </p>
-        <div className="ab-agents">
-          {[1,2,3].map(ring => (
-            <React.Fragment key={ring}>
-              <div className="ab-ring-label">{RING_LABELS[ring].name}</div>
-              {AGENTS.filter(a => a.ring === ring).map(a => (
-                <div key={a.key} className="ab-agent">
-                  <div className="ab-agent-name">{a.name}</div>
-                  <div className="ab-agent-role">{agentRole(a.prompt)}</div>
-                </div>
-              ))}
-            </React.Fragment>
-          ))}
-        </div>
       </div>
 
-      {/* CTA — moved from Public.jsx */}
+      {/* CTA */}
       <div className="cta">
         <p className="cta-p">Field of Action engages where a real system exists, a real constraint is present, and responsibility is held.</p>
-        <a href="#" className="cta-a">Begin a conversation &rarr;</a>
+        <a href="https://fieldofaction.substack.com" className="cta-a">Begin a conversation &rarr;</a>
       </div>
     </div>
   );
