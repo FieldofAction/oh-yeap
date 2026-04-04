@@ -22,7 +22,7 @@ export default function About({ theme }) {
       <div className="ab-section en d2">
         <div className="ab-sl">Position</div>
         <p className="ab-display">
-          Design leader working across systems, brand, and emerging technology.
+          Design leader setting direction across systems, brand, and emerging technology.
         </p>
         <p className="ab-body">
           My practice combines design leadership and generative research to shape the conditions for aligned teams, clear decisions, and coherent creative output. I build frameworks and systems that translate ideas into action.
