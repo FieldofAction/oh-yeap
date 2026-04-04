@@ -52,12 +52,12 @@ const XRAY_DATA = {
 
 /* ── Section diagrams ── */
 const SECTION_DIAGRAMS = {
-  "Form to Field": "/images/theory/canon-form-to-field.png",
-  "Enter Relational Intelligence": "/images/theory/canon-relational-intelligence.png",
-  "Aesthetics as Condition": "/images/theory/canon-aesthetics.png",
-  "Human-Centered to Field-Centered Design": "/images/theory/canon-field-centered.png",
-  "Relational Turn": "/images/theory/canon-relational-turn.png",
-  "Toward Transrelational Intelligence": "/images/theory/canon-transrelational.png",
+  "Form to Field": { src: "/images/theory/canon-form-to-field.png", caption: "Design\u2019s movement from fixed form toward dynamic field conditions." },
+  "Enter Relational Intelligence": { src: "/images/theory/canon-relational-intelligence.png", caption: "Creativity, and awareness emerge in the spaces between elements rather than the elements themselves." },
+  "Aesthetics as Condition": { src: "/images/theory/canon-aesthetics.png", caption: null },
+  "Human-Centered to Field-Centered Design": { src: "/images/theory/canon-field-centered.png", caption: "Reframing design from focusing on individual users to engaging entire systems." },
+  "Relational Turn": { src: "/images/theory/canon-relational-turn.png", caption: "Each adjustment shifts the system, requiring continual attunement." },
+  "Toward Transrelational Intelligence": { src: "/images/theory/canon-transrelational.png", caption: "Intelligence becomes a distributed condition across human, artificial, and ecological systems, forming a shared field of becoming." },
 };
 
 const TYPE_COLORS = { signal: "#2e6b4f", inflation: "#a06828", shadow: "#6a5aaa" };
@@ -221,6 +221,7 @@ export default function Canon() {
         <div className="ph-sl">Abstract</div>
         <p className="ph-abstract-text">{theory.abstract}</p>
         <img src="/images/theory/canon-abstract.png" alt="Relational Design abstract diagram" className="cn-diagram" loading="lazy" />
+        <div className="cn-diagram-caption">Relational Design Process Diagram</div>
       </div>
 
       {/* ── 2. Philosophy ── */}
@@ -243,8 +244,13 @@ export default function Canon() {
             {sec.body.split("\n\n").map((p, j) => (
               <p key={j} className="ph-body-text">{p}</p>
             ))}
-            {SECTION_DIAGRAMS[sec.heading] && <img src={SECTION_DIAGRAMS[sec.heading]} alt={`${sec.heading} diagram`} className="cn-diagram" loading="lazy" />}
-            {sec.caption && <div className="cn-diagram-caption">{sec.caption}</div>}
+            {SECTION_DIAGRAMS[sec.heading] && (
+              <>
+                <img src={SECTION_DIAGRAMS[sec.heading].src} alt={`${sec.heading} diagram`} className="cn-diagram" loading="lazy" />
+                {SECTION_DIAGRAMS[sec.heading].caption && <div className="cn-diagram-caption">{SECTION_DIAGRAMS[sec.heading].caption}</div>}
+              </>
+            )}
+            {!SECTION_DIAGRAMS[sec.heading] && sec.caption && <div className="ph-body-caption">{sec.caption}</div>}
             {renderCards(XRAY_DATA.philosophy?.[sec.heading], i * 40)}
           </div>
         ))}
