@@ -63,8 +63,13 @@ export default function VideoEmbed({ url, poster, caption }) {
   return (
     <div className="ve-container" ref={containerRef}>
       <div className="ve-aspect">
-        {/* Poster + play button */}
-        {!loaded && (
+        {/* Native video: render immediately with preload for first frame */}
+        {provider === "native" && (
+          <video src={url} controls muted loop playsInline preload="metadata" poster={poster || undefined} style={{borderRadius:12}} />
+        )}
+
+        {/* Poster + play button for external embeds */}
+        {!loaded && provider !== "native" && (
           <>
             {poster && <img className="ve-poster" src={poster} alt="" />}
             {url && (
@@ -93,9 +98,6 @@ export default function VideoEmbed({ url, poster, caption }) {
             allowFullScreen
             title="Video"
           />
-        )}
-        {loaded && provider === "native" && (
-          <video src={url} controls autoPlay preload="metadata" poster={poster || undefined} />
         )}
       </div>
       {caption && <div className="ve-caption">{caption}</div>}

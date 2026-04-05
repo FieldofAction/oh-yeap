@@ -1489,7 +1489,7 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 
 /* ── Video Embed ── */
 .ve-container{margin:40px 0}
-.ve-aspect{position:relative;width:100%;padding-top:56.25%;background:var(--sf);border:1px solid var(--bd);overflow:hidden}
+.ve-aspect{position:relative;width:100%;padding-top:56.25%;background:var(--sf);border:1px solid var(--bd);overflow:hidden;border-radius:12px}
 .ve-aspect iframe,.ve-aspect video{position:absolute;inset:0;width:100%;height:100%;border:0}
 .ve-poster{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .ve-play{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--bd);color:var(--fg);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;z-index:2}
