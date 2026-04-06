@@ -117,14 +117,19 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
           {item.subtitle || item.section}: {item.title}
         </div>
         {item.body?.map((block, i) => {
+          const diagRe = /^(Meta[- ]Diagram|Meta Caption|Wave-Diagram|Glass-Emotion)/;
           if (block.type === "text") {
             const paras = block.content.split("\n\n");
+            const prevIsArt = i > 0 && item.body[i - 1]?.type === "artwork";
             return (
               <div key={i} className={`rd-body-text${fn} dc`} style={{animationDelay:`${0.5 + i * 0.06}s`}}>
                 {(() => { let firstPara = (i === 0); return paras.map((para, j) => {
                   const trimmed = para.trim();
-                  const isHeader = j === 0 && trimmed.length < 60 && trimmed.length > 2 && !/[.,;:!?)"]$/.test(trimmed) && !/^(Meta[- ]Diagram|Meta Caption|Wave-Diagram|Glass-Emotion)/.test(trimmed);
-                  const isPullQuote = !isHeader && trimmed.length >= 20 && trimmed.length <= 140 && /\.$/.test(trimmed) && (trimmed.match(/\./g) || []).length <= 2 && j > 0 && j < paras.length - 1 && paras[j - 1]?.trim().length > 140;
+                  const isDiagramLabel = j === 0 && diagRe.test(trimmed);
+                  if (isDiagramLabel && prevIsArt) return null;
+                  const isHeader = j === 0 && !isDiagramLabel && trimmed.length < 60 && trimmed.length > 2 && !/[.,;:!?)"]$/.test(trimmed);
+                  const isPullQuote = !isHeader && !isDiagramLabel && trimmed.length >= 20 && trimmed.length <= 140 && /\.$/.test(trimmed) && (trimmed.match(/\./g) || []).length <= 2 && j > 0 && j < paras.length - 1 && paras[j - 1]?.trim().length > 140;
+                  if (isDiagramLabel) return <div key={j} className="rd-diagram-label">{trimmed}</div>;
                   if (isHeader) return <h3 key={j} className="rd-section-heading">{trimmed}</h3>;
                   if (isPullQuote) return <blockquote key={j} className="rd-pullquote">{trimmed}</blockquote>;
                   if (firstPara && !isHeader) { firstPara = false; }
@@ -134,6 +139,9 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
             );
           }
           if (block.type === "artwork") {
+            const nextBlock = item.body[i + 1];
+            const nextDiagLabel = nextBlock?.type === "text" && diagRe.test(nextBlock.content.split("\n\n")[0]?.trim()) ? nextBlock.content.split("\n\n")[0].trim() : null;
+            const cap = nextDiagLabel || block.caption;
             return (
               <div key={i} className="rd-artwork dc img-reveal" style={{animationDelay:`${0.5 + i * 0.06}s`}}>
                 <div className="rd-artwork-frame">
@@ -145,7 +153,7 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
                   <div className="rd-artwork-glow" />
                   {!block.src && <div className="rd-artwork-label">Artwork {i}</div>}
                 </div>
-                {block.caption && <div className="rd-artwork-cap">{block.caption}</div>}
+                {cap && <div className={nextDiagLabel ? "rd-diagram-label" : "rd-artwork-cap"}>{cap}</div>}
               </div>
             );
           }
