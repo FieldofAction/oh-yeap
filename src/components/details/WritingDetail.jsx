@@ -113,9 +113,8 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
           )}
           <div className="rd-hero-art-glow" />
         </div>
-        <div className="rd-caption dc dc5">
-          {item.subtitle || item.section}: {item.title}
-        </div>
+        {(() => { const dRe = /^(Meta[- ]Diagram|Meta Caption|Wave-Diagram|Glass-Emotion)/; const fb = item.body?.[0]; const dl = fb?.type === "text" && dRe.test(fb.content.split("\n\n")[0]?.trim()) ? fb.content.split("\n\n")[0].trim() : null;
+        return <div className={`${dl ? "rd-diagram-label" : "rd-caption"} dc dc5`}>{dl || `${item.subtitle || item.section}: ${item.title}`}</div>; })()}
         {item.body?.map((block, i) => {
           const diagRe = /^(Meta[- ]Diagram|Meta Caption|Wave-Diagram|Glass-Emotion)/;
           if (block.type === "text") {
@@ -126,7 +125,7 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
                 {(() => { let firstPara = (i === 0); return paras.map((para, j) => {
                   const trimmed = para.trim();
                   const isDiagramLabel = j === 0 && diagRe.test(trimmed);
-                  if (isDiagramLabel && prevIsArt) return null;
+                  if (isDiagramLabel && (prevIsArt || i === 0)) return null;
                   const isHeader = j === 0 && !isDiagramLabel && trimmed.length < 60 && trimmed.length > 2 && !/[.,;:!?)"]$/.test(trimmed);
                   const isPullQuote = !isHeader && !isDiagramLabel && trimmed.length >= 20 && trimmed.length <= 140 && /\.$/.test(trimmed) && (trimmed.match(/\./g) || []).length <= 2 && j > 0 && j < paras.length - 1 && paras[j - 1]?.trim().length > 140;
                   if (isDiagramLabel) return <div key={j} className="rd-diagram-label">{trimmed}</div>;
