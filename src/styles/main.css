@@ -268,6 +268,9 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .rd-back{position:sticky;top:16px;z-index:160;font-size:11px;font-weight:400;letter-spacing:.03em;text-transform:uppercase;color:var(--fm);cursor:pointer;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:8px 16px;border:1px solid var(--bd);transition:all .2s;font-family:var(--sans);display:inline-flex;align-items:center;gap:6px;margin:16px 0 -48px 40px;width:fit-content}
 @media(max-width:768px){.rd-back{margin-left:20px}}
 .rd-back:hover{color:var(--fg);border-color:var(--fm)}
+.rd-byline{display:flex;flex-direction:column;gap:2px;margin-bottom:12px}
+.rd-byline-name{font-size:13px;font-weight:500;letter-spacing:.01em;color:var(--fm)}
+.rd-byline-date{font-size:11px;font-weight:400;letter-spacing:.01em;color:var(--ff)}
 .rd-meta{display:flex;align-items:center;gap:12px;margin-bottom:24px;font-size:11px;letter-spacing:.01em;color:var(--ff);font-family:var(--sans)}
 .rd-meta-sep{width:1px;height:10px;background:var(--bd)}
 .rd-title{font-family:var(--display);font-size:clamp(36px,5.5vw,56px);font-weight:600;letter-spacing:-0.02em;line-height:1.08;margin-bottom:12px;color:var(--fg)}
@@ -324,6 +327,9 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .rd-citations-list{display:flex;flex-direction:column;gap:6px}
 .rd-cite{font-size:11px;color:var(--ff);line-height:1.5;padding-left:12px;border-left:1px solid var(--bd)}
 .rd-cite strong{color:var(--fm);font-weight:400}
+.rd-share-toolbar{display:flex;gap:16px;align-items:center;margin-top:40px;padding-top:24px;border-top:1px solid var(--bd)}
+.rd-share-btn{font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:.02em;color:var(--ff);background:none;border:none;cursor:pointer;padding:0;text-decoration:none;transition:color .2s}
+.rd-share-btn:hover{color:var(--fm)}
 .rd-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:48px;padding-top:32px;border-top:1px solid var(--bd)}
 .rd-related{margin-top:48px;padding-top:32px;border-top:1px solid var(--bd)}
 .rd-related-h{font-size:13px;font-weight:600;letter-spacing:.01em;color:var(--fm);margin-bottom:16px}

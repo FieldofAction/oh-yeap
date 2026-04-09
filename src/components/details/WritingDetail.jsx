@@ -1,14 +1,37 @@
-import React, { useMemo, useCallback, useRef, useState } from "react";
+import React, { useMemo, useCallback, useRef, useState, useEffect } from "react";
 import { VIS } from "../../data/seed";
 import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
 import VideoEmbed from "../VideoEmbed";
 
-function AudioPlayer({ src, dur }) {
+function AudioPlayer({ src, dur, itemKey }) {
   const ref = useRef(null);
+  const lastSaved = useRef(0);
+  const storageKey = `audio-pos-${itemKey}`;
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrent] = useState(0);
   const [duration, setDuration] = useState(0);
+
+  useEffect(() => {
+    const audio = ref.current;
+    if (!audio) return;
+    const saved = sessionStorage.getItem(storageKey);
+    if (saved) {
+      const pos = parseFloat(saved);
+      if (!isNaN(pos) && pos > 0) {
+        const applyPos = () => {
+          audio.currentTime = pos;
+          setProgress((pos / audio.duration) * 100);
+          setCurrent(pos);
+        };
+        if (audio.readyState >= 1) { applyPos(); }
+        else { audio.addEventListener("loadedmetadata", applyPos, { once: true }); }
+      }
+    }
+    return () => {
+      if (audio.currentTime > 0) sessionStorage.setItem(storageKey, String(audio.currentTime));
+    };
+  }, [storageKey]);
 
   const toggle = () => {
     const a = ref.current;
@@ -22,6 +45,11 @@ function AudioPlayer({ src, dur }) {
     if (!a || !a.duration) return;
     setProgress((a.currentTime / a.duration) * 100);
     setCurrent(a.currentTime);
+    const now = Date.now();
+    if (now - lastSaved.current >= 5000) {
+      lastSaved.current = now;
+      sessionStorage.setItem(storageKey, String(a.currentTime));
+    }
   };
 
   const onLoaded = () => {
@@ -44,7 +72,7 @@ function AudioPlayer({ src, dur }) {
 
   return (
     <div className="rd-audio-bar rd-audio-player dc dc3">
-      <audio ref={ref} src={src} preload="metadata" onTimeUpdate={onTime} onLoadedMetadata={onLoaded} onEnded={() => setPlaying(false)} />
+      <audio ref={ref} src={src} preload="metadata" onTimeUpdate={onTime} onLoadedMetadata={onLoaded} onEnded={() => { setPlaying(false); sessionStorage.removeItem(storageKey); }} />
       <button className={`rd-audio-play${playing ? " on" : ""}`} onClick={toggle}>
         {playing ? "❚❚" : "▶"}
       </button>
@@ -81,20 +109,39 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
   const isMemo = item.writeType === "memo";
   const fn = !isMemo ? " fn" : "";
 
+  const [copiedText, setCopiedText] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  const handleCopyText = useCallback(() => {
+    const text = item.body?.filter(b => b.type === "text").map(b => b.content).join("\n\n") || "";
+    navigator.clipboard?.writeText(text).then(() => { setCopiedText(true); setTimeout(() => setCopiedText(false), 2000); });
+  }, [item]);
+
+  const handleShareLink = useCallback(() => {
+    if (navigator.share) {
+      navigator.share({ title: item.title, url: window.location.href }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(window.location.href).then(() => { setCopiedLink(true); setTimeout(() => setCopiedLink(false), 2000); });
+    }
+  }, [item.title]);
+
   return (
     <div className={`rd-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>← Back</button>
       <div className="rd-inner">
         <h1 className={`rd-title${fn} dc dc1`}>{item.title}</h1>
         {item.subtitle && <div className={`rd-subtitle${fn} dc dc2`}>{item.subtitle}</div>}
+        <div className="rd-byline dc dc2">
+          <span className="rd-byline-name">Alfred (Daniel) Dickson II</span>
+          {item.publishDate && <span className="rd-byline-date">{new Date(item.publishDate + "T00:00:00").toLocaleDateString("en-US", { month:"long", day:"numeric", year:"numeric" })}</span>}
+        </div>
         <div className="rd-meta dc dc2">
           {isMemo && item.memoNum && <span>Memo {item.memoNum}</span>}
-          {isMemo && item.memoNum && <div className="rd-meta-sep" />}
-          <span>{item.year}</span>
-          {item.readMin && <><div className="rd-meta-sep" /><span>{item.readMin} min read</span></>}
+          {isMemo && item.memoNum && item.readMin && <div className="rd-meta-sep" />}
+          {item.readMin && <span>{item.readMin} min read</span>}
         </div>
         <p className={`rd-desc${fn} dc dc3`}>{item.desc}</p>
-        {item.audioSrc && <AudioPlayer src={item.audioSrc} dur={item.audioDur} />}
+        {item.audioSrc && <AudioPlayer src={item.audioSrc} dur={item.audioDur} itemKey={item.title} />}
         {!item.audioSrc && item.audioDur && item.substackUrl && (
           <a href={item.substackUrl} target="_blank" rel="noopener noreferrer" className="rd-audio-bar dc dc3" style={{textDecoration:"none",color:"inherit",cursor:"pointer"}}>
             <div className="rd-audio-dot" />
@@ -188,6 +235,11 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
           }
           return null;
         })}
+        <div className="rd-share-toolbar dc dc7">
+          <button className="rd-share-btn" onClick={handleCopyText}>{copiedText ? "Copied" : "Copy Text"}</button>
+          <button className="rd-share-btn" onClick={handleShareLink}>{copiedLink ? "Copied" : "Share Link"}</button>
+          {item.substackUrl && <a href={item.substackUrl} target="_blank" rel="noopener noreferrer" className="rd-share-btn">Read on Substack</a>}
+        </div>
         <PatternChipsDetail itemTitle={item.title} active={lens} />
         <AlexanderChipsDetail itemTitle={item.title} active={patternLens} />
         <div className="rd-tags dc dc7">
