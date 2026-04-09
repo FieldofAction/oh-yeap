@@ -65,7 +65,7 @@ export default function VideoEmbed({ url, poster, caption }) {
       <div className="ve-aspect">
         {/* Native video: render immediately with preload for first frame */}
         {provider === "native" && (
-          <video src={url} controls muted loop playsInline preload="metadata" poster={poster || undefined} style={{borderRadius:12}} />
+          <video src={poster ? url : `${url}#t=0.1`} controls muted loop playsInline preload="metadata" poster={poster || undefined} style={{borderRadius:12}} />
         )}
 
         {/* Poster + play button for external embeds */}
