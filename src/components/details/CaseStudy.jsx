@@ -1,7 +1,49 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useRef, useEffect } from "react";
 import { VIS } from "../../data/seed";
 import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
 import VideoEmbed from "../VideoEmbed";
+
+/* ═══════════════════════════════════════════════════════════
+   Scroll-triggered reveal system
+   Uses IntersectionObserver rooted in the .cs-overlay scroll
+   container. Blocks start hidden and animate in as they
+   enter the viewport — replaces mount-time stagger.
+   ═══════════════════════════════════════════════════════════ */
+function useScrollReveal(rootRef) {
+  const observerRef = useRef(null);
+  const elemsRef = useRef(new Set());
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!root) return;
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("cs-visible");
+            observerRef.current?.unobserve(entry.target);
+          }
+        });
+      },
+      { root, threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    );
+
+    // Observe anything already registered
+    elemsRef.current.forEach((el) => observerRef.current.observe(el));
+
+    return () => observerRef.current?.disconnect();
+  }, [rootRef]);
+
+  // Ref callback — attach to each block
+  const observe = useCallback((el) => {
+    if (!el) return;
+    elemsRef.current.add(el);
+    observerRef.current?.observe(el);
+  }, []);
+
+  return observe;
+}
 
 /* ── Image block helper — renders src or generated SVG ── */
 function BlockImg({ src, alt, fg, artVi, index = 0 }) {
@@ -20,6 +62,9 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
   const heroVi = useMemo(() => VIS[Math.abs(item.title.charCodeAt(0)) % VIS.length](fg), [item.title, fg]);
   const artVi = useCallback((i) => VIS[(Math.abs(item.title.charCodeAt(0)) + i + 1) % VIS.length](fg), [item.title, fg]);
 
+  const overlayRef = useRef(null);
+  const observe = useScrollReveal(overlayRef);
+
   const cs = item.caseStudy;
   if (!cs) return null;
   const imgs = cs.images || {};
@@ -29,13 +74,12 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
   /* ── Editorial block renderer ── */
   const renderBlock = (block, idx) => {
     const key = `block-${idx}`;
-    const delay = { animationDelay: `${0.12 + idx * 0.06}s` };
 
     switch (block.type) {
       /* ── Hero image — full bleed ── */
       case "hero":
         return (
-          <div key={key} className="cs-block cs-block--hero dc img-reveal" style={delay}>
+          <div key={key} ref={observe} className="cs-block cs-block--hero cs-sr cs-sr--scale">
             <div className="cs-block-img">
               <BlockImg src={block.src} alt={block.alt || item.title} fg={fg} artVi={artVi} index={idx} />
             </div>
@@ -46,7 +90,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       /* ── Figure — single full-width ── */
       case "figure":
         return (
-          <div key={key} className="cs-block cs-block--figure dc img-reveal" style={delay}>
+          <div key={key} ref={observe} className="cs-block cs-block--figure cs-sr cs-sr--rise">
             <div className="cs-block-img">
               <BlockImg src={block.src} alt={block.alt} fg={fg} artVi={artVi} index={idx} />
             </div>
@@ -57,7 +101,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       /* ── Two-up — side by side ── */
       case "two-up":
         return (
-          <div key={key} className="cs-block cs-block--two-up dc img-reveal" style={delay}>
+          <div key={key} ref={observe} className="cs-block cs-block--two-up cs-sr cs-sr--stagger">
             {block.images?.map((img, i) => (
               <div key={i} className="cs-block-img">
                 <BlockImg src={img.src} alt={img.alt} fg={fg} artVi={artVi} index={idx + i} />
@@ -76,7 +120,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       /* ── Three-up — three in a row ── */
       case "three-up":
         return (
-          <div key={key} className="cs-block cs-block--three-up dc img-reveal" style={delay}>
+          <div key={key} ref={observe} className="cs-block cs-block--three-up cs-sr cs-sr--stagger">
             {block.images?.map((img, i) => (
               <div key={i} className="cs-block-img">
                 <BlockImg src={img.src} alt={img.alt} fg={fg} artVi={artVi} index={idx + i} />
@@ -91,7 +135,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       /* ── Inline — image + text side by side ── */
       case "inline":
         return (
-          <div key={key} className={`cs-block cs-block--inline${block.align === "right" ? " cs-block--inline-right" : ""} dc`} style={delay}>
+          <div key={key} ref={observe} className={`cs-block cs-block--inline${block.align === "right" ? " cs-block--inline-right" : ""} cs-sr cs-sr--rise`}>
             <div>
               <div className="cs-block-img">
                 <BlockImg src={block.src} alt={block.alt} fg={fg} artVi={artVi} index={idx} />
@@ -109,7 +153,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       /* ── Section header ── */
       case "section":
         return (
-          <div key={key} className="cs-block cs-block--section dc" style={delay}>
+          <div key={key} ref={observe} className="cs-block cs-block--section cs-sr cs-sr--rise">
             <div className="cs-block--section-label">{block.label}</div>
             <div className="cs-block--section-rule" />
           </div>
@@ -119,11 +163,10 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       case "body": {
         let text = block.text;
         if (!text && block.key) {
-          // Pull from structured data
           if (block.key === "framing") text = cs.framing;
           else if (block.key === "outcomes" && cs.outcomes?.points) {
             return (
-              <div key={key} className="cs-block cs-block--body cs-narrative dc" style={delay}>
+              <div key={key} ref={observe} className="cs-block cs-block--body cs-narrative cs-sr cs-sr--rise">
                 <ul className="cs-points">
                   {cs.outcomes.points.map((p, i) => <li key={i}>{p}</li>)}
                 </ul>
@@ -133,7 +176,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         }
         if (!text) return null;
         return (
-          <div key={key} className="cs-block cs-block--body dc" style={delay}>
+          <div key={key} ref={observe} className="cs-block cs-block--body cs-sr cs-sr--rise">
             <div className="cs-body">
               {text.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}
             </div>
@@ -144,7 +187,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       /* ── Pull quote — text as image ── */
       case "pull-quote":
         return (
-          <div key={key} className="cs-block cs-block--pull-quote dc" style={delay}>
+          <div key={key} ref={observe} className="cs-block cs-block--pull-quote cs-sr cs-sr--rise">
             <div className="cs-block--pull-quote-rule" />
             <div className="cs-block--pull-quote-text">{block.text}</div>
             {block.attr && <div className="cs-block--pull-quote-attr">{block.attr}</div>}
@@ -155,7 +198,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       case "reframe":
         if (!cs.reframe) return null;
         return (
-          <div key={key} className="cs-reframe dc" style={delay}>
+          <div key={key} ref={observe} className="cs-reframe cs-sr cs-sr--rise">
             <div className="cs-reframe-thesis">{cs.reframe.thesis}</div>
             {cs.reframe.body && (
               <div className="cs-body cs-reframe-body">
@@ -169,7 +212,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       case "intervention":
         if (!cs.intervention) return null;
         return (
-          <div key={key} className="cs-block cs-narrative dc" style={delay}>
+          <div key={key} ref={observe} className="cs-block cs-narrative cs-sr cs-sr--stagger">
             <div className="cs-intervention-grid">
               {cs.intervention.system && (
                 <div className="cs-intv-card">
@@ -200,7 +243,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       case "insight":
         if (!cs.outcomes?.insight?.length) return null;
         return (
-          <div key={key} className="cs-insight dc" style={delay}>
+          <div key={key} ref={observe} className="cs-insight cs-sr cs-sr--rise">
             {cs.outcomes.insight.map((line, i) => <p key={i}>{line}</p>)}
           </div>
         );
@@ -208,10 +251,95 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       /* ── Video ── */
       case "video":
         return (
-          <div key={key} className="cs-block dc" style={delay}>
+          <div key={key} ref={observe} className="cs-block cs-sr cs-sr--scale">
             <VideoEmbed url={block.url || item.videoUrl} poster={block.poster || item.videoPoster} />
           </div>
         );
+
+      /* ═══════════════════════════════════════════
+         NEW BLOCK TYPES — Agency-level techniques
+         ═══════════════════════════════════════════ */
+
+      /* ── Sticky — text pinned while images scroll ── */
+      case "sticky":
+        return (
+          <div key={key} ref={observe} className="cs-block cs-block--sticky cs-sr cs-sr--rise">
+            <div className="cs-sticky-text">
+              {block.label && <div className="cs-block--section-label">{block.label}</div>}
+              {block.heading && <h2 className="cs-sticky-heading">{block.heading}</h2>}
+              {block.body && <div className="cs-sticky-body">{block.body.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>}
+            </div>
+            <div className="cs-sticky-images">
+              {block.images?.map((img, i) => (
+                <div key={i} className="cs-sticky-card">
+                  <div className="cs-block-img">
+                    <BlockImg src={img.src} alt={img.alt} fg={fg} artVi={artVi} index={idx + i} />
+                  </div>
+                  {img.caption && <div className="cs-cap">{img.caption}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      /* ── Split — text vs image, full bleed contrast ── */
+      case "split":
+        return (
+          <div key={key} ref={observe} className={`cs-block cs-block--split${block.align === "right" ? " cs-block--split-reversed" : ""} cs-sr cs-sr--rise`}>
+            <div className={`cs-split-text${block.tone === "light" ? " cs-split-text--light" : ""}`}>
+              {block.subtitle && <div className="cs-split-subtitle">{block.subtitle}</div>}
+              {block.heading && <h2 className="cs-split-heading">{block.heading}</h2>}
+              {block.body && <div className="cs-split-body">{block.body.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>}
+            </div>
+            <div className="cs-split-image">
+              {block.src ? (
+                <img src={block.src} alt={block.alt || ""} />
+              ) : (
+                <div className="cs-split-gradient" />
+              )}
+            </div>
+          </div>
+        );
+
+      /* ── Device — screenshot in CSS monitor mockup ── */
+      case "device":
+        return (
+          <div key={key} ref={observe} className="cs-block cs-block--device cs-sr cs-sr--scale">
+            <div className="cs-device-glow" />
+            <div className="cs-device-frame">
+              <div className="cs-device-screen">
+                {block.src ? (
+                  <img src={block.src} alt={block.alt || ""} />
+                ) : (
+                  <div className="cs-device-placeholder">
+                    <BlockImg src={null} alt="" fg={fg} artVi={artVi} index={idx} />
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="cs-device-base" />
+            <div className="cs-device-stand" />
+            <div className="cs-device-foot" />
+            {block.caption && <div className="cs-cap" style={{ textAlign: "center", marginTop: 16 }}>{block.caption}</div>}
+          </div>
+        );
+
+      /* ── Grid — contact sheet / film strip ── */
+      case "grid": {
+        const cols = block.cols || 4;
+        return (
+          <div key={key} ref={observe} className="cs-block cs-block--grid cs-sr cs-sr--stagger" style={{ "--grid-cols": cols }}>
+            {block.images?.map((img, i) => (
+              <div key={i} className="cs-grid-cell">
+                <div className="cs-block-img">
+                  <BlockImg src={img.src} alt={img.alt} fg={fg} artVi={artVi} index={idx + i} />
+                </div>
+              </div>
+            ))}
+            {block.caption && <div className="cs-cap" style={{ gridColumn: "1/-1" }}>{block.caption}</div>}
+          </div>
+        );
+      }
 
       default:
         return null;
@@ -223,7 +351,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
     const fig = figures[index];
     if (!fig) return null;
     return (
-      <div className="cs-fig dc img-reveal" style={{ animationDelay: `${0.2 + index * 0.08}s` }}>
+      <div ref={observe} className="cs-fig cs-sr cs-sr--rise">
         <div className="cs-full-img">
           {fig.src ? (
             <img src={fig.src} alt={fig.alt || `${item.title} figure ${index + 1}`} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -238,11 +366,11 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
   };
 
   return (
-    <div className={`cs-overlay ${closing ? "closing" : ""}`}>
+    <div ref={overlayRef} className={`cs-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>&larr; Back</button>
       <div className="cs-inner">
 
-        {/* ── Title + Meta — always first ── */}
+        {/* ── Title + Meta — always first (immediate, no scroll-trigger) ── */}
         <div className="cs-header dc dc1">
           <h1 className="cs-title">{item.title}</h1>
           <p className="cs-subtitle">{item.subtitle}</p>
@@ -260,7 +388,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         ) : (
           <>
             {/* Legacy: Hero */}
-            <div className="cs-block cs-block--hero dc dc2 img-reveal">
+            <div ref={observe} className="cs-block cs-block--hero cs-sr cs-sr--scale">
               <div className="cs-block-img">
                 {imgs.hero ? (
                   <img src={imgs.hero} alt={item.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
@@ -271,13 +399,13 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
             </div>
 
             {item.videoUrl && (
-              <div className="dc dc3">
+              <div ref={observe} className="cs-sr cs-sr--scale">
                 <VideoEmbed url={item.videoUrl} poster={item.videoPoster} />
               </div>
             )}
 
             {cs.framing && (
-              <div className="cs-narrative dc dc3">
+              <div ref={observe} className="cs-narrative cs-sr cs-sr--rise">
                 <div className="cs-section-label">Framing</div>
                 <div className="cs-body">
                   {cs.framing.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}
@@ -288,7 +416,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
             <Fig index={0} />
 
             {cs.reframe && (
-              <div className="cs-reframe dc dc4">
+              <div ref={observe} className="cs-reframe cs-sr cs-sr--rise">
                 <div className="cs-reframe-thesis">{cs.reframe.thesis}</div>
                 {cs.reframe.body && (
                   <div className="cs-body cs-reframe-body">
@@ -301,7 +429,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
             <Fig index={1} />
 
             {cs.intervention && (
-              <div className="cs-narrative dc dc5">
+              <div ref={observe} className="cs-narrative cs-sr cs-sr--stagger">
                 <div className="cs-section-label">The Intervention</div>
                 <div className="cs-intervention-grid">
                   {cs.intervention.system && (
@@ -333,7 +461,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
 
             {cs.outcomes && (
               <>
-                <div className="cs-narrative dc dc6">
+                <div ref={observe} className="cs-narrative cs-sr cs-sr--rise">
                   <div className="cs-section-label">Outcomes</div>
                   {cs.outcomes.points?.length > 0 && (
                     <ul className="cs-points">
@@ -342,10 +470,10 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
                   )}
                 </div>
                 {cs.outcomes.closing && (
-                  <div className="cs-pullquote dc dc7">{cs.outcomes.closing}</div>
+                  <div ref={observe} className="cs-pullquote cs-sr cs-sr--rise">{cs.outcomes.closing}</div>
                 )}
                 {cs.outcomes.insight?.length > 0 && (
-                  <div className="cs-insight dc dc8">
+                  <div ref={observe} className="cs-insight cs-sr cs-sr--rise">
                     {cs.outcomes.insight.map((line, i) => <p key={i}>{line}</p>)}
                   </div>
                 )}
@@ -358,7 +486,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         <AlexanderChipsDetail itemTitle={item.title} active={patternLens} />
 
         {/* ── Deliverables + Tags ── */}
-        <div className="cs-footer dc dc8">
+        <div ref={observe} className="cs-footer cs-sr cs-sr--rise">
           {item.deliverables?.length > 0 && (
             <div className="cs-deliv">
               <div className="cs-section-label">Deliverables</div>

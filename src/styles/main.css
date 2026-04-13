@@ -486,6 +486,30 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .ix-art-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
 @media(max-width:768px){.ix-art{grid-template-columns:1fr}}
 
+/* ═══════════════════════════════════════════════════════════
+   Case Study — Scroll-triggered reveal system
+   Three variants: rise (text), scale (images), stagger (grids)
+   Driven by IntersectionObserver in CaseStudy.jsx
+   ═══════════════════════════════════════════════════════════ */
+.cs-sr{opacity:0;transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.cs-sr--rise{transform:translateY(40px)}
+.cs-sr--scale{transform:scale(.94)}
+.cs-sr--stagger>*{opacity:0;transform:translateY(30px);transition:opacity .6s cubic-bezier(.16,1,.3,1),transform .6s cubic-bezier(.16,1,.3,1)}
+
+/* Visible state — triggered by IntersectionObserver */
+.cs-visible.cs-sr{opacity:1}
+.cs-visible.cs-sr--rise{transform:translateY(0)}
+.cs-visible.cs-sr--scale{transform:scale(1)}
+.cs-visible.cs-sr--stagger>*{opacity:1;transform:translateY(0)}
+.cs-visible.cs-sr--stagger>*:nth-child(1){transition-delay:0ms}
+.cs-visible.cs-sr--stagger>*:nth-child(2){transition-delay:100ms}
+.cs-visible.cs-sr--stagger>*:nth-child(3){transition-delay:200ms}
+.cs-visible.cs-sr--stagger>*:nth-child(4){transition-delay:300ms}
+.cs-visible.cs-sr--stagger>*:nth-child(5){transition-delay:400ms}
+.cs-visible.cs-sr--stagger>*:nth-child(6){transition-delay:500ms}
+
+@media(prefers-reduced-motion:reduce){.cs-sr{opacity:1;transform:none;transition:none}.cs-sr--stagger>*{opacity:1;transform:none;transition:none}}
+
 /* ── Case Study Detail ── */
 .cs-overlay{position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;animation:rdOpen .3s ease both}
 .cs-overlay.closing{animation:rdClose .3s ease both}
@@ -619,6 +643,59 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .cs-insight{padding:96px 0;text-align:center}
 .cs-insight p{font-family:var(--display);font-size:clamp(20px,3vw,32px);font-weight:500;color:var(--fg);line-height:1.4;margin-bottom:12px;letter-spacing:0.02em}
 .cs-insight p:last-child{margin-bottom:0}
+
+/* ═══════════════════════════════════════════════════════════
+   NEW BLOCK TYPES — Agency-level techniques
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Sticky — text pinned while images scroll past ── */
+.cs-block--sticky{width:calc(100% + 80px);margin-left:-40px;display:grid;grid-template-columns:1fr 1fr;min-height:200vh;position:relative}
+.cs-sticky-text{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;justify-content:center;padding:60px clamp(24px,4vw,56px)}
+.cs-sticky-heading{font-family:var(--display);font-size:clamp(24px,3.5vw,40px);font-weight:500;color:var(--fg);line-height:1.15;margin-top:16px;margin-bottom:20px;letter-spacing:-0.01em}
+.cs-sticky-body{font-size:15px;line-height:1.7;color:var(--fm);max-width:400px}
+.cs-sticky-body p{margin-bottom:16px}
+.cs-sticky-body p:last-child{margin-bottom:0}
+.cs-sticky-images{padding:15vh 24px;display:flex;flex-direction:column;gap:32px}
+.cs-sticky-card{background:linear-gradient(180deg,var(--sf) 0%,color-mix(in srgb,var(--sf) 60%,var(--bg)) 100%);border-radius:16px;padding:16px 16px 12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.cs-sticky-card .cs-block-img{width:100%;aspect-ratio:4/3;background:var(--bg);border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.cs-sticky-card .cs-block-img img{width:100%;height:100%;object-fit:cover}
+@media(max-width:900px){.cs-block--sticky{grid-template-columns:1fr;min-height:auto;width:calc(100% + 40px);margin-left:-20px}.cs-sticky-text{position:relative;height:auto;padding:40px 20px}.cs-sticky-images{padding:0 20px 40px}}
+
+/* ── Split — text vs image, full bleed contrast ── */
+.cs-block--split{width:calc(100% + 80px);margin-left:-40px;display:grid;grid-template-columns:1fr 1fr;min-height:80vh}
+.cs-block--split-reversed{direction:rtl}
+.cs-block--split-reversed>*{direction:ltr}
+.cs-split-text{display:flex;flex-direction:column;justify-content:center;padding:60px clamp(24px,5vw,64px);background:var(--bg)}
+.cs-split-text--light{background:var(--sf)}
+.cs-split-subtitle{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ff);margin-bottom:12px}
+.cs-split-heading{font-family:var(--display);font-size:clamp(28px,4vw,52px);font-weight:500;color:var(--fg);line-height:1.1;margin-bottom:16px;letter-spacing:-0.01em}
+.cs-split-body{font-size:15px;line-height:1.7;color:var(--fm);max-width:420px}
+.cs-split-body p{margin-bottom:16px}
+.cs-split-body p:last-child{margin-bottom:0}
+.cs-split-image{overflow:hidden;position:relative;background:var(--sf)}
+.cs-split-image img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cs-split-gradient{position:absolute;inset:0;background:linear-gradient(135deg,var(--sf) 0%,color-mix(in srgb,var(--sf) 60%,var(--bg)) 100%)}
+@media(max-width:768px){.cs-block--split{grid-template-columns:1fr;width:calc(100% + 40px);margin-left:-20px;min-height:auto}.cs-block--split-reversed{direction:ltr}.cs-split-image{min-height:50vh}}
+
+/* ── Device — screenshot in CSS monitor mockup ── */
+.cs-block--device{width:calc(100% + 80px);margin-left:-40px;display:flex;flex-direction:column;align-items:center;padding:80px 24px;position:relative}
+.cs-device-glow{position:absolute;bottom:10%;left:50%;transform:translateX(-50%);width:60%;height:35%;background:radial-gradient(ellipse,rgba(47,91,255,.06) 0%,transparent 70%);pointer-events:none}
+.cs-device-frame{width:min(860px,100%);background:linear-gradient(145deg,color-mix(in srgb,var(--sf) 80%,var(--fg)),var(--sf));border-radius:14px 14px 0 0;padding:10px;border:1px solid var(--bd);border-bottom:none;box-shadow:0 40px 100px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.03);position:relative}
+.cs-device-frame::before{content:'';position:absolute;top:5px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--bd)}
+.cs-device-screen{border-radius:6px;overflow:hidden;aspect-ratio:16/10;background:var(--bg);display:flex;align-items:center;justify-content:center}
+.cs-device-screen img{width:100%;height:100%;object-fit:cover}
+.cs-device-placeholder{width:100%;height:100%}
+.cs-device-base{width:40%;height:6px;margin:0 auto;background:linear-gradient(to bottom,color-mix(in srgb,var(--sf) 80%,var(--fg)),var(--sf));border-radius:0 0 3px 3px}
+.cs-device-stand{width:18%;height:60px;margin:0 auto;background:linear-gradient(to right,var(--sf),color-mix(in srgb,var(--sf) 80%,var(--fg)),var(--sf));clip-path:polygon(15% 0,85% 0,100% 100%,0% 100%)}
+.cs-device-foot{width:28%;height:3px;margin:0 auto;background:var(--bd);border-radius:2px}
+@media(max-width:768px){.cs-block--device{width:calc(100% + 40px);margin-left:-20px;padding:48px 16px}.cs-device-stand{height:40px}}
+
+/* ── Grid — contact sheet / film strip ── */
+.cs-block--grid{width:calc(100% + 80px);margin-left:-40px;display:grid;grid-template-columns:repeat(var(--grid-cols,4),1fr);gap:6px;background:var(--sf);border-radius:16px;padding:6px;overflow:hidden}
+.cs-grid-cell{overflow:hidden;border-radius:8px}
+.cs-grid-cell .cs-block-img{width:100%;aspect-ratio:4/3;background:var(--bg);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cs-grid-cell .cs-block-img img{width:100%;height:100%;object-fit:cover}
+@media(max-width:768px){.cs-block--grid{width:calc(100% + 40px);margin-left:-20px;grid-template-columns:repeat(min(var(--grid-cols,4),2),1fr)}}
 
 /* Footer — deliverables + tags */
 .cs-footer{border-top:1px solid var(--bd);padding-top:56px;margin-top:48px}
