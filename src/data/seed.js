@@ -100,13 +100,40 @@ export const SEED = [
       { type:"section", label:"Framing" },
       { type:"body", key:"framing" },
       { type:"pull-quote", text:"The platform was speaking too loudly." },
-      { type:"figure", src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-09_2500_c.jpg", caption:"Artist-first: the platform recedes, the performer holds the frame" },
+
+      /* Sticky — text pinned while artist images scroll past */
+      { type:"sticky", label:"The Landscape", heading:"Artists arrived with their own aesthetic gravity.", body:"The platform's visual identity competed with the very thing that gave it value. Every artist brought a fully formed world. The brand needed to stop shouting over it.", images:[
+        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-40_2500_c.jpg", caption:"Live performance — the energy belongs to the artist" },
+        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-42_2500_c.jpg", caption:"Artist identity, already fully formed" },
+        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-46_2500_c.jpg", caption:"The performer holds the frame" },
+      ]},
+
       { type:"section", label:"Reframe" },
       { type:"reframe" },
-      { type:"figure", src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-14_2500_c.jpg", caption:"From personality to infrastructure" },
+
+      /* Split — the shift from personality to infrastructure */
+      { type:"split", subtitle:"The Shift", heading:"From personality to infrastructure", src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-14_2500_c.jpg", align:"left" },
+
       { type:"section", label:"The Intervention" },
       { type:"intervention" },
+
+      /* Device — the redesigned product in a monitor frame */
+      { type:"device", src:"/images/case-studies/WIP/Vevo/vevo_desktop_website-1600x1067.jpg", caption:"The redesigned platform — artist-first hierarchy, restrained brand presence" },
+
       { type:"video", url:"/images/case-studies/WIP/Vevo/vevo_launch_v1%20(1080p).mp4", poster:"/images/case-studies/WIP/Vevo/vevo_launch_poster.jpg" },
+
+      /* Grid — contact sheet of the breadth of artist work */
+      { type:"grid", cols:4, images:[
+        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-09_2500_c.jpg" },
+        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-17_2500_c.jpg" },
+        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-25_2500_c.jpg" },
+        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-44_2500_c.jpg" },
+        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-32_2500_c.jpg" },
+        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-03_2500_c.jpg" },
+        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-21_2500_c.jpg" },
+        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-48_2500_c.jpg" },
+      ], caption:"The Vevo Book — documenting the transformation" },
+
       { type:"section", label:"Outcomes" },
       { type:"body", key:"outcomes" },
       { type:"figure", src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-48_2500_c.jpg", caption:"Restraint became authority" },
