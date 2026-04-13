@@ -124,12 +124,18 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 @keyframes hgBorder{from{border-color:transparent}to{border-color:var(--bd)}}
 
 /* ── Hero 02: Type Field ── */
-.htf-field{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);aspect-ratio:5/2;margin-top:32px;border:1px solid var(--bd)}
-.htf-cell{overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+.htf-field{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);overflow:hidden}
+.htf-cell{overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--bd);border-bottom:1px solid var(--bd);min-height:0}
 .htf-cell:nth-child(3n){border-right:none}
 .htf-cell:nth-child(n+7){border-bottom:none}
 .htf-cell--void{}
 .htf-glyph{font-family:'DM Sans',var(--display),sans-serif;font-weight:900;color:var(--fg);line-height:0.8;pointer-events:none;white-space:nowrap;will-change:transform}
+
+/* ── Hero 03: Constraint Field ── */
+.hcf-field{display:grid;grid-template-columns:repeat(2,1fr);overflow:hidden}
+.hcf-panel{overflow:hidden;position:relative;border-right:1px solid var(--bd)}
+.hcf-panel:last-child{border-right:none}
+.hcf-svg{position:absolute;inset:-40%;width:180%;height:180%}
 
 @media(max-width:768px){
   .hero{padding:0 20px}

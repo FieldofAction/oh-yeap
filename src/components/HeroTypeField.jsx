@@ -7,10 +7,11 @@ import React, { useRef, useState, useEffect } from "react";
    The field as landscape. */
 
 /*
-  Letter config: which letter, which cell (0-8 in 3x3), font size,
-  and x/y offset controlling which fragment of the glyph is visible.
+  Letter config: ch, cell index (0-8), font size,
+  ox/oy = base offset (controls which fragment is visible),
+  rot = rotation in degrees (angled crops for abstraction)
 
-  Grid:
+  Grid (3 columns x 3 rows):
   ┌───0───┬───1───┬───2───┐
   │   A   │   C   │ void  │
   ├───3───┼───4───┼───5───┤
@@ -20,15 +21,15 @@ import React, { useRef, useState, useEffect } from "react";
   └───────┴───────┴───────┘
 */
 const GLYPHS = [
-  { ch:"A", cell:0, size:320, ox:-30,  oy:40  },
-  { ch:"C", cell:1, size:340, ox:-60,  oy:-20 },
-  null, // void
-  null, // void
-  { ch:"T", cell:4, size:300, ox:-20,  oy:30  },
-  { ch:"I", cell:5, size:360, ox:-40,  oy:-30 },
-  { ch:"O", cell:6, size:350, ox:-50,  oy:-40 },
-  null, // void
-  { ch:"N", cell:8, size:310, ox:-20,  oy:-10 },
+  { ch:"A", cell:0, size:420, ox:-80,  oy:60,   rot:-8  },
+  { ch:"C", cell:1, size:460, ox:-100, oy:-50,  rot:5   },
+  null,
+  null,
+  { ch:"T", cell:4, size:380, ox:-40,  oy:70,   rot:-4  },
+  { ch:"I", cell:5, size:500, ox:-60,  oy:-80,  rot:12  },
+  { ch:"O", cell:6, size:440, ox:-90,  oy:-60,  rot:-6  },
+  null,
+  { ch:"N", cell:8, size:400, ox:-50,  oy:-30,  rot:7   },
 ];
 
 export default function HeroTypeField() {
@@ -41,19 +42,18 @@ export default function HeroTypeField() {
   const rafRef = useRef(null);
   const [entered, setEntered] = useState(false);
 
-  // Entry fade
   useEffect(() => {
     const t = setTimeout(() => setEntered(true), 300);
     return () => clearTimeout(t);
   }, []);
 
-  // Spring physics for each cell's offset
+  // Spring physics — more dynamic than Hero 01
   useEffect(() => {
     let running = true;
-    const TENSION = 0.012;
-    const DAMPING = 0.92;
-    const DRIFT_AMP = 2;
-    const DRIFT_PERIOD = 15000;
+    const TENSION = 0.025;     // stiffer spring — more responsive
+    const DAMPING = 0.86;      // less damping — more bounce/life
+    const DRIFT_AMP = 4;       // stronger rest drift
+    const DRIFT_PERIOD = 10000;
 
     const tick = () => {
       const now = Date.now();
@@ -64,12 +64,11 @@ export default function HeroTypeField() {
         let tdx = targetOffsets.current[i].dx;
         let tdy = targetOffsets.current[i].dy;
 
-        // Ambient drift at rest
         if (idle) {
-          const phase = i * 0.7;
+          const phase = i * 0.9;
           const t = now / DRIFT_PERIOD;
           tdx += Math.sin((t + phase) * Math.PI * 2) * DRIFT_AMP;
-          tdy += Math.cos((t + phase * 0.6) * Math.PI * 2) * DRIFT_AMP * 0.7;
+          tdy += Math.cos((t + phase * 0.6) * Math.PI * 2) * DRIFT_AMP * 0.8;
         }
 
         const cur = currentOffsets.current[i];
@@ -90,17 +89,16 @@ export default function HeroTypeField() {
     return () => { running = false; cancelAnimationFrame(rafRef.current); };
   }, []);
 
-  // Cursor tracking — each cell responds to proximity
+  // Cursor tracking — stronger response, tracked across full page
   useEffect(() => {
     const onMove = (e) => {
       const el = fieldRef.current;
       if (!el) return;
       const rect = el.getBoundingClientRect();
-      const mx = (e.clientX - rect.left) / rect.width;  // 0..1
-      const my = (e.clientY - rect.top) / rect.height;   // 0..1
+      const mx = (e.clientX - rect.left) / rect.width;
+      const my = (e.clientY - rect.top) / rect.height;
       lastMoveTime.current = Date.now();
 
-      // Cell centers in 0..1 space
       GLYPHS.forEach((g, i) => {
         if (!g) return;
         const col = g.cell % 3;
@@ -110,12 +108,11 @@ export default function HeroTypeField() {
         const distX = mx - cx;
         const distY = my - cy;
         const dist = Math.sqrt(distX * distX + distY * distY);
-        const proximity = Math.max(0, 1 - dist * 2.5);
-        // Shift letter offset toward cursor — reveals hidden parts of the glyph
-        const strength = 25;
+        const proximity = Math.max(0, 1 - dist * 2);
+        const strength = 50; // doubled from before
         targetOffsets.current[i] = {
-          dx: distX * proximity * strength,
-          dy: distY * proximity * strength,
+          dx: distX * proximity * proximity * strength,
+          dy: distY * proximity * proximity * strength,
         };
       });
     };
@@ -124,7 +121,7 @@ export default function HeroTypeField() {
   }, []);
 
   return (
-    <div className="htf-field" ref={fieldRef}>
+    <div className="hg-field htf-field" ref={fieldRef}>
       {GLYPHS.map((g, i) => (
         <div key={i} className={`htf-cell${g ? "" : " htf-cell--void"}`}>
           {g && (
@@ -132,8 +129,8 @@ export default function HeroTypeField() {
               className="htf-glyph"
               style={{
                 fontSize: g.size,
-                transform: `translate(${g.ox + offsets[i].dx}px, ${g.oy + offsets[i].dy}px)`,
-                opacity: entered ? 0.18 : 0,
+                transform: `translate(${g.ox + offsets[i].dx}px, ${g.oy + offsets[i].dy}px) rotate(${g.rot}deg)`,
+                opacity: entered ? 0.2 : 0,
                 transitionProperty: "opacity",
                 transitionDuration: entered ? "1.5s" : "0s",
                 transitionTimingFunction: "ease",

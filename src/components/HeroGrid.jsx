@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import HeroSignalGrid from "./HeroSignalGrid";
 import HeroTypeField from "./HeroTypeField";
+import HeroConstraintField from "./HeroConstraintField";
 
 /* ── Hero Shell: randomly selects a composition on mount ── */
 
@@ -12,7 +13,7 @@ const DASH = [
   { label: "Writing", val: "Themes of Authoring" },
 ];
 
-const HEROES = [HeroSignalGrid, HeroTypeField];
+const HEROES = [HeroSignalGrid, HeroTypeField, HeroConstraintField];
 
 export default function HeroGrid() {
   const chosen = useRef(HEROES[Math.floor(Math.random() * HEROES.length)]);
