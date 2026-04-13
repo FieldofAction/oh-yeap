@@ -3,16 +3,31 @@ import { FILTERS } from "../data/playbook-data";
 import { PatternChips, AlexanderChips } from "./PatternLens";
 import NetworkGraph from "./NetworkGraph";
 import HeroCycle from "./HeroCycle";
+import HeroGrid from "./HeroGrid";
 
-/* ── Hero mode: 1 = Threshold Strip, 2 = Signal Bar, 3 = Ambient Dashboard ── */
-const HERO_MODE = 2;
+/* ── Hero mode: 1 = Threshold Strip, 2 = Signal Bar, 3 = Ambient Dashboard, 4 = Available Light Grid ── */
+const HERO_MODE = 4;
 
 /* ── Extract artwork images from item body for hover preview ── */
 function getPreviewImages(item) {
-  if (!item.body) return [];
-  return item.body
-    .filter(b => b.type === "artwork" && b.src)
-    .map(b => b.src);
+  // Writing items: pull artwork blocks
+  if (item.body) {
+    return item.body
+      .filter(b => b.type === "artwork" && b.src)
+      .map(b => b.src);
+  }
+  // Practice items: pull from thumbnail + caseStudy layout
+  if (item.caseStudy) {
+    const srcs = [];
+    if (item.thumbnail) srcs.push(item.thumbnail);
+    const layout = item.caseStudy.layout || [];
+    for (const block of layout) {
+      if (block.src) srcs.push(block.src);
+      if (block.images) block.images.forEach(img => { if (img.src) srcs.push(img.src); });
+    }
+    return srcs.slice(0, 6);
+  }
+  return [];
 }
 
 /* ── Hover slideshow preview for work cards ── */
@@ -151,6 +166,10 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 <p className="hero-bio en d3">Design leader and systems thinker. Structure, culture, and infrastructure. Currently at Apple TV.</p>
               </div>
             </div>
+          )}
+
+          {HERO_MODE === 4 && (
+            <HeroGrid />
           )}
 
           {/* Network diagram — easter egg, press G to toggle */}

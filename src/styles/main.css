@@ -116,9 +116,27 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .hero-threshold{position:relative;display:flex;align-items:center;justify-content:flex-start;min-height:180px}
 .hero-threshold-arc{position:absolute;left:50%;top:50%;width:1400px;height:1400px;transform:translate(-50%,-50%);border-radius:50%;border:1px solid var(--bd);pointer-events:none;opacity:.4}
 
+/* ── Hero Grid: Available Light ── */
+.hero--grid{display:flex;flex-direction:column;max-width:1200px;padding:0 40px;margin:0 auto 40px}
+.hg-field{aspect-ratio:5/2;margin-top:32px;border:1px solid transparent;animation:hgBorder 1.5s ease 0.3s forwards}
+.hg-svg{width:100%;height:100%;display:block}
+.hg-glyph{font-family:var(--display);font-size:21px;font-weight:700;letter-spacing:.08em;fill:var(--fg)}
+@keyframes hgBorder{from{border-color:transparent}to{border-color:var(--bd)}}
+
+/* ── Hero 02: Type Field ── */
+.htf-field{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);aspect-ratio:5/2;margin-top:32px;border:1px solid var(--bd)}
+.htf-cell{overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;border-right:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+.htf-cell:nth-child(3n){border-right:none}
+.htf-cell:nth-child(n+7){border-bottom:none}
+.htf-cell--void{}
+.htf-glyph{font-family:'DM Sans',var(--display),sans-serif;font-weight:900;color:var(--fg);line-height:0.8;pointer-events:none;white-space:nowrap;will-change:transform}
+
 @media(max-width:768px){
   .hero{padding:0 20px}
   .hero--strip,.hero--signal,.hero--dash{min-height:auto;padding-top:80px}
+  .hero--grid{padding:0 20px}
+  .hg-field{margin-top:24px}
+  .hg-glyph{font-size:14px}
   .hero-strip-row{flex-direction:column;align-items:flex-start;gap:12px}
   .hero-dash-grid{grid-template-columns:repeat(2,1fr)}
   .hero-dash-cell:nth-child(2n){border-right:none}
