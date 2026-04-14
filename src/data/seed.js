@@ -21,17 +21,46 @@ export const SEED = [
       figures:[],
     },
     layout:[
-      { type:"hero", src:null, caption:"Apple Music: orientation within a plural listening ecosystem" },
+      /* Act 1 — The Hook: hero with atmosphere gradient (no image yet) */
+      { type:"hero", variant:"bleed", src:null, caption:"Apple Music: orientation within a plural listening ecosystem" },
+
       { type:"section", label:"Framing" },
       { type:"body", key:"framing" },
-      { type:"two-up", images:[{ src:null, caption:"Listening modes shared similar visual treatment" },{ src:null, caption:"Content hierarchy lacked strong intent signals" }] },
+
+      /* Sticky — the plural landscape */
+      { type:"sticky", label:"The Landscape", heading:"When everything looks equally important, nothing feels intentional.", body:"Genres, moods, editorial programs, live content, and algorithmic playlists all lived inside a beautifully unified structure. But cohesion began to blur distinction. The system was plural. The experience was flat.", images:[
+        { src:null, caption:"Listening modes shared similar visual treatment" },
+        { src:null, caption:"Content hierarchy lacked strong intent signals" },
+        { src:null, caption:"Navigation cues were absent across modules" },
+      ]},
+
       { type:"pull-quote", text:"When everything looks equally important, nothing feels intentional." },
+
       { type:"section", label:"Reframe" },
       { type:"reframe" },
-      { type:"figure", src:null, caption:"Typological differentiation between listening modes" },
+
+      /* Split — the conceptual shift */
+      { type:"split", subtitle:"The Shift", heading:"From harmony to wayfinding", src:null, align:"left", body:"The objective was not to reduce diversity. It was to make it legible. Design needed to help users answer: What am I choosing? Why? What type of listening experience is this?" },
+
       { type:"section", label:"The Intervention" },
       { type:"intervention" },
-      { type:"three-up", images:[{ src:null, caption:"Editorial" },{ src:null, caption:"Algorithmic" },{ src:null, caption:"Curated" }], caption:"Content type differentiation across the ecosystem" },
+
+      /* Triptych — the three content types (placeholder images) */
+      { type:"triptych", images:[
+        { src:null, label:"Content Type", title:"Editorial\nCurated\nListening" },
+        { src:null, label:"Content Type", title:"Algorithmic\nPersonalized\nFlow" },
+        { src:null, label:"Content Type", title:"Mood\nGenre\nExploration" },
+      ], caption:"Typological differentiation: three modes of listening, three visual languages" },
+
+      /* Device — product in a screen frame (placeholder) */
+      { type:"device", src:null, caption:"Wayfinding intelligence embedded in the product surface" },
+
+      /* Brand reel video — the only real asset */
+      { type:"video", url:"/images/case-studies/WIP/Apple%20Music/cd_aml_brandreel_v1%20(720p).mp4" },
+
+      /* Atmosphere — the system as environment */
+      { type:"atmosphere", bgGradient:"linear-gradient(160deg, #fa233b 0%, #1a1a2e 40%, #000 100%)", heading:"Orientation as Respect", body:"Clarity becomes emotional at scale. The system began to guide — not by reducing choice, but by making every choice legible. Plural systems require visible structure." },
+
       { type:"section", label:"Outcomes" },
       { type:"body", key:"outcomes" },
       { type:"pull-quote", text:"The system began to guide." },
@@ -58,21 +87,67 @@ export const SEED = [
       figures:[],
     },
     layout:[
-      { type:"hero", src:"/images/case-studies/WIP/Google%20Cloud/Google_Cloud_Hero.png", caption:"Google Cloud: expressing momentum within system constraints" },
+      /* Act 1 — The Hook: strongest in-situ, full-bleed */
+      { type:"hero", variant:"bleed", src:"/images/case-studies/WIP/Google%20Cloud/b40c1896-319e-41a6-ba68-48c1860b766b.png", caption:"Event signage: the brand at architectural scale" },
+
       { type:"section", label:"Framing" },
       { type:"body", key:"framing" },
-      { type:"figure", src:"/images/case-studies/WIP/Google%20Cloud/23258cb7-c1bf-4498-a22f-b219b42dc3b3.png", caption:"The brand could explain. It needed to feel inevitable." },
+
+      /* Sticky text + scrolling environmental images */
+      { type:"sticky", label:"Brand at Scale", heading:"The system was structured. The expression needed motion.", body:"Google Cloud operates within one of the most disciplined brand systems in the world. That proximity creates a paradox: it inherits trust and clarity, but risks compressing differentiation.", images:[
+        { src:"/images/case-studies/WIP/Google%20Cloud/23258cb7-c1bf-4498-a22f-b219b42dc3b3.png", caption:"Billboard: the brand at building scale" },
+        { src:"/images/case-studies/WIP/Google%20Cloud/309c11e1-1242-47e9-a349-5bcedfd0b84c.jpg", caption:"Street-level wild posting with testimonials" },
+        { src:"/images/case-studies/WIP/Google%20Cloud/c171a76d-8825-435f-9293-1af813f4f621.jpg", caption:"Blog editorial: thought leadership within the system" },
+      ]},
+
+      { type:"pull-quote", text:"The brand could explain. It needed to feel inevitable." },
+
       { type:"section", label:"Reframe" },
       { type:"reframe" },
-      { type:"inline", src:"/images/case-studies/WIP/Google%20Cloud/e7577ada-7a3c-47ab-b4a5-12d3ab9be82c.png", align:"left", caption:"Storytelling depth within system constraints", text:"The goal was not to depart from Google. It was to express momentum within the system. Progress needed to become visible: the highest expression of discipline itself." },
-      { type:"two-up", images:[{ src:"/images/case-studies/WIP/Google%20Cloud/a03cffa7-43b2-4eaf-874d-1c33609c4186.png", caption:"Infrastructure clarity" },{ src:"/images/case-studies/WIP/Google%20Cloud/f5f070dc-3b03-4c2a-80b6-2abed328a9c4.png", caption:"Expressive emphasis" }] },
+
+      /* Act 2 — Brand system + expression */
+      { type:"split", subtitle:"Brand System", heading:"Expanded modular patterns to support narrative storytelling", src:"/images/case-studies/WIP/Google%20Cloud/e7577ada-7a3c-47ab-b4a5-12d3ab9be82c.png", align:"left", body:"The goal was not to depart from Google. It was to express momentum within the system. Progress needed to become visible: the highest expression of discipline itself." },
+
+      { type:"two-up", images:[{ src:"/images/case-studies/WIP/Google%20Cloud/a03cffa7-43b2-4eaf-874d-1c33609c4186.png", caption:"Icon construction and color ratios" },{ src:"/images/case-studies/WIP/Google%20Cloud/f5f070dc-3b03-4c2a-80b6-2abed328a9c4.png", caption:"Color system: 500 to 50 gradients" }] },
+
+      { type:"two-up", images:[{ src:"/images/case-studies/WIP/Google%20Cloud/e1f7328b-3a54-4419-8e55-14754752cb52.png", caption:"Wordmark spacing and proportion" },{ src:"/images/case-studies/WIP/Google%20Cloud/13611f66-bc28-4a30-9fdd-3f48737122d7.png", caption:"Logo usage: one-color and reverse" }] },
+
       { type:"section", label:"The Intervention" },
       { type:"intervention" },
+
       { type:"pull-quote", text:"Framework brands win on discipline. But discipline must allow signal." },
+
+      /* Triptych — brand expression across touchpoints */
+      { type:"triptych", images:[
+        { src:"/images/case-studies/WIP/Google%20Cloud/33e1b9b9-4aea-4c1e-9f84-80f37ef457f8.png", label:"Whitepaper", title:"Data\nCloud\nPlatform" },
+        { src:"/images/case-studies/WIP/Google%20Cloud/8a41a001-6197-43c1-89dc-f3d81fb8feb1.png", label:"Product", title:"Cloud\nNext\n2023" },
+        { src:"/images/case-studies/WIP/Google%20Cloud/bb8bcaa0-a457-4357-90da-4f0f1796f48b.png", label:"Identity", title:"Built\nWith\nGoogle" },
+      ], caption:"Expressive behaviors within system constraints" },
+
+      /* Act 3 — Impact: video + digital + closing */
       { type:"video", url:"/images/case-studies/WIP/Google%20Cloud/gc1002_cloudstyle_2021_launch_film_16x9_1920x1080_2398_stereo.mp4_v1%20(1080p).mp4" },
+
+      /* Device — the product in a screen frame */
+      { type:"device", src:"/images/case-studies/WIP/Google%20Cloud/c171a76d-8825-435f-9293-1af813f4f621.jpg", caption:"Blog platform — thought leadership within the design system" },
+
+      { type:"split", subtitle:"Digital", heading:"Mobile surfaces extending the system", src:"/images/case-studies/WIP/Google%20Cloud/fa743ca5-c7b0-4a00-8e61-ce1f7f792398.png", align:"right", tone:"light" },
+
+      /* Atmosphere — Cloud brand expression as environment */
+      { type:"atmosphere", bgGradient:"linear-gradient(160deg, #1a73e8 0%, #174ea6 40%, #0d47a1 100%)", cardSrc:"/images/case-studies/WIP/Google%20Cloud/e8f61128-4c2f-4410-a09b-324a04fc5b0a.png", heading:"Signal Within the System", body:"Expression is not decoration. It is strategic amplification. The design system expanded to carry narrative without breaking the framework." },
+
+      /* Grid — breadth of output */
+      { type:"grid", cols:3, images:[
+        { src:"/images/case-studies/WIP/Google%20Cloud/1c0e6151-b803-4005-a24a-4acb88540ed2.jpg" },
+        { src:"/images/case-studies/WIP/Google%20Cloud/2cff227e-1cd4-42d2-a1f2-c53bfb68824d.jpg" },
+        { brand:"Google\nCloud" },
+        { src:"/images/case-studies/WIP/Google%20Cloud/21799c8e-58e9-4f93-8061-8a2978c385bf.png" },
+        { src:"/images/case-studies/WIP/Google%20Cloud/e7577ada-7a3c-47ab-b4a5-12d3ab9be82c.png" },
+        { src:"/images/case-studies/WIP/Google%20Cloud/309c11e1-1242-47e9-a349-5bcedfd0b84c.jpg" },
+      ], caption:"Across scale: from event signage to product surfaces" },
+
       { type:"section", label:"Outcomes" },
       { type:"body", key:"outcomes" },
-      { type:"three-up", images:[{ src:"/images/case-studies/WIP/Google%20Cloud/b40c1896-319e-41a6-ba68-48c1860b766b.png", caption:"Event signage" },{ src:"/images/case-studies/WIP/Google%20Cloud/309c11e1-1242-47e9-a349-5bcedfd0b84c.jpg", caption:"Environmental" },{ src:"/images/case-studies/WIP/Google%20Cloud/fa743ca5-c7b0-4a00-8e61-ce1f7f792398.png", caption:"Digital" }] },
+      { type:"pull-quote", text:"Cloud began to feel like movement. Structure became its vehicle." },
       { type:"insight" },
     ],
   }},
@@ -96,7 +171,8 @@ export const SEED = [
       figures:[],
     },
     layout:[
-      { type:"hero", src:"/images/case-studies/WIP/Vevo/d0446437-3af8-48f9-b724-7d5a07c7d822.jpg", caption:"Khalid performing at a school gymnasium — the platform recedes, the artist holds the frame" },
+      /* Act 1 — The Hook: cinematic performance, full-bleed */
+      { type:"hero", variant:"bleed", src:"/images/case-studies/WIP/Vevo/d0446437-3af8-48f9-b724-7d5a07c7d822.jpg", caption:"Khalid performing at a school gymnasium — the platform recedes, the artist holds the frame" },
       { type:"section", label:"Framing" },
       { type:"body", key:"framing" },
       { type:"pull-quote", text:"The platform was speaking too loudly." },
@@ -117,26 +193,44 @@ export const SEED = [
       { type:"section", label:"The Intervention" },
       { type:"intervention" },
 
+      /* Triptych — SXSW activation: the brand in physical space */
+      { type:"triptych", images:[
+        { src:"/images/case-studies/WIP/Vevo/sxsw_vevo_00.webp", label:"SXSW 2017", title:"The Stage\nBelongs to\nThe Artist" },
+        { src:"/images/case-studies/WIP/Vevo/sxsw_vevo_02.webp", label:"SXSW 2017", title:"Platform\nas\nInfrastructure" },
+        { src:"/images/case-studies/WIP/Vevo/sxsw_vevo_04.webp", label:"SXSW 2017", title:"Restraint\nin\nAction" },
+      ], caption:"SXSW activation: artist-first hierarchy in physical space" },
+
       /* Device — the redesigned product in a monitor frame */
       { type:"device", src:"/images/case-studies/WIP/Vevo/vevo_desktop_website-1600x1067.jpg", caption:"The redesigned platform — artist-first hierarchy, restrained brand presence" },
 
       { type:"video", url:"/images/case-studies/WIP/Vevo/vevo_launch_v1%20(1080p).mp4", poster:"/images/case-studies/WIP/Vevo/vevo_launch_poster.jpg" },
+
+      /* Atmosphere — product surfaces floating on dark field */
+      { type:"atmosphere", bgGradient:"linear-gradient(160deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)", cardSrc:"/images/case-studies/WIP/Vevo/FEATURE_MOCK.webp", heading:"Product as Stage", body:"Every surface was designed to recede. The artist's imagery, palette, and energy define the experience. The platform provides structure without competing for attention." },
+
+      /* Two-up — product mockups */
+      { type:"two-up", images:[{ src:"/images/case-studies/WIP/Vevo/ABOUT_MOCK.webp", caption:"Artist profile: identity-first hierarchy" },{ src:"/images/case-studies/WIP/Vevo/ARTICLE_MOCK.webp", caption:"Editorial surface: editorial voice within restraint" }] },
 
       /* Grid — contact sheet of the breadth of artist work */
       { type:"grid", cols:4, images:[
         { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-09_2500_c.jpg" },
         { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-17_2500_c.jpg" },
         { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-25_2500_c.jpg" },
-        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-44_2500_c.jpg" },
+        { brand:"Vevo" },
         { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-32_2500_c.jpg" },
         { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-03_2500_c.jpg" },
         { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-21_2500_c.jpg" },
         { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-48_2500_c.jpg" },
       ], caption:"The Vevo Book — documenting the transformation" },
 
+      /* SXSW street photography — the brand outside the screen */
+      { type:"figure", variant:"bleed", src:"/images/case-studies/WIP/Vevo/sxsw_vevo_01.webp", caption:"SXSW 2017: the brand in the street" },
+
+      { type:"video", url:"/images/case-studies/WIP/Vevo/vevoeoy_2017_v07_v1%20(1080p).mp4" },
+
       { type:"section", label:"Outcomes" },
       { type:"body", key:"outcomes" },
-      { type:"figure", src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-48_2500_c.jpg", caption:"Restraint became authority" },
+      { type:"figure", variant:"float", src:"/images/case-studies/WIP/Vevo/ALL_COVERS_MOCK.webp", caption:"The system at scale — every cover, one voice" },
       { type:"pull-quote", text:"Restraint became authority." },
       { type:"insight" },
     ],
@@ -161,22 +255,67 @@ export const SEED = [
       figures:[],
     },
     layout:[
-      { type:"hero", src:"/images/case-studies/WIP/Tribeca%20Film/festival.jpg.webp", caption:"Tribeca Festival: from event institution to editorial organism" },
+      /* Act 1 — The Hook: cinematic building signage, full-bleed */
+      { type:"hero", variant:"bleed", src:"/images/case-studies/WIP/Tribeca%20Film/festival.jpg.webp", caption:"Tribeca Film Festival: the brand at street scale" },
+
       { type:"section", label:"Framing" },
       { type:"body", key:"framing" },
-      { type:"figure", src:"/images/case-studies/WIP/Tribeca%20Film/TFF13_02_Ads.png", caption:"An identity optimized for a moment, not a presence" },
       { type:"pull-quote", text:"Culture does not operate once a year." },
+
+      /* Sticky — campaign evolution TFF13 → TFF14 */
+      { type:"sticky", label:"Campaign Evolution", heading:"From event-driven activation to curatorial voice.", body:"The identity was optimized for a moment, not a presence. The opportunity was to extend the festival's voice beyond the event itself.", images:[
+        { src:"/images/case-studies/WIP/Tribeca%20Film/TFF13_02_Ads.png", caption:"2013: dimensional type, event-anchored" },
+        { src:"/images/case-studies/WIP/Tribeca%20Film/article_full%402x.jpg", caption:"Outdoor banner: the brand at building scale" },
+        { src:"/images/case-studies/WIP/Tribeca%20Film/Tribeca-Film-Festival-_-New-Yourk-City-NY-_-NYC-3.jpg.webp", caption:"Street presence across the neighborhood" },
+      ]},
+
       { type:"section", label:"Reframe" },
       { type:"reframe" },
-      { type:"three-up", images:[{ src:"/images/case-studies/WIP/Tribeca%20Film/TFF13_01_Ads.png", caption:"Festival" },{ src:"/images/case-studies/WIP/Tribeca%20Film/TFF13_03_Ads.png", caption:"Editorial" },{ src:"/images/case-studies/WIP/Tribeca%20Film/TFF13_04_Ads.png", caption:"Platform" }], caption:"Dimensional type system across the 2013 campaign" },
+
+      /* Act 2 — The Work: triptych of TFF14 poster campaign */
+      { type:"triptych", images:[
+        { src:"/images/case-studies/WIP/Tribeca%20Film/TFF14_01_Ads-1.png", label:"Campaign 2014", title:"Get Your\nElevator Pitch\nSubway Ready" },
+        { src:"/images/case-studies/WIP/Tribeca%20Film/TFF14_02_Ads-1.png", label:"Campaign 2014", title:"Think\nOutside\nThe Screen" },
+        { src:"/images/case-studies/WIP/Tribeca%20Film/TFF14_03_Ads-1.png", label:"Campaign 2014", title:"Welcome to\nThe Golden Age\nof the Audience" },
+      ], caption:"Type-driven poster series: curatorial voice as campaign system" },
+
+      /* Before/after — evolution */
+      { type:"two-up", images:[{ src:"/images/case-studies/WIP/Tribeca%20Film/TFF13_01_Ads.png", caption:"2013 — dimensional, event-driven" },{ src:"/images/case-studies/WIP/Tribeca%20Film/TFF14_01_Ads-1.png", caption:"2014 — typographic, curatorial" }] },
+
       { type:"section", label:"The Intervention" },
       { type:"intervention" },
-      { type:"two-up", images:[{ src:"/images/case-studies/WIP/Tribeca%20Film/TFF13_01_Ads.png", caption:"2013 — event-driven" },{ src:"/images/case-studies/WIP/Tribeca%20Film/TFF14_01_Ads-1.png", caption:"2014 — curatorial voice" }] },
+
+      /* Contact sheet — street photography + brand activation */
+      { type:"grid", cols:3, images:[
+        { src:"/images/case-studies/WIP/Tribeca%20Film/_1Sat4.13.stickersF.webp" },
+        { src:"/images/case-studies/WIP/Tribeca%20Film/_3Mon.4.15.chelseaA.webp" },
+        { src:"/images/case-studies/WIP/Tribeca%20Film/_4Wed.4.10.bikeR.webp" },
+        { src:"/images/case-studies/WIP/Tribeca%20Film/_4Mon.4.15.puddleE.webp" },
+        { brand:"Tribeca\nFilm\nFestival" },
+        { src:"/images/case-studies/WIP/Tribeca%20Film/_4Tues.4.16.empirestateF.webp" },
+      ], caption:"Instagram letter series: the brand in the streets of the neighborhood" },
+
+      /* Atmosphere — festival venue, the brand as lived experience */
+      { type:"atmosphere", bgSrc:"/images/case-studies/WIP/Tribeca%20Film/MEM_20130417_400.webp", heading:"The Festival as Organism", body:"The identity needed to extend beyond the event window. Culture does not operate once a year — and the brand had to embody that continuity in every touchpoint, from stage to street to screen." },
+
+      /* Mood Music — content as editorial extension */
+      { type:"split", subtitle:"Content Extension", heading:"Mood Music: editorial as year-round voice", src:"/images/case-studies/WIP/Tribeca%20Film/MOOD_MUSIC/MoodMusic_Art_Terror.jpg", align:"left", body:"Mood Music paired cinematic moments with curated playlists — giving the festival an editorial voice that extended well beyond the event window." },
+
+      { type:"figure", variant:"float", src:"/images/case-studies/WIP/Tribeca%20Film/MOOD_MUSIC/MoodMusic_Art_Sensitive.jpg", caption:"Mood Music: Sensitive — extending editorial voice beyond the festival" },
+
+      /* Device — the festival website in a screen frame */
+      { type:"device", src:"/images/case-studies/WIP/Tribeca%20Film/335a19ee0c03dd186b8ad07441ddc97c0e04015a-1500x1031.heif.avif", caption:"Festival website: editorial voice as digital experience" },
+
+      /* Festival life — two-up of the neighborhood during the festival */
+      { type:"two-up", images:[{ src:"/images/case-studies/WIP/Tribeca%20Film/CityDuringTheFestival_RubyTull_047.webp", caption:"The neighborhood during the festival" },{ src:"/images/case-studies/WIP/Tribeca%20Film/CityDuringTheFestival_RubyTull_185.webp", caption:"Tribeca: a place, not just an event" }] },
+
+      /* Act 3 — Impact */
       { type:"video", url:"/images/case-studies/WIP/Tribeca%20Film/tribeca_trailer_ncm_proreshq.mov_v1%20(1080p).mp4" },
+
+      { type:"figure", variant:"bleed", src:"/images/case-studies/WIP/Tribeca%20Film/TFF2013_Kodak_Industry_Lounge_Margarita_Corporan-83.webp", caption:"Industry lounge: the brand as gathering space" },
+
       { type:"section", label:"Outcomes" },
-      { type:"inline", src:"/images/case-studies/WIP/Tribeca%20Film/TFF14_03_Ads.png", align:"left", caption:"Year-round cultural presence", text:"Tribeca became less episodic. More alive. Editorial thinking creates elasticity. Continuity builds relevance." },
       { type:"body", key:"outcomes" },
-      { type:"figure", src:"/images/case-studies/WIP/Tribeca%20Film/TFF14_02_Ads.png", caption:"From seasonal activation to continuous voice" },
       { type:"pull-quote", text:"Tribeca became less episodic. More alive." },
       { type:"insight" },
     ],

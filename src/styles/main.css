@@ -697,6 +697,63 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .cs-grid-cell .cs-block-img img{width:100%;height:100%;object-fit:cover}
 @media(max-width:768px){.cs-block--grid{width:calc(100% + 40px);margin-left:-20px;grid-template-columns:repeat(min(var(--grid-cols,4),2),1fr)}}
 
+/* ═══════════════════════════════════════════════════════════
+   BLOCK VARIANTS — Agency-level image treatments
+   Breaks the "card in a tray" uniformity
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Hero Bleed — full edge-to-edge, no padding/radius ── */
+.cs-block--hero.cs-block--bleed{background:none;border-radius:0;padding:0;width:calc(100% + 80px);margin-left:-40px}
+.cs-block--hero.cs-block--bleed .cs-block-img{border-radius:0;aspect-ratio:21/9}
+.cs-block--hero.cs-block--bleed .cs-cap{padding:12px 40px 0}
+@media(max-width:768px){.cs-block--hero.cs-block--bleed{width:calc(100% + 40px);margin-left:-20px}.cs-block--hero.cs-block--bleed .cs-cap{padding:12px 20px 0}}
+
+/* ── Figure Float — centered with generous margin, no bg wrapper ── */
+.cs-block--figure.cs-block--float{background:none;padding:0;width:min(720px, calc(100% + 40px));margin-left:auto;margin-right:auto;margin-bottom:80px}
+.cs-block--figure.cs-block--float .cs-block-img{border-radius:12px;aspect-ratio:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.cs-block--figure.cs-block--float .cs-block-img img{border-radius:12px}
+.cs-block--figure.cs-block--float .cs-cap{text-align:center}
+
+/* ── Figure Bleed — full edge-to-edge, no container ── */
+.cs-block--figure.cs-block--bleed{background:none;padding:0;border-radius:0;width:calc(100% + 80px);margin-left:-40px}
+.cs-block--figure.cs-block--bleed .cs-block-img{border-radius:0;aspect-ratio:21/9}
+@media(max-width:768px){.cs-block--figure.cs-block--bleed{width:calc(100% + 40px);margin-left:-20px}}
+
+/* ── Triptych — tall poster cards, tight gutters, no wrapper ── */
+.cs-block--triptych{width:calc(100% + 80px);margin-left:-40px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;background:none;padding:0;overflow:hidden}
+.cs-block--triptych .cs-triptych-card{position:relative;aspect-ratio:3/4;overflow:hidden;border-radius:8px;display:flex;flex-direction:column;justify-content:flex-end;padding:24px}
+.cs-block--triptych .cs-triptych-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.cs-block--triptych .cs-triptych-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.55) 0%,transparent 50%);pointer-events:none}
+.cs-block--triptych .cs-triptych-label{position:relative;z-index:2;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:8px}
+.cs-block--triptych .cs-triptych-title{position:relative;z-index:2;font-size:clamp(16px,2.5vw,28px);font-weight:700;line-height:1.1;color:#fff;text-transform:uppercase;letter-spacing:-.01em}
+.cs-block--triptych .cs-cap{grid-column:1/-1;padding:0;text-align:center;margin-top:12px}
+@media(max-width:768px){.cs-block--triptych{width:calc(100% + 40px);margin-left:-20px;grid-template-columns:1fr}.cs-block--triptych .cs-triptych-card{aspect-ratio:16/9}}
+
+/* ── Atmosphere — floating UI fragment on rich product background ── */
+.cs-block--atmosphere{width:calc(100% + 80px);margin-left:-40px;min-height:80vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:80px 40px;border-radius:0}
+.cs-atmo-bg{position:absolute;inset:0;overflow:hidden}
+.cs-atmo-bg img{width:100%;height:100%;object-fit:cover}
+.cs-atmo-bg-gradient{position:absolute;inset:0}
+.cs-atmo-bg::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.35);pointer-events:none}
+.cs-atmo-content{position:relative;z-index:2;display:grid;grid-template-columns:auto 1fr;gap:clamp(32px,6vw,80px);align-items:center;max-width:960px;width:100%}
+.cs-atmo-card{background:rgba(10,10,10,.75);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px 20px;width:240px;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+.cs-atmo-card img{width:100%;border-radius:10px}
+.cs-atmo-card-title{font-weight:600;font-size:15px;color:#fff;margin-bottom:16px}
+.cs-atmo-card-item{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13px;color:rgba(255,255,255,.5);border-bottom:1px solid rgba(255,255,255,.05)}
+.cs-atmo-card-item:last-child{border-bottom:none}
+.cs-atmo-card-item.active{color:#fff}
+.cs-atmo-card-icon{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:11px}
+.cs-atmo-text{color:rgba(255,255,255,.85)}
+.cs-atmo-text h2{font-family:var(--display);font-size:clamp(20px,3vw,32px);font-weight:500;line-height:1.4;margin-bottom:16px;letter-spacing:-.01em}
+.cs-atmo-text p{font-size:15px;line-height:1.7;color:rgba(255,255,255,.55);max-width:420px}
+@media(max-width:768px){.cs-block--atmosphere{width:calc(100% + 40px);margin-left:-20px;padding:48px 20px;min-height:auto}.cs-atmo-content{grid-template-columns:1fr;justify-items:center;text-align:center}.cs-atmo-text p{max-width:100%}}
+
+/* ── Contact Sheet with brand tile interrupt ── */
+.cs-grid-cell--brand{background:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:clamp(11px,1.4vw,16px);line-height:1.3;text-align:center;padding:12px;color:var(--fg);border:1px solid var(--bd)}
+
+/* ── Split with background color tint ── */
+.cs-split-text--tinted{background:color-mix(in srgb,var(--ac1) 6%,var(--bg))}
+
 /* Footer — deliverables + tags */
 .cs-footer{border-top:1px solid var(--bd);padding-top:56px;margin-top:48px}
 .cs-deliv{margin-bottom:24px}

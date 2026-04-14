@@ -19,7 +19,11 @@ export default function PracticeRow({ item, delay, fg, onOpen, lens, patternLens
       <span className="prow-arrow">→</span>
       {item.hasVisual && (
         <div className="prow-preview">
-          <div dangerouslySetInnerHTML={{ __html: vi }} style={{ width:"100%", height:"100%" }} />
+          {item.thumbnail ? (
+            <img src={item.thumbnail} alt="" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+          ) : (
+            <div dangerouslySetInnerHTML={{ __html: vi }} style={{ width:"100%", height:"100%" }} />
+          )}
           <div className="prow-glow" />
         </div>
       )}

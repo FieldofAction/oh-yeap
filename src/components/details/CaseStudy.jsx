@@ -79,7 +79,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       /* ── Hero image — full bleed ── */
       case "hero":
         return (
-          <div key={key} ref={observe} className="cs-block cs-block--hero cs-sr cs-sr--scale">
+          <div key={key} ref={observe} className={`cs-block cs-block--hero${block.variant ? ` cs-block--${block.variant}` : ""} cs-sr cs-sr--scale`}>
             <div className="cs-block-img">
               <BlockImg src={block.src} alt={block.alt || item.title} fg={fg} artVi={artVi} index={idx} />
             </div>
@@ -90,7 +90,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       /* ── Figure — single full-width ── */
       case "figure":
         return (
-          <div key={key} ref={observe} className="cs-block cs-block--figure cs-sr cs-sr--rise">
+          <div key={key} ref={observe} className={`cs-block cs-block--figure${block.variant ? ` cs-block--${block.variant}` : ""} cs-sr cs-sr--rise`}>
             <div className="cs-block-img">
               <BlockImg src={block.src} alt={block.alt} fg={fg} artVi={artVi} index={idx} />
             </div>
@@ -330,16 +330,72 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         return (
           <div key={key} ref={observe} className="cs-block cs-block--grid cs-sr cs-sr--stagger" style={{ "--grid-cols": cols }}>
             {block.images?.map((img, i) => (
-              <div key={i} className="cs-grid-cell">
-                <div className="cs-block-img">
-                  <BlockImg src={img.src} alt={img.alt} fg={fg} artVi={artVi} index={idx + i} />
-                </div>
+              <div key={i} className={`cs-grid-cell${img.brand ? " cs-grid-cell--brand" : ""}`}>
+                {img.brand ? (
+                  <span>{img.brand}</span>
+                ) : (
+                  <div className="cs-block-img">
+                    <BlockImg src={img.src} alt={img.alt} fg={fg} artVi={artVi} index={idx + i} />
+                  </div>
+                )}
               </div>
             ))}
             {block.caption && <div className="cs-cap" style={{ gridColumn: "1/-1" }}>{block.caption}</div>}
           </div>
         );
       }
+
+      /* ── Triptych — tall poster-style cards ── */
+      case "triptych":
+        return (
+          <div key={key} ref={observe} className="cs-block cs-block--triptych cs-sr cs-sr--stagger">
+            {block.images?.map((img, i) => (
+              <div key={i} className="cs-triptych-card" style={img.bg ? { background: img.bg } : {}}>
+                {img.src && <img src={img.src} alt={img.alt || ""} />}
+                <div className="cs-triptych-overlay" />
+                {img.label && <div className="cs-triptych-label">{img.label}</div>}
+                {img.title && <div className="cs-triptych-title">{img.title}</div>}
+              </div>
+            ))}
+            {block.caption && <div className="cs-cap">{block.caption}</div>}
+          </div>
+        );
+
+      /* ── Atmosphere — floating UI fragment on product background ── */
+      case "atmosphere":
+        return (
+          <div key={key} ref={observe} className="cs-block cs-block--atmosphere cs-sr cs-sr--scale">
+            <div className="cs-atmo-bg">
+              {block.bgSrc ? (
+                <img src={block.bgSrc} alt="" />
+              ) : (
+                <div className="cs-atmo-bg-gradient" style={{ background: block.bgGradient || "linear-gradient(135deg, #1a0a00 0%, #2d1200 30%, #ff6b2b 100%)" }} />
+              )}
+            </div>
+            <div className="cs-atmo-content">
+              {block.cardSrc ? (
+                <div className="cs-atmo-card">
+                  <img src={block.cardSrc} alt={block.cardAlt || ""} />
+                </div>
+              ) : block.cardItems ? (
+                <div className="cs-atmo-card">
+                  {block.cardTitle && <div className="cs-atmo-card-title">{block.cardTitle}</div>}
+                  {block.cardItems.map((ci, i) => (
+                    <div key={i} className={`cs-atmo-card-item${ci.active ? " active" : ""}`}>
+                      <span className="cs-atmo-card-icon">{ci.icon || "●"}</span>
+                      {ci.label}
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+              <div className="cs-atmo-text">
+                {block.heading && <h2>{block.heading}</h2>}
+                {block.body && block.body.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}
+              </div>
+            </div>
+            {block.caption && <div className="cs-cap" style={{ position: "relative", zIndex: 2, textAlign: "center", color: "rgba(255,255,255,.5)", marginTop: 16 }}>{block.caption}</div>}
+          </div>
+        );
 
       default:
         return null;
