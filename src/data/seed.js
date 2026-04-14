@@ -71,7 +71,7 @@ export const SEED = [
     framing:"Google Cloud operates within one of the most disciplined brand systems in the world. That proximity creates a paradox: it inherits trust and clarity, but risks compressing differentiation. Cloud is architecture, reliability, and scale. But it must also signal ambition. The system was structured. The expression needed motion.\n\nThe design foundation was consistent but under-signaled product ambition. Expression skewed utilitarian. Storytelling signals lagged product evolution. Visual language felt infrastructural rather than progressive.\n\nThe brand could explain. It needed to feel inevitable.",
     reframe:{
       thesis:"Embodied Progress",
-      body:"The goal was not to depart from Google. It was to express momentum within the system.\n\nProgress needed to become visible.",
+      body:"The goal was not to depart from Google. It was to express momentum within the system. Progress needed to become visible.",
     },
     intervention:{
       system:["Expanded modular patterns to support narrative storytelling","Clarified separation between infrastructure clarity and expressive emphasis","Preserved Google brand integrity while extending Cloud distinction"],

@@ -212,7 +212,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       case "intervention":
         if (!cs.intervention) return null;
         return (
-          <div key={key} ref={observe} className="cs-block cs-narrative cs-sr cs-sr--stagger">
+          <div key={key} ref={observe} className="cs-block cs-block--intervention cs-sr cs-sr--stagger">
             <div className="cs-intervention-grid">
               {cs.intervention.system && (
                 <div className="cs-intv-card">
