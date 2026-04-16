@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#0C0D10; --fg:#E8EAF0; --fm:#868B94; --ff:#565A62; --bd:#1C1E24; --ac:#2F5BFF; }
+  * { box-sizing:border-box; margin:0; padding:0 }
+  html, body { width:1200px; height:630px; background:var(--bg); color:var(--fg); font-family:'Inter',system-ui,sans-serif; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; overflow:hidden }
+  .card { position:relative; width:1200px; height:630px; padding:64px 72px; display:flex; flex-direction:column; justify-content:space-between }
+  /* corner ticks — a nod to the grid aesthetic on the home hero */
+  .tick { position:absolute; width:14px; height:14px; border-color:var(--ff); border-style:solid; border-width:0 }
+  .tick.tl { top:40px; left:40px; border-top-width:1px; border-left-width:1px }
+  .tick.tr { top:40px; right:40px; border-top-width:1px; border-right-width:1px }
+  .tick.bl { bottom:40px; left:40px; border-bottom-width:1px; border-left-width:1px }
+  .tick.br { bottom:40px; right:40px; border-bottom-width:1px; border-right-width:1px }
+  .top { display:flex; align-items:baseline; justify-content:space-between }
+  .brand { font-size:15px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--fm) }
+  .meta { font-family:'Space Mono',monospace; font-size:13px; color:var(--ff); letter-spacing:.04em }
+  .center { display:flex; flex-direction:column; gap:28px; align-items:flex-start; margin-top:-8px }
+  .mark { font-size:104px; font-weight:300; letter-spacing:-.02em; line-height:.95; color:var(--fg) }
+  .mark em { font-style:normal; font-weight:500 }
+  .rule { width:72px; height:1px; background:var(--ac); opacity:.9 }
+  .name { font-size:22px; font-weight:500; letter-spacing:.01em; color:var(--fg) }
+  .name span { color:var(--fm); font-weight:400 }
+  .bottom { display:flex; align-items:flex-end; justify-content:space-between }
+  .role { font-size:15px; font-weight:400; line-height:1.5; color:var(--fm); max-width:580px }
+  .role b { color:var(--fg); font-weight:500 }
+  .url { font-family:'Space Mono',monospace; font-size:14px; color:var(--fg); letter-spacing:.02em }
+</style>
+</head>
+<body>
+  <div class="card">
+    <span class="tick tl"></span>
+    <span class="tick tr"></span>
+    <span class="tick bl"></span>
+    <span class="tick br"></span>
+
+    <div class="top">
+      <div class="brand">Field of Action</div>
+      <div class="meta">No. 01 / 2026</div>
+    </div>
+
+    <div class="center">
+      <div class="mark">Field of <em>Action</em></div>
+      <div class="rule"></div>
+      <div class="name">Alfred (Daniel) Dickson II <span>— Designer, Writer</span></div>
+    </div>
+
+    <div class="bottom">
+      <div class="role">A field for <b>relational design</b>, written essays, and case studies from practice.</div>
+      <div class="url">fieldofaction.org</div>
+    </div>
+  </div>
+</body>
+</html>
