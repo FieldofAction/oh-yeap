@@ -1,4 +1,5 @@
-export const FILTERS = ["All","Practice","Writing","Exploration","Artifacts"];
+// "Practice" hidden for Wave 1 launch — case studies need refinement. Restore when Wave 2 ships.
+export const FILTERS = ["All","Writing","Exploration","Artifacts"];
 
 export const PILLARS = [
   { key:"system", label:"System", color:"#6b8fa3", desc:"Grid, proportion, clarity, infrastructure" },

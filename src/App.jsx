@@ -121,8 +121,12 @@ export default function App() {
     return () => window.removeEventListener("keydown", handler);
   }, [activeItem]);
 
+  // Wave 1 launch: Practice (case studies) hidden from public-facing surfaces until Wave 2 refinement ships.
+  // Studio-gated views (Backstage, etc.) still receive full `content`.
+  const publicContent = useMemo(() => content.filter(c => c.section !== "practice"), [content]);
+
   const filtered = useMemo(() => {
-    let items = content.filter(c => c.status !== "draft");
+    let items = publicContent.filter(c => c.status !== "draft");
     if (relFilter) {
       items = items.filter(c =>
         c.title === relFilter || c.relations?.includes(relFilter) ||
@@ -132,7 +136,7 @@ export default function App() {
       items = items.filter(c => c.section.toLowerCase() === filter.toLowerCase());
     }
     return items;
-  }, [content, filter, relFilter]);
+  }, [publicContent, filter, relFilter]);
 
   const handleRelation = useCallback((name) => {
     setFilter("All");
@@ -166,17 +170,17 @@ export default function App() {
       <div className="app-content">
         <DualLensBar modelActive={lens} patternActive={patternLens} onToggleModel={toggleLens} onTogglePattern={togglePatternLens} onOpenModels={() => navigateTo("models")} onOpenPatterns={() => navigateTo("patterns")} />
         <main className={`view-wrap${transitioning ? " view-leaving" : ""}`}>
-          {view === "public" && <Public items={filtered} allItems={content} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={asu.get_system_condition()} onOpen={openItem} lens={lens} patternLens={patternLens} showGraph={showGraph} />}
+          {view === "public" && <Public items={filtered} allItems={publicContent} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={asu.get_system_condition()} onOpen={openItem} lens={lens} patternLens={patternLens} showGraph={showGraph} />}
           {view === "model" && <ArtOfModel asu={asu} />}
           {view === "playbook" && <Playbook asu={asu} />}
           {view === "backstage" && <Backstage content={content} themeKey={themeKey} onThemeChange={setThemeKey} onPublish={handlePublish} asu={asu} />}
-          {view === "models" && <Models content={content} onOpen={openItem} fg={theme.fg} />}
+          {view === "models" && <Models content={publicContent} onOpen={openItem} fg={theme.fg} />}
           {view === "about" && <About theme={theme} />}
           {view === "colophon" && <Colophon />}
           {view === "canon" && <Canon />}
           {view === "console" && <FieldConsole />}
           {view === "lab" && <IncandescantLab asu={asu} />}
-          {view === "patterns" && <PatternLanguage content={content} onOpen={openItem} fg={theme.fg} />}
+          {view === "patterns" && <PatternLanguage content={publicContent} onOpen={openItem} fg={theme.fg} />}
           {view === "foa" && <FOAGenerator />}
           {view === "breakground" && <BreakgroundCard />}
           {view === "desert" && <DesertVisual />}

@@ -61,6 +61,25 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .sb-group{margin:0}
 .sb-group-h{font-size:8px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);opacity:.5;padding:10px 20px 2px}
 
+/* ── Sidebar lock indicator (gated tier) ── */
+.sb-tier-h{display:flex;align-items:center;gap:8px}
+.sb-lock{font-size:7px;color:var(--ff);opacity:.7;line-height:1;transform:translateY(-1px)}
+
+/* ── Studio password gate modal ── */
+.sb-gate-overlay{position:fixed;inset:0;z-index:200;background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;animation:en .2s ease;padding:20px}
+.sb-gate{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:32px;width:100%;max-width:380px;display:flex;flex-direction:column;gap:16px;box-shadow:0 24px 80px rgba(0,0,0,.4)}
+.sb-gate-label{font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--ff)}
+.sb-gate-title{font-size:18px;font-weight:400;color:var(--fg);letter-spacing:-.01em;margin-bottom:4px}
+.sb-gate-input{font-family:var(--mono);font-size:14px;padding:10px 12px;background:var(--bg);border:1px solid var(--bd);border-radius:6px;color:var(--fg);outline:none;transition:border-color .2s}
+.sb-gate-input:focus{border-color:var(--ac2)}
+.sb-gate-input[aria-invalid="true"]{border-color:#c94f4f}
+.sb-gate-error{font-size:11px;color:#c94f4f;font-weight:400}
+.sb-gate-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:4px}
+.sb-gate-btn{font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:.02em;padding:8px 16px;border-radius:6px;border:1px solid var(--ac2);background:var(--ac2);color:#fff;cursor:pointer;transition:opacity .2s}
+.sb-gate-btn:hover{opacity:.85}
+.sb-gate-btn--ghost{background:transparent;color:var(--fm);border-color:var(--bd)}
+.sb-gate-btn--ghost:hover{color:var(--fg);opacity:1}
+
 /* ── Canon sub-nav (sticky anchored navigation) ── */
 .cn-subnav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:24px;padding:12px 0;margin-bottom:32px;border-bottom:1px solid var(--bd);background:var(--bg)}
 .cn-subnav-link{font-size:11px;font-weight:400;letter-spacing:.02em;color:var(--ff);background:none;border:none;cursor:pointer;padding:4px 0;font-family:var(--sans);transition:color .2s;border-bottom:1px solid transparent}
