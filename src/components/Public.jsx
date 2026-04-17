@@ -92,8 +92,8 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                   <span>Building <em>{nowState.building}</em></span>
                 </div>
                 <div className="hero-links">
-                  <a href="https://fieldofaction.substack.com" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
-                  <a href="https://linkedin.com/in/danieldickson" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
+                  <a href="https://substack.com/@adickson" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
+                  <a href="https://linkedin.com/in/alfred-daniel-dickson-ii-5803423" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
                 </div>
               </div>
             </div>
@@ -155,8 +155,8 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Links</div>
                   <div className="hero-dash-val hero-links">
-                    <a href="https://fieldofaction.substack.com" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
-                    <a href="https://linkedin.com/in/danieldickson" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
+                    <a href="https://substack.com/@adickson" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
+                    <a href="https://linkedin.com/in/alfred-daniel-dickson-ii-5803423" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
                   </div>
                 </div>
               </div>

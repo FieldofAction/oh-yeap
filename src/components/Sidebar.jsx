@@ -27,8 +27,8 @@ const NAV = [
     { key: "patterns", label: "Pattern Language" },
   ]},
   { tier: "EXTERNAL", items: [
-    { href: "https://fieldofaction.substack.com", label: "Substack" },
-    { href: "https://linkedin.com/in/danieldickson", label: "LinkedIn" },
+    { href: "https://substack.com/@adickson", label: "Substack" },
+    { href: "https://linkedin.com/in/alfred-daniel-dickson-ii-5803423", label: "LinkedIn" },
   ]},
 ];
 
