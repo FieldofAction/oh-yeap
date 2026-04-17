@@ -88,10 +88,9 @@ export default function About({ theme }) {
         )}
       </div>
 
-      {/* CTA */}
+      {/* CTA — "Begin a conversation" link hidden until there's a dedicated destination. */}
       <div className="cta">
         <p className="cta-p">Field of Action engages where a real system exists, a real constraint is present, and responsibility is held.</p>
-        <a href="https://substack.com/@adickson" className="cta-a">Begin a conversation &rarr;</a>
       </div>
     </div>
   );
