@@ -13,16 +13,21 @@ const LAYOUTS = {
     bound: { left: 60, right: 940, top: 55, bottom: 345 },
     midY: 200,
     connDashWidth: 0.4,
+    // Minimum inter-letter gap for collision prevention (viewBox units).
+    // At 21px glyphs in a 1000-wide viewBox this generous spacing prevents any visible overlap.
+    minKern: 60,
   },
   square: {
     viewBox: "0 0 1000 1000",
-    // Inset bounds so large 120px glyphs (centered on each anchor) stay fully
-    // inside the framed box. The 120 CSS px font maps to roughly 340 viewBox
-    // units at a 358-wide container → ~170 unit half-glyph; top/bottom rows
-    // sit at y=150/850 so letter caps/descenders don't collide with the edge.
-    bound: { left: 150, right: 850, top: 150, bottom: 850 },
+    // Bounds chosen so 6-letter ACTION row fits without glyph overlap:
+    // 800u span / 5 gaps = 160u center-to-center, which clears the widest
+    // adjacent pair (O-N at 80px font ≈ 156u combined half-widths) by ~4u.
+    bound: { left: 100, right: 900, top: 180, bottom: 820 },
     midY: 500,
     connDashWidth: 1.0,
+    // Letters rest 160u apart; allow tilt to compress down to 140u
+    // (tasteful cushion) before collision locks further motion.
+    minKern: 140,
   },
 };
 
@@ -63,9 +68,7 @@ const CONNECTIONS = [
   [0,6],[5,12],
 ];
 
-const MIN_KERN = 60;
-
-function displaceAll(letters, pullX = 0, pullY = 0, bound) {
+function displaceAll(letters, pullX = 0, pullY = 0, bound, minKern = 60) {
   const px = isNaN(pullX) ? 0 : pullX;
   const py = isNaN(pullY) ? 0 : pullY;
   const anchorX = px <= 0 ? bound.left : bound.right;
@@ -92,13 +95,13 @@ function displaceAll(letters, pullX = 0, pullY = 0, bound) {
     if (px <= 0) {
       if (ordered[0].dx < bound.left) ordered[0].dx = bound.left;
       for (let i = 1; i < ordered.length; i++) {
-        if (ordered[i].dx <= ordered[i - 1].dx + MIN_KERN) ordered[i].dx = ordered[i - 1].dx + MIN_KERN;
+        if (ordered[i].dx <= ordered[i - 1].dx + minKern) ordered[i].dx = ordered[i - 1].dx + minKern;
       }
     } else {
       const last = ordered.length - 1;
       if (ordered[last].dx > bound.right) ordered[last].dx = bound.right;
       for (let i = last - 1; i >= 0; i--) {
-        if (ordered[i].dx >= ordered[i + 1].dx - MIN_KERN) ordered[i].dx = ordered[i + 1].dx - MIN_KERN;
+        if (ordered[i].dx >= ordered[i + 1].dx - minKern) ordered[i].dx = ordered[i + 1].dx - minKern;
       }
     }
     ordered.forEach(o => { o.dx = Math.max(bound.left, Math.min(bound.right, o.dx)); });
@@ -109,7 +112,7 @@ function displaceAll(letters, pullX = 0, pullY = 0, bound) {
 
 function FieldSVG({ pullX, pullY, layout }) {
   const base = buildBase(layout);
-  const letters = displaceAll(base, pullX, pullY, layout.bound);
+  const letters = displaceAll(base, pullX, pullY, layout.bound, layout.minKern);
   const inset = 18;
   return (
     <svg className="hg-svg" viewBox={layout.viewBox} preserveAspectRatio="xMidYMid meet">

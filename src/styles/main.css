@@ -178,9 +178,10 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
   .hg-motion-cta:hover,.hg-motion-cta:active{color:var(--fg);border-color:var(--fg)}
 }
 @media(max-width:480px){
-  /* Square field + 3x letters, anchored to top/bottom via square viewBox */
+  /* Square field + big anchored letters. Font sized so all 6 ACTION letters
+     fit the row with tasteful cushion (≈2x the prior mobile 40px). */
   .hg-field{aspect-ratio:1/1}
-  .hg-glyph{font-size:120px}
+  .hg-glyph{font-size:80px}
 }
 @media(max-width:768px){.nowbar{gap:4px}}
 .nowbar em{font-family:var(--display);color:var(--fm);font-size:10px}
