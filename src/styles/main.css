@@ -167,6 +167,8 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
   .hero-dash-grid{grid-template-columns:repeat(2,1fr);margin-bottom:16px}
   .hero-dash-cell{padding:10px 0}
   .hero-dash-cell:not(:first-child){padding-left:12px}
+  /* Re-flush every first-column cell in the 2-col mobile layout */
+  .hero-dash-cell:nth-child(2n+1){padding-left:0}
   .hero-dash-cell:nth-child(2n){border-right:none}
   .hero-dash-label{font-size:8px;margin-bottom:3px}
   .hero-dash-val{font-size:12px;line-height:1.3}
