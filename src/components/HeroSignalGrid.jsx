@@ -35,7 +35,7 @@ const CONNECTIONS = [
   [0,6],[5,12],
 ];
 
-const MIN_KERN = 15;
+const MIN_KERN = 60;
 
 function displaceAll(letters, pullX = 0, pullY = 0) {
   const px = isNaN(pullX) ? 0 : pullX;
@@ -147,6 +147,8 @@ export default function HeroSignalGrid() {
   const [pullX, setPullX] = useState(0);
   const [pullY, setPullY] = useState(0);
   const [animated, setAnimated] = useState(false);
+  const [needsMotionPerm, setNeedsMotionPerm] = useState(false);
+  const [motionActive, setMotionActive] = useState(false);
   const rafRef = useRef(null);
   const targetX = useRef(0);
   const targetY = useRef(0);
@@ -155,12 +157,14 @@ export default function HeroSignalGrid() {
   const velocityX = useRef(0);
   const velocityY = useRef(0);
   const lastMoveTime = useRef(Date.now());
+  const motionBaselineBeta = useRef(null);
+  const motionListenerRef = useRef(null);
 
   useEffect(() => {
     if (!animated) return;
     let running = true;
-    const TENSION = 0.008;
-    const DAMPING = 0.94;
+    const TENSION = 0.003;
+    const DAMPING = 0.96;
     const REST_THRESHOLD = 0.001;
     const IDLE_MS = 2000;
     const DRIFT_AMP = 0.03;
@@ -206,12 +210,77 @@ export default function HeroSignalGrid() {
     return () => window.removeEventListener("mousemove", onMove);
   }, [animated]);
 
+  // Device-tilt interaction for touch devices.
+  // Partial (A) + (C): ambient idle drift always runs; tilt adds input when available.
+  // iOS 13+ requires gesture-initiated permission; Android / older iOS attach silently.
+  useEffect(() => {
+    if (!animated) return;
+    if (typeof window === "undefined") return;
+    const hasTouch = "ontouchstart" in window || (navigator.maxTouchPoints || 0) > 0;
+    if (!hasTouch) return;
+    const DOE = window.DeviceOrientationEvent;
+    if (!DOE) return;
+    if (typeof DOE.requestPermission === "function") {
+      setNeedsMotionPerm(true);
+    } else {
+      attachOrientation();
+    }
+    return () => detachOrientation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [animated]);
+
+  const attachOrientation = () => {
+    const handler = (e) => {
+      // gamma: left-right tilt (-90..90). beta: front-back tilt (-180..180).
+      // First reading establishes a baseline so "flat" position sits at rest.
+      const g = typeof e.gamma === "number" ? e.gamma : 0;
+      const b = typeof e.beta === "number" ? e.beta : 0;
+      if (motionBaselineBeta.current === null) motionBaselineBeta.current = b;
+      const normX = Math.max(-2, Math.min(2, g / 25));
+      const normY = Math.max(-2, Math.min(2, (b - motionBaselineBeta.current) / 25));
+      targetX.current = normX;
+      targetY.current = normY;
+      lastMoveTime.current = Date.now();
+    };
+    window.addEventListener("deviceorientation", handler);
+    motionListenerRef.current = handler;
+    setMotionActive(true);
+  };
+
+  const detachOrientation = () => {
+    if (motionListenerRef.current) {
+      window.removeEventListener("deviceorientation", motionListenerRef.current);
+      motionListenerRef.current = null;
+    }
+  };
+
+  const requestMotionPermission = async () => {
+    try {
+      const resp = await window.DeviceOrientationEvent.requestPermission();
+      if (resp === "granted") attachOrientation();
+    } catch (_) {
+      /* denied or unavailable — fall through to ambient idle drift */
+    } finally {
+      setNeedsMotionPerm(false);
+    }
+  };
+
   return (
     <div className="hg-field" ref={fieldRef}>
       {!animated
         ? <FieldSVGAnimated onComplete={() => setAnimated(true)} />
         : <FieldSVG pullX={pullX} pullY={pullY} />
       }
+      {needsMotionPerm && !motionActive && (
+        <button
+          type="button"
+          className="hg-motion-cta"
+          onClick={requestMotionPermission}
+          aria-label="Enable motion interaction"
+        >
+          Tilt to engage
+        </button>
+      )}
     </div>
   );
 }
