@@ -13,7 +13,8 @@ const DASH = [
   { label: "Writing", val: "Themes of Authoring" },
 ];
 
-const HEROES = [HeroSignalGrid, HeroTypeField, HeroConstraintField];
+// Wave 1 launch: only Hero 01 active in rotation. Others tabled for later.
+const HEROES = [HeroSignalGrid];
 
 export default function HeroGrid() {
   const chosen = useRef(HEROES[Math.floor(Math.random() * HEROES.length)]);
