@@ -7,8 +7,9 @@ const DRAWINGS = Array.from({ length: 115 }, (_, i) => {
   return {
     id: i + 1,
     file: `4726-${num}`,
-    thumb: `media/drawings/thumbs/4726-${num}.jpg`,
-    full: `media/drawings/full/4726-${num}.jpg`,
+    // Absolute paths — relative URLs break if the app is served from a nested route.
+    thumb: `/media/drawings/thumbs/4726-${num}.jpg`,
+    full: `/media/drawings/full/4726-${num}.jpg`,
   };
 });
 

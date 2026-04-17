@@ -1,5 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
+
+// Normalize bare "media/..." paths in data to absolute "/media/..." so they
+// resolve from the site root regardless of the current SPA route. Safe to
+// call on already-absolute or http(s) URLs — they pass through untouched.
+const abs = (s) => (!s ? s : /^(https?:|\/)/.test(s) ? s : `/${s}`);
 const MONTHS = {
   "2018-04": {
     label: "April 2018",
@@ -164,7 +169,8 @@ const CLUSTER_B = [
   "media/posts/201901/17842094581343828.jpg",
 ];
 
-function ImageCard({ src, index, onClick, isMulti, by, caption }) {
+function ImageCard({ src: rawSrc, index, onClick, isMulti, by, caption }) {
+  const src = abs(rawSrc);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
   const isVideo = src.endsWith(".mp4");
@@ -187,7 +193,7 @@ function ImageCard({ src, index, onClick, isMulti, by, caption }) {
 }
 
 function Lightbox({ post, imageIndex, onClose, onNext, onPrev, onImageNav }) {
-  const currentSrc = post.i[imageIndex] || post.i[0];
+  const currentSrc = abs(post.i[imageIndex] || post.i[0]);
   const isVideo = currentSrc.endsWith(".mp4");
   useEffect(() => {
     const handleKey = (e) => {
@@ -283,7 +289,7 @@ function PhotoCluster({ images }) {
     <div className="pb-cluster">
       {images.map((src,i) => (
         <div key={i} className="pb-cluster-img">
-          <img src={src} alt="" loading="lazy" />
+          <img src={abs(src)} alt="" loading="lazy" />
         </div>
       ))}
     </div>
@@ -409,7 +415,7 @@ export default function PatioBeach() {
             {/* Route map */}
             <a href="https://maps.app.goo.gl/doCvsJgNw5pvPuG89" target="_blank" rel="noopener noreferrer" className="pb-route-map">
               <div className="pb-route-img">
-                <img src="media/nest/route-map.png" alt="Walking route from 302 5th St to Rivendell School, Park Slope to Gowanus" />
+                <img src="/media/nest/route-map.png" alt="Walking route from 302 5th St to Rivendell School, Park Slope to Gowanus" />
               </div>
               <div className="pb-route-labels">
                 <div className="pb-route-place">
@@ -451,7 +457,7 @@ export default function PatioBeach() {
           {/* 5. The Bowerbird */}
           <NarrativeSection label="The Bowerbird">
             <div className="pb-narr-figure">
-              <img src="media/nest/bowerbird.jpg" alt="Satin bowerbird" className="pb-narr-figure-img" />
+              <img src="/media/nest/bowerbird.jpg" alt="Satin bowerbird" className="pb-narr-figure-img" />
               <div className="pb-narr-figure-cap">Satin bowerbird (<em>Ptilonorhynchus violaceus</em>)</div>
             </div>
             <p className="pb-narr-body">Around this same time I learned about the bowerbird. A small bird known for building elaborate nests from objects it collects from the forest floor. Flowers, shells, pieces of glass, bits of plastic. Anything colorful or unusual. The bird arranges these fragments carefully, creating a structure meant to attract a mate. Beauty assembled from what others overlook.</p>
