@@ -5,23 +5,40 @@ import React, { useRef, useState, useEffect } from "react";
    Corner-attractor cursor displacement, spring physics.
    The field as diagram. */
 
-const BOUND = { left: 60, right: 940, top: 55, bottom: 345 };
+// Two layouts: wide (desktop/tablet, 2.5:1 band) and square (phone, 1:1 impact shape).
+// The square layout anchors FIELD to the top and ACTION to the bottom.
+const LAYOUTS = {
+  wide: {
+    viewBox: "0 0 1000 400",
+    bound: { left: 60, right: 940, top: 55, bottom: 345 },
+    midY: 200,
+    connDashWidth: 0.4,
+  },
+  square: {
+    viewBox: "0 0 1000 1000",
+    bound: { left: 60, right: 940, top: 90, bottom: 910 },
+    midY: 500,
+    connDashWidth: 1.0,
+  },
+};
 
-const BASE = [
-  { ch:"F", x:BOUND.left,  y:BOUND.top },
-  { ch:"I", x:300,         y:BOUND.top },
-  { ch:"E", x:500,         y:BOUND.top },
-  { ch:"L", x:700,         y:BOUND.top },
-  { ch:"D", x:BOUND.right, y:BOUND.top },
-  { ch:"O", x:BOUND.left,  y:200 },
-  { ch:"F", x:BOUND.right, y:200 },
-  { ch:"A", x:BOUND.left,  y:BOUND.bottom },
-  { ch:"C", x:260,         y:BOUND.bottom },
-  { ch:"T", x:420,         y:BOUND.bottom },
-  { ch:"I", x:580,         y:BOUND.bottom },
-  { ch:"O", x:740,         y:BOUND.bottom },
-  { ch:"N", x:BOUND.right, y:BOUND.bottom },
-];
+function buildBase({ bound, midY }) {
+  return [
+    { ch:"F", x:bound.left,  y:bound.top },
+    { ch:"I", x:300,         y:bound.top },
+    { ch:"E", x:500,         y:bound.top },
+    { ch:"L", x:700,         y:bound.top },
+    { ch:"D", x:bound.right, y:bound.top },
+    { ch:"O", x:bound.left,  y:midY },
+    { ch:"F", x:bound.right, y:midY },
+    { ch:"A", x:bound.left,  y:bound.bottom },
+    { ch:"C", x:260,         y:bound.bottom },
+    { ch:"T", x:420,         y:bound.bottom },
+    { ch:"I", x:580,         y:bound.bottom },
+    { ch:"O", x:740,         y:bound.bottom },
+    { ch:"N", x:bound.right, y:bound.bottom },
+  ];
+}
 
 const DELAYS = [1.4,1.5,1.6,1.7,1.8,1.9,2.0,2.1,2.2,2.3,2.4,2.5,2.6];
 
@@ -37,10 +54,10 @@ const CONNECTIONS = [
 
 const MIN_KERN = 60;
 
-function displaceAll(letters, pullX = 0, pullY = 0) {
+function displaceAll(letters, pullX = 0, pullY = 0, bound) {
   const px = isNaN(pullX) ? 0 : pullX;
   const py = isNaN(pullY) ? 0 : pullY;
-  const anchorX = px <= 0 ? BOUND.left : BOUND.right;
+  const anchorX = px <= 0 ? bound.left : bound.right;
   const rows = {};
   letters.forEach((l, i) => {
     const key = l.y;
@@ -48,7 +65,7 @@ function displaceAll(letters, pullX = 0, pullY = 0) {
     rows[key].push({ idx: i, baseX: l.x, baseY: l.y });
   });
   const result = letters.map(l => ({ ...l, dx: l.x }));
-  const minY = BOUND.top, maxY = BOUND.bottom;
+  const minY = bound.top, maxY = bound.bottom;
   Object.values(rows).forEach(row => {
     const rowY = row[0].baseY;
     const rowNorm = (rowY - minY) / (maxY - minY);
@@ -62,28 +79,29 @@ function displaceAll(letters, pullX = 0, pullY = 0) {
     });
     const ordered = row.map(r => ({ idx: r.idx, dx: result[r.idx].dx }));
     if (px <= 0) {
-      if (ordered[0].dx < BOUND.left) ordered[0].dx = BOUND.left;
+      if (ordered[0].dx < bound.left) ordered[0].dx = bound.left;
       for (let i = 1; i < ordered.length; i++) {
         if (ordered[i].dx <= ordered[i - 1].dx + MIN_KERN) ordered[i].dx = ordered[i - 1].dx + MIN_KERN;
       }
     } else {
       const last = ordered.length - 1;
-      if (ordered[last].dx > BOUND.right) ordered[last].dx = BOUND.right;
+      if (ordered[last].dx > bound.right) ordered[last].dx = bound.right;
       for (let i = last - 1; i >= 0; i--) {
         if (ordered[i].dx >= ordered[i + 1].dx - MIN_KERN) ordered[i].dx = ordered[i + 1].dx - MIN_KERN;
       }
     }
-    ordered.forEach(o => { o.dx = Math.max(BOUND.left, Math.min(BOUND.right, o.dx)); });
+    ordered.forEach(o => { o.dx = Math.max(bound.left, Math.min(bound.right, o.dx)); });
     ordered.forEach(s => { result[s.idx].dx = s.dx; });
   });
   return result;
 }
 
-function FieldSVG({ pullX, pullY }) {
-  const letters = displaceAll(BASE, pullX, pullY);
+function FieldSVG({ pullX, pullY, layout }) {
+  const base = buildBase(layout);
+  const letters = displaceAll(base, pullX, pullY, layout.bound);
   const inset = 18;
   return (
-    <svg className="hg-svg" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMid meet">
+    <svg className="hg-svg" viewBox={layout.viewBox} preserveAspectRatio="xMidYMid meet">
       {CONNECTIONS.map(([a, b], i) => {
         const la = letters[a], lb = letters[b];
         const ddx = lb.dx - la.dx, dy = lb.y - la.y;
@@ -95,7 +113,7 @@ function FieldSVG({ pullX, pullY }) {
         const shortened = Math.max(0, dist - inset * 2);
         return (
           <line key={`l${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
-            stroke="var(--fg)" strokeWidth="0.4" opacity="0.1"
+            stroke="var(--fg)" strokeWidth={layout.connDashWidth} opacity="0.1"
             strokeDasharray={shortened} strokeDashoffset="0" />
         );
       })}
@@ -106,16 +124,17 @@ function FieldSVG({ pullX, pullY }) {
   );
 }
 
-function FieldSVGAnimated({ onComplete }) {
+function FieldSVGAnimated({ onComplete, layout }) {
+  const base = buildBase(layout);
   useEffect(() => {
     const timer = setTimeout(onComplete, 3200);
     return () => clearTimeout(timer);
   }, [onComplete]);
   const inset = 18;
   return (
-    <svg className="hg-svg" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMid meet">
+    <svg className="hg-svg" viewBox={layout.viewBox} preserveAspectRatio="xMidYMid meet">
       {CONNECTIONS.map(([a, b], i) => {
-        const la = BASE[a], lb = BASE[b];
+        const la = base[a], lb = base[b];
         const ddx = lb.x - la.x, dy = lb.y - la.y;
         const dist = Math.sqrt(ddx*ddx + dy*dy);
         if (dist < 1) return null;
@@ -125,14 +144,14 @@ function FieldSVGAnimated({ onComplete }) {
         const shortened = Math.max(0, dist - inset * 2);
         const delay = 0.1 + i * 0.08;
         return (
-          <line key={`l${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--fg)" strokeWidth="0.4" opacity="0">
+          <line key={`l${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--fg)" strokeWidth={layout.connDashWidth} opacity="0">
             <set attributeName="stroke-dasharray" to={`${shortened}`} />
             <animate attributeName="stroke-dashoffset" from={shortened} to="0" dur="1.6s" begin={`${delay}s`} fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1" keyTimes="0;1" />
             <animate attributeName="opacity" from="0" to="0.1" dur="0.8s" begin={`${delay}s`} fill="freeze" />
           </line>
         );
       })}
-      {BASE.map((l, i) => (
+      {base.map((l, i) => (
         <text key={`t${i}`} x={l.x} y={l.y} textAnchor="middle" dominantBaseline="central" className="hg-glyph" opacity="0">
           {l.ch}
           <animate attributeName="opacity" from="0" to="0.22" dur="1s" begin={`${DELAYS[i]}s`} fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1" keyTimes="0;1" />
@@ -149,6 +168,21 @@ export default function HeroSignalGrid() {
   const [animated, setAnimated] = useState(false);
   const [needsMotionPerm, setNeedsMotionPerm] = useState(false);
   const [motionActive, setMotionActive] = useState(false);
+  // Layout: square on phones (≤480px), wide everywhere else.
+  const [layoutKey, setLayoutKey] = useState(() => {
+    if (typeof window === "undefined") return "wide";
+    return window.matchMedia("(max-width: 480px)").matches ? "square" : "wide";
+  });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(max-width: 480px)");
+    const handler = (e) => setLayoutKey(e.matches ? "square" : "wide");
+    mq.addEventListener ? mq.addEventListener("change", handler) : mq.addListener(handler);
+    return () => {
+      mq.removeEventListener ? mq.removeEventListener("change", handler) : mq.removeListener(handler);
+    };
+  }, []);
+  const layout = LAYOUTS[layoutKey];
   const rafRef = useRef(null);
   const targetX = useRef(0);
   const targetY = useRef(0);
@@ -268,8 +302,8 @@ export default function HeroSignalGrid() {
   return (
     <div className="hg-field" ref={fieldRef}>
       {!animated
-        ? <FieldSVGAnimated onComplete={() => setAnimated(true)} />
-        : <FieldSVG pullX={pullX} pullY={pullY} />
+        ? <FieldSVGAnimated key={`anim-${layoutKey}`} layout={layout} onComplete={() => setAnimated(true)} />
+        : <FieldSVG key={`still-${layoutKey}`} layout={layout} pullX={pullX} pullY={pullY} />
       }
       {needsMotionPerm && !motionActive && (
         <button

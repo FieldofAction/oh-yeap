@@ -178,9 +178,9 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
   .hg-motion-cta:hover,.hg-motion-cta:active{color:var(--fg);border-color:var(--fg)}
 }
 @media(max-width:480px){
-  /* Square field + larger letters for phone impact */
+  /* Square field + 3x letters, anchored to top/bottom via square viewBox */
   .hg-field{aspect-ratio:1/1}
-  .hg-glyph{font-size:40px}
+  .hg-glyph{font-size:120px}
 }
 @media(max-width:768px){.nowbar{gap:4px}}
 .nowbar em{font-family:var(--display);color:var(--fm);font-size:10px}
