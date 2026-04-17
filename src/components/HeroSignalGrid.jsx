@@ -28,9 +28,10 @@ const LAYOUTS = {
     // Tighter kerning: compresses rest spacing to ~135u so letters feel
     // grouped rather than spread; tilt can still push down to 115u.
     minKern: 115,
-    // Spring tuning: more responsive with a small overshoot on mobile for
-    // a livelier "tilt" feel than the calm desktop defaults.
-    spring: { tension: 0.012, damping: 0.88, restThreshold: 0.002 },
+    // Spring: soft-landing. Lower tension + heavier damping glide the
+    // letters to rest rather than snapping. Responsiveness comes from
+    // the eased tilt input filter, not spring stiffness.
+    spring: { tension: 0.006, damping: 0.93, restThreshold: 0.002 },
   },
 };
 
@@ -281,16 +282,30 @@ export default function HeroSignalGrid() {
   }, [animated]);
 
   const attachOrientation = () => {
+    // Deadzone so tiny hand tremors don't register.
+    const DEADZONE_DEG = 3;
+    // Degree at which the eased response hits ~76% of max.
+    const FALLOFF_DEG = 30;
+    // Low-pass smoothing on the raw gyro stream — 0 = never change, 1 = instant.
+    const SMOOTH = 0.12;
+    // Smooth ease that maxes asymptotically instead of clamping hard.
+    // sign(x) * tanh(|x - deadzone| / falloff), zeroed inside the deadzone.
+    const easeTilt = (deg) => {
+      const sign = deg < 0 ? -1 : 1;
+      const mag = Math.max(0, Math.abs(deg) - DEADZONE_DEG);
+      return sign * Math.tanh(mag / FALLOFF_DEG) * 1.6;
+    };
     const handler = (e) => {
       // gamma: left-right tilt (-90..90). beta: front-back tilt (-180..180).
       // First reading establishes a baseline so "flat" position sits at rest.
       const g = typeof e.gamma === "number" ? e.gamma : 0;
       const b = typeof e.beta === "number" ? e.beta : 0;
       if (motionBaselineBeta.current === null) motionBaselineBeta.current = b;
-      const normX = Math.max(-2, Math.min(2, g / 25));
-      const normY = Math.max(-2, Math.min(2, (b - motionBaselineBeta.current) / 25));
-      targetX.current = normX;
-      targetY.current = normY;
+      const rawX = easeTilt(g);
+      const rawY = easeTilt(b - motionBaselineBeta.current);
+      // Low-pass filter so target itself glides rather than jumps on every reading.
+      targetX.current += (rawX - targetX.current) * SMOOTH;
+      targetY.current += (rawY - targetY.current) * SMOOTH;
       lastMoveTime.current = Date.now();
     };
     window.addEventListener("deviceorientation", handler);
