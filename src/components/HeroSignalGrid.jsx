@@ -16,27 +16,38 @@ const LAYOUTS = {
   },
   square: {
     viewBox: "0 0 1000 1000",
-    bound: { left: 60, right: 940, top: 90, bottom: 910 },
+    // Inset bounds so large 120px glyphs (centered on each anchor) stay fully
+    // inside the framed box. The 120 CSS px font maps to roughly 340 viewBox
+    // units at a 358-wide container → ~170 unit half-glyph; top/bottom rows
+    // sit at y=150/850 so letter caps/descenders don't collide with the edge.
+    bound: { left: 150, right: 850, top: 150, bottom: 850 },
     midY: 500,
     connDashWidth: 1.0,
   },
 };
 
 function buildBase({ bound, midY }) {
+  // Evenly distribute interior letters between the left/right anchor columns,
+  // keeping F/D and A/N flush with bound.left / bound.right.
+  const span = bound.right - bound.left;
+  // FIELD = 5 letters → 4 gaps
+  const fieldXs = [0, 1, 2, 3, 4].map(i => bound.left + (span * i) / 4);
+  // ACTION = 6 letters → 5 gaps
+  const actionXs = [0, 1, 2, 3, 4, 5].map(i => bound.left + (span * i) / 5);
   return [
-    { ch:"F", x:bound.left,  y:bound.top },
-    { ch:"I", x:300,         y:bound.top },
-    { ch:"E", x:500,         y:bound.top },
-    { ch:"L", x:700,         y:bound.top },
-    { ch:"D", x:bound.right, y:bound.top },
+    { ch:"F", x:fieldXs[0],  y:bound.top },
+    { ch:"I", x:fieldXs[1],  y:bound.top },
+    { ch:"E", x:fieldXs[2],  y:bound.top },
+    { ch:"L", x:fieldXs[3],  y:bound.top },
+    { ch:"D", x:fieldXs[4],  y:bound.top },
     { ch:"O", x:bound.left,  y:midY },
     { ch:"F", x:bound.right, y:midY },
-    { ch:"A", x:bound.left,  y:bound.bottom },
-    { ch:"C", x:260,         y:bound.bottom },
-    { ch:"T", x:420,         y:bound.bottom },
-    { ch:"I", x:580,         y:bound.bottom },
-    { ch:"O", x:740,         y:bound.bottom },
-    { ch:"N", x:bound.right, y:bound.bottom },
+    { ch:"A", x:actionXs[0], y:bound.bottom },
+    { ch:"C", x:actionXs[1], y:bound.bottom },
+    { ch:"T", x:actionXs[2], y:bound.bottom },
+    { ch:"I", x:actionXs[3], y:bound.bottom },
+    { ch:"O", x:actionXs[4], y:bound.bottom },
+    { ch:"N", x:actionXs[5], y:bound.bottom },
   ];
 }
 
