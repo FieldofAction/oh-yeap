@@ -159,12 +159,21 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 @media(max-width:768px){
   .hero{padding:0 20px}
   .hero--strip,.hero--signal,.hero--dash{min-height:auto;padding-top:80px}
-  .hero--grid{padding:0 20px}
-  .hg-field{margin-top:24px}
-  .hg-glyph{font-size:14px}
+  .hero--grid{padding:0 16px}
+  .hg-field{margin-top:16px;aspect-ratio:3/2}
+  .hg-glyph{font-size:20px;font-weight:700}
   .hero-strip-row{flex-direction:column;align-items:flex-start;gap:12px}
-  .hero-dash-grid{grid-template-columns:repeat(2,1fr)}
+  /* Dashboard strip — compressed on mobile */
+  .hero-dash-grid{grid-template-columns:repeat(2,1fr);margin-bottom:16px}
+  .hero-dash-cell{padding:10px 0}
+  .hero-dash-cell:not(:first-child){padding-left:12px}
   .hero-dash-cell:nth-child(2n){border-right:none}
+  .hero-dash-label{font-size:8px;margin-bottom:3px}
+  .hero-dash-val{font-size:12px;line-height:1.3}
+}
+@media(max-width:480px){
+  /* Signal Grid letters a touch more present on small phones */
+  .hg-glyph{font-size:22px}
 }
 @media(max-width:768px){.nowbar{gap:4px}}
 .nowbar em{font-family:var(--display);color:var(--fm);font-size:10px}
