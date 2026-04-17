@@ -16,18 +16,21 @@ const LAYOUTS = {
     // Minimum inter-letter gap for collision prevention (viewBox units).
     // At 21px glyphs in a 1000-wide viewBox this generous spacing prevents any visible overlap.
     minKern: 60,
+    // Calm desktop spring — mouse input is already precise.
+    spring: { tension: 0.003, damping: 0.96, restThreshold: 0.001 },
   },
   square: {
     viewBox: "0 0 1000 1000",
-    // Bounds chosen so 6-letter ACTION row fits without glyph overlap:
-    // 800u span / 5 gaps = 160u center-to-center, which clears the widest
-    // adjacent pair (O-N at 80px font ≈ 156u combined half-widths) by ~4u.
-    bound: { left: 100, right: 900, top: 180, bottom: 820 },
+    // Equal 100u margin on all four sides of the framed box.
+    bound: { left: 100, right: 900, top: 100, bottom: 900 },
     midY: 500,
     connDashWidth: 1.0,
-    // Letters rest 160u apart; allow tilt to compress down to 140u
-    // (tasteful cushion) before collision locks further motion.
-    minKern: 140,
+    // Tighter kerning: compresses rest spacing to ~135u so letters feel
+    // grouped rather than spread; tilt can still push down to 115u.
+    minKern: 115,
+    // Spring tuning: more responsive with a small overshoot on mobile for
+    // a livelier "tilt" feel than the calm desktop defaults.
+    spring: { tension: 0.012, damping: 0.88, restThreshold: 0.002 },
   },
 };
 
@@ -211,9 +214,9 @@ export default function HeroSignalGrid() {
   useEffect(() => {
     if (!animated) return;
     let running = true;
-    const TENSION = 0.003;
-    const DAMPING = 0.96;
-    const REST_THRESHOLD = 0.001;
+    const TENSION = layout.spring.tension;
+    const DAMPING = layout.spring.damping;
+    const REST_THRESHOLD = layout.spring.restThreshold;
     const IDLE_MS = 2000;
     const DRIFT_AMP = 0.03;
     const DRIFT_PERIOD = 12000;
@@ -240,7 +243,7 @@ export default function HeroSignalGrid() {
     };
     rafRef.current = requestAnimationFrame(tick);
     return () => { running = false; cancelAnimationFrame(rafRef.current); };
-  }, [animated]);
+  }, [animated, layout]);
 
   useEffect(() => {
     if (!animated) return;
