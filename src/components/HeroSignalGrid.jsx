@@ -10,6 +10,8 @@ import React, { useRef, useState, useEffect } from "react";
 const LAYOUTS = {
   wide: {
     viewBox: "0 0 1000 400",
+    vbWidth: 1000,
+    vbHeight: 400,
     bound: { left: 60, right: 940, top: 55, bottom: 345 },
     midY: 200,
     connDashWidth: 0.4,
@@ -18,9 +20,31 @@ const LAYOUTS = {
     minKern: 60,
     // Calm desktop spring — mouse input is already precise.
     spring: { tension: 0.003, damping: 0.96, restThreshold: 0.001 },
+    // Radial attention field: clarity zone that follows the cursor. Values in viewBox units.
+    // Baseline matches the existing rest opacity; peak/dim are the focused/defocused ends.
+    attention: {
+      radius: 160,
+      letterBase: 0.22, letterPeak: 0.55, letterDim: 0.14,
+      connBase: 0.1, connPeak: 0.22, connDim: 0.06,
+    },
+    // Echo mid-layer: a dim copy of the letters driven by its own slower spring.
+    // Depth comes from temporal lag, not amplitude — at rest the echo sits almost
+    // on top of the foreground, so it reads as a soft shadow rather than doubled text.
+    // During motion the slower spring trails, giving transient parallax.
+    echo: {
+      amplitudeScale: 1.0,
+      spring: { tension: 0.0016, damping: 0.965, restThreshold: 0.0008 },
+      offsetX: -1.5, offsetY: -1.5,
+      letterOpacity: 0.045, connOpacity: 0.022,
+    },
+    // Background spotlight: a soft radial gradient centered on the cursor, tied to
+    // presence so it fades in/out with the field. Very low opacity — barely there.
+    background: { spotOpacity: 0.05, spotRadius: 520 },
   },
   square: {
     viewBox: "0 0 1000 1000",
+    vbWidth: 1000,
+    vbHeight: 1000,
     // Equal 100u margin on all four sides of the framed box.
     bound: { left: 100, right: 900, top: 100, bottom: 900 },
     midY: 500,
@@ -32,6 +56,22 @@ const LAYOUTS = {
     // letters to rest rather than snapping. Responsiveness comes from
     // the eased tilt input filter, not spring stiffness.
     spring: { tension: 0.006, damping: 0.93, restThreshold: 0.002 },
+    // Square viewBox is taller; a larger radius matches the denser letter field.
+    // Note: on touch devices cursor events never fire, so presence stays 0 and this is effectively off.
+    attention: {
+      radius: 280,
+      letterBase: 0.22, letterPeak: 0.55, letterDim: 0.14,
+      connBase: 0.1, connPeak: 0.22, connDim: 0.06,
+    },
+    // Echo tuned for touch: tilt drives pullX/Y with its own aggressive filtering,
+    // so the echo's spring needs to trail noticeably without feeling disconnected.
+    echo: {
+      amplitudeScale: 1.0,
+      spring: { tension: 0.0035, damping: 0.945, restThreshold: 0.0015 },
+      offsetX: -2, offsetY: -2,
+      letterOpacity: 0.045, connOpacity: 0.022,
+    },
+    background: { spotOpacity: 0.05, spotRadius: 600 },
   },
 };
 
@@ -114,12 +154,74 @@ function displaceAll(letters, pullX = 0, pullY = 0, bound, minKern = 60) {
   return result;
 }
 
-function FieldSVG({ pullX, pullY, layout }) {
+// Smoothstep proximity: returns 1 at the cursor center, 0 at/past the radius.
+// Shape is p*p*(3-2p) so the falloff has continuous derivative at both ends.
+function radialProximity(px, py, cx, cy, radius) {
+  const ddx = px - cx, dy = py - cy;
+  const dist = Math.sqrt(ddx * ddx + dy * dy);
+  const p = Math.max(0, 1 - dist / radius);
+  return p * p * (3 - 2 * p);
+}
+
+function FieldSVG({ pullX, pullY, echoX, echoY, cursorVX, cursorVY, cursorPresence, layout }) {
   const base = buildBase(layout);
   const letters = displaceAll(base, pullX, pullY, layout.bound, layout.minKern);
+  // Echo uses the same displacement math with its own lagged, reduced-amplitude target.
+  // The positional delta between letters and echoLetters is what reads as parallax.
+  const echoLetters = displaceAll(base, echoX, echoY, layout.bound, layout.minKern);
   const inset = 18;
+  const att = layout.attention;
+  const echoCfg = layout.echo;
+  const bgCfg = layout.background;
+  // When presence is ~0 the radial field contributes nothing; skip the per-element calc.
+  const fieldOn = cursorPresence > 0.001;
+  const letterOpacityFor = (x, y) => {
+    if (!fieldOn) return att.letterBase;
+    const prox = radialProximity(x, y, cursorVX, cursorVY, att.radius);
+    const focused = att.letterDim + prox * (att.letterPeak - att.letterDim);
+    return att.letterBase + (focused - att.letterBase) * cursorPresence;
+  };
+  const connOpacityFor = (mx, my) => {
+    if (!fieldOn) return att.connBase;
+    const prox = radialProximity(mx, my, cursorVX, cursorVY, att.radius);
+    const focused = att.connDim + prox * (att.connPeak - att.connDim);
+    return att.connBase + (focused - att.connBase) * cursorPresence;
+  };
+  // Background spotlight position: follow cursor when present, rest at viewBox center.
+  const spotCX = fieldOn ? cursorVX : layout.vbWidth / 2;
+  const spotCY = fieldOn ? cursorVY : layout.vbHeight / 2;
+  const spotAlpha = bgCfg.spotOpacity * cursorPresence;
+  // Unique gradient id per layout so wide/square don't collide if both are in the DOM briefly.
+  const spotId = `hg-spot-${layout.vbWidth}-${layout.vbHeight}`;
   return (
     <svg className="hg-svg" viewBox={layout.viewBox} preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <radialGradient id={spotId} cx={spotCX} cy={spotCY} r={bgCfg.spotRadius} gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="var(--fg)" stopOpacity={spotAlpha} />
+          <stop offset="100%" stopColor="var(--fg)" stopOpacity="0" />
+        </radialGradient>
+      </defs>
+      <rect x="0" y="0" width={layout.vbWidth} height={layout.vbHeight} fill={`url(#${spotId})`} pointerEvents="none" />
+      {/* Echo layer — dim, static diagonal offset, no per-letter radial modulation. */}
+      <g transform={`translate(${echoCfg.offsetX} ${echoCfg.offsetY})`} aria-hidden="true">
+        {CONNECTIONS.map(([a, b], i) => {
+          const la = echoLetters[a], lb = echoLetters[b];
+          const ddx = lb.dx - la.dx, dy = lb.y - la.y;
+          const dist = Math.sqrt(ddx*ddx + dy*dy);
+          if (dist < 1) return null;
+          const ux = ddx / dist, uy = dy / dist;
+          const x1 = la.dx + ux * inset, y1 = la.y + uy * inset;
+          const x2 = lb.dx - ux * inset, y2 = lb.y - uy * inset;
+          return (
+            <line key={`el${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
+              stroke="var(--fg)" strokeWidth={layout.connDashWidth} opacity={echoCfg.connOpacity} />
+          );
+        })}
+        {echoLetters.map((l, i) => (
+          <text key={`et${i}`} x={l.dx} y={l.y} textAnchor="middle" dominantBaseline="central" className="hg-glyph" opacity={echoCfg.letterOpacity}>{l.ch}</text>
+        ))}
+      </g>
+      {/* Foreground layer */}
       {CONNECTIONS.map(([a, b], i) => {
         const la = letters[a], lb = letters[b];
         const ddx = lb.dx - la.dx, dy = lb.y - la.y;
@@ -129,21 +231,42 @@ function FieldSVG({ pullX, pullY, layout }) {
         const x1 = la.dx + ux * inset, y1 = la.y + uy * inset;
         const x2 = lb.dx - ux * inset, y2 = lb.y - uy * inset;
         const shortened = Math.max(0, dist - inset * 2);
+        const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
         return (
           <line key={`l${i}`} x1={x1} y1={y1} x2={x2} y2={y2}
-            stroke="var(--fg)" strokeWidth={layout.connDashWidth} opacity="0.1"
+            stroke="var(--fg)" strokeWidth={layout.connDashWidth} opacity={connOpacityFor(mx, my)}
             strokeDasharray={shortened} strokeDashoffset="0" />
         );
       })}
       {letters.map((l, i) => (
-        <text key={`t${i}`} x={l.dx} y={l.y} textAnchor="middle" dominantBaseline="central" className="hg-glyph" opacity="0.22">{l.ch}</text>
+        <text key={`t${i}`} x={l.dx} y={l.y} textAnchor="middle" dominantBaseline="central" className="hg-glyph" opacity={letterOpacityFor(l.dx, l.y)}>{l.ch}</text>
       ))}
     </svg>
   );
 }
 
+// Compression → release: each letter starts pulled 45% toward its row center, then
+// glides out to its resting position in sync with the opacity fade. Lerp only in X
+// (rows are horizontal); vertical alignment reads as "the diagram" and stays stable.
+function compressedXFor(letters) {
+  const rows = {};
+  letters.forEach((l, i) => {
+    if (!rows[l.y]) rows[l.y] = [];
+    rows[l.y].push(i);
+  });
+  const out = new Array(letters.length);
+  Object.values(rows).forEach(indices => {
+    let minX = Infinity, maxX = -Infinity;
+    indices.forEach(i => { if (letters[i].x < minX) minX = letters[i].x; if (letters[i].x > maxX) maxX = letters[i].x; });
+    const center = (minX + maxX) / 2;
+    indices.forEach(i => { out[i] = letters[i].x + (center - letters[i].x) * 0.45; });
+  });
+  return out;
+}
+
 function FieldSVGAnimated({ onComplete, layout }) {
   const base = buildBase(layout);
+  const compressed = compressedXFor(base);
   useEffect(() => {
     const timer = setTimeout(onComplete, 3200);
     return () => clearTimeout(timer);
@@ -170,8 +293,9 @@ function FieldSVGAnimated({ onComplete, layout }) {
         );
       })}
       {base.map((l, i) => (
-        <text key={`t${i}`} x={l.x} y={l.y} textAnchor="middle" dominantBaseline="central" className="hg-glyph" opacity="0">
+        <text key={`t${i}`} x={compressed[i]} y={l.y} textAnchor="middle" dominantBaseline="central" className="hg-glyph" opacity="0">
           {l.ch}
+          <animate attributeName="x" from={compressed[i]} to={l.x} dur="1.1s" begin={`${DELAYS[i]}s`} fill="freeze" calcMode="spline" keySplines="0.22 1 0.36 1" keyTimes="0;1" />
           <animate attributeName="opacity" from="0" to="0.22" dur="1s" begin={`${DELAYS[i]}s`} fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1" keyTimes="0;1" />
         </text>
       ))}
@@ -183,6 +307,15 @@ export default function HeroSignalGrid() {
   const fieldRef = useRef(null);
   const [pullX, setPullX] = useState(0);
   const [pullY, setPullY] = useState(0);
+  // Cursor in viewBox coords + presence (0–1). Presence eases in when the cursor
+  // enters the field rect and out when it leaves, so the radial effect has no hard edge.
+  const [cursorVX, setCursorVX] = useState(500);
+  const [cursorVY, setCursorVY] = useState(200);
+  const [cursorPresence, setCursorPresence] = useState(0);
+  // Echo layer: lagged spring that tracks the same pull target at reduced amplitude.
+  // The gap between this and pullX/pullY is what creates the parallax/depth feel.
+  const [echoX, setEchoX] = useState(0);
+  const [echoY, setEchoY] = useState(0);
   const [animated, setAnimated] = useState(false);
   const [needsMotionPerm, setNeedsMotionPerm] = useState(false);
   const [motionActive, setMotionActive] = useState(false);
@@ -211,6 +344,19 @@ export default function HeroSignalGrid() {
   const lastMoveTime = useRef(Date.now());
   const motionBaselineBeta = useRef(null);
   const motionListenerRef = useRef(null);
+  // Radial attention targets (viewBox coords) and eased current values.
+  // Presence target = 1 while cursor is inside the field rect, 0 otherwise.
+  const cursorTargetX = useRef(500);
+  const cursorTargetY = useRef(200);
+  const cursorCurX = useRef(500);
+  const cursorCurY = useRef(200);
+  const presenceTarget = useRef(0);
+  const presenceCur = useRef(0);
+  // Echo spring state (current position + velocity per axis).
+  const echoCurX = useRef(0);
+  const echoCurY = useRef(0);
+  const echoVelX = useRef(0);
+  const echoVelY = useRef(0);
 
   useEffect(() => {
     if (!animated) return;
@@ -221,6 +367,10 @@ export default function HeroSignalGrid() {
     const IDLE_MS = 2000;
     const DRIFT_AMP = 0.03;
     const DRIFT_PERIOD = 12000;
+    // Low-pass ease for cursor position and presence. ~0.18 per frame at 60fps
+    // lands inside the spec's 120–200ms response window without overshoot.
+    const CURSOR_EASE = 0.18;
+    const PRESENCE_EASE = 0.12;
     const tick = () => {
       const now = Date.now();
       const idle = now - lastMoveTime.current > IDLE_MS;
@@ -240,6 +390,31 @@ export default function HeroSignalGrid() {
         setPullX(currentX.current);
         setPullY(currentY.current);
       }
+      // Echo spring: same target (scaled), deliberately slower than foreground.
+      const eCfg = layout.echo;
+      const eTarget = targetX.current + driftX;
+      const eTargetY = targetY.current + driftY;
+      const eForceX = (eTarget * eCfg.amplitudeScale - echoCurX.current) * eCfg.spring.tension;
+      const eForceY = (eTargetY * eCfg.amplitudeScale - echoCurY.current) * eCfg.spring.tension;
+      echoVelX.current = (echoVelX.current + eForceX) * eCfg.spring.damping;
+      echoVelY.current = (echoVelY.current + eForceY) * eCfg.spring.damping;
+      echoCurX.current += echoVelX.current;
+      echoCurY.current += echoVelY.current;
+      if (Math.abs(echoVelX.current) > eCfg.spring.restThreshold || Math.abs(echoVelY.current) > eCfg.spring.restThreshold) {
+        setEchoX(echoCurX.current);
+        setEchoY(echoCurY.current);
+      }
+      const prevCX = cursorCurX.current, prevCY = cursorCurY.current, prevP = presenceCur.current;
+      cursorCurX.current += (cursorTargetX.current - cursorCurX.current) * CURSOR_EASE;
+      cursorCurY.current += (cursorTargetY.current - cursorCurY.current) * CURSOR_EASE;
+      presenceCur.current += (presenceTarget.current - presenceCur.current) * PRESENCE_EASE;
+      if (Math.abs(cursorCurX.current - prevCX) > 0.1 || Math.abs(cursorCurY.current - prevCY) > 0.1) {
+        setCursorVX(cursorCurX.current);
+        setCursorVY(cursorCurY.current);
+      }
+      if (Math.abs(presenceCur.current - prevP) > 0.001) {
+        setCursorPresence(presenceCur.current);
+      }
       if (running) rafRef.current = requestAnimationFrame(tick);
     };
     rafRef.current = requestAnimationFrame(tick);
@@ -257,10 +432,23 @@ export default function HeroSignalGrid() {
       targetX.current = Math.max(-2, Math.min(2, (x - 0.5) * 2));
       targetY.current = Math.max(-2, Math.min(2, (y - 0.5) * 2));
       lastMoveTime.current = Date.now();
+      // Radial field: viewBox-space cursor position, always updated so the
+      // ease-target stays aligned even when the pointer is just outside the field.
+      cursorTargetX.current = x * layout.vbWidth;
+      cursorTargetY.current = y * layout.vbHeight;
+      // Presence tracks whether the pointer is inside the field rect.
+      presenceTarget.current = (x >= 0 && x <= 1 && y >= 0 && y <= 1) ? 1 : 0;
     };
+    const onLeave = () => { presenceTarget.current = 0; };
     window.addEventListener("mousemove", onMove);
-    return () => window.removeEventListener("mousemove", onMove);
-  }, [animated]);
+    window.addEventListener("mouseout", onLeave);
+    window.addEventListener("blur", onLeave);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseout", onLeave);
+      window.removeEventListener("blur", onLeave);
+    };
+  }, [animated, layout]);
 
   // Device-tilt interaction for touch devices.
   // Partial (A) + (C): ambient idle drift always runs; tilt adds input when available.
@@ -335,7 +523,7 @@ export default function HeroSignalGrid() {
     <div className="hg-field" ref={fieldRef}>
       {!animated
         ? <FieldSVGAnimated key={`anim-${layoutKey}`} layout={layout} onComplete={() => setAnimated(true)} />
-        : <FieldSVG key={`still-${layoutKey}`} layout={layout} pullX={pullX} pullY={pullY} />
+        : <FieldSVG key={`still-${layoutKey}`} layout={layout} pullX={pullX} pullY={pullY} echoX={echoX} echoY={echoY} cursorVX={cursorVX} cursorVY={cursorVY} cursorPresence={cursorPresence} />
       }
       {needsMotionPerm && !motionActive && (
         <button
