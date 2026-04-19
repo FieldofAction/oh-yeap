@@ -8,13 +8,19 @@ const abs = (s) => (!s ? s : /^(https?:|\/)/.test(s) ? s : `/${s}`);
 
 // Strip redundant prefixes and attribution phrases from legacy IG captions so
 // the stamp (No. NNN) and the explicit `by` attribution aren't duplicated.
-const cleanCaption = (raw) => {
+const cleanCaption = (raw, by) => {
   if (!raw) return "";
   let c = raw;
   c = c.replace(/[ðâ]/g, "");
   c = c.replace(/^Trash\s*0*\d+[A-Za-z]?\s*/i, "");
   c = c.replace(/(?:guest\s+contributor|editor[-\s]?at[-\s]?large)\s*:?\s*@?\w*/gi, "");
-  c = c.replace(/^[\s:\-—–·•]+/, "").replace(/[\s:\-—–·•]+$/, "").trim();
+  if (by) {
+    const handle = by.replace(/^@/, "");
+    c = c.replace(new RegExp(`@${handle}\\b`, "gi"), "");
+  }
+  c = c.replace(/\b(?:filmed\s+by|plucked\s+fr[o]?m|s\/o\s+to\s+my\s+connect|s\/o\s+to)\b/gi, "");
+  c = c.replace(/^[\s:\-—–·•🎥📸🎵]+/u, "").replace(/[\s:\-—–·•🎥📸🎵]+$/u, "").trim();
+  if (!/[a-z0-9]/i.test(c)) return "";
   return c;
 };
 const MONTHS = {
@@ -165,6 +171,85 @@ const MONTHS = {
 };
 const MONTH_KEYS = Object.keys(MONTHS);
 
+/* ── Reels (IG stories) — videos + stills captured alongside the archive ── */
+const REELS = [
+  {n:1,u:"media/posts/stories/201806/17922282466147338.mp4",d:"2018-06-08"},
+  {n:2,u:"media/posts/stories/201806/17922179653159622.mp4",d:"2018-06-08"},
+  {n:3,u:"media/posts/stories/201806/17936458183107139.mp4",d:"2018-06-08"},
+  {n:4,u:"media/posts/stories/201806/17877822610234151.mp4",d:"2018-06-08",by:"@skiphursh"},
+  {n:5,u:"media/posts/stories/201806/17951838943060676.mp4",d:"2018-06-14"},
+  {n:6,u:"media/posts/stories/201807/17885493469227432.mp4",d:"2018-07-05"},
+  {n:7,u:"media/posts/stories/201807/17931389173134058.mp4",d:"2018-07-08"},
+  {n:8,u:"media/posts/stories/201807/17939464282095809.mp4",d:"2018-07-12",c:"filmed by @mario1000words",by:"@mario1000words"},
+  {n:9,u:"media/posts/stories/201807/17945350861112925.mp4",d:"2018-07-16"},
+  {n:10,u:"media/posts/stories/201807/17920980286194024.mp4",d:"2018-07-21"},
+  {n:11,u:"media/posts/stories/201807/17941447840089072.mp4",d:"2018-07-21",c:"s/o to my connect @department_of_sanitation",by:"@department_of_sanitation"},
+  {n:12,u:"media/posts/stories/201807/17961877051045984.mp4",d:"2018-07-22"},
+  {n:13,u:"media/posts/stories/201807/17938394410187219.jpg",d:"2018-07-23"},
+  {n:14,u:"media/posts/stories/201807/17873730844256296.mp4",d:"2018-07-28"},
+  {n:15,u:"media/posts/stories/201807/17964700114061072.jpg",d:"2018-07-29"},
+  {n:16,u:"media/posts/stories/201808/17936083087180985.mp4",d:"2018-08-01"},
+  {n:17,u:"media/posts/stories/201808/17880285244247000.mp4",d:"2018-08-11"},
+  {n:18,u:"media/posts/stories/201808/17957785531101536.jpg",d:"2018-08-22",c:"@dailpicsofcoconuts i could never lose you. you were the only one who left a comment 🙏🏽 ru a robot?",by:"@dailpicsofcoconuts"},
+  {n:19,u:"media/posts/stories/201808/17972772412062503.mp4",d:"2018-08-22",c:"🎥 @draeger 🎵 #morrissey 'how soon is now'",by:"@draeger"},
+  {n:20,u:"media/posts/stories/201808/17941743601163775.mp4",d:"2018-08-27"},
+  {n:21,u:"media/posts/stories/201809/17880883084265748.mp4",d:"2018-09-14"},
+  {n:22,u:"media/posts/stories/201809/17851897384294854.mp4",d:"2018-09-24"},
+  {n:23,u:"media/posts/stories/201810/17977422268101749.mp4",d:"2018-10-24"},
+  {n:24,u:"media/posts/stories/201810/17883049819300296.mp4",d:"2018-10-24"},
+  {n:25,u:"media/posts/stories/201810/17901206476262268.jpg",d:"2018-10-27"},
+  {n:26,u:"media/posts/stories/201810/17997357040020488.jpg",d:"2018-10-30"},
+  {n:27,u:"media/posts/stories/201811/17923294795228494.jpg",d:"2018-11-02",c:"plucked frm @ignoredprayers",by:"@ignoredprayers"},
+  {n:28,u:"media/posts/stories/201811/17906520916256900.mp4",d:"2018-11-09"},
+  {n:29,u:"media/posts/stories/201812/17876710891288798.mp4",d:"2018-12-06"},
+  {n:30,u:"media/posts/stories/201812/17948222704218605.mp4",d:"2018-12-20"},
+  {n:31,u:"media/posts/stories/201901/17852793667327833.mp4",d:"2019-01-24"},
+  {n:32,u:"media/posts/stories/201902/18033591835025155.mp4",d:"2019-02-09"},
+  {n:33,u:"media/posts/stories/201902/18030313237025350.mp4",d:"2019-02-09"},
+  {n:34,u:"media/posts/stories/201902/17971366411202935.mp4",d:"2019-02-09"},
+  {n:35,u:"media/posts/stories/201904/18054791860004810.mp4",d:"2019-04-04",by:"@draeger"},
+  {n:36,u:"media/posts/stories/201906/17958394600281431.mp4",d:"2019-06-24"},
+  {n:37,u:"media/posts/stories/201906/17843788843498475.mp4",d:"2019-06-24",by:"@beechertrouble"},
+  {n:38,u:"media/posts/stories/201906/18077419297009294.mp4",d:"2019-06-24"},
+  {n:39,u:"media/posts/stories/201906/18045988474180442.mp4",d:"2019-06-24",by:"@andrew_herzog"},
+  {n:40,u:"media/posts/stories/201906/18001024522232202.mp4",d:"2019-06-27"},
+  {n:41,u:"media/posts/stories/201906/18079208371063831.jpg",d:"2019-06-29"},
+  {n:42,u:"media/posts/stories/201906/18046424488183788.mp4",d:"2019-06-29"},
+  {n:43,u:"media/posts/stories/201906/17889016831362151.mp4",d:"2019-06-29"},
+  {n:44,u:"media/posts/stories/201906/17984059474250135.mp4",d:"2019-06-29"},
+  {n:45,u:"media/posts/stories/201906/18042386791164233.jpg",d:"2019-06-30"},
+  {n:46,u:"media/posts/stories/201907/18057703012124141.mp4",d:"2019-07-01"},
+  {n:47,u:"media/posts/stories/201907/18078809467023702.mp4",d:"2019-07-07"},
+  {n:48,u:"media/posts/stories/201907/18064446016110178.mp4",d:"2019-07-07"},
+  {n:49,u:"media/posts/stories/201907/17985480496256314.jpg",d:"2019-07-07"},
+  {n:50,u:"media/posts/stories/201907/17844737668512600.mp4",d:"2019-07-07"},
+  {n:51,u:"media/posts/stories/201907/18039428395174895.mp4",d:"2019-07-07"},
+  {n:52,u:"media/posts/stories/201907/18004453459228875.mp4",d:"2019-07-08"},
+  {n:53,u:"media/posts/stories/201907/17870416273416505.mp4",d:"2019-07-09"},
+  {n:54,u:"media/posts/stories/201907/17879701954388489.mp4",d:"2019-07-10"},
+  {n:55,u:"media/posts/stories/201907/18053541679184132.mp4",d:"2019-07-10"},
+  {n:56,u:"media/posts/stories/201907/18059952697123402.mp4",d:"2019-07-10"},
+  {n:57,u:"media/posts/stories/201907/17872907668409838.mp4",d:"2019-07-10"},
+  {n:58,u:"media/posts/stories/201907/18060327862124355.jpg",d:"2019-07-10"},
+  {n:59,u:"media/posts/stories/201907/18005813356233308.mp4",d:"2019-07-11"},
+  {n:60,u:"media/posts/stories/201907/17982818434271882.mp4",d:"2019-07-23",by:"@skiphursh"},
+  {n:61,u:"media/posts/stories/201907/18020437225207929.mp4",d:"2019-07-23"},
+  {n:62,u:"media/posts/stories/201907/17845541200537952.mp4",d:"2019-07-31"},
+  {n:63,u:"media/posts/stories/201907/17858527975475352.mp4",d:"2019-07-31"},
+  {n:64,u:"media/posts/stories/201908/18074704876106184.mp4",d:"2019-08-16"},
+  {n:65,u:"media/posts/stories/201908/18064466290186749.mp4",d:"2019-08-16"},
+  {n:66,u:"media/posts/stories/201911/17845127725753687.jpg",d:"2019-11-07"},
+];
+
+const MONTH_LABEL = ["","January","February","March","April","May","June","July","August","September","October","November","December"];
+const REEL_MONTHS = REELS.reduce((acc, r) => {
+  const [y, m] = r.d.split("-");
+  const key = `${y}-${m}`;
+  if (!acc[key]) acc[key] = { label: `${MONTH_LABEL[parseInt(m)]} ${y}`, reels: [] };
+  acc[key].reels.push(r);
+  return acc;
+}, {});
+
 /* ── pick a few representative images for narrative photo clusters ── */
 const CLUSTER_A = [
   "media/posts/201804/17939689354009499.jpg",
@@ -217,7 +302,7 @@ function Lightbox({ post, imageIndex, onClose, onNext, onPrev, onImageNav }) {
     return () => window.removeEventListener("keydown", handleKey);
   }, [onClose, onNext, onPrev, imageIndex, onImageNav, post.i.length]);
   const num = String(post.n).padStart(3, "0");
-  const caption = cleanCaption(post.c);
+  const caption = cleanCaption(post.c, post.by);
   return createPortal(
     <div onClick={onClose} className="pb-lightbox">
       <button onClick={e=>{e.stopPropagation();onPrev();}} className="pb-lb-arrow pb-lb-prev">&#8249;</button>
@@ -249,6 +334,91 @@ function Lightbox({ post, imageIndex, onClose, onNext, onPrev, onImageNav }) {
         )}
       </figure>
       <button onClick={e=>{e.stopPropagation();onNext();}} className="pb-lb-arrow pb-lb-next">&#8250;</button>
+      <button onClick={onClose} className="pb-lb-close">&#10005;</button>
+    </div>,
+    document.body
+  );
+}
+
+/* ── Reel card — vertical 9:16 thumb ── */
+function ReelCard({ reel, onClick }) {
+  const src = abs(reel.u);
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
+  const isVideo = src.endsWith(".mp4");
+  return (
+    <div onClick={onClick} className="pb-reel-card">
+      <div className="pb-reel-thumb">
+        {error ? (
+          <div className="pb-card-err">—</div>
+        ) : isVideo ? (
+          <video
+            src={src}
+            muted loop playsInline preload="metadata"
+            onLoadedData={()=>setLoaded(true)}
+            onError={()=>setError(true)}
+            onMouseEnter={e=>e.target.play()}
+            onMouseLeave={e=>{e.target.pause();e.target.currentTime=0;}}
+            className="pb-reel-media"
+            style={{ opacity:loaded?1:0.4 }}
+          />
+        ) : (
+          <img
+            src={src} alt="" loading="lazy"
+            onLoad={()=>setLoaded(true)}
+            onError={()=>setError(true)}
+            className="pb-reel-media"
+            style={{ opacity:loaded?1:0.4 }}
+          />
+        )}
+        {isVideo && <div className="pb-reel-play">▶</div>}
+        {reel.by && <div className="pb-card-by">{reel.by}</div>}
+      </div>
+    </div>
+  );
+}
+
+/* ── Reel lightbox — slide mount with 9:16 portrait window ── */
+function ReelLightbox({ reels, index, onClose, onNav }) {
+  const r = reels[index];
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowRight") onNav(1);
+      if (e.key === "ArrowLeft") onNav(-1);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [onClose, onNav]);
+  if (!r) return null;
+  const src = abs(r.u);
+  const isVideo = src.endsWith(".mp4");
+  const num = String(r.n).padStart(3, "0");
+  const caption = cleanCaption(r.c, r.by);
+  return createPortal(
+    <div onClick={onClose} className="pb-lightbox">
+      <button onClick={e=>{e.stopPropagation();onNav(-1);}} className="pb-lb-arrow pb-lb-prev">&#8249;</button>
+      <figure className="pb-lb-slide pb-lb-slide-reel" onClick={e=>e.stopPropagation()}>
+        <div className="pb-lb-slide-top">
+          <span className="pb-lb-stamp">NEST</span>
+          <span className="pb-lb-stamp">Reel {num}</span>
+          <span className="pb-lb-stamp">{r.d}</span>
+        </div>
+        <div className="pb-lb-slide-window pb-lb-reel-window">
+          {isVideo ? (
+            <video src={src} controls autoPlay loop playsInline className="pb-lb-window-media" />
+          ) : (
+            <img src={src} alt="" className="pb-lb-window-media" />
+          )}
+        </div>
+        {(caption || r.by) && (
+          <figcaption className="pb-lb-slide-caption">
+            {caption && <p className="pb-lb-caption">{caption}</p>}
+            {r.by && <p className="pb-lb-by">Guest contributor · {r.by}</p>}
+          </figcaption>
+        )}
+      </figure>
+      <button onClick={e=>{e.stopPropagation();onNav(1);}} className="pb-lb-arrow pb-lb-next">&#8250;</button>
       <button onClick={onClose} className="pb-lb-close">&#10005;</button>
     </div>,
     document.body
@@ -361,11 +531,21 @@ function getFilterOptions(dim) {
 }
 
 export default function PatioBeach() {
-  const [view, setView] = useState("narrative"); // "narrative" or "archive"
+  const [view, setView] = useState("narrative"); // "narrative" | "archive" | "reels"
   const [filters, setFilters] = useState({ month: "all", type: "all", contributor: "all", season: "all", color: "all", material: "all", condition: "all" });
   const [expandedDim, setExpandedDim] = useState(null);
   const [lightboxPost, setLightboxPost] = useState(null);
   const [lightboxImageIdx, setLightboxImageIdx] = useState(0);
+  const [reelIdx, setReelIdx] = useState(null);
+  const handleReelNav = useCallback((dir) => {
+    setReelIdx(prev => {
+      if (prev === null) return prev;
+      const next = prev + dir;
+      if (next < 0) return REELS.length - 1;
+      if (next >= REELS.length) return 0;
+      return next;
+    });
+  }, []);
 
   const allPosts = ALL_POSTS_FLAT;
 
@@ -413,10 +593,25 @@ export default function PatioBeach() {
         <div className="pb-view-toggle">
           <button className={`pb-view-btn${view==="narrative"?" on":""}`} onClick={()=>setView("narrative")}>About</button>
           <button className={`pb-view-btn${view==="archive"?" on":""}`} onClick={()=>setView("archive")}>Archive</button>
+          <button className={`pb-view-btn${view==="reels"?" on":""}`} onClick={()=>setView("reels")}>Reels</button>
         </div>
       </div>
 
-      {view === "narrative" ? (
+      {view === "reels" ? (
+        <div className="pb-reels">
+          <p className="pb-reels-intro">Ephemeral companions to the archive — short clips and stills captured alongside the walks. {REELS.length} in total.</p>
+          {Object.entries(REEL_MONTHS).map(([monthKey, monthData]) => (
+            <div key={monthKey} className="pb-month-group">
+              <div className="pb-month-label">{monthData.label}<span>{monthData.reels.length}</span></div>
+              <div className="pb-reel-grid">
+                {monthData.reels.map(r => (
+                  <ReelCard key={r.n} reel={r} onClick={()=>setReelIdx(REELS.findIndex(x=>x.n===r.n))} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : view === "narrative" ? (
         <div className="pb-narrative">
           {/* 1. Opening — The Premise */}
           <NarrativeSection>
@@ -594,6 +789,7 @@ export default function PatioBeach() {
       )}
 
       {lightboxPost && <Lightbox post={lightboxPost} imageIndex={lightboxImageIdx} onClose={()=>setLightboxPost(null)} onNext={handleNext} onPrev={handlePrev} onImageNav={idx=>setLightboxImageIdx(idx)} />}
+      {reelIdx !== null && <ReelLightbox reels={REELS} index={reelIdx} onClose={()=>setReelIdx(null)} onNav={handleReelNav} />}
     </div>
   );
 }
