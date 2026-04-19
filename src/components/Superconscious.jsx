@@ -17,6 +17,7 @@ const DRAWINGS = Array.from({ length: 115 }, (_, i) => {
 function Lightbox({ drawings, index, onClose, onNav }) {
   const d = drawings[index];
   if (!d) return null;
+  const num = String(d.id).padStart(3, "0");
 
   return createPortal(
     <div onClick={onClose} className="sc-lightbox">
@@ -25,21 +26,32 @@ function Lightbox({ drawings, index, onClose, onNav }) {
         className="sc-lb-arrow sc-lb-prev"
       >&#8249;</button>
 
-      <img
-        src={d.full}
-        alt={`Drawing ${d.id}`}
-        onClick={(e) => e.stopPropagation()}
-        style={{ maxHeight:"85vh", maxWidth:"min(80vw, calc(100vw - 140px))", objectFit:"contain", clipPath:"inset(6px)", cursor:"default" }}
-      />
+      <figure className="sc-lb-page" onClick={(e) => e.stopPropagation()}>
+        <div className="sc-lb-image-wrap">
+          <img
+            src={d.full}
+            alt={`Superconscious No. ${num}`}
+            className="sc-lb-image"
+          />
+        </div>
+        <figcaption className="sc-lb-caption">
+          <div className="sc-lb-cap-title">
+            <em>Superconscious No. {num}</em>, 2019–2025
+          </div>
+          <div className="sc-lb-cap-mat">
+            Monoline white paint on archival black paper
+          </div>
+          <div className="sc-lb-cap-dim">
+            9 × 11 in.  •  22.9 × 27.9 cm
+          </div>
+        </figcaption>
+        <div className="sc-lb-pagenum">{d.id}</div>
+      </figure>
 
       <button
         onClick={(e) => { e.stopPropagation(); onNav(1); }}
         className="sc-lb-arrow sc-lb-next"
       >&#8249;</button>
-
-      <div className="sc-lb-counter" onClick={(e) => e.stopPropagation()}>
-        {index + 1} / {drawings.length}
-      </div>
 
       <button
         onClick={onClose}
