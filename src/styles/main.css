@@ -1024,7 +1024,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .pb-route-place-hood{font-size:10px;font-weight:400;color:var(--ff)}
 .pb-route-meta{font-size:9px;font-weight:400;letter-spacing:0.04em;color:var(--ff);padding-top:12px;border-top:1px solid var(--bd)}
 .pb-narr-figure{margin:32px 0;overflow:hidden}
-.pb-narr-figure-img{width:100%;height:auto;display:block;border-radius:4px}
+.pb-narr-figure-img{width:100%;height:auto;display:block;border-radius:4px;filter:saturate(0.58) contrast(1.12) brightness(0.97) sepia(0.08) hue-rotate(-4deg)}
 .pb-narr-figure-cap{font-size:10px;color:var(--ff);margin-top:10px;font-style:italic;letter-spacing:0.02em}
 .pb-narr-cta{display:flex;align-items:center;gap:20px;padding-top:32px}
 .pb-narr-cta-count{font-size:11px;color:var(--ff);letter-spacing:0.02em}
