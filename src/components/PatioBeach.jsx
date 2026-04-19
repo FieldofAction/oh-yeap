@@ -5,6 +5,18 @@ import { createPortal } from "react-dom";
 // resolve from the site root regardless of the current SPA route. Safe to
 // call on already-absolute or http(s) URLs — they pass through untouched.
 const abs = (s) => (!s ? s : /^(https?:|\/)/.test(s) ? s : `/${s}`);
+
+// Strip redundant prefixes and attribution phrases from legacy IG captions so
+// the stamp (No. NNN) and the explicit `by` attribution aren't duplicated.
+const cleanCaption = (raw) => {
+  if (!raw) return "";
+  let c = raw;
+  c = c.replace(/[ðâ]/g, "");
+  c = c.replace(/^Trash\s*0*\d+[A-Za-z]?\s*/i, "");
+  c = c.replace(/(?:guest\s+contributor|editor[-\s]?at[-\s]?large)\s*:?\s*@?\w*/gi, "");
+  c = c.replace(/^[\s:\-—–·•]+/, "").replace(/[\s:\-—–·•]+$/, "").trim();
+  return c;
+};
 const MONTHS = {
   "2018-04": {
     label: "April 2018",
@@ -204,26 +216,38 @@ function Lightbox({ post, imageIndex, onClose, onNext, onPrev, onImageNav }) {
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
   }, [onClose, onNext, onPrev, imageIndex, onImageNav, post.i.length]);
+  const num = String(post.n).padStart(3, "0");
+  const caption = cleanCaption(post.c);
   return createPortal(
     <div onClick={onClose} className="pb-lightbox">
       <button onClick={e=>{e.stopPropagation();onPrev();}} className="pb-lb-arrow pb-lb-prev">&#8249;</button>
-      {isVideo ? (
-        <video src={currentSrc} controls autoPlay loop muted playsInline onClick={e=>e.stopPropagation()} className="pb-lb-media" />
-      ) : (
-        <img src={currentSrc} alt="" onClick={e=>e.stopPropagation()} className="pb-lb-media" />
-      )}
-      {post.i.length > 1 && (
-        <div onClick={e=>e.stopPropagation()} className="pb-lb-dots">
-          {post.i.map((_,idx)=>(
-            <button key={idx} onClick={()=>onImageNav(idx)} className={`pb-lb-dot${idx===imageIndex?" on":""}`} />
-          ))}
+      <figure className="pb-lb-slide" onClick={e=>e.stopPropagation()}>
+        <div className="pb-lb-slide-top">
+          <span className="pb-lb-stamp">NEST</span>
+          <span className="pb-lb-stamp">No. {num}</span>
+          <span className="pb-lb-stamp">{post.d}</span>
         </div>
-      )}
-      <div onClick={e=>e.stopPropagation()} className="pb-lb-info">
-        <p className="pb-lb-caption">{post.c}</p>
-        {post.by && <p className="pb-lb-by">{post.by}</p>}
-        <p className="pb-lb-date">{post.d}</p>
-      </div>
+        <div className="pb-lb-slide-window">
+          {isVideo ? (
+            <video src={currentSrc} controls autoPlay loop muted playsInline className="pb-lb-window-media" />
+          ) : (
+            <img src={currentSrc} alt="" className="pb-lb-window-media" />
+          )}
+        </div>
+        {post.i.length > 1 && (
+          <div className="pb-lb-dots">
+            {post.i.map((_,idx)=>(
+              <button key={idx} onClick={()=>onImageNav(idx)} className={`pb-lb-dot${idx===imageIndex?" on":""}`} />
+            ))}
+          </div>
+        )}
+        {(caption || post.by) && (
+          <figcaption className="pb-lb-slide-caption">
+            {caption && <p className="pb-lb-caption">{caption}</p>}
+            {post.by && <p className="pb-lb-by">Guest contributor · {post.by}</p>}
+          </figcaption>
+        )}
+      </figure>
       <button onClick={e=>{e.stopPropagation();onNext();}} className="pb-lb-arrow pb-lb-next">&#8250;</button>
       <button onClick={onClose} className="pb-lb-close">&#10005;</button>
     </div>,
