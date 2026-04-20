@@ -22,13 +22,13 @@ function Lightbox({ drawings, index, onClose, onNav }) {
   const swipe = useSwipeNav({ onNext: () => onNav(1), onPrev: () => onNav(-1) });
 
   return createPortal(
-    <div onClick={onClose} className="sc-lightbox" {...swipe}>
+    <div onClick={onClose} className="sc-lightbox" {...swipe.bind}>
       <button
         onClick={(e) => { e.stopPropagation(); onNav(-1); }}
         className="sc-lb-arrow sc-lb-prev"
       >&#8249;</button>
 
-      <figure className="sc-lb-page" onClick={(e) => e.stopPropagation()}>
+      <figure className="sc-lb-page" onClick={(e) => e.stopPropagation()} style={swipe.style}>
         <div className="sc-lb-image-wrap">
           <img
             src={d.full}

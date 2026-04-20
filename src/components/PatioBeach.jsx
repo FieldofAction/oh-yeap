@@ -290,7 +290,7 @@ function ImageCard({ src: rawSrc, index, onClick, isMulti, by, caption }) {
   );
 }
 
-function Lightbox({ post, imageIndex, onClose, onNext, onPrev, onImageNav }) {
+function Lightbox({ post, imageIndex, onClose, onNext, onPrev, onImageNav, canNext, canPrev }) {
   const currentSrc = abs(post.i[imageIndex] || post.i[0]);
   const isVideo = currentSrc.endsWith(".mp4");
   useEffect(() => {
@@ -304,14 +304,18 @@ function Lightbox({ post, imageIndex, onClose, onNext, onPrev, onImageNav }) {
   }, [onClose, onNext, onPrev, imageIndex, onImageNav, post.i.length]);
   const num = String(post.n).padStart(3, "0");
   const caption = cleanCaption(post.c, post.by);
+  const hasNextImg = post.i.length > 1 && imageIndex < post.i.length - 1;
+  const hasPrevImg = post.i.length > 1 && imageIndex > 0;
   const swipe = useSwipeNav({
-    onNext: () => { if (post.i.length > 1 && imageIndex < post.i.length - 1) onImageNav(imageIndex + 1); else onNext(); },
-    onPrev: () => { if (post.i.length > 1 && imageIndex > 0) onImageNav(imageIndex - 1); else onPrev(); },
+    onNext: () => { if (hasNextImg) onImageNav(imageIndex + 1); else onNext(); },
+    onPrev: () => { if (hasPrevImg) onImageNav(imageIndex - 1); else onPrev(); },
+    canNext: hasNextImg || canNext,
+    canPrev: hasPrevImg || canPrev,
   });
   return createPortal(
-    <div onClick={onClose} className="pb-lightbox" {...swipe}>
+    <div onClick={onClose} className="pb-lightbox" {...swipe.bind}>
       <button onClick={e=>{e.stopPropagation();onPrev();}} className="pb-lb-arrow pb-lb-prev">&#8249;</button>
-      <figure className="pb-lb-slide" onClick={e=>e.stopPropagation()}>
+      <figure className="pb-lb-slide" onClick={e=>e.stopPropagation()} style={swipe.style}>
         <div className="pb-lb-slide-top">
           <span className="pb-lb-stamp">NEST</span>
           <span className="pb-lb-stamp">No. {num}</span>
@@ -402,9 +406,9 @@ function ReelLightbox({ reels, index, onClose, onNav }) {
   const caption = cleanCaption(r.c, r.by);
   const swipe = useSwipeNav({ onNext: () => onNav(1), onPrev: () => onNav(-1) });
   return createPortal(
-    <div onClick={onClose} className="pb-lightbox" {...swipe}>
+    <div onClick={onClose} className="pb-lightbox" {...swipe.bind}>
       <button onClick={e=>{e.stopPropagation();onNav(-1);}} className="pb-lb-arrow pb-lb-prev">&#8249;</button>
-      <figure className="pb-lb-slide pb-lb-slide-reel" onClick={e=>e.stopPropagation()}>
+      <figure className="pb-lb-slide pb-lb-slide-reel" onClick={e=>e.stopPropagation()} style={swipe.style}>
         <div className="pb-lb-slide-top">
           <span className="pb-lb-stamp">NEST</span>
           <span className="pb-lb-stamp">Reel {num}</span>
@@ -794,7 +798,7 @@ export default function PatioBeach() {
         </div>
       )}
 
-      {lightboxPost && <Lightbox post={lightboxPost} imageIndex={lightboxImageIdx} onClose={()=>setLightboxPost(null)} onNext={handleNext} onPrev={handlePrev} onImageNav={idx=>setLightboxImageIdx(idx)} />}
+      {lightboxPost && <Lightbox post={lightboxPost} imageIndex={lightboxImageIdx} onClose={()=>setLightboxPost(null)} onNext={handleNext} onPrev={handlePrev} onImageNav={idx=>setLightboxImageIdx(idx)} canNext={currentIndex < filteredPosts.length - 1} canPrev={currentIndex > 0} />}
       {reelIdx !== null && <ReelLightbox reels={REELS} index={reelIdx} onClose={()=>setReelIdx(null)} onNav={handleReelNav} />}
     </div>
   );
