@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { createPortal } from "react-dom";
+import useSwipeNav from "../hooks/useSwipeNav";
 
 /* ── Image manifest ─────────────────────────────────────────── */
 const DRAWINGS = Array.from({ length: 115 }, (_, i) => {
@@ -18,9 +19,10 @@ function Lightbox({ drawings, index, onClose, onNav }) {
   const d = drawings[index];
   if (!d) return null;
   const num = String(d.id).padStart(3, "0");
+  const swipe = useSwipeNav({ onNext: () => onNav(1), onPrev: () => onNav(-1) });
 
   return createPortal(
-    <div onClick={onClose} className="sc-lightbox">
+    <div onClick={onClose} className="sc-lightbox" {...swipe}>
       <button
         onClick={(e) => { e.stopPropagation(); onNav(-1); }}
         className="sc-lb-arrow sc-lb-prev"

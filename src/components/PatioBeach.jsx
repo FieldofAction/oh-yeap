@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
+import useSwipeNav from "../hooks/useSwipeNav";
 
 // Normalize bare "media/..." paths in data to absolute "/media/..." so they
 // resolve from the site root regardless of the current SPA route. Safe to
@@ -303,8 +304,12 @@ function Lightbox({ post, imageIndex, onClose, onNext, onPrev, onImageNav }) {
   }, [onClose, onNext, onPrev, imageIndex, onImageNav, post.i.length]);
   const num = String(post.n).padStart(3, "0");
   const caption = cleanCaption(post.c, post.by);
+  const swipe = useSwipeNav({
+    onNext: () => { if (post.i.length > 1 && imageIndex < post.i.length - 1) onImageNav(imageIndex + 1); else onNext(); },
+    onPrev: () => { if (post.i.length > 1 && imageIndex > 0) onImageNav(imageIndex - 1); else onPrev(); },
+  });
   return createPortal(
-    <div onClick={onClose} className="pb-lightbox">
+    <div onClick={onClose} className="pb-lightbox" {...swipe}>
       <button onClick={e=>{e.stopPropagation();onPrev();}} className="pb-lb-arrow pb-lb-prev">&#8249;</button>
       <figure className="pb-lb-slide" onClick={e=>e.stopPropagation()}>
         <div className="pb-lb-slide-top">
@@ -395,8 +400,9 @@ function ReelLightbox({ reels, index, onClose, onNav }) {
   const isVideo = src.endsWith(".mp4");
   const num = String(r.n).padStart(3, "0");
   const caption = cleanCaption(r.c, r.by);
+  const swipe = useSwipeNav({ onNext: () => onNav(1), onPrev: () => onNav(-1) });
   return createPortal(
-    <div onClick={onClose} className="pb-lightbox">
+    <div onClick={onClose} className="pb-lightbox" {...swipe}>
       <button onClick={e=>{e.stopPropagation();onNav(-1);}} className="pb-lb-arrow pb-lb-prev">&#8249;</button>
       <figure className="pb-lb-slide pb-lb-slide-reel" onClick={e=>e.stopPropagation()}>
         <div className="pb-lb-slide-top">
