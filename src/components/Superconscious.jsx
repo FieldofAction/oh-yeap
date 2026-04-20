@@ -121,12 +121,15 @@ export default function Superconscious() {
             className="sc-grid-item"
             onClick={() => openLightbox(i)}
           >
-            <img
-              src={d.thumb}
-              alt={`Drawing ${d.id}`}
-              loading="lazy"
-              className="sc-grid-img"
-            />
+            <div className="sc-grid-thumb">
+              <img
+                src={d.thumb}
+                alt={`Drawing ${d.id}`}
+                loading="lazy"
+                className="sc-grid-img"
+              />
+            </div>
+            <div className="sc-grid-cap">No. {String(d.id).padStart(3, "0")}</div>
           </div>
         ))}
       </section>
