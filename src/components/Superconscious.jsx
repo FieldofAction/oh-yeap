@@ -127,6 +127,7 @@ export default function Superconscious() {
               loading="lazy"
               className="sc-grid-img"
             />
+            <div className="sc-grid-cap">No. {String(d.id).padStart(3, "0")}</div>
           </div>
         ))}
       </section>
