@@ -30,6 +30,36 @@ import SketchbookDetail from "./components/details/Sketchbook";
 import SpecSheetDetail from "./components/details/SpecSheet";
 import TheoryDetail from "./components/details/TheoryDetail";
 
+// URL hash ↔ view routing. Keeps the app a single-page SPA but lets
+// people share / bookmark specific sections.
+const VIEW_TO_HASH = {
+  patiobeach: "patio-beach",
+  superconscious: "share-location",
+  canon: "relational-design",
+  studio: "studio",
+  about: "about",
+  colophon: "colophon",
+  models: "mental-models",
+  patterns: "pattern-language",
+};
+const HASH_TO_VIEW = Object.fromEntries(
+  Object.entries(VIEW_TO_HASH).map(([view, hash]) => [hash, view])
+);
+const viewFromHash = () => {
+  const hash = typeof window !== "undefined"
+    ? window.location.hash.replace(/^#\/?/, "")
+    : "";
+  return HASH_TO_VIEW[hash] || "public";
+};
+
+const WORK_VIEWS = new Set(["public", "superconscious", "patiobeach"]);
+const CANON_VIEWS = new Set(["canon"]);
+const INFO_VIEWS = new Set(["about", "colophon"]);
+const themeForView = (v) =>
+  WORK_VIEWS.has(v) ? "threshold" :
+  CANON_VIEWS.has(v) ? "canon" :
+  INFO_VIEWS.has(v) ? "info" : "light";
+
 function cv(t) {
   return {
     "--bg": t.bg, "--fg": t.fg, "--fm": t.fm, "--ff": t.ff,
@@ -39,8 +69,8 @@ function cv(t) {
 }
 
 export default function App() {
-  const [view, setView] = useState("public");
-  const [themeKey, setThemeKey] = useState("threshold");
+  const [view, setView] = useState(() => viewFromHash());
+  const [themeKey, setThemeKey] = useState(() => themeForView(viewFromHash()));
   const [content, setContent] = useState(SEED);
   const [filter, setFilter] = useState("All");
   const [relFilter, setRelFilter] = useState(null);
@@ -64,23 +94,40 @@ export default function App() {
   const toggleLens = useCallback(() => setLens(p => !p), []);
   const togglePatternLens = useCallback(() => setPatternLens(p => !p), []);
 
-  // View-to-theme mapping: Work = dark, Canon = deep slate, Studio = light, Info = medium grey
-  const WORK_VIEWS = useMemo(() => new Set(["public", "superconscious", "patiobeach"]), []);
-  const CANON_VIEWS = useMemo(() => new Set(["canon"]), []);
-  const INFO_VIEWS = useMemo(() => new Set(["about", "colophon"]), []);
-
-  // Page transition — fade out, swap, fade in, auto-switch theme
+  // Page transition — fade out, swap, fade in, auto-switch theme, sync URL hash.
   const navigateTo = useCallback((target) => {
     if (target === view && !transitioning) return;
-    const nextTheme = WORK_VIEWS.has(target) ? "threshold" : CANON_VIEWS.has(target) ? "canon" : INFO_VIEWS.has(target) ? "info" : "light";
     setTransitioning(true);
-    setThemeKey(nextTheme);
+    setThemeKey(themeForView(target));
     setTimeout(() => {
       setView(target);
       window.scrollTo(0, 0);
       setTransitioning(false);
+      const hash = VIEW_TO_HASH[target] || "";
+      const desired = hash ? `#${hash}` : "";
+      if (window.location.hash !== desired) {
+        const url = hash ? desired : window.location.pathname + window.location.search;
+        window.history.pushState(null, "", url);
+      }
     }, 200);
-  }, [view, transitioning, WORK_VIEWS, CANON_VIEWS, INFO_VIEWS]);
+  }, [view, transitioning]);
+
+  // Back/forward + manual hash edits sync the view without re-pushing history.
+  useEffect(() => {
+    const handler = () => {
+      const target = viewFromHash();
+      if (target === view) return;
+      setThemeKey(themeForView(target));
+      setView(target);
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener("popstate", handler);
+    window.addEventListener("hashchange", handler);
+    return () => {
+      window.removeEventListener("popstate", handler);
+      window.removeEventListener("hashchange", handler);
+    };
+  }, [view]);
 
   // Scroll-reveal observer — watches .reveal elements, adds .revealed on intersect
   useEffect(() => {
