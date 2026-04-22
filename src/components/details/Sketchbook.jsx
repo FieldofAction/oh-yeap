@@ -49,6 +49,25 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
                     </div>
                   );
                 }
+                if (frag.type === "refusals") {
+                  return (
+                    <div key={i} className="sk-refusals">
+                      {frag.title && <div className="sk-refusals-label">{frag.title}</div>}
+                      <ul className="sk-refusals-list">
+                        {frag.items.map((item, idx) => (
+                          <li key={idx} className="sk-refusal">
+                            {item.context && <div className="sk-refusal-context">{item.context}</div>}
+                            <div className="sk-refusal-primary">
+                              <span className="sk-refusal-mark">×</span>
+                              <span className="sk-refusal-text">{item.text}</span>
+                            </div>
+                            {item.becomes && <div className="sk-refusal-becomes">{item.becomes}</div>}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  );
+                }
                 return null;
               })}
             </div>

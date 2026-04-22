@@ -824,6 +824,18 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .sk-frag-note-date{font-size:10px;font-weight:500;letter-spacing:.01em;color:var(--ff);margin-bottom:6px}
 .sk-frag-note-text{font-size:14px;font-weight:400;color:var(--fm);line-height:1.7}
 .sk-frag-note::before{content:'';position:absolute;top:16px;left:-6px;width:10px;height:10px;background:var(--cbg);border-left:1px solid var(--bd);border-bottom:1px solid var(--bd);transform:rotate(45deg)}
+/* Refusals list — structured evidence that the condition could refuse things */
+.sk-refusals{margin:32px 0 48px;padding:24px 28px;background:color-mix(in srgb, var(--fg) 3%, transparent);border-left:2px solid var(--bd)}
+.sk-refusals-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--fm);margin-bottom:20px}
+.sk-refusals-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:18px}
+.sk-refusal{padding-bottom:16px;border-bottom:1px dotted var(--bd)}
+.sk-refusal:last-child{border-bottom:none;padding-bottom:0}
+.sk-refusal-context{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--ff);margin-bottom:6px}
+.sk-refusal-primary{display:flex;align-items:baseline;gap:10px;font-size:15px;color:var(--fg);font-weight:500;line-height:1.4}
+.sk-refusal-mark{font-family:var(--mono);font-size:14px;color:var(--ff);flex-shrink:0}
+.sk-refusal-text{letter-spacing:-.005em}
+.sk-refusal-becomes{font-size:13px;color:var(--fm);line-height:1.55;margin-top:6px;padding-left:24px;font-weight:300}
+
 .sk-oq{margin-bottom:64px;padding-top:40px;border-top:1px solid var(--bd)}
 .sk-oq-label{font-size:13px;font-weight:600;letter-spacing:.01em;color:var(--fm);margin-bottom:16px}
 .sk-oq-item{font-size:14px;font-weight:400;color:var(--fm);line-height:1.7;padding:10px 0;border-bottom:1px solid var(--bd);position:relative;padding-left:20px}
