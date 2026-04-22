@@ -78,7 +78,7 @@ export default function HotelNest() {
 
       {/* 4. The Poster */}
       <section className="hn-product dc dc4">
-        <SectionHeader label="01">The Poster</SectionHeader>
+        <SectionHeader label="01">Poster</SectionHeader>
 
         <div className="hn-stack">
           <ImageSlot label="Detail · typography corner" aspect="3 / 2" path="/images/nest/poster-detail-1.jpg" />
@@ -118,7 +118,7 @@ export default function HotelNest() {
 
       {/* 5. The Tee */}
       <section className="hn-product dc dc5">
-        <SectionHeader label="02">The Tee</SectionHeader>
+        <SectionHeader label="02">Tee</SectionHeader>
 
         <div className="hn-stack">
           <ImageSlot label="Flat lay · front" aspect="4 / 5" path="/images/nest/tee-front.jpg" />
