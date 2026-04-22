@@ -599,7 +599,7 @@ export default function PatioBeach() {
       <div className="pb-header">
         <div className="pb-header-label">Archive</div>
         <h1 className="pb-title">Nest</h1>
-        <p className="pb-subtitle">486 posts, 556 images, 2018–2021</p>
+        <p className="pb-subtitle">A photographic archive. 2016 – 2021. 486 sites, mostly Brooklyn and Manhattan.</p>
         <div className="pb-view-toggle">
           <button className={`pb-view-btn${view==="narrative"?" on":""}`} onClick={()=>setView("narrative")}>About</button>
           <button className={`pb-view-btn${view==="archive"?" on":""}`} onClick={()=>setView("archive")}>Archive</button>
@@ -627,17 +627,17 @@ export default function PatioBeach() {
           <NarrativeSection>
             <p className="pb-narr-lead">Discarded things have meaning.</p>
             <p className="pb-narr-body">This project began as a simple act of noticing.</p>
-            <p className="pb-narr-body">For a few years I walked my son Mathis to preschool along the same route each morning. Park Slope to Gowanus in Brooklyn. Along the way I'd whip out my iPhone or my Fujifilm X100 and photograph objects that had been left behind: broken furniture, lost toys, crushed packaging, forgotten tools, and empty alcohol containers. Honestly, it felt like a wild party happened after dark. But every night. Chaos!</p>
-            <p className="pb-narr-body">One of the first images I took was of me in a thrown-out mirror. Funny looking back on it now. But it snowballed from there. At first it felt like a small curiosity or a way to sharpen my eye. Over time I realized the documenting was fun. New York is a dirty city. Lots of garbage and all types. Large and small. People throw away anything. The quiet life of things the city had decided it no longer needed. And perhaps the things we decide are the same about ourselves.</p>
-            <p className="pb-narr-body">I was not the first person to discover the hidden material of refuse. I'm reminded of Justin Gignac's <a href="https://www.nycgarbage.com/" target="_blank" rel="noopener noreferrer">Garbage for Sale</a>, Young Blanks' legendary <a href="https://www.youngblanks.com/periodical-table-of-trash" target="_blank" rel="noopener noreferrer">Periodical Table of Trash</a>, and the <a href="https://www.noahpurifoy.com/" target="_blank" rel="noopener noreferrer">Noah Purifoy Outdoor Desert Art Museum</a> in Joshua Tree, a 10-acre open-air gallery featuring over 100 large-scale assemblage sculptures created from found desert, household, and industrial junk. Each person brings their own perspective. It hits everyone differently.</p>
+            <p className="pb-narr-body">Starting in late 2016, I walked my son Mathis to preschool along the same route each morning, Park Slope to Gowanus in Brooklyn. Along the way I'd whip out my iPhone or my Fujifilm X100 and photograph objects that had been left behind: broken furniture, lost toys, crushed packaging, forgotten tools, empty alcohol containers. Honestly, it felt like a wild party happened after dark. Every night. Chaos.</p>
+            <p className="pb-narr-body">One of the first images I took was of me in a thrown-out mirror. Funny looking back on it now. But it snowballed from there. At first it felt like a small curiosity, a way to sharpen my eye. Over time I realized the documenting was fun. New York is a dirty city. Lots of garbage and all types. Large and small. People throw away anything. The quiet life of things the city had decided it no longer needed. And perhaps the things we decide are the same about ourselves.</p>
+            <p className="pb-narr-body">I was not the first person to discover the hidden material of refuse. I'm reminded of Justin Gignac's <a href="https://www.nycgarbage.com/" target="_blank" rel="noopener noreferrer">Garbage for Sale</a>, Young Blanks' legendary <a href="https://www.youngblanks.com/periodical-table-of-trash" target="_blank" rel="noopener noreferrer">Periodical Table of Trash</a>, and the <a href="https://www.noahpurifoy.com/" target="_blank" rel="noopener noreferrer">Noah Purifoy Outdoor Desert Art Museum</a> in Joshua Tree, a ten-acre open-air gallery of over 100 large-scale assemblage sculptures built from found desert, household, and industrial junk. Each person brings their own perspective. It hits everyone differently.</p>
           </NarrativeSection>
 
           {/* Photo cluster */}
           <PhotoCluster images={CLUSTER_A} />
 
           {/* 2. The Route */}
-          <NarrativeSection label="The Route">
-            <p className="pb-narr-body">The first several photos were taken along a short daily walk. Way before I knew it was anything. As time passed I branched out.</p>
+          <NarrativeSection label="Route">
+            <p className="pb-narr-body">The first photographs were taken along a short daily walk, well before I knew it was anything.</p>
             <p className="pb-narr-route">Park Slope → Gowanus</p>
             <p className="pb-narr-body pb-narr-quiet">A distance of less than two miles.</p>
 
@@ -663,20 +663,29 @@ export default function PatioBeach() {
 
             <p className="pb-narr-body">What began as a routine gradually became a ritual. Walking the same streets every day created a kind of visual awareness. Small details surfaced. Patterns emerged. The ordinary started to feel like signals.</p>
             <p className="pb-narr-body">This route became the only space in my life at the time where I created purely from curiosity. No brief. No client. No outcome required.</p>
+            <p className="pb-narr-body">As time passed, I branched out. I started photographing wherever I traveled, mostly still Brooklyn and Manhattan, sometimes farther. Word got around. Friends started sending me their own sightings. The archive became partly authored by other people who had learned to see the same way.</p>
           </NarrativeSection>
 
           {/* 3. Gowanus */}
           <NarrativeSection label="Gowanus">
-            <p className="pb-narr-body">Many of the early photographs were taken near the Gowanus Canal. One of the most polluted waterways in America.</p>
-            <p className="pb-narr-body">For over a century the canal absorbed the industrial byproducts of New York: chemicals, waste, residue from manufacturing and shipping. Today it is a designated Superfund site, a place where the past remains visible in the environment.</p>
+            <p className="pb-narr-body">Many of the early photographs were taken near the Gowanus Canal, one of the most polluted waterways in America.</p>
+            <p className="pb-narr-body">For over a century, the canal absorbed the industrial byproducts of New York: chemicals, waste, residue from manufacturing and shipping. Today it's a designated Superfund site, a place where the past remains visible in the environment.</p>
             <p className="pb-narr-body">Walking along its edges each day, the objects I found began to feel less random. They felt like artifacts of the city's shadow. Things removed from sight so the surface of life could appear clean and orderly.</p>
           </NarrativeSection>
 
           {/* Photo cluster */}
           <PhotoCluster images={CLUSTER_B} />
 
+          {/* Name */}
+          <NarrativeSection label="Name">
+            <p className="pb-narr-body">The work began on my personal Instagram. By late 2017 it had taken over a feed meant for other things, so I gave it its own account: @transhny, trash + NY. A working title. Descriptive, almost a hashtag.</p>
+            <p className="pb-narr-body">That name held for about six months. By April 2018 I understood the project differently than I had when I named it, and I renamed the account @patiobeach. It wasn't a rebrand. It was an admission that the project was not about garbage.</p>
+            <p className="pb-narr-body">A patio is the threshold between a home and what's outside it. A beach is the threshold between solid ground and what moves underneath everything. Both are places of rest and observation, defined by what they're next to. Patio Beach names the zone where private life meets the unconscious and leaves evidence on the ground between them.</p>
+            <p className="pb-narr-body">The curb, it turns out, is a tideline. Things wash up there. Sanitation arrives like the tide and carries them away.</p>
+          </NarrativeSection>
+
           {/* 4. The Shadow */}
-          <NarrativeSection label="The Shadow">
+          <NarrativeSection label="Shadow">
             <p className="pb-narr-body">At some point I realized the photographs were not only about the city. They were also about me.</p>
             <p className="pb-narr-body">It wasn't until I lost interest in the project that the real tension surfaced. I had so many photos and wanted to make something of them, maybe a book. But the photos had lost their appeal. They weren't beautiful in any conventional sense. I struggled with how or what to do with them. And that was the point. The photos were ugly, and in those moments I was able to see and connect with my uglier sides.</p>
             <p className="pb-narr-body">The discarded objects reflected something internal. The parts of ourselves we quietly set aside because they no longer match the image we want to project. Broken things. Unfinished things. Things that once mattered but were left behind.</p>
@@ -684,12 +693,12 @@ export default function PatioBeach() {
           </NarrativeSection>
 
           {/* 5. The Bowerbird */}
-          <NarrativeSection label="The Bowerbird">
+          <NarrativeSection label="Bowerbird">
             <div className="pb-narr-figure">
               <img src="/media/nest/bowerbird.jpg" alt="Satin bowerbird" className="pb-narr-figure-img" />
               <div className="pb-narr-figure-cap">Satin bowerbird (<em>Ptilonorhynchus violaceus</em>)</div>
             </div>
-            <p className="pb-narr-body">Around this same time I learned about the bowerbird. A small bird known for building elaborate nests from objects it collects from the forest floor. Flowers, shells, pieces of glass, bits of plastic. Anything colorful or unusual. The bird arranges these fragments carefully, creating a structure meant to attract a mate. Beauty assembled from what others overlook.</p>
+            <p className="pb-narr-body">Around this same time I learned about the bowerbird, a small bird known for building elaborate nests from objects it collects from the forest floor. Flowers, shells, pieces of glass, bits of plastic. Anything colorful or unusual. The male bird arranges these fragments carefully, creating a structure meant to attract a mate. Beauty assembled from what others overlook, and shown in order to be seen.</p>
             <p className="pb-narr-body">I couldn't help but see the connection. Without realizing it, I had been doing something similar. Collecting the discarded fragments of the city. Building a visual nest.</p>
           </NarrativeSection>
 
@@ -703,15 +712,15 @@ export default function PatioBeach() {
           {/* Contributors */}
           <ContributorsSection />
 
-          {/* 7. Nest */}
-          <NarrativeSection label="Nest">
-            <p className="pb-narr-body">Over time more than 500 photographs accumulated. Each one a fragment. A small record of something discarded. Together they form something else entirely. A nest built from the overlooked pieces of the city. Not as an archive of trash, but as a meditation on attention. The beauty, tension, and meaning hidden inside what we usually walk past. <strong>Because what we discard, ignore, or hide often tells the most honest story about who we are.</strong></p>
+          {/* 7. Closing */}
+          <NarrativeSection>
+            <p className="pb-narr-body">Patio Beach ran from late 2016 through October 2021. 486 sites. The feed remains, dormant, at @patiobeach.</p>
           </NarrativeSection>
 
           {/* CTA to archive */}
           <div className="pb-narr-cta">
             <button className="pb-view-btn on" onClick={()=>{setView("archive");window.scrollTo(0,0);}}>View the Archive</button>
-            <span className="pb-narr-cta-count">486 posts · 556 images · 2018–2021</span>
+            <span className="pb-narr-cta-count">486 sites · 2016 – 2021</span>
           </div>
         </div>
       ) : (
