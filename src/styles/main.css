@@ -882,6 +882,32 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 @media(max-width:768px){.sp-source-title{min-width:auto;font-weight:600;letter-spacing:-0.01em}}
 .sp-source-why{font-size:11px;font-weight:300;color:var(--fm);line-height:1.5}
 
+/* Framing block — left-bordered editorial moment (artifact opening + glue) */
+.sp-framing{border-left:2px solid var(--bd);padding:20px 0 20px 24px;margin-bottom:48px;max-width:680px}
+.sp-framing-label{font-size:13px;font-weight:600;letter-spacing:.01em;color:var(--fm);margin-bottom:10px}
+.sp-framing-body{font-family:var(--display);font-size:17px;font-weight:400;line-height:1.6;color:var(--fm)}
+
+/* Glue / Derivation Chain variant of framing */
+.sp-glue{margin-top:16px}
+.sp-glue-chain{font-family:var(--mono);font-size:12px;line-height:1.6;color:var(--fg);letter-spacing:.01em;padding:20px 0;margin:16px 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);white-space:pre-wrap;word-break:break-word}
+.sp-glue-after{font-size:14px;margin-top:4px}
+
+/* Numbered components — utilitarian spec feel, generous spacing */
+.sp-components{display:flex;flex-direction:column}
+.sp-components-item{display:grid;grid-template-columns:40px 1fr;gap:20px;padding:28px 0;border-top:1px solid var(--bd)}
+.sp-components-item:first-child{border-top:none;padding-top:12px}
+.sp-components-num{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--ff);padding-top:3px}
+.sp-components-label{font-size:15px;font-weight:600;letter-spacing:-0.005em;color:var(--fg);margin-bottom:8px}
+.sp-components-desc{font-size:14px;font-weight:300;color:var(--fm);line-height:1.65;max-width:620px}
+@media(max-width:768px){.sp-components-item{grid-template-columns:28px 1fr;gap:14px;padding:22px 0}}
+
+/* Open Questions on artifact pages — mirrors sk-oq treatment */
+.sp-oq{margin-bottom:64px;padding-top:40px;border-top:1px solid var(--bd)}
+.sp-oq .sp-section-label{padding-bottom:0;border-bottom:none;margin-bottom:16px}
+.sp-oq-item{font-size:14px;font-weight:400;color:var(--fm);line-height:1.7;padding:10px 0;border-bottom:1px solid var(--bd);position:relative;padding-left:20px}
+.sp-oq-item::before{content:'?';position:absolute;left:0;top:10px;font-family:var(--display);font-size:14px;color:var(--ff)}
+.sp-oq-item:last-child{border-bottom:none}
+
 /* ── Theory Detail ── */
 .th-overlay{position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;animation:rdOpen .3s ease both}
 .th-overlay.closing{animation:rdClose .3s ease both}

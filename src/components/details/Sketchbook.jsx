@@ -14,10 +14,10 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
           {item.status === "wip" ? "In Progress" : item.status}
         </div>
         <h1 className="sk-title dc dc1">{item.title}</h1>
-        <div className="sk-sub dc dc2">{item.subtitle} · {item.year}</div>
+        <div className="sk-sub dc dc2">{item.subtitle ? `${item.subtitle} · ${item.year}` : item.year}</div>
         {item.sketch?.hypothesis && (
           <div className="sk-hyp dc dc3">
-            <div className="sk-hyp-label">Hypothesis</div>
+            <div className="sk-hyp-label">{item.sketch.hypothesisLabel || "Hypothesis"}</div>
             <div className="sk-hyp-text">{item.sketch.hypothesis}</div>
           </div>
         )}
@@ -79,7 +79,7 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
             {item.sketch.connections.map((c, i) => {
               const linked = allItems.find(a => a.title === c.title);
               return (
-                <div key={i} className="sk-conn-item" onClick={() => { if(linked && (linked.body || linked.caseStudy || linked.sketch)){onOpen(linked);window.scrollTo(0,0)} }}>
+                <div key={i} className="sk-conn-item" onClick={() => { if(linked && (linked.body || linked.caseStudy || linked.sketch || linked.spec || linked.theory)){onOpen(linked);window.scrollTo(0,0)} }}>
                   <div className="sk-conn-title">{c.title} →</div>
                   <div className="sk-conn-why">{c.why}</div>
                 </div>

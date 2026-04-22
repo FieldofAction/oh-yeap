@@ -276,7 +276,7 @@ export const PATTERNS = [
   { id:"pl-169", num:169, title:"Terraced Slope", scale:"buildings", group:"gardens", desc:"Shape sloping ground into terraces that create flat, usable areas at multiple levels.", appliedIn:[], notes:"" },
   { id:"pl-170", num:170, title:"Fruit Trees", scale:"buildings", group:"gardens", desc:"Plant fruit trees to provide food, shade, and the rhythm of seasonal change.", appliedIn:[], notes:"" },
   { id:"pl-171", num:171, title:"Tree Places", scale:"buildings", group:"gardens", desc:"Position trees to create canopied gathering spots where people naturally pause.", appliedIn:[], notes:"" },
-  { id:"pl-172", num:172, title:"Garden Growing Wild", scale:"buildings", group:"gardens", desc:"Allow parts of the garden to grow freely in a natural, untamed state.", appliedIn:["GSL"], notes:"" },
+  { id:"pl-172", num:172, title:"Garden Growing Wild", scale:"buildings", group:"gardens", desc:"Allow parts of the garden to grow freely in a natural, untamed state.", appliedIn:["Condition-First"], notes:"" },
   { id:"pl-173", num:173, title:"Garden Wall", scale:"buildings", group:"gardens", desc:"Enclose the garden with a wall to create a protected, room-like outdoor space.", appliedIn:[], notes:"" },
   { id:"pl-174", num:174, title:"Trellised Walk", scale:"buildings", group:"gardens", desc:"Create shaded garden paths with overhead trellises and climbing plants.", appliedIn:[], notes:"" },
   { id:"pl-175", num:175, title:"Greenhouse", scale:"buildings", group:"gardens", desc:"Include a glass-enclosed growing space connected to the building for year-round cultivation.", appliedIn:[], notes:"" },
@@ -317,10 +317,10 @@ export const PATTERNS = [
   { id:"pl-204", num:204, title:"Secret Place", scale:"buildings", group:"thick-walls", desc:"Include hidden, private recesses where both adults and children can withdraw from the world.", appliedIn:["Safety Trap","Loud Goodbye"], notes:"" },
 
   // ── Construction: Emergent Structure ──
-  { id:"pl-205", num:205, title:"Structure Follows Social Spaces", scale:"construction", group:"emergent-structure", desc:"Let the structural system emerge from the social spaces it serves rather than imposing a grid.", appliedIn:["Relational Design","Google Cloud","GSL","Architecture of Coherence","Relational Field Model"], notes:"" },
+  { id:"pl-205", num:205, title:"Structure Follows Social Spaces", scale:"construction", group:"emergent-structure", desc:"Let the structural system emerge from the social spaces it serves rather than imposing a grid.", appliedIn:["Relational Design","Google Cloud","Condition-First","Architecture of Coherence","Relational Field Model"], notes:"" },
   { id:"pl-206", num:206, title:"Efficient Structure", scale:"construction", group:"emergent-structure", desc:"Distribute structural loads as efficiently as possible through the building's frame.", appliedIn:["Leveling Game"], notes:"" },
   { id:"pl-207", num:207, title:"Good Materials", scale:"construction", group:"emergent-structure", desc:"Choose materials that age gracefully, connect to the senses, and improve over time.", appliedIn:["Diagram Packs","Compression Sequence"], notes:"" },
-  { id:"pl-208", num:208, title:"Gradual Stiffening", scale:"construction", group:"emergent-structure", desc:"Build structure iteratively, allowing it to stiffen and harden gradually as the form takes shape.", appliedIn:["Beyond Productivity","Relational Design","GSL"], notes:"" },
+  { id:"pl-208", num:208, title:"Gradual Stiffening", scale:"construction", group:"emergent-structure", desc:"Build structure iteratively, allowing it to stiffen and harden gradually as the form takes shape.", appliedIn:["Beyond Productivity","Relational Design","Condition-First"], notes:"" },
 
   // ── Construction: Structural Layout ──
   { id:"pl-209", num:209, title:"Roof Layout", scale:"construction", group:"structural-layout", desc:"Derive the roof plan directly from the plan of the rooms below so the roof expresses the building's life.", appliedIn:[], notes:"" },

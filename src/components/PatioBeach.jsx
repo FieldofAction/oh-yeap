@@ -609,7 +609,7 @@ export default function PatioBeach() {
 
       {view === "reels" ? (
         <div className="pb-reels">
-          <p className="pb-reels-intro">Ephemeral companions to the archive — short clips and stills captured alongside the walks. {REELS.length} in total.</p>
+          <p className="pb-reels-intro">Ephemeral companions to the archive. Short clips and stills captured alongside the walks. {REELS.length} in total.</p>
           {Object.entries(REEL_MONTHS).map(([monthKey, monthData]) => (
             <div key={monthKey} className="pb-month-group">
               <div className="pb-month-label">{monthData.label}<span>{monthData.reels.length}</span></div>

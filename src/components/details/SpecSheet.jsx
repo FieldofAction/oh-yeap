@@ -4,7 +4,7 @@ import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
 
 export default function SpecSheetDetail({ item, allItems, closing, onClose, onOpen, fg, lens, patternLens }) {
   const artVi = useCallback((i) => VIS[(Math.abs(item.title.charCodeAt(0)) + i) % VIS.length](fg), [item.title, fg]);
-  const typeLabel = {diagram:"Diagram",prompt:"Prompt",framework:"Framework",model:"Model"}[item.artifactType] || "Artifact";
+  const typeLabel = {diagram:"Diagram",prompt:"Prompt",framework:"Framework",model:"Model",method:"Method"}[item.artifactType] || "Artifact";
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback((text) => {
@@ -32,7 +32,47 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           </div>
         </div>
 
-        {/* Executable prompt block — copy-paste ready */}
+        {/* Optional framing block — left-bordered, used to frame the artifact */}
+        {item.spec?.framing && (
+          <div className="sp-framing dc dc2">
+            <div className="sp-framing-label">{item.spec.framing.label}</div>
+            <div className="sp-framing-body">{item.spec.framing.body}</div>
+          </div>
+        )}
+
+        {/* Numbered components — used for method/template artifacts */}
+        {item.spec?.components?.length > 0 && (
+          <div className="sp-section dc dc3">
+            <div className="sp-section-label">Components</div>
+            <div className="sp-components">
+              {item.spec.components.map((c, i) => (
+                <div key={i} className="sp-components-item">
+                  <div className="sp-components-num">{String(c.num ?? i + 1).padStart(2, "0")}</div>
+                  <div className="sp-components-body">
+                    <div className="sp-components-label">{c.label}</div>
+                    <div className="sp-components-desc">{c.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Glue block — second framed moment, carries the derivation chain */}
+        {item.spec?.glue && (
+          <div className="sp-framing sp-glue dc dc4">
+            <div className="sp-framing-label">{item.spec.glue.label}</div>
+            <div className="sp-framing-body">{item.spec.glue.body}</div>
+            {item.spec.glue.chain && (
+              <div className="sp-glue-chain">{item.spec.glue.chain}</div>
+            )}
+            {item.spec.glue.after && (
+              <div className="sp-framing-body sp-glue-after">{item.spec.glue.after}</div>
+            )}
+          </div>
+        )}
+
+        {/* Executable prompt block, copy-paste ready */}
         {item.spec?.prompt && (
           <div className="sp-section dc dc3">
             <div className="sp-prompt-header">
@@ -83,13 +123,21 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         )}
         {item.spec?.usage && (
           <div className="sp-section dc dc6">
-            <div className="sp-section-label">Usage</div>
+            <div className="sp-section-label">{item.spec.components ? "How to use it" : "Usage"}</div>
             <div className="sp-usage">{item.spec.usage}</div>
           </div>
         )}
+        {item.spec?.openQuestions?.length > 0 && (
+          <div className="sp-oq dc dc7">
+            <div className="sp-section-label">Open Questions</div>
+            {item.spec.openQuestions.map((q, i) => (
+              <div key={i} className="sp-oq-item">{q}</div>
+            ))}
+          </div>
+        )}
         {item.spec?.source?.length > 0 && (
-          <div className="sp-section dc dc7">
-            <div className="sp-section-label">Source</div>
+          <div className="sp-section dc dc8">
+            <div className="sp-section-label">{item.spec.components ? "Connections" : "Source"}</div>
             {item.spec.source.map((s, i) => {
               const linked = allItems.find(a => a.title === s.title);
               return (
