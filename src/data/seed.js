@@ -814,10 +814,10 @@ export const SEED = [
       // TODO: drop the cropped Mega Lager structural grid image at
       // /media/exploration/condition-first/mega-lager-grid.jpg and add
       // src:"/media/exploration/condition-first/mega-lager-grid.jpg" below.
-      {type:"visual",caption:"Grid became named behaviors, not layout preferences. Fields shown from a brand-system instance."},
-      {type:"note",date:"Feb 2026",content:"Tested the posture on a brand system: named the condition precisely (\"Rendezvous, the charged interval before connection\"), then let it govern downstream decisions. Color stopped being a choice and became a derivation of the brew's character. Grid stopped being a preference and became a set of named behaviors. Identity marks stopped being symbols and became functional roles in a relational field. Each decision traced back to the named condition. When the condition was precise, the decisions felt inevitable. When I tried to work from components first, the system went slack. The precision of the naming was load-bearing, not the components themselves. (Full system → Practice / Soul Mega)"},
-      {type:"note",date:"Jan–Feb 2025",content:"Earlier instrument-building, before the method had a name. What the system refused to produce turned out to be more revealing than what it produced. Constraints as design decisions."},
-      {type:"note",date:"Ongoing",content:"Vague conditions produce vague design. Precise conditions make decisions feel inevitable. The precision of the naming appears to do most of the work, more than the apparatus, more than the technique."},
+      {type:"visual",caption:"Grid shown as named behaviors. Fields from a brand-system instance."},
+      {type:"note",date:"Feb 2026",content:"Tested the posture on a brand system: named the condition precisely (\"Rendezvous, the charged interval before connection\"), then let it govern downstream decisions. Color became a derivation of the brew's character. Grid became a set of named behaviors. Identity marks became functional roles in a relational field. Each decision traced back to the named condition. When the condition was precise, the decisions felt inevitable. The precision of the naming was load-bearing. (Full system → Practice / Soul Mega)"},
+      {type:"note",date:"Jan–Feb 2025",content:"Earlier instrument-building, before the method had a name. What the system refused to produce was the most revealing signal. Constraints as design decisions."},
+      {type:"note",date:"Ongoing",content:"Precise conditions make decisions feel inevitable. The precision of the naming appears to do most of the work."},
     ],
     openQuestions:[
       "What's the minimum set of conditions that produces coherent output?",
@@ -878,6 +878,31 @@ export const SEED = [
     ],
     usage:"Use when diagnosing why a system isn't producing coherence, or when designing a new system from conditions rather than components. Map agents first, then conditions, then signals. Coherence zones appear (or don't) as a result: they can't be placed directly. The model is diagnostic, not prescriptive.",
     source:[{title:"Relational Design Canon",why:"The model is the spatial expression of the theory"},{title:"Condition-First",why:"the applied posture this model describes"}],
+  }},
+  { id:uid(), section:"artifacts", title:"Condition Set", subtitle:"A portable format for condition-first design", desc:"A portable format for condition-first design. A decision instrument that names the condition a system is holding and provides the chain for deriving from it.", year:"2026", status:"v0.1", tags:["Template","Method","v0.1"], relations:["Condition-First"], hasVisual:false, artifactType:"method", version:"0.1", spec:{
+    framing:{label:"What it is",body:"A Condition Set is the minimum portable payload that lets someone design from a named condition. Not brand guidelines. Not strategy. The instrument that produces the work, extracted so a collaborator, or a future self, can make coherent decisions without rederiving the posture from scratch."},
+    components:[
+      {num:1,label:"The Named Condition",desc:"A single precise sentence the whole system derives from. The test: can it refuse things? If the condition cannot reject a proposed move, it is too vague. The naming has to carry enough definition to make rejection possible."},
+      {num:2,label:"The Refusal Criteria",desc:"What the condition explicitly is not. This is how the condition does editorial work later. Refusal criteria make the question \"does this hold the condition?\" answerable in the field."},
+      {num:3,label:"The Diagnostic Questions",desc:"Four or five tests the condition generates. Any proposed move has to pass them. The count is calibrated to stay inside a narrow working range."},
+      {num:4,label:"The Behavioral Translations",desc:"Named functions the condition produces. Each one written as a role. What it does in the field, stated plainly. This is the layer where condition becomes design vocabulary."},
+      {num:5,label:"The Derivation Rules",desc:"The sentences that explain why each decision exists. Every decision in the finished work should have a traceable derivation sentence. A decision without its sentence is ornament."},
+      {num:6,label:"The Whimsy Allowance",desc:"The single sanctioned break in the discipline. Named explicitly. One allowance keeps the system alive inside its rigor, deployed with restraint."},
+    ],
+    glue:{label:"The Derivation Chain",body:"What makes a Condition Set portable is the chain connecting the six components. Every operational decision has to trace back to the named condition through a nameable path:",chain:"Named Condition → Diagnostic Question → Behavioral Translation → Derivation Rule → Decision",after:"Any finished piece should trace back up the chain. A decision without a traceable path does not belong in the system."},
+    usage:"Start by naming the condition. Resist the pull to start with components. The precision of the naming is load-bearing. Write the refusal criteria next; they test whether the naming is sharp enough. Diagnostic questions, behavioral translations, and derivation rules follow in that order. The whimsy allowance comes last. The set is ready to hand off only when you can trace every example decision back through the chain.",
+    openQuestions:[
+      "What happens when the condition itself is wrong or insufficient?",
+      "How many instances does a Condition Set need before the template should harden into a form?",
+      "Does the whimsy allowance belong inside the set or outside it?",
+      "Can a Condition Set be authored collaboratively, or does it require a single namer?",
+      "What is the minimum viable Condition Set? Can any of the six components be dropped?",
+    ],
+    source:[
+      {title:"Condition-First",why:"the posture this artifact extracts (Exploration)"},
+      {title:"Relational Design Canon",why:"the underlying theory"},
+      {title:"Field of Action",why:"where Condition Sets get deployed"},
+    ],
   }},
 ];
 

@@ -79,7 +79,7 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
             {item.sketch.connections.map((c, i) => {
               const linked = allItems.find(a => a.title === c.title);
               return (
-                <div key={i} className="sk-conn-item" onClick={() => { if(linked && (linked.body || linked.caseStudy || linked.sketch)){onOpen(linked);window.scrollTo(0,0)} }}>
+                <div key={i} className="sk-conn-item" onClick={() => { if(linked && (linked.body || linked.caseStudy || linked.sketch || linked.spec || linked.theory)){onOpen(linked);window.scrollTo(0,0)} }}>
                   <div className="sk-conn-title">{c.title} →</div>
                   <div className="sk-conn-why">{c.why}</div>
                 </div>
