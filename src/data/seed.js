@@ -812,23 +812,28 @@ export const SEED = [
     hypothesis:"What happens when you design from conditions instead of components?",
     fragments:[
       // TODO: drop the cropped Mega Lager structural grid image at
-      // /media/exploration/condition-first/mega-lager-grid.jpg and add
+      // /media/exploration/condition-first/mega-lager-grid.jpg (green field
+      // overlay primary, can label slightly desaturated) and add
       // src:"/media/exploration/condition-first/mega-lager-grid.jpg" below.
-      {type:"visual",caption:"Grid shown as named behaviors. Fields from a brand-system instance."},
-      {type:"note",date:"Feb 2026",content:"Tested the posture on a brand system: named the condition precisely (\"Rendezvous, the charged interval before connection\"), then let it govern downstream decisions. Color became a derivation of the brew's character. Grid became a set of named behaviors. Identity marks became functional roles in a relational field. Each decision traced back to the named condition. When the condition was precise, the decisions felt inevitable. The precision of the naming was load-bearing. (Full system → Practice / Soul Mega)"},
-      {type:"note",date:"Jan–Feb 2025",content:"Earlier instrument-building, before the method had a name. What the system refused to produce was the most revealing signal. Constraints as design decisions."},
-      {type:"note",date:"Ongoing",content:"Precise conditions make decisions feel inevitable. The precision of the naming appears to do most of the work."},
+      {type:"visual",caption:"The grid as Rendezvous topology: two rails, two buffers, a center. The buffers are the interval, not margin."},
+      {type:"note",date:"Feb 2026",content:"Tested the posture on a brand system: named the condition precisely (\"Rendezvous — the charged interval before connection\"), then let it govern downstream decisions. The grid became the condition's topology made literal — two rails, two buffers, a center — with the buffers functioning as the interval itself rather than as margin. Color derived from the brew's character meeting the condition's quality: cold fermentation as blue, rice warmth as peach, the seam between them reading as the anticipation. Identity marks became functional roles in a relational field, not symbols. Each decision traced back to the named condition. When the naming was precise, the decisions felt inevitable. When I tried to work from components first, the system went slack. The precision of the naming was load-bearing — not the components themselves. (Full system → Practice / Soul Mega)"},
+      // TODO: drop the constraint / output / refusal triptych at
+      // /media/exploration/condition-first/constraint-output-refusal.jpg
+      // and add src:"/media/exploration/condition-first/constraint-output-refusal.jpg" below.
+      {type:"visual",caption:"Constraint set, output, refusal. What the system declined was the design decision."},
+      {type:"note",date:"Jan–Feb 2025",content:"Earlier instrument-building, before the method had a name. The constraint set did more work than any single output. The refusals revealed the decisions."},
+      {type:"note",date:"Ongoing",content:"Vague conditions produce vague design. Precise conditions make decisions feel inevitable. The precision of the naming appears to do most of the work — more than the apparatus, more than the technique."},
     ],
     openQuestions:[
       "What's the minimum set of conditions that produces coherent output?",
       "Is the feeling of inevitability a property of the output, or of the viewer's pattern recognition?",
       "How do you hand off a condition-set to someone who didn't build it?",
-      "Does condition-first design scale beyond visual systems, into org design, operational architecture, spatial?",
+      "Does condition-first design scale beyond visual systems — into org design, operational architecture, spatial?",
     ],
     connections:[
       {title:"Relational Design Canon",why:"where the principles get executed instead of argued"},
-      {title:"Soul Mega",why:"the posture as applied brand system (Practice, forthcoming)"},
-      {title:"Condition Set",why:"the portable instrument extracted from this work (Artifact, forthcoming)"},
+      {title:"Soul Mega",why:"the posture as applied brand system (Practice — forthcoming)"},
+      {title:"Condition Set",why:"the portable instrument extracted from this work"},
       {title:"Field of Action",why:"what this becomes when it makes things"},
     ],
   }},
