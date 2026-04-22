@@ -12,6 +12,9 @@ const NAV = [
     { key: "patiobeach", label: "Patio Beach" },
     { key: "superconscious", label: "Share Location" },
   ]},
+  { tier: "HOTEL", items: [
+    { key: "hotelnest", label: "Nest" },
+  ]},
   { tier: "CANON", items: [
     { key: "canon", label: "Relational Design" },
   ]},

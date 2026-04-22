@@ -2287,3 +2287,65 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 /* Font fallback declarations for offline / slow network */
 @font-face{font-family:'atlas grotesk';font-style:normal;font-weight:300 700;font-display:swap;src:local('Atlas Grotesk')}
 @font-face{font-family:'Space Mono';font-style:normal;font-weight:400 700;font-display:swap;src:local('Space Mono')}
+
+/* ── Hotel / Nest — single-page edition store ─────────────────── */
+.hn{max-width:720px;margin:0 auto;padding:80px 40px 120px;color:var(--fg)}
+@media(max-width:768px){.hn{padding:60px 20px 80px}}
+
+.hn-head{margin-bottom:56px}
+.hn-crumb{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ff);margin-bottom:20px}
+.hn-title{font-family:var(--display);font-size:clamp(44px,7vw,72px);font-weight:300;letter-spacing:-0.02em;line-height:1;margin:0 0 16px;color:var(--fg)}
+.hn-sub{font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--fm);margin-bottom:6px}
+.hn-date{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--ff)}
+
+.hn-hero{margin-bottom:48px}
+
+/* Image slot placeholder */
+.hn-slot{width:100%;display:flex;align-items:center;justify-content:center;background:var(--sf);border:1px dashed var(--bd);border-radius:2px;margin:0;overflow:hidden;position:relative}
+.hn-slot[data-priority="1"]{border-style:solid;border-color:var(--bd);background:color-mix(in srgb,var(--sf) 85%,var(--fg) 2%)}
+.hn-slot-label{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:24px;color:var(--ff)}
+.hn-slot-ar{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--ff);opacity:.7}
+.hn-slot-name{font-family:var(--display);font-size:14px;font-weight:400;color:var(--fm);letter-spacing:.01em}
+.hn-slot-path{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--ff);opacity:.5;word-break:break-all;max-width:320px}
+.hn-cap{font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:var(--ff);margin:8px 0 24px;line-height:1.5}
+.hn-cap:empty{display:none}
+
+/* Intro */
+.hn-intro{margin:0 0 72px;padding:0;max-width:600px}
+.hn-intro-body{font-family:var(--sans);font-size:16px;font-weight:300;line-height:1.7;color:var(--fm);margin:0 0 20px}
+.hn-essay-link{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--fg);text-decoration:none;border-bottom:1px solid var(--bd);padding-bottom:2px;transition:border-color .2s}
+.hn-essay-link:hover{border-bottom-color:var(--fg)}
+
+/* Section header */
+.hn-sec-head{margin:0 0 32px;padding-bottom:16px;border-bottom:1px solid var(--bd);display:flex;align-items:baseline;gap:16px}
+.hn-sec-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ff)}
+.hn-sec-title{font-family:var(--display);font-size:24px;font-weight:400;letter-spacing:-0.01em;color:var(--fg);margin:0}
+
+/* Product section */
+.hn-product{margin-bottom:88px}
+.hn-stack{display:flex;flex-direction:column;gap:24px;margin-bottom:48px}
+.hn-stack .hn-cap{margin-top:-16px;margin-bottom:0}
+
+.hn-product-block{padding:32px 0 0;border-top:1px solid var(--bd)}
+.hn-product-name{font-family:var(--display);font-size:22px;font-weight:400;letter-spacing:-0.01em;color:var(--fg);margin:0 0 16px}
+.hn-spec{list-style:none;padding:0;margin:0 0 20px;display:flex;flex-direction:column;gap:4px}
+.hn-spec li{font-family:var(--mono);font-size:12px;color:var(--fm);letter-spacing:.02em;line-height:1.6}
+.hn-price{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--fg);letter-spacing:.02em;margin-bottom:20px}
+
+.hn-size{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.hn-size label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ff)}
+.hn-size select{font-family:var(--mono);font-size:12px;color:var(--fg);background:transparent;border:1px solid var(--bd);border-radius:2px;padding:6px 10px;letter-spacing:.04em;cursor:pointer}
+.hn-size select:focus{outline:none;border-color:var(--fg)}
+
+.hn-reserve{display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--bg);background:var(--fg);padding:14px 22px;text-decoration:none;border-radius:2px;transition:opacity .2s}
+.hn-reserve:hover{opacity:.85}
+.hn-reserve:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+
+/* Edition terms */
+.hn-terms{margin-bottom:72px}
+.hn-terms-body{max-width:600px}
+.hn-terms-body p{font-family:var(--sans);font-size:14px;font-weight:300;line-height:1.75;color:var(--fm);margin:0 0 16px}
+.hn-terms-body p:last-child{margin-bottom:0}
+
+/* Imprint footer */
+.hn-imprint{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ff);text-align:center;padding-top:40px;border-top:1px solid var(--bd)}
