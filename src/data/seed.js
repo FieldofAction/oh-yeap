@@ -816,6 +816,11 @@ export const SEED = [
       {type:"visual",src:"/media/exploration/condition-first/identity-marks.png",caption:"Identity marks as functional roles in a relational field. Each mark carries a job, not a symbol."},
       {type:"visual",src:"/media/exploration/condition-first/mega-lager-label.png",caption:"The output: Mega Lager (Rendezvous Edition). Each surface traces back to the named condition."},
       {type:"note",date:"Feb 2026",content:"Tested the posture on a brand system: named the condition precisely (\"Rendezvous, the charged interval before connection\"), then let it govern downstream decisions. The grid became the condition's topology made literal: two rails, two buffers, a center, with the buffers functioning as the interval itself rather than as margin. Color derived from the brew's character meeting the condition's quality: cold fermentation as blue, rice warmth as peach, the seam between them reading as the anticipation. Identity marks became functional roles in a relational field, not symbols. Each decision traced back to the named condition. When the naming was precise, the decisions felt inevitable. When I tried to work from components first, the system went slack. The precision of the naming was load-bearing, not the components themselves. (Full system → Practice / Soul Mega)"},
+      {type:"refusals",title:"Refusals, from the Rendezvous application",items:[
+        {text:"No passive symmetry.",becomes:"Asymmetry with balance. Tension that creates approach."},
+        {text:"No direct adjacency between systems.",becomes:"The buffer became the interval itself."},
+        {text:"No loudness.",becomes:"Hierarchy became necessary. Silence became part of the system."},
+      ]},
       // TODO: drop the constraint / output / refusal triptych at
       // /media/exploration/condition-first/constraint-output-refusal.jpg
       // and add src:"/media/exploration/condition-first/constraint-output-refusal.jpg" below.
