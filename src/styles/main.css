@@ -2300,13 +2300,9 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 
 .hn-hero{margin-bottom:48px}
 
-/* Image slot placeholder */
-.hn-slot{width:100%;display:flex;align-items:center;justify-content:center;background:var(--sf);border:1px dashed var(--bd);border-radius:2px;margin:0;overflow:hidden;position:relative}
-.hn-slot[data-priority="1"]{border-style:solid;border-color:var(--bd);background:color-mix(in srgb,var(--sf) 85%,var(--fg) 2%)}
-.hn-slot-label{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;padding:24px;color:var(--ff)}
-.hn-slot-ar{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--ff);opacity:.7}
-.hn-slot-name{font-family:var(--display);font-size:14px;font-weight:400;color:var(--fm);letter-spacing:.01em}
-.hn-slot-path{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--ff);opacity:.5;word-break:break-all;max-width:320px}
+/* Image slot */
+.hn-slot{width:100%;background:var(--sf);border-radius:2px;margin:0;overflow:hidden;position:relative}
+.hn-slot img{width:100%;height:100%;object-fit:cover;display:block}
 .hn-cap{font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:var(--ff);margin:8px 0 24px;line-height:1.5}
 .hn-cap:empty{display:none}
 

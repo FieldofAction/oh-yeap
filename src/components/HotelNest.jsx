@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
-// Placeholder image slot — renders a dashed aspect-ratio box with a label.
-// Swap for real <img> when assets land under /images/nest/.
+// Image slot — renders a real <img> when `path` exists in /public/images/nest/,
+// else falls back to a dashed placeholder showing the expected aspect + path.
 function ImageSlot({ label, aspect, path, priority = false }) {
   return (
     <figure
@@ -10,11 +10,13 @@ function ImageSlot({ label, aspect, path, priority = false }) {
       aria-label={label}
       data-priority={priority ? "1" : undefined}
     >
-      <div className="hn-slot-label">
-        <span className="hn-slot-ar">{aspect}</span>
-        <span className="hn-slot-name">{label}</span>
-        <span className="hn-slot-path">{path}</span>
-      </div>
+      <img
+        src={path}
+        alt={label}
+        loading={priority ? "eager" : "lazy"}
+        decoding={priority ? "sync" : "async"}
+        fetchPriority={priority ? "high" : "auto"}
+      />
     </figure>
   );
 }
