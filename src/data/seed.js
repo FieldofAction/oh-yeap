@@ -741,7 +741,7 @@ export const SEED = [
     {type:"text",content:"IV. The Framework's Deepest Claim\n\nI want to end with what I think is the most important thing that examining failure modes reveals about a framework.\n\nA framework's failure modes are not accidents or embarrassments. They are the direct consequence of the framework's deepest commitments. The shadow behaviors of Relational Design are each the cost of something Relational Design genuinely values: patience, openness, non-imposition. You cannot have the value without paying the cost. The cost is not a bug; it is the price of the thing itself.\n\nThis means that naming the failure modes is not a critique of the framework's values. It is a more precise articulation of them. A way of saying: this is what we value, this is what that value costs, and here is where we have to be most honest with ourselves about which we are doing in any given moment.\n\nThe shadow of any strength is simply that strength, deployed past the point where it is still a strength. Naming it is not an argument against the strength. It is an argument for wisdom about when to apply it.\n\nThe most generative thing Relational Design can do is not to resolve its failure modes but to hold them in consciousness alongside its principles. To operate from a position of genuine self-knowledge rather than defensive coherence.\n\nThat is, in itself, a relational act."},
     {type:"credit",thesis:"The framework that can name its failure modes is not weaker for doing so. It is more trustworthy.",lines:["Working Paper","Daniel Dickson","Field of Action, 2026"]},
   ]},
-  { id:uid(), section:"exploration", title:"Relational Design", subtitle:"Field-Centered Framework", desc:"A theory of design as relational intelligence: from form to field, aesthetics as condition, and design as attunement.", year:"2026", status:"live", tags:["Theory","Systems","Design"], relations:["GSL","Relational Field Model","Beyond Productivity"], hasVisual:true, theory:{
+  { id:uid(), section:"exploration", title:"Relational Design", subtitle:"Field-Centered Framework", desc:"A theory of design as relational intelligence: from form to field, aesthetics as condition, and design as attunement.", year:"2026", status:"live", tags:["Theory","Systems","Design"], relations:["Condition-First","Relational Field Model","Beyond Productivity"], hasVisual:true, theory:{
     intro:"This paper proposes Relational Design as both an aesthetic framework and an epistemological stance. It does not present a closed system or prescriptive methodology, but a field-based orientation for understanding how meaning, coherence, and intelligence emerge through interaction. The theory is intended to evolve through practice, reflection, and relational engagement.",
     abstract:"Relational Design extends the modernist lineage of design, from the Bauhaus's concern for material integrity to Material Design's systematization of the digital interface, into the age of relational intelligence. In this new paradigm, the fundamental material of design is relation itself. Design becomes the structuring of attunement, shaping the conditions under which interactions among human, technological, and ecological agents come into coherence (Alexander 58; Bateson 217). Relational Design is both an aesthetic theory and an epistemological stance. It offers a way of knowing and constructing meaning through mutual influence, resonance, and presence (Merleau-Ponty 147).",
     sections:[
@@ -807,18 +807,30 @@ export const SEED = [
     },
     colophon:{author:"Alfred Daniel Dickson II",org:"Field of Action",location:"Los Angeles, CA",period:"2024–2026",contribution:"With contributions in theory, diagrams, and methodology from ongoing work within Field of Action"},
   }},
-  { id:uid(), section:"exploration", title:"GSL", subtitle:"Generative Simulation Layer", desc:"Condition-first design experiments. Procedural logic meets visual systems.", year:"Active", status:"wip", tags:["Procedural","Simulation"], relations:["Relational Design"], hasVisual:true, sketch:{
-    hypothesis:"What happens when you design from conditions instead of components? Can procedural logic generate visual systems that feel coherent without being manually composed?",
+  { id:uid(), section:"exploration", title:"Condition-First", subtitle:"", desc:"Designing from conditions instead of components.", year:"Active", status:"wip", tags:["Procedural","Brand System"], relations:["Relational Design","Condition Set"], hasVisual:true, sketch:{
+    hypothesisLabel:"Inquiry",
+    hypothesis:"What happens when you design from conditions instead of components?",
     fragments:[
-      {type:"visual",caption:"Early output: procedural grid generation from seed values"},
-      {type:"note",content:"The interesting thing is what the system refuses to produce. The constraints are more revealing than the outputs.",date:"Feb 2025"},
-      {type:"visual",caption:"Comparison: hand-composed vs. condition-generated layouts"},
-      {type:"note",content:"Sacred geometry as input constraint changes everything. The outputs stop looking random and start looking inevitable. Need to understand why.",date:"Jan 2025"},
-      {type:"visual",caption:"Parameter space: mapping which seed values produce coherence"},
-      {type:"note",content:"Showed early outputs to two designers. Both said 'that looks designed' before knowing it was generated. This is the signal.",date:"Jan 2025"},
+      // TODO: drop the cropped Mega Lager structural grid image at
+      // /media/exploration/condition-first/mega-lager-grid.jpg and add
+      // src:"/media/exploration/condition-first/mega-lager-grid.jpg" below.
+      {type:"visual",caption:"Grid became named behaviors, not layout preferences. Fields shown from a brand-system instance."},
+      {type:"note",date:"Feb 2026",content:"Tested the posture on a brand system: named the condition precisely (\"Rendezvous, the charged interval before connection\"), then let it govern downstream decisions. Color stopped being a choice and became a derivation of the brew's character. Grid stopped being a preference and became a set of named behaviors. Identity marks stopped being symbols and became functional roles in a relational field. Each decision traced back to the named condition. When the condition was precise, the decisions felt inevitable. When I tried to work from components first, the system went slack. The precision of the naming was load-bearing, not the components themselves. (Full system → Practice / Soul Mega)"},
+      {type:"note",date:"Jan–Feb 2025",content:"Earlier instrument-building, before the method had a name. What the system refused to produce turned out to be more revealing than what it produced. Constraints as design decisions."},
+      {type:"note",date:"Ongoing",content:"Vague conditions produce vague design. Precise conditions make decisions feel inevitable. The precision of the naming appears to do most of the work, more than the apparatus, more than the technique."},
     ],
-    openQuestions:["Does condition-first design scale beyond visual systems, into org design, brand architecture, spatial?","What's the minimum set of constraints that produces coherent output?","How do you hand off a generative system to someone who didn't build it?","Is the feeling of inevitability a property of the output or a property of the viewer's pattern recognition?"],
-    connections:[{title:"Relational Design Canon",why:"GSL is the computational test of relational design principles"},{title:"Grown vs. built systems",why:"GSL explores what 'grown' means in practice"},{title:"Soul Mega",why:"Sacred geometry logic from Soul Mega became GSL's constraint language"}],
+    openQuestions:[
+      "What's the minimum set of conditions that produces coherent output?",
+      "Is the feeling of inevitability a property of the output, or of the viewer's pattern recognition?",
+      "How do you hand off a condition-set to someone who didn't build it?",
+      "Does condition-first design scale beyond visual systems, into org design, operational architecture, spatial?",
+    ],
+    connections:[
+      {title:"Relational Design Canon",why:"where the principles get executed instead of argued"},
+      {title:"Soul Mega",why:"the posture as applied brand system (Practice, forthcoming)"},
+      {title:"Condition Set",why:"the portable instrument extracted from this work (Artifact, forthcoming)"},
+      {title:"Field of Action",why:"what this becomes when it makes things"},
+    ],
   }},
   { id:uid(), section:"exploration", title:"Hybrid Intelligence", subtitle:"AI Collaboration", desc:"Human-AI collaboration patterns and multi-agent architectures.", year:"Active", status:"wip", tags:["AI","Tools"], relations:[], hasVisual:false, sketch:{
     hypothesis:"Can a multi-agent AI architecture replicate the cognitive diversity of a design team, giving a solo practitioner access to multiple perspectives simultaneously?",
@@ -865,7 +877,7 @@ export const SEED = [
       {label:"Coherence Zones",desc:"Regions where agent alignment produces emergent order. The goal of relational design."},
     ],
     usage:"Use when diagnosing why a system isn't producing coherence, or when designing a new system from conditions rather than components. Map agents first, then conditions, then signals. Coherence zones appear (or don't) as a result: they can't be placed directly. The model is diagnostic, not prescriptive.",
-    source:[{title:"Relational Design Canon",why:"The model is the spatial expression of the theory"},{title:"GSL",why:"GSL is the computational implementation of this model"}],
+    source:[{title:"Relational Design Canon",why:"The model is the spatial expression of the theory"},{title:"Condition-First",why:"the applied posture this model describes"}],
   }},
 ];
 

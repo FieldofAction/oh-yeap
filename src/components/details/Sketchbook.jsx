@@ -14,10 +14,10 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
           {item.status === "wip" ? "In Progress" : item.status}
         </div>
         <h1 className="sk-title dc dc1">{item.title}</h1>
-        <div className="sk-sub dc dc2">{item.subtitle} · {item.year}</div>
+        <div className="sk-sub dc dc2">{item.subtitle ? `${item.subtitle} · ${item.year}` : item.year}</div>
         {item.sketch?.hypothesis && (
           <div className="sk-hyp dc dc3">
-            <div className="sk-hyp-label">Hypothesis</div>
+            <div className="sk-hyp-label">{item.sketch.hypothesisLabel || "Hypothesis"}</div>
             <div className="sk-hyp-text">{item.sketch.hypothesis}</div>
           </div>
         )}
