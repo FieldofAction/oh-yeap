@@ -811,11 +811,10 @@ export const SEED = [
     hypothesisLabel:"Inquiry",
     hypothesis:"What happens when you design from conditions instead of components?",
     fragments:[
-      // TODO: drop the cropped Mega Lager structural grid image at
-      // /media/exploration/condition-first/mega-lager-grid.jpg (green field
-      // overlay primary, can label slightly desaturated) and add
-      // src:"/media/exploration/condition-first/mega-lager-grid.jpg" below.
-      {type:"visual",caption:"The grid as Rendezvous topology: two rails, two buffers, a center. The buffers are the interval, not margin."},
+      {type:"visual",src:"/media/exploration/condition-first/mega-lager-grid.png",caption:"The grid as Rendezvous topology: two rails, two buffers, a center. The buffers are the interval, not margin."},
+      {type:"visual",src:"/media/exploration/condition-first/color-logic.png",caption:"Color derived from the brew's character meeting the condition's quality. Cold fermentation as blue, rice warmth as peach, the seam between them reading as the anticipation."},
+      {type:"visual",src:"/media/exploration/condition-first/identity-marks.png",caption:"Identity marks as functional roles in a relational field. Each mark carries a job, not a symbol."},
+      {type:"visual",src:"/media/exploration/condition-first/mega-lager-label.png",caption:"The output: Mega Lager (Rendezvous Edition). Each surface traces back to the named condition."},
       {type:"note",date:"Feb 2026",content:"Tested the posture on a brand system: named the condition precisely (\"Rendezvous — the charged interval before connection\"), then let it govern downstream decisions. The grid became the condition's topology made literal — two rails, two buffers, a center — with the buffers functioning as the interval itself rather than as margin. Color derived from the brew's character meeting the condition's quality: cold fermentation as blue, rice warmth as peach, the seam between them reading as the anticipation. Identity marks became functional roles in a relational field, not symbols. Each decision traced back to the named condition. When the naming was precise, the decisions felt inevitable. When I tried to work from components first, the system went slack. The precision of the naming was load-bearing — not the components themselves. (Full system → Practice / Soul Mega)"},
       // TODO: drop the constraint / output / refusal triptych at
       // /media/exploration/condition-first/constraint-output-refusal.jpg
