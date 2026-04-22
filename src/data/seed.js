@@ -841,7 +841,7 @@ export const SEED = [
       {title:"Field of Action",why:"what this becomes when it makes things"},
     ],
   }},
-  { id:uid(), section:"exploration", title:"Hybrid Intelligence", subtitle:"AI Collaboration", desc:"Human-AI collaboration patterns and multi-agent architectures.", year:"Active", status:"wip", tags:["AI","Tools"], relations:[], hasVisual:false, sketch:{
+  { id:uid(), section:"exploration", title:"Hybrid Intelligence", subtitle:"AI Collaboration", desc:"Human-AI collaboration patterns and multi-agent architectures.", year:"Active", status:"wip", tags:["AI","Tools"], relations:[], hasVisual:false, hidden:true, sketch:{
     hypothesis:"Can a multi-agent AI architecture replicate the cognitive diversity of a design team, giving a solo practitioner access to multiple perspectives simultaneously?",
     fragments:[
       {type:"note",content:"The backstage pipeline is the first working prototype. Eight agents, each with a different lens. The surprising finding: the agents disagree with each other in productive ways.",date:"Feb 2025"},
@@ -854,7 +854,7 @@ export const SEED = [
     openQuestions:["What's the right number of agents? Eight feels like too many for most tasks but the redundancy catches things.","Can agents develop 'memory' across runs, learning what this system tends to produce and course-correcting?","How do you design the selection logic, which agents to activate for which type of idea?","Is the real value in the outputs or in the act of reading multiple perspectives sequentially?"],
     connections:[{title:"Art of Intelligence",why:"Hybrid Intelligence is the applied experiment of intelligence-as-practice"},{title:"Context windows and perception frames",why:"Each agent is literally a different perception frame on the same input"}],
   }},
-  { id:uid(), section:"artifacts", title:"Diagram Packs", subtitle:"Visual System", desc:"Visual system for communicating relational ideas.", year:"Active", status:"wip", tags:["Visual","Diagrams"], relations:["Beyond Productivity"], hasVisual:false, artifactType:"diagram", version:"0.3", spec:{
+  { id:uid(), section:"artifacts", title:"Diagram Packs", subtitle:"Visual System", desc:"Visual system for communicating relational ideas.", year:"Active", status:"wip", tags:["Visual","Diagrams"], relations:["Beyond Productivity"], hasVisual:false, hidden:true, artifactType:"diagram", version:"0.3", spec:{
     preview:{type:"visual",caption:"Core diagram set: relational field, emergence pattern, feedback loop"},
     anatomy:[
       {label:"Field Diagram",desc:"Represents relational space between agents. Concentric rings show proximity of influence."},
@@ -877,7 +877,7 @@ export const SEED = [
     usage:"Use before publishing anything, essays, briefs, presentations, even Slack messages. Run the sequence mentally or literally. It works on single ideas and on entire documents. Particularly effective when paired with an AI agent: have the agent perform steps 2-3 and evaluate the result yourself at step 4.",
     source:[{title:"Context windows and perception frames",why:"Compression is frame management applied to language"},{title:"Hybrid Intelligence",why:"Designed to work with AI collaboration patterns"}],
   }},
-  { id:uid(), section:"artifacts", title:"Relational Field Model", subtitle:"Conceptual Framework", desc:"A model for mapping how agents, conditions, and signals interact within a system.", year:"2025", status:"seed", tags:["Framework","Systems","Theory"], relations:["Relational Design"], hasVisual:false, artifactType:"framework", version:"0.1", spec:{
+  { id:uid(), section:"artifacts", title:"Relational Field Model", subtitle:"Conceptual Framework", desc:"A model for mapping how agents, conditions, and signals interact within a system.", year:"2025", status:"seed", tags:["Framework","Systems","Theory"], relations:["Relational Design"], hasVisual:false, hidden:true, artifactType:"framework", version:"0.1", spec:{
     preview:{type:"visual",caption:"Relational Field Model: agents, conditions, signals, and coherence zones"},
     anatomy:[
       {label:"Agents",desc:"Any entity that acts, human, AI, organizational, environmental. Represented as nodes."},

@@ -169,8 +169,9 @@ export default function App() {
   }, [activeItem]);
 
   // Wave 1 launch: Practice (case studies) hidden from public-facing surfaces until Wave 2 refinement ships.
+  // Items flagged { hidden: true } in seed.js are also excluded from all public surfaces (cards + detail-overlay lookups).
   // Studio-gated views (Backstage, etc.) still receive full `content`.
-  const publicContent = useMemo(() => content.filter(c => c.section !== "practice"), [content]);
+  const publicContent = useMemo(() => content.filter(c => c.section !== "practice" && !c.hidden), [content]);
 
   const filtered = useMemo(() => {
     let items = publicContent.filter(c => c.status !== "draft");
