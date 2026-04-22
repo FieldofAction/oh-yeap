@@ -15,6 +15,9 @@ Two other hide mechanisms are also active: a Wave-1 launch gate that removes all
 | 1 | Diagram Packs | Artifacts | wip / v0.3 | Spec sheet | No diagram assets; preview caption references diagrams that don't exist yet |
 | 2 | Relational Field Model | Artifacts | seed / v0.1 | Spec sheet | No preview visual; couples tightly to Relational Design canon without adding new signal |
 | 3 | Hybrid Intelligence | Exploration | wip | Sketchbook | Fragments reference visuals (agent comparison, architecture diagram) with no `src`; reads as essay, not sketch |
+| 4 | Condition-First | Exploration | wip | Sketchbook | Held back for revision pass |
+
+*With Condition-First and Hybrid Intelligence both hidden, the public Exploration section is now empty. The filter button and section header still render on direct navigation; consider suppressing empty sections in `Public.jsx` if that becomes visually awkward.*
 
 ### B. By Wave-1 launch gate (`section !== "practice"` at [App.jsx:174](src/App.jsx:174))
 
@@ -72,6 +75,11 @@ Two other hide mechanisms are also active: a Wave-1 launch gate that removes all
 
 **Shape of the work**
 - The Backstage pipeline itself is the living instrument. Best path: wire a "snapshot" action in Backstage that produces sketch fragments automatically, then let this page be the feed. Otherwise it'll stay in the "unfinished essay" trap.
+
+---
+
+### 4. Condition-First — **TBD**
+Held for revision pass. LOE to be filled in as the direction becomes clear.
 
 ---
 

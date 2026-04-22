@@ -807,7 +807,7 @@ export const SEED = [
     },
     colophon:{author:"Alfred Daniel Dickson II",org:"Field of Action",location:"Los Angeles, CA",period:"2024–2026",contribution:"With contributions in theory, diagrams, and methodology from ongoing work within Field of Action"},
   }},
-  { id:uid(), section:"exploration", title:"Condition-First", subtitle:"", desc:"Designing from conditions instead of components.", year:"Active", status:"wip", tags:["Procedural","Brand System"], relations:["Relational Design","Condition Set"], hasVisual:true, sketch:{
+  { id:uid(), section:"exploration", title:"Condition-First", subtitle:"", desc:"Designing from conditions instead of components.", year:"Active", status:"wip", tags:["Procedural","Brand System"], relations:["Relational Design","Condition Set"], hasVisual:true, hidden:true, sketch:{
     hypothesisLabel:"Inquiry",
     hypothesis:"What happens when you design from conditions instead of components?",
     fragments:[
