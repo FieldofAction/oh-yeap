@@ -20,7 +20,10 @@ const cleanCaption = (raw, by) => {
     c = c.replace(new RegExp(`@${handle}\\b`, "gi"), "");
   }
   c = c.replace(/\b(?:filmed\s+by|plucked\s+fr[o]?m|s\/o\s+to\s+my\s+connect|s\/o\s+to)\b/gi, "");
-  c = c.replace(/^[\s:\-—–·•🎥📸🎵]+/u, "").replace(/[\s:\-—–·•🎥📸🎵]+$/u, "").trim();
+  // Replace em/en dashes with commas so legacy captions read without them.
+  c = c.replace(/\s*[—–]\s*/g, ", ");
+  c = c.replace(/^[\s:\-·•🎥📸🎵]+/u, "").replace(/[\s:\-·•🎥📸🎵]+$/u, "").trim();
+  c = c.replace(/^,\s*/, "").replace(/,\s*$/, "");
   if (!/[a-z0-9]/i.test(c)) return "";
   return c;
 };

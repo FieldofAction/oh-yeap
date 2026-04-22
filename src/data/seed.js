@@ -59,7 +59,7 @@ export const SEED = [
       { type:"video", url:"/images/case-studies/WIP/Apple%20Music/cd_aml_brandreel_v1%20(720p).mp4" },
 
       /* Atmosphere — the system as environment */
-      { type:"atmosphere", bgGradient:"linear-gradient(160deg, #fa233b 0%, #1a1a2e 40%, #000 100%)", heading:"Orientation as Respect", body:"Clarity becomes emotional at scale. The system began to guide — not by reducing choice, but by making every choice legible. Plural systems require visible structure." },
+      { type:"atmosphere", bgGradient:"linear-gradient(160deg, #fa233b 0%, #1a1a2e 40%, #000 100%)", heading:"Orientation as Respect", body:"Clarity becomes emotional at scale. The system began to guide, not by reducing choice, but by making every choice legible. Plural systems require visible structure." },
 
       { type:"section", label:"Outcomes" },
       { type:"body", key:"outcomes" },
@@ -128,7 +128,7 @@ export const SEED = [
       { type:"video", url:"/images/case-studies/WIP/Google%20Cloud/gc1002_cloudstyle_2021_launch_film_16x9_1920x1080_2398_stereo.mp4_v1%20(1080p).mp4" },
 
       /* Device — the product in a screen frame */
-      { type:"device", src:"/images/case-studies/WIP/Google%20Cloud/c171a76d-8825-435f-9293-1af813f4f621.jpg", caption:"Blog platform — thought leadership within the design system" },
+      { type:"device", src:"/images/case-studies/WIP/Google%20Cloud/c171a76d-8825-435f-9293-1af813f4f621.jpg", caption:"Blog platform. Thought leadership within the design system" },
 
       { type:"split", subtitle:"Digital", heading:"Mobile surfaces extending the system", src:"/images/case-studies/WIP/Google%20Cloud/fa743ca5-c7b0-4a00-8e61-ce1f7f792398.png", align:"right", tone:"light" },
 
@@ -172,14 +172,14 @@ export const SEED = [
     },
     layout:[
       /* Act 1 — The Hook: cinematic performance, full-bleed */
-      { type:"hero", variant:"bleed", src:"/images/case-studies/WIP/Vevo/d0446437-3af8-48f9-b724-7d5a07c7d822.jpg", caption:"Khalid performing at a school gymnasium — the platform recedes, the artist holds the frame" },
+      { type:"hero", variant:"bleed", src:"/images/case-studies/WIP/Vevo/d0446437-3af8-48f9-b724-7d5a07c7d822.jpg", caption:"Khalid performing at a school gymnasium. The platform recedes, the artist holds the frame" },
       { type:"section", label:"Framing" },
       { type:"body", key:"framing" },
       { type:"pull-quote", text:"The platform was speaking too loudly." },
 
       /* Sticky — text pinned while artist images scroll past */
       { type:"sticky", label:"The Landscape", heading:"Artists arrived with their own aesthetic gravity.", body:"The platform's visual identity competed with the very thing that gave it value. Every artist brought a fully formed world. The brand needed to stop shouting over it.", images:[
-        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-40_2500_c.jpg", caption:"Live performance — the energy belongs to the artist" },
+        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-40_2500_c.jpg", caption:"Live performance. The energy belongs to the artist" },
         { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-42_2500_c.jpg", caption:"Artist identity, already fully formed" },
         { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-46_2500_c.jpg", caption:"The performer holds the frame" },
       ]},
@@ -201,7 +201,7 @@ export const SEED = [
       ], caption:"SXSW activation: artist-first hierarchy in physical space" },
 
       /* Device — the redesigned product in a monitor frame */
-      { type:"device", src:"/images/case-studies/WIP/Vevo/vevo_desktop_website-1600x1067.jpg", caption:"The redesigned platform — artist-first hierarchy, restrained brand presence" },
+      { type:"device", src:"/images/case-studies/WIP/Vevo/vevo_desktop_website-1600x1067.jpg", caption:"The redesigned platform. Artist-first hierarchy, restrained brand presence" },
 
       { type:"video", url:"/images/case-studies/WIP/Vevo/vevo_launch_v1%20(1080p).mp4", poster:"/images/case-studies/WIP/Vevo/vevo_launch_poster.jpg" },
 
@@ -221,7 +221,7 @@ export const SEED = [
         { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-03_2500_c.jpg" },
         { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-21_2500_c.jpg" },
         { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-48_2500_c.jpg" },
-      ], caption:"The Vevo Book — documenting the transformation" },
+      ], caption:"The Vevo Book. Documenting the transformation" },
 
       /* SXSW street photography — the brand outside the screen */
       { type:"figure", variant:"bleed", src:"/images/case-studies/WIP/Vevo/sxsw_vevo_01.webp", caption:"SXSW 2017: the brand in the street" },
@@ -230,7 +230,7 @@ export const SEED = [
 
       { type:"section", label:"Outcomes" },
       { type:"body", key:"outcomes" },
-      { type:"figure", variant:"float", src:"/images/case-studies/WIP/Vevo/ALL_COVERS_MOCK.webp", caption:"The system at scale — every cover, one voice" },
+      { type:"figure", variant:"float", src:"/images/case-studies/WIP/Vevo/ALL_COVERS_MOCK.webp", caption:"The system at scale. Every cover, one voice" },
       { type:"pull-quote", text:"Restraint became authority." },
       { type:"insight" },
     ],
@@ -280,7 +280,7 @@ export const SEED = [
       ], caption:"Type-driven poster series: curatorial voice as campaign system" },
 
       /* Before/after — evolution */
-      { type:"two-up", images:[{ src:"/images/case-studies/WIP/Tribeca%20Film/TFF13_01_Ads.png", caption:"2013 — dimensional, event-driven" },{ src:"/images/case-studies/WIP/Tribeca%20Film/TFF14_01_Ads-1.png", caption:"2014 — typographic, curatorial" }] },
+      { type:"two-up", images:[{ src:"/images/case-studies/WIP/Tribeca%20Film/TFF13_01_Ads.png", caption:"2013. Dimensional, event-driven" },{ src:"/images/case-studies/WIP/Tribeca%20Film/TFF14_01_Ads-1.png", caption:"2014. Typographic, curatorial" }] },
 
       { type:"section", label:"The Intervention" },
       { type:"intervention" },
@@ -296,12 +296,12 @@ export const SEED = [
       ], caption:"Instagram letter series: the brand in the streets of the neighborhood" },
 
       /* Atmosphere — festival venue, the brand as lived experience */
-      { type:"atmosphere", bgSrc:"/images/case-studies/WIP/Tribeca%20Film/MEM_20130417_400.webp", heading:"The Festival as Organism", body:"The identity needed to extend beyond the event window. Culture does not operate once a year — and the brand had to embody that continuity in every touchpoint, from stage to street to screen." },
+      { type:"atmosphere", bgSrc:"/images/case-studies/WIP/Tribeca%20Film/MEM_20130417_400.webp", heading:"The Festival as Organism", body:"The identity needed to extend beyond the event window. Culture does not operate once a year, and the brand had to embody that continuity in every touchpoint, from stage to street to screen." },
 
       /* Mood Music — content as editorial extension */
-      { type:"split", subtitle:"Content Extension", heading:"Mood Music: editorial as year-round voice", src:"/images/case-studies/WIP/Tribeca%20Film/MOOD_MUSIC/MoodMusic_Art_Terror.jpg", align:"left", body:"Mood Music paired cinematic moments with curated playlists — giving the festival an editorial voice that extended well beyond the event window." },
+      { type:"split", subtitle:"Content Extension", heading:"Mood Music: editorial as year-round voice", src:"/images/case-studies/WIP/Tribeca%20Film/MOOD_MUSIC/MoodMusic_Art_Terror.jpg", align:"left", body:"Mood Music paired cinematic moments with curated playlists, giving the festival an editorial voice that extended well beyond the event window." },
 
-      { type:"figure", variant:"float", src:"/images/case-studies/WIP/Tribeca%20Film/MOOD_MUSIC/MoodMusic_Art_Sensitive.jpg", caption:"Mood Music: Sensitive — extending editorial voice beyond the festival" },
+      { type:"figure", variant:"float", src:"/images/case-studies/WIP/Tribeca%20Film/MOOD_MUSIC/MoodMusic_Art_Sensitive.jpg", caption:"Mood Music: Sensitive. Extending editorial voice beyond the festival" },
 
       /* Device — the festival website in a screen frame */
       { type:"device", src:"/images/case-studies/WIP/Tribeca%20Film/335a19ee0c03dd186b8ad07441ddc97c0e04015a-1500x1031.heif.avif", caption:"Festival website: editorial voice as digital experience" },
@@ -815,23 +815,23 @@ export const SEED = [
       {type:"visual",src:"/media/exploration/condition-first/color-logic.png",caption:"Color derived from the brew's character meeting the condition's quality. Cold fermentation as blue, rice warmth as peach, the seam between them reading as the anticipation."},
       {type:"visual",src:"/media/exploration/condition-first/identity-marks.png",caption:"Identity marks as functional roles in a relational field. Each mark carries a job, not a symbol."},
       {type:"visual",src:"/media/exploration/condition-first/mega-lager-label.png",caption:"The output: Mega Lager (Rendezvous Edition). Each surface traces back to the named condition."},
-      {type:"note",date:"Feb 2026",content:"Tested the posture on a brand system: named the condition precisely (\"Rendezvous — the charged interval before connection\"), then let it govern downstream decisions. The grid became the condition's topology made literal — two rails, two buffers, a center — with the buffers functioning as the interval itself rather than as margin. Color derived from the brew's character meeting the condition's quality: cold fermentation as blue, rice warmth as peach, the seam between them reading as the anticipation. Identity marks became functional roles in a relational field, not symbols. Each decision traced back to the named condition. When the naming was precise, the decisions felt inevitable. When I tried to work from components first, the system went slack. The precision of the naming was load-bearing — not the components themselves. (Full system → Practice / Soul Mega)"},
+      {type:"note",date:"Feb 2026",content:"Tested the posture on a brand system: named the condition precisely (\"Rendezvous, the charged interval before connection\"), then let it govern downstream decisions. The grid became the condition's topology made literal: two rails, two buffers, a center, with the buffers functioning as the interval itself rather than as margin. Color derived from the brew's character meeting the condition's quality: cold fermentation as blue, rice warmth as peach, the seam between them reading as the anticipation. Identity marks became functional roles in a relational field, not symbols. Each decision traced back to the named condition. When the naming was precise, the decisions felt inevitable. When I tried to work from components first, the system went slack. The precision of the naming was load-bearing, not the components themselves. (Full system → Practice / Soul Mega)"},
       // TODO: drop the constraint / output / refusal triptych at
       // /media/exploration/condition-first/constraint-output-refusal.jpg
       // and add src:"/media/exploration/condition-first/constraint-output-refusal.jpg" below.
       {type:"visual",caption:"Constraint set, output, refusal. What the system declined was the design decision."},
       {type:"note",date:"Jan–Feb 2025",content:"Earlier instrument-building, before the method had a name. The constraint set did more work than any single output. The refusals revealed the decisions."},
-      {type:"note",date:"Ongoing",content:"Vague conditions produce vague design. Precise conditions make decisions feel inevitable. The precision of the naming appears to do most of the work — more than the apparatus, more than the technique."},
+      {type:"note",date:"Ongoing",content:"Vague conditions produce vague design. Precise conditions make decisions feel inevitable. The precision of the naming appears to do most of the work, more than the apparatus, more than the technique."},
     ],
     openQuestions:[
       "What's the minimum set of conditions that produces coherent output?",
       "Is the feeling of inevitability a property of the output, or of the viewer's pattern recognition?",
       "How do you hand off a condition-set to someone who didn't build it?",
-      "Does condition-first design scale beyond visual systems — into org design, operational architecture, spatial?",
+      "Does condition-first design scale beyond visual systems, into org design, operational architecture, spatial?",
     ],
     connections:[
       {title:"Relational Design Canon",why:"where the principles get executed instead of argued"},
-      {title:"Soul Mega",why:"the posture as applied brand system (Practice — forthcoming)"},
+      {title:"Soul Mega",why:"the posture as applied brand system (Practice, forthcoming)"},
       {title:"Condition Set",why:"the portable instrument extracted from this work"},
       {title:"Field of Action",why:"what this becomes when it makes things"},
     ],
@@ -884,14 +884,14 @@ export const SEED = [
     source:[{title:"Relational Design Canon",why:"The model is the spatial expression of the theory"},{title:"Condition-First",why:"the applied posture this model describes"}],
   }},
   { id:uid(), section:"artifacts", title:"Condition Set", subtitle:"A portable format for condition-first design", desc:"A portable format for condition-first design. A decision instrument that names the condition a system is holding and provides the chain for deriving from it.", year:"2026", status:"v0.1", tags:["Template","Method","v0.1"], relations:["Condition-First"], hasVisual:false, artifactType:"method", version:"0.1", spec:{
-    framing:{label:"What it is",body:"A Condition Set is the minimum portable payload that lets someone design from a named condition. Not brand guidelines. Not strategy. The instrument that produces the work, extracted so a collaborator, or a future self, can make coherent decisions without rederiving the posture from scratch."},
+    framing:{label:"What it is",body:"A Condition Set is the minimum portable payload that lets someone design from a named condition. Brand & Strategy guideline adjacent. The instrument that produces the work, extracted so a collaborator, or a future self, can make coherent decisions without rederiving the posture from scratch."},
     components:[
-      {num:1,label:"The Named Condition",desc:"A single precise sentence the whole system derives from. The test: can it refuse things? If the condition cannot reject a proposed move, it is too vague. The naming has to carry enough definition to make rejection possible."},
-      {num:2,label:"The Refusal Criteria",desc:"What the condition explicitly is not. This is how the condition does editorial work later. Refusal criteria make the question \"does this hold the condition?\" answerable in the field."},
-      {num:3,label:"The Diagnostic Questions",desc:"Four or five tests the condition generates. Any proposed move has to pass them. The count is calibrated to stay inside a narrow working range."},
-      {num:4,label:"The Behavioral Translations",desc:"Named functions the condition produces. Each one written as a role. What it does in the field, stated plainly. This is the layer where condition becomes design vocabulary."},
-      {num:5,label:"The Derivation Rules",desc:"The sentences that explain why each decision exists. Every decision in the finished work should have a traceable derivation sentence. A decision without its sentence is ornament."},
-      {num:6,label:"The Whimsy Allowance",desc:"The single sanctioned break in the discipline. Named explicitly. One allowance keeps the system alive inside its rigor, deployed with restraint."},
+      {num:1,label:"Named Condition",desc:"A single precise sentence the whole system derives from. The test: can it refuse things? If the condition cannot reject a proposed move, it is too vague. The naming has to carry enough definition to make rejection possible."},
+      {num:2,label:"Refusal Criteria",desc:"What the condition explicitly is not. This is how the condition does editorial work later. Refusal criteria make the question \"does this hold the condition?\" answerable in the field."},
+      {num:3,label:"Diagnostic Questions",desc:"Four or five tests the condition generates. Any proposed move has to pass them. The count is calibrated to stay inside a narrow working range."},
+      {num:4,label:"Behavioral Translations",desc:"Named functions the condition produces. Each one written as a role. What it does in the field, stated plainly. This is the layer where condition becomes design vocabulary."},
+      {num:5,label:"Derivation Rules",desc:"The sentences that explain why each decision exists. Every decision in the finished work should have a traceable derivation sentence. A decision without its sentence is ornament."},
+      {num:6,label:"Whimsy Allowance",desc:"The single sanctioned break in the discipline. Named explicitly. One allowance keeps the system alive inside its rigor, deployed with restraint."},
     ],
     glue:{label:"The Derivation Chain",body:"What makes a Condition Set portable is the chain connecting the six components. Every operational decision has to trace back to the named condition through a nameable path:",chain:"Named Condition → Diagnostic Question → Behavioral Translation → Derivation Rule → Decision",after:"Any finished piece should trace back up the chain. A decision without a traceable path does not belong in the system."},
     usage:"Start by naming the condition. Resist the pull to start with components. The precision of the naming is load-bearing. Write the refusal criteria next; they test whether the naming is sharp enough. Diagnostic questions, behavioral translations, and derivation rules follow in that order. The whimsy allowance comes last. The set is ready to hand off only when you can trace every example decision back through the chain.",
