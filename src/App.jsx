@@ -23,6 +23,7 @@ import useExplorationStore from "./store/useExplorationStore";
 import PatioBeach from "./components/PatioBeach";
 import Superconscious from "./components/Superconscious";
 import Studio from "./components/Studio";
+import HotelNest from "./components/HotelNest";
 import { DualLensToggle, DualLensBar } from "./components/PatternLens";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
@@ -41,6 +42,7 @@ const VIEW_TO_HASH = {
   colophon: "colophon",
   models: "mental-models",
   patterns: "pattern-language",
+  hotelnest: "hotel/nest",
 };
 const HASH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_HASH).map(([view, hash]) => [hash, view])
@@ -235,6 +237,7 @@ export default function App() {
           {view === "studio" && <Studio navigateTo={navigateTo} />}
           {view === "patiobeach" && <PatioBeach />}
           {view === "superconscious" && <Superconscious />}
+          {view === "hotelnest" && <HotelNest />}
         </main>
 
           <SiteFooter />
