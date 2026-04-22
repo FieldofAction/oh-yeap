@@ -171,8 +171,12 @@ export default function App() {
   }, [activeItem]);
 
   // Wave 1 launch: Practice (case studies) hidden from public-facing surfaces until Wave 2 refinement ships.
-  // Studio-gated views (Backstage, etc.) still receive full `content`.
-  const publicContent = useMemo(() => content.filter(c => c.section !== "practice"), [content]);
+  // Items flagged { hidden: true } in seed.js are excluded from production builds only — visible during `npm run dev`
+  // so we can preview unfinished pages locally without publishing them. Studio-gated views (Backstage, etc.) still receive full `content`.
+  const publicContent = useMemo(
+    () => content.filter(c => c.section !== "practice" && (import.meta.env.DEV || !c.hidden)),
+    [content]
+  );
 
   const filtered = useMemo(() => {
     let items = publicContent.filter(c => c.status !== "draft");
