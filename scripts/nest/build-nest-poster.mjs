@@ -1,11 +1,11 @@
 /*
- * Build the NEST index poster as a composite PNG/JPG from the Patio Beach archive.
+ * Build the NEST index poster — revised layout.
  *
- * - Reads /instagram/patio-beach-archive.jsx (repo root)
- * - Extracts the primary image path from each of the 486 posts
- * - Lays them out in an 18×27 typology grid (= 486 cells, exact 2:3 ratio)
- * - Adds editorial typography: NEST header, subheader, bottom metadata stack, edition stamp
- * - Renders via puppeteer to public/images/nest/poster-hero.jpg (web hero)
+ * - Reads /instagram/patio-beach-archive.jsx and extracts 486 primary image paths
+ * - Lays them in an 18×27 typology grid
+ * - Renders inside a warm-paper "sheet" with a deckle (torn) left edge
+ * - Three-column editorial footer (left metadata / center NEST lockup / right imprint)
+ * - Hero output: public/images/nest/poster-hero.jpg (2400×3600, 2:3)
  *
  * Run from worktree root:  node scripts/nest/build-nest-poster.mjs
  */
@@ -23,10 +23,8 @@ const mediaRoot = path.join(worktreeRoot, 'public');
 const outDir = path.join(worktreeRoot, 'public', 'images', 'nest');
 const outPath = path.join(outDir, 'poster-hero.jpg');
 
-// ── 1. Parse the archive: extract the first image path from each post ──────
+// ── 1. Parse the archive: first image per post ────────────────────────────
 const archiveSrc = fs.readFileSync(archivePath, 'utf8');
-// Each post has shape: {n:NNN,c:"...",i:["media/posts/YYYYMM/HASH.jpg", ...], d:"..."}
-// A handful of posts lead with a .mp4; for those we pick the next .jpg/.png in the array.
 const IMG_RE = /\.(jpe?g|png)$/i;
 const arrayMatches = [...archiveSrc.matchAll(/i:\[([^\]]+)\]/g)];
 const allPaths = arrayMatches
@@ -36,100 +34,124 @@ const allPaths = arrayMatches
   })
   .filter(Boolean);
 
-// Verify each file exists on disk; skip missing ones (shouldn't happen, but be defensive)
 const verified = [];
 for (const rel of allPaths) {
   const abs = path.join(mediaRoot, rel);
   if (fs.existsSync(abs)) verified.push({ rel, abs });
 }
+console.log(`Parsed ${allPaths.length} image paths, verified ${verified.length} on disk.`);
 
-console.log(`Parsed ${allPaths.length} image paths from archive, verified ${verified.length} on disk.`);
-
-if (verified.length < 486) {
-  console.warn(`WARNING: expected 486, got ${verified.length}. Grid will be padded with empty cells if short.`);
-}
-
-// Take exactly 486 (or fewer, padded)
 const GRID_COLS = 18;
 const GRID_ROWS = 27;
 const GRID_CELLS = GRID_COLS * GRID_ROWS;
 const cells = verified.slice(0, GRID_CELLS);
-while (cells.length < GRID_CELLS) cells.push(null); // pad
+while (cells.length < GRID_CELLS) cells.push(null);
 
-// ── 2. Build the HTML document ─────────────────────────────────────────────
-// Output dimensions: 1800 × 2700 (exact 2:3 aspect — matches 24×36 poster)
-const W = 1800;
-const H = 2700;
+// ── 2. Canvas + sheet geometry ────────────────────────────────────────────
+const W = 2400;          // canvas width
+const H = 3600;          // canvas height (exact 2:3)
 
-// Convert abs paths to file:// URLs for puppeteer
-const thumbUrls = cells.map(c => c ? 'file://' + c.abs : null);
+const SHEET_INSET_X = 160;   // backdrop margin on each side
+const SHEET_INSET_TOP = 180;
+const SHEET_INSET_BOT = 180;
+const SHEET_W = W - SHEET_INSET_X * 2;   // 2080
+const SHEET_H = H - SHEET_INSET_TOP - SHEET_INSET_BOT; // 3240
 
-const cellHtml = thumbUrls
-  .map((u, i) => u
-    ? `<div class="cell"><img src="${u}" alt="" loading="eager" decoding="sync"/></div>`
+// ── 3. Deckle-edge clip-path (left side of sheet) ─────────────────────────
+// Deterministic "randomness" so rebuilds produce the same edge shape.
+function mulberry32(seed) {
+  return () => {
+    let t = (seed += 0x6D2B79F5);
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const rand = mulberry32(486);
+
+function buildDeckleClipPath(heightPx, steps = 70, maxInset = 22) {
+  // Points clockwise starting top-left, using the sheet's own coord system.
+  const pts = [];
+  pts.push(`${(rand() * maxInset).toFixed(1)}px 0`);   // top-left with tiny inset
+  pts.push(`100% 0`);
+  pts.push(`100% 100%`);
+  pts.push(`${(rand() * maxInset).toFixed(1)}px 100%`); // bottom-left with tiny inset
+  // Left edge going up from near-bottom to near-top
+  for (let i = steps - 1; i >= 1; i--) {
+    const y = (i / steps) * heightPx;
+    // Use cubic-ish variance to cluster values near 0 with occasional deeper bites
+    const r = rand();
+    const inset = Math.pow(r, 1.6) * maxInset;
+    pts.push(`${inset.toFixed(1)}px ${y.toFixed(1)}px`);
+  }
+  return `polygon(${pts.join(', ')})`;
+}
+
+const deckleClipPath = buildDeckleClipPath(SHEET_H);
+
+// ── 4. Build cell HTML ────────────────────────────────────────────────────
+const cellHtml = cells
+  .map(c => c
+    ? `<div class="cell"><img src="file://${c.abs}" alt="" loading="eager" decoding="sync"/></div>`
     : `<div class="cell cell-empty"></div>`)
   .join('');
 
+// ── 5. HTML document ──────────────────────────────────────────────────────
 const html = `<!doctype html>
 <html>
 <head>
 <meta charset="utf-8"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { width: ${W}px; height: ${H}px; }
   body {
-    background: #F5EFE2;               /* warm paper */
+    background: #E4D8BF;   /* warm tan backdrop behind the sheet */
     font-family: 'IBM Plex Mono', monospace;
-    color: #1A1714;                     /* warm near-black */
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    padding: 120px 130px 140px 130px;
-    position: relative;
-  }
-
-  /* subtle paper vignette */
-  body::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at center, transparent 55%, rgba(120,100,70,0.06) 100%);
-    pointer-events: none;
-  }
-
-  /* ── Header ── */
-  header {
-    text-align: center;
-    margin-bottom: 56px;
-  }
-  .title {
-    font-family: 'Playfair Display', serif;
-    font-weight: 600;
-    font-size: 180px;
-    letter-spacing: -0.02em;
-    line-height: 0.9;
     color: #1A1714;
-  }
-  .subtitle {
-    margin-top: 22px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-weight: 400;
-    font-size: 15px;
-    letter-spacing: 0.32em;
-    text-transform: uppercase;
-    color: #5C5247;
+    position: relative;
+    overflow: hidden;
   }
 
-  /* ── Grid ── */
+  /* ── Sheet: warm paper with deckle edge on left ── */
+  .sheet {
+    position: absolute;
+    top: ${SHEET_INSET_TOP}px;
+    left: ${SHEET_INSET_X}px;
+    width: ${SHEET_W}px;
+    height: ${SHEET_H}px;
+    background: #F1E8D2;              /* slightly brighter cream */
+    clip-path: ${deckleClipPath};
+    display: flex;
+    flex-direction: column;
+    padding: 300px 220px 200px 220px;  /* generous top margin, balanced sides */
+  }
+
+  /* Subtle drop-shadow approximation — render a second sheet behind for shadow */
+  .shadow {
+    position: absolute;
+    top: ${SHEET_INSET_TOP + 4}px;
+    left: ${SHEET_INSET_X + 4}px;
+    width: ${SHEET_W}px;
+    height: ${SHEET_H}px;
+    background: rgba(60, 45, 20, 0.18);
+    clip-path: ${deckleClipPath};
+    filter: blur(18px);
+    z-index: 0;
+  }
+  .sheet { z-index: 1; }
+
+  /* ── Grid (18 × 27 square cells) ── */
   .grid {
+    width: 100%;
+    aspect-ratio: ${GRID_COLS} / ${GRID_ROWS};
     display: grid;
     grid-template-columns: repeat(${GRID_COLS}, 1fr);
     grid-template-rows: repeat(${GRID_ROWS}, 1fr);
-    gap: 4px;
-    margin-bottom: 48px;
-    min-height: 0;                 /* allow grid to shrink inside body grid row */
+    gap: 5px;
+    margin: 0 auto;
   }
   .cell {
     position: relative;
@@ -143,118 +165,88 @@ const html = `<!doctype html>
     height: 100%;
     object-fit: cover;
     display: block;
-    filter: saturate(0.92) contrast(1.02);
   }
-  .cell-empty {
-    background: #EADFC8;
-  }
+  .cell-empty { background: #EADFC8; }
 
-  /* ── Footer metadata ── */
+  /* ── Footer: three columns, baseline-aligned ── */
   footer {
+    flex: 1;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: end;
-    gap: 48px;
-    padding-top: 18px;
-    border-top: 1px solid #1A1714;
+    gap: 80px;
+    padding-top: 60px;
   }
-  .meta-left {
+  .meta-left,
+  .meta-right {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
+    font-size: 22px;
     font-weight: 400;
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: #1A1714;
-    line-height: 1.7;
+    line-height: 1.6;
   }
-  .meta-left .dim { color: #7A6F5F; }
-  .meta-center {
-    text-align: center;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: #1A1714;
-  }
-  .edition {
-    display: inline-flex;
-    align-items: baseline;
-    gap: 8px;
-    font-size: 22px;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-  }
-  .edition .blank {
-    display: inline-block;
-    width: 64px;
-    border-bottom: 1.5px solid #1A1714;
-    height: 1em;
-  }
-  .meta-center .sig-line {
-    margin-top: 18px;
-    width: 180px;
-    border-bottom: 1px solid #1A1714;
-    margin-left: auto;
-    margin-right: auto;
-    height: 18px;
-  }
-  .meta-center .sig-label {
-    font-size: 9px;
-    letter-spacing: 0.3em;
-    color: #7A6F5F;
-    margin-top: 4px;
-  }
-  .meta-right {
-    text-align: right;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: #5C5247;
-    line-height: 1.8;
-  }
-  .meta-right .hotel {
+  .meta-right { text-align: right; }
+  .meta-right .imprint {
     font-family: 'Playfair Display', serif;
-    font-size: 16px;
-    letter-spacing: 0.08em;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 26px;
+    letter-spacing: 0;
     text-transform: none;
     color: #1A1714;
+    margin-top: 4px;
+  }
+  .lockup {
+    text-align: center;
+  }
+  .lockup .nest {
+    font-family: 'Playfair Display', serif;
     font-weight: 500;
-    font-style: italic;
-    margin-top: 2px;
+    font-size: 52px;
+    letter-spacing: 0.02em;
+    color: #1A1714;
+    line-height: 1;
+  }
+  .lockup .sub {
+    margin-top: 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 400;
+    font-size: 18px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: #1A1714;
   }
 </style>
 </head>
 <body>
-  <header>
-    <div class="title">NEST</div>
-    <div class="subtitle">Patio Beach &nbsp;·&nbsp; Index &nbsp;·&nbsp; Edition 01</div>
-  </header>
+  <div class="shadow"></div>
+  <div class="sheet">
+    <div class="grid">
+      ${cellHtml}
+    </div>
 
-  <div class="grid">
-    ${cellHtml}
+    <footer>
+      <div class="meta-left">
+        486 Sites<br/>
+        Brooklyn &amp; Manhattan<br/>
+        2016 — 2021
+      </div>
+      <div class="lockup">
+        <div class="nest">NEST</div>
+        <div class="sub">Patio Beach</div>
+      </div>
+      <div class="meta-right">
+        Earth Day 2026
+        <div class="imprint">A Hotel release</div>
+      </div>
+    </footer>
   </div>
-
-  <footer>
-    <div class="meta-left">
-      486 Sites<br/>
-      Brooklyn &amp; Manhattan<br/>
-      <span class="dim">2016 — 2021</span>
-    </div>
-    <div class="meta-center">
-      <div class="edition"><span class="blank"></span>&nbsp;/&nbsp;100</div>
-      <div class="sig-line"></div>
-      <div class="sig-label">Signed</div>
-    </div>
-    <div class="meta-right">
-      Earth Day 2026<br/>
-      <span class="hotel">A Hotel release</span>
-    </div>
-  </footer>
 </body>
 </html>`;
 
-// ── 3. Render via puppeteer ────────────────────────────────────────────────
+// ── 6. Render via puppeteer ──────────────────────────────────────────────
 fs.mkdirSync(outDir, { recursive: true });
 const tmpHtml = path.join(outDir, '.poster-hero.tmp.html');
 fs.writeFileSync(tmpHtml, html);
@@ -265,22 +257,29 @@ const browser = await puppeteer.launch({
 });
 const page = await browser.newPage();
 await page.setViewport({ width: W, height: H, deviceScaleFactor: 1 });
-await page.goto('file://' + tmpHtml, { waitUntil: 'networkidle0', timeout: 120_000 });
+await page.goto('file://' + tmpHtml, { waitUntil: 'networkidle0', timeout: 180_000 });
 
-// Extra safety: wait for fonts + all images decoded
+// Wait for fonts + image decode + a render frame
 await page.evaluate(async () => {
   await document.fonts.ready;
   const imgs = [...document.images];
-  await Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(res => {
-    img.addEventListener('load', res, { once: true });
-    img.addEventListener('error', res, { once: true });
-  })));
+  await Promise.all(imgs.map(img => img.complete && img.naturalWidth > 0
+    ? Promise.resolve()
+    : new Promise(res => {
+      img.addEventListener('load', res, { once: true });
+      img.addEventListener('error', res, { once: true });
+    })
+  ));
+  // additional decode pass to be safe
+  await Promise.all(imgs.map(img => img.decode ? img.decode().catch(() => {}) : Promise.resolve()));
+  // two RAFs to settle
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 });
 
 await page.screenshot({
   path: outPath,
   type: 'jpeg',
-  quality: 92,
+  quality: 95,
   clip: { x: 0, y: 0, width: W, height: H },
 });
 

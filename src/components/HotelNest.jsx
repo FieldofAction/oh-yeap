@@ -45,6 +45,10 @@ export default function HotelNest() {
   const POSTER_URL = "https://buy.stripe.com/poster-placeholder";
   // TODO: Stripe URL — tee
   const TEE_URL = "https://buy.stripe.com/tee-placeholder";
+  // TODO: Stripe URL — tote
+  const TOTE_URL = "https://buy.stripe.com/tote-placeholder";
+  // TODO: Stripe URL — complete-edition bundle
+  const BUNDLE_URL = "https://buy.stripe.com/bundle-placeholder";
   // TODO: real Substack URL
   const ESSAY_URL = "https://artofmemos.substack.com/p/nest";
 
@@ -71,7 +75,7 @@ export default function HotelNest() {
       {/* 3. Intro */}
       <section className="hn-intro dc dc3">
         <p className="hn-intro-body">
-          For five years I photographed what cities couldn't hold: mattresses, shoes, chairs, the small archaeology of what people couldn't keep. The archive is called Patio Beach. NEST is the first edition built from it: an index poster assembled from 486 sites, and a tee that carries the dates. Released on Earth Day, 2026.
+          For five years I photographed what cities couldn't hold: mattresses, shoes, chairs, the small archaeology of what people couldn't keep. The archive is called Patio Beach. NEST is the first edition built from it — three objects: an index poster assembled from 486 sites, a tee, and a tote. Released on Earth Day, 2026.
         </p>
         <a className="hn-essay-link" href={ESSAY_URL} target="_blank" rel="noopener noreferrer">
           Read the essay →
@@ -83,19 +87,16 @@ export default function HotelNest() {
         <SectionHeader label="01">Poster</SectionHeader>
 
         <div className="hn-stack">
-          <ImageSlot label="Detail · typography corner" aspect="3 / 2" path="/images/nest/poster-detail-1.jpg" />
-          <Caption />
-
           <ImageSlot label="Detail · typology grid zone" aspect="3 / 2" path="/images/nest/poster-detail-2.jpg" />
           <Caption />
 
-          <ImageSlot label="Detail · edition stamp + signature" aspect="3 / 2" path="/images/nest/poster-detail-3.jpg" />
+          <ImageSlot label="Detail · deckle edge + edition numbering" aspect="3 / 2" path="/images/nest/poster-detail-3.jpg" />
           <Caption />
 
           <ImageSlot label="In-situ · on a wall" aspect="4 / 5" path="/images/nest/poster-insitu-1.jpg" />
           <Caption />
 
-          <ImageSlot label="In-situ · held or rolled" aspect="4 / 5" path="/images/nest/poster-insitu-2.jpg" />
+          <ImageSlot label="In-situ · on a table" aspect="4 / 5" path="/images/nest/poster-insitu-2.jpg" />
           <Caption />
         </div>
 
@@ -177,18 +178,128 @@ export default function HotelNest() {
         </div>
       </section>
 
-      {/* 6. On This Edition */}
-      <section className="hn-terms dc dc6">
-        <SectionHeader label="03">On This Edition</SectionHeader>
+      {/* 6. The Tote */}
+      <section className="hn-product dc dc6">
+        <SectionHeader label="03">Tote</SectionHeader>
+
+        <div className="hn-stack">
+          <ImageSlot label="Flat lay · front" aspect="4 / 5" path="/images/nest/tote-front.jpg" />
+          <Caption />
+
+          <ImageSlot label="Flat lay · back" aspect="4 / 5" path="/images/nest/tote-back.jpg" />
+          <Caption />
+
+          <ImageSlot label="Detail · front print" aspect="3 / 2" path="/images/nest/tote-detail-front.jpg" />
+          <Caption />
+
+          <ImageSlot label="Detail · handle reinforcement" aspect="3 / 2" path="/images/nest/tote-detail-handle.jpg" />
+          <Caption />
+
+          <ImageSlot label="Detail · interior label" aspect="3 / 2" path="/images/nest/tote-detail-label.jpg" />
+          <Caption />
+
+          <ImageSlot label="In-situ · carried" aspect="4 / 5" path="/images/nest/tote-insitu.jpg" />
+          <Caption />
+        </div>
+
+        <div className="hn-product-block">
+          <h3 className="hn-product-name">NEST / Edition Tote</h3>
+          <ul className="hn-spec">
+            <li>Stanley/Stella STAU773 · 100% GOTS organic cotton, 160 gsm</li>
+            <li>Water-based print · Reinforced cross-stitch handles</li>
+            <li>Edition of 50</li>
+          </ul>
+          <div className="hn-price">$45</div>
+          <a
+            className="hn-reserve"
+            href={TOTE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Reserve →
+          </a>
+        </div>
+      </section>
+
+      {/* 7. Complete Edition (bundle) */}
+      <section className="hn-bundle dc dc7">
+        <SectionHeader label="04">Complete Edition</SectionHeader>
+
+        <div className="hn-bundle-body">
+          <p className="hn-bundle-lede">
+            The poster, the tee, and the tote — the full release, reserved as a set. Capped at 50 complete editions.
+          </p>
+
+          <ul className="hn-bundle-list">
+            <li>
+              <span className="hn-bundle-item">NEST / Index Poster</span>
+              <span className="hn-bundle-item-note">24 × 36 in · signed + numbered</span>
+              <span className="hn-bundle-item-price">$85</span>
+            </li>
+            <li>
+              <span className="hn-bundle-item">NEST / Edition Tee</span>
+              <span className="hn-bundle-item-note">Organic cotton · Sizes S–XXL</span>
+              <span className="hn-bundle-item-price">$55</span>
+            </li>
+            <li>
+              <span className="hn-bundle-item">NEST / Edition Tote</span>
+              <span className="hn-bundle-item-note">Organic cotton · 160 gsm</span>
+              <span className="hn-bundle-item-price">$45</span>
+            </li>
+          </ul>
+
+          <div className="hn-bundle-total">
+            <div className="hn-bundle-total-row">
+              <span className="hn-bundle-total-label">Sum of parts</span>
+              <span className="hn-bundle-total-strike">$185</span>
+            </div>
+            <div className="hn-bundle-total-row hn-bundle-total-final">
+              <span className="hn-bundle-total-label">Complete edition</span>
+              <span className="hn-bundle-total-price">$170</span>
+            </div>
+          </div>
+
+          <div className="hn-size">
+            <label htmlFor="hn-bundle-size-select">Tee size</label>
+            <select
+              id="hn-bundle-size-select"
+              value={size}
+              onChange={(e) => setSize(e.target.value)}
+            >
+              <option>S</option>
+              <option>M</option>
+              <option>L</option>
+              <option>XL</option>
+              <option>XXL</option>
+            </select>
+          </div>
+
+          <a
+            className="hn-reserve hn-reserve-bundle"
+            href={BUNDLE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Reserve the Complete Edition →
+          </a>
+          <div className="hn-bundle-note">
+            Individual reservations stay available above. If the 50 complete-edition sets sell out, individual pieces remain open until their own edition caps.
+          </div>
+        </div>
+      </section>
+
+      {/* 8. On This Edition */}
+      <section className="hn-terms dc dc8">
+        <SectionHeader label="05">On This Edition</SectionHeader>
         <div className="hn-terms-body">
           <p>Reservations open April 22 and close May 6. The edition is printed once, after reservations close. Each poster is signed and numbered by hand before shipping. Delivery is expected by late May.</p>
-          <p>Printed to order. No inventory, no overproduction. The poster is printed by Gelato at a US facility on FSC-certified stock. The tee is printed on a Stanley/Stella organic cotton blank with water-based ink.</p>
+          <p>Printed to order. No inventory, no overproduction. The poster is printed by Gelato at a US facility on FSC-certified stock. The tee and tote are printed on Stanley/Stella organic cotton blanks with water-based ink.</p>
           <p>20% of proceeds go to the Gowanus Canal Conservancy.</p>
         </div>
       </section>
 
-      {/* 7. Imprint footer */}
-      <footer className="hn-imprint dc dc7">
+      {/* 9. Imprint footer */}
+      <footer className="hn-imprint dc dc9">
         A Hotel release · 2026
       </footer>
     </div>
