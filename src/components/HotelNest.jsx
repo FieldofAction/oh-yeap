@@ -95,9 +95,6 @@ export default function HotelNest() {
 
           <ImageSlot label="In-situ · on a wall" aspect="4 / 5" path="/images/nest/poster-insitu-1.jpg" />
           <Caption />
-
-          <ImageSlot label="In-situ · on a table" aspect="4 / 5" path="/images/nest/poster-insitu-2.jpg" />
-          <Caption />
         </div>
 
         <div className="hn-product-block">
@@ -134,9 +131,6 @@ export default function HotelNest() {
           <Caption />
 
           <ImageSlot label="Detail · back type block" aspect="3 / 2" path="/images/nest/tee-detail-back.jpg" />
-          <Caption />
-
-          <ImageSlot label="Detail · interior label" aspect="3 / 2" path="/images/nest/tee-detail-label.jpg" />
           <Caption />
 
           <ImageSlot label="In-situ · worn" aspect="4 / 5" path="/images/nest/tee-insitu.jpg" />
@@ -187,9 +181,6 @@ export default function HotelNest() {
           <Caption />
 
           <ImageSlot label="Flat lay · back" aspect="4 / 5" path="/images/nest/tote-back.jpg" />
-          <Caption />
-
-          <ImageSlot label="Detail · front print" aspect="3 / 2" path="/images/nest/tote-detail-front.jpg" />
           <Caption />
 
           <ImageSlot label="Detail · handle reinforcement" aspect="3 / 2" path="/images/nest/tote-detail-handle.jpg" />
