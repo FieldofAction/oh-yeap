@@ -1,5 +1,50 @@
 import { useState, useEffect } from "react";
 
+// ── Reservation window ────────────────────────────────────────
+// Reservations close 23:59 ET on May 8, 2026. After that, Reserve
+// buttons disable client-side AND the Stripe Payment Links should
+// be manually toggled off. See scripts/nest/STRIPE-SETUP.md.
+const RESERVATIONS_CLOSE = new Date("2026-05-09T03:59:59Z"); // 23:59 EDT May 8
+
+// ── Stripe Payment Link URLs ──────────────────────────────────
+// Filled in at build time from VITE_STRIPE_*_URL env vars
+// (see .env.local.example). If an env var is missing, the
+// ReserveButton renders as disabled with a "not configured" state
+// so missing URLs surface immediately in dev.
+const STRIPE = {
+  poster: import.meta.env.VITE_STRIPE_POSTER_URL || "",
+  tee: import.meta.env.VITE_STRIPE_TEE_URL || "",
+  tote: import.meta.env.VITE_STRIPE_TOTE_URL || "",
+  bundle: import.meta.env.VITE_STRIPE_BUNDLE_URL || "",
+};
+
+function ReserveButton({ href, children, variant, now }) {
+  const closed = now >= RESERVATIONS_CLOSE;
+  const configured = Boolean(href);
+  const disabled = closed || !configured;
+  const cls = `hn-reserve${variant === "bundle" ? " hn-reserve-bundle" : ""}${disabled ? " hn-reserve-disabled" : ""}`;
+
+  if (closed) {
+    return (
+      <div className={cls} aria-disabled="true" role="presentation">
+        Reservations closed
+      </div>
+    );
+  }
+  if (!configured) {
+    return (
+      <div className={cls} aria-disabled="true" role="presentation" title="Stripe URL not configured — see .env.local.example">
+        Reservations opening soon
+      </div>
+    );
+  }
+  return (
+    <a className={cls} href={href} target="_blank" rel="noopener noreferrer">
+      {children}
+    </a>
+  );
+}
+
 // Image slot — renders a real <img> when `path` exists in /public/images/nest/,
 // else falls back to a dashed placeholder showing the expected aspect + path.
 function ImageSlot({ label, aspect, path, priority = false }) {
@@ -38,17 +83,18 @@ function SectionHeader({ children, label }) {
 /* ── Main page ─────────────────────────────────────────────── */
 export default function HotelNest() {
   const [size, setSize] = useState("M");
+  // Recomputed on mount and every minute so the page auto-flips
+  // to the closed state once May 8 23:59 ET passes, even on a
+  // long-open tab. Cheap — only when page is mounted.
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+  const reservationsClosed = now >= RESERVATIONS_CLOSE;
 
   useEffect(() => { document.title = "NEST — First edition from the Patio Beach archive"; }, []);
 
-  // TODO: Stripe URL — poster
-  const POSTER_URL = "https://buy.stripe.com/poster-placeholder";
-  // TODO: Stripe URL — tee
-  const TEE_URL = "https://buy.stripe.com/tee-placeholder";
-  // TODO: Stripe URL — tote
-  const TOTE_URL = "https://buy.stripe.com/tote-placeholder";
-  // TODO: Stripe URL — complete-edition bundle
-  const BUNDLE_URL = "https://buy.stripe.com/bundle-placeholder";
   // TODO: real Substack URL
   const ESSAY_URL = "https://artofmemos.substack.com/p/nest";
 
@@ -74,6 +120,11 @@ export default function HotelNest() {
 
       {/* 3. Intro */}
       <section className="hn-intro dc dc3">
+        {reservationsClosed && (
+          <div className="hn-closed-banner" role="status">
+            Reservations closed — the edition has been printed.
+          </div>
+        )}
         <p className="hn-intro-body">
           For five years I photographed what cities couldn't hold: mattresses, shoes, chairs, the small archaeology of what people couldn't keep. The archive is called Patio Beach. NEST is the first edition built from it — three objects: an index poster assembled from 486 sites, a tee, and a tote. Released on Earth Day, 2026.
         </p>
@@ -105,14 +156,7 @@ export default function HotelNest() {
             <li>Signed + numbered · Edition of 100</li>
           </ul>
           <div className="hn-price">$85</div>
-          <a
-            className="hn-reserve"
-            href={POSTER_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Reserve →
-          </a>
+          <ReserveButton href={STRIPE.poster} now={now}>Reserve →</ReserveButton>
         </div>
       </section>
 
@@ -151,6 +195,7 @@ export default function HotelNest() {
               id="hn-size-select"
               value={size}
               onChange={(e) => setSize(e.target.value)}
+              disabled={reservationsClosed}
             >
               <option>S</option>
               <option>M</option>
@@ -159,16 +204,10 @@ export default function HotelNest() {
               <option>XXL</option>
             </select>
           </div>
+          <div className="hn-size-note">Stripe will confirm your size at checkout.</div>
 
           <div className="hn-price">$55</div>
-          <a
-            className="hn-reserve"
-            href={TEE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Reserve →
-          </a>
+          <ReserveButton href={STRIPE.tee} now={now}>Reserve →</ReserveButton>
         </div>
       </section>
 
@@ -201,14 +240,7 @@ export default function HotelNest() {
             <li>Edition of 50</li>
           </ul>
           <div className="hn-price">$45</div>
-          <a
-            className="hn-reserve"
-            href={TOTE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Reserve →
-          </a>
+          <ReserveButton href={STRIPE.tote} now={now}>Reserve →</ReserveButton>
         </div>
       </section>
 
@@ -256,6 +288,7 @@ export default function HotelNest() {
               id="hn-bundle-size-select"
               value={size}
               onChange={(e) => setSize(e.target.value)}
+              disabled={reservationsClosed}
             >
               <option>S</option>
               <option>M</option>
@@ -264,15 +297,11 @@ export default function HotelNest() {
               <option>XXL</option>
             </select>
           </div>
+          <div className="hn-size-note">Stripe will confirm your size at checkout.</div>
 
-          <a
-            className="hn-reserve hn-reserve-bundle"
-            href={BUNDLE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <ReserveButton href={STRIPE.bundle} now={now} variant="bundle">
             Reserve the Complete Edition →
-          </a>
+          </ReserveButton>
           <div className="hn-bundle-note">
             Individual reservations stay available above. If the 50 complete-edition sets sell out, individual pieces remain open until their own edition caps.
           </div>
@@ -283,7 +312,7 @@ export default function HotelNest() {
       <section className="hn-terms dc dc8">
         <SectionHeader label="05">On This Edition</SectionHeader>
         <div className="hn-terms-body">
-          <p>Reservations open April 22 and close May 6. The edition is printed once, after reservations close. Each poster is signed and numbered by hand before shipping. Delivery is expected by late May.</p>
+          <p>Reservations open April 22 and close May 8, 11:59 PM ET. The edition is printed once, after reservations close. Each poster is signed and numbered by hand before shipping. Delivery is expected by late May.</p>
           <p>Printed to order. No inventory, no overproduction. The poster is printed by Gelato at a US facility on FSC-certified stock. The tee and tote are printed on Stanley/Stella organic cotton blanks with water-based ink.</p>
           <p>20% of proceeds go to the Gowanus Canal Conservancy.</p>
         </div>
