@@ -236,7 +236,7 @@ export default function HotelNest() {
           <h3 className="hn-product-name">NEST / Edition Tote</h3>
           <ul className="hn-spec">
             <li>Stanley/Stella STAU773 · 100% GOTS organic cotton, 160 gsm</li>
-            <li>Water-based print · Reinforced cross-stitch handles</li>
+            <li>French Navy · Water-based print · Reinforced cross-stitch handles</li>
             <li>Edition of 50</li>
           </ul>
           <div className="hn-price">$45</div>
@@ -266,7 +266,7 @@ export default function HotelNest() {
             </li>
             <li>
               <span className="hn-bundle-item">NEST / Edition Tote</span>
-              <span className="hn-bundle-item-note">Organic cotton · 160 gsm</span>
+              <span className="hn-bundle-item-note">French Navy · Organic cotton · 160 gsm</span>
               <span className="hn-bundle-item-price">$45</span>
             </li>
           </ul>

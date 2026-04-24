@@ -44,7 +44,7 @@ Save → note the **Product ID** (`prod_...`) and the **Price ID** (`price_...`)
 | Field | Value |
 |---|---|
 | Name | `NEST / Edition Tote — Edition 01` |
-| Description | Black Stanley/Stella STAU773 organic cotton tote, 160 gsm. Water-based print. Edition of 50. Reserved now — shipped late May 2026. A Hotel release. |
+| Description | French Navy Stanley/Stella STAU773 organic cotton tote (color C727), 160 gsm. Water-based print. Edition of 50. Reserved now — shipped late May 2026. A Hotel release. |
 | Image | upload `/public/images/nest/tote-front.jpg` |
 | Unit label | `tote` |
 | Statement descriptor | `NEST TOTE` |
@@ -83,7 +83,10 @@ On each product's detail page → **Metadata** section → Add these keys. Metad
 |---|---|---|
 | Poster | `product_type` | `poster` |
 | Tee | `product_type` | `tee` |
+| Tee | `color` | `black` |
 | Tote | `product_type` | `tote` |
+| Tote | `color` | `french_navy` |
+| Tote | `blank_sku` | `STAU773_C727` |
 | Complete Edition | `product_type` | `bundle` |
 | Complete Edition | `bundle_contents` | `poster,tee,tote` |
 
