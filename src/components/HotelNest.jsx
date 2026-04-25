@@ -186,7 +186,7 @@ export default function HotelNest() {
           <ul className="hn-spec">
             <li>100% GOTS-certified organic cotton</li>
             <li>Water-based print · Sizes S–XXL</li>
-            <li>Edition of 50</li>
+            <li>Edition of 100</li>
           </ul>
 
           <div className="hn-size">
@@ -237,7 +237,7 @@ export default function HotelNest() {
           <ul className="hn-spec">
             <li>Stanley/Stella STAU773 · 100% GOTS organic cotton, 160 gsm</li>
             <li>French Navy · Water-based print · Reinforced cross-stitch handles</li>
-            <li>Edition of 50</li>
+            <li>Edition of 100</li>
           </ul>
           <div className="hn-price">$45</div>
           <ReserveButton href={STRIPE.tote} now={now}>Reserve →</ReserveButton>
