@@ -97,7 +97,7 @@ The label is cream or warm off-white with dark ink, cleanly stitched to the blac
 - 37 × 42 cm body, 65 cm straps
 - Top edge double-folded; handles reinforced with cross-stitch
 - OEKO-TEX, Fairwear Foundation, PETA-Approved Vegan
-- Colors under consideration: **Royal Blue** and **French Navy** — both honor the project's satin bowerbird motif (the species is famously blue-obsessed; builds its bower with blue objects it collects from the ground). Royal Blue is the louder, more literal bowerbird pick; French Navy is the restrained, editorial cousin.
+- **Chosen color: French Navy (Stanley/Stella code `C727`, ~`#1F2A44`).** Variant B below is the production direction. Variant A (Royal Blue) is kept for reference in case of a future re-run. Satin bowerbird motif honored quietly — navy reads as restrained and editorial next to the black tee.
 - Matches the tee's sourcing ethic — same supplier family, same organic certification. Cohesive story for the edition.
 - Print-on-demand available via Prodigi; also available through distributors like Organic Blank and Baroneclothing.
 
