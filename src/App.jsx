@@ -51,7 +51,7 @@ const viewFromHash = () => {
   const hash = typeof window !== "undefined"
     ? window.location.hash.replace(/^#\/?/, "")
     : "";
-  return HASH_TO_VIEW[hash] || "public";
+  return HASH_TO_VIEW[hash] || "studio";
 };
 
 const WORK_VIEWS = new Set(["public", "superconscious", "patiobeach"]);

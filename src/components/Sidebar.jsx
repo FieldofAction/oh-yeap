@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 // Wave 1 launch note:
 // - Practice hidden from WORK until case studies are refined (Wave 2).
@@ -53,11 +53,22 @@ export default function Sidebar({ view, navigateTo, filter, setFilter }) {
   const [gatePending, setGatePending] = useState(null); // nav item awaiting unlock
   const [gateInput, setGateInput] = useState("");
   const [gateError, setGateError] = useState(false);
+  // Suppresses the auto-open effect during the 200ms transition after a
+  // dismissal, so closing the modal can't immediately re-trigger it before
+  // navigateTo lands on the public view.
+  const dismissingRef = useRef(false);
 
-  // Guard: if the current view is a studio view but unlock was cleared, bounce home.
+  // Gate: if the current view is a studio view but unlock was cleared, show the
+  // password modal in place. (Replaces the older bounce-to-public behavior so
+  // landing directly on studio.fieldofaction.org reads as Studio, not as the
+  // public home page.)
   useEffect(() => {
-    if (STUDIO_KEYS.has(view) && !unlocked) navigateTo("public");
-  }, [view, unlocked, navigateTo]);
+    if (STUDIO_KEYS.has(view) && !unlocked && !gatePending && !dismissingRef.current) {
+      setGatePending({ key: view, label: "Studio" });
+      setGateInput("");
+      setGateError(false);
+    }
+  }, [view, unlocked, gatePending]);
 
   const handleNav = (item) => {
     if (item.href) { window.open(item.href, "_blank"); return; }
@@ -96,6 +107,14 @@ export default function Sidebar({ view, navigateTo, filter, setFilter }) {
     setGatePending(null);
     setGateInput("");
     setGateError(false);
+    // If the user dismissed the modal while on a studio view without unlocking,
+    // send them to a safe public view so they don't see studio content behind it.
+    if (STUDIO_KEYS.has(view) && !unlocked) {
+      dismissingRef.current = true;
+      navigateTo("public");
+      // Long enough to cover navigateTo's 200ms transition + a buffer.
+      setTimeout(() => { dismissingRef.current = false; }, 500);
+    }
   };
 
   const STUDIO_VIEWS = new Set(["studio", "model", "playbook", "console", "foa", "breakground", "desert", "backstage", "editor", "lab"]);
