@@ -707,6 +707,10 @@ export default function PatioBeach() {
 
           {/* 6. Mathis */}
           <NarrativeSection label="Mathis">
+            <div className="pb-narr-figure">
+              <img src="/media/nest/mathis.jpg" alt="Mathis at age 4 in J.J. Byrne Playground, Park Slope" className="pb-narr-figure-img" />
+              <div className="pb-narr-figure-cap">Mathis age 4, J.J. Byrne</div>
+            </div>
             <p className="pb-narr-body">This project would not exist without my son. Walking him to school created the space where the photographs happened. But more importantly, his presence changed the way I saw the world. Children notice things adults move past. A crushed toy. A strange object on the sidewalk. Something bright in the gutter.</p>
             <p className="pb-narr-body">Walking with him slowed my attention. Mathis came into the world with awareness, seeing the unacknowledged easily. He shared that gift with me through fatherhood and care.</p>
             <p className="pb-narr-body">What began as visual curiosity eventually led to something else: a rediscovery of my own voice. First visually, then personally, and eventually through advocacy and action. Awareness creates momentum.</p>
