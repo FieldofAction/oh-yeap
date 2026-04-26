@@ -1,11 +1,6 @@
 import React, { useState } from "react";
-import { AGENTS, RING_LABELS } from "../data/agents";
-import { AOM_VERSIONS } from "../data/aom-versions";
-
-function agentRole(prompt) {
-  const m = prompt.match(/Your (?:role|orientation) is ([^.]+)/);
-  return m ? m[1].trim() : "";
-}
+import { AGENTS_PUBLIC, RING_LABELS } from "../data/agents-public";
+import { AOM_PUBLIC } from "../data/aom-versions-public";
 
 export default function About({ theme }) {
   const [showAgents, setShowAgents] = useState(false);
@@ -57,11 +52,11 @@ export default function About({ theme }) {
         </p>
         <p className="ab-body" style={{ marginTop:20 }}>
           <span style={{ fontFamily:"var(--display)", fontWeight:300, color:"var(--fg)" }}>v1: Intervention.</span>{" "}
-          {AOM_VERSIONS.v1.subtitle}<br/>
+          {AOM_PUBLIC.v1.subtitle}<br/>
           <span style={{ fontFamily:"var(--display)", fontWeight:300, color:"var(--fg)" }}>v2: Authorship.</span>{" "}
-          {AOM_VERSIONS.v2.subtitle}<br/>
+          {AOM_PUBLIC.v2.subtitle}<br/>
           <span style={{ fontFamily:"var(--display)", fontWeight:300, color:"var(--fg)" }}>v3: Infrastructure.</span>{" "}
-          {AOM_VERSIONS.v3.subtitle}
+          {AOM_PUBLIC.v3.subtitle}
         </p>
       </div>
 
@@ -76,10 +71,10 @@ export default function About({ theme }) {
             {[1,2,3].map(ring => (
               <React.Fragment key={ring}>
                 <div className="ab-ring-label">{RING_LABELS[ring].name}</div>
-                {AGENTS.filter(a => a.ring === ring).map(a => (
+                {AGENTS_PUBLIC.filter(a => a.ring === ring).map(a => (
                   <div key={a.key} className="ab-agent">
                     <div className="ab-agent-name">{a.name}</div>
-                    <div className="ab-agent-role">{agentRole(a.prompt)}</div>
+                    <div className="ab-agent-role">{a.role}</div>
                   </div>
                 ))}
               </React.Fragment>

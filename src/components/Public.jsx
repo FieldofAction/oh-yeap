@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { FILTERS } from "../data/playbook-data";
+import { FILTERS } from "../data/playbook-public";
 import { PatternChips, AlexanderChips } from "./PatternLens";
 import NetworkGraph from "./NetworkGraph";
 import HeroCycle from "./HeroCycle";

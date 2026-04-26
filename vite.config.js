@@ -7,7 +7,19 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const apiKey = env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY || ''
   console.log('[vite] API key loaded:', apiKey ? apiKey.substring(0, 15) + '...' : 'MISSING')
+
+  // Build target: 'public' (default) or 'studio'.
+  // Vercel sets BUILD_TARGET via the project's environment variable.
+  // The public project builds index.html only — Studio code never enters that bundle.
+  const buildTarget = env.BUILD_TARGET || process.env.BUILD_TARGET || 'public'
+  const input = buildTarget === 'studio'
+    ? { studio: path.resolve(process.cwd(), 'studio.html') }
+    : { index: path.resolve(process.cwd(), 'index.html') }
+
   return {
+    build: {
+      rollupOptions: { input },
+    },
     plugins: [
       react(),
       {
