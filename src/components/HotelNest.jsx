@@ -248,6 +248,14 @@ export default function HotelNest() {
       <section className="hn-bundle dc dc7">
         <SectionHeader label="04">Complete Edition</SectionHeader>
 
+        <div className="hn-bundle-hero">
+          <ImageSlot
+            label="Complete Edition · poster, tee, and tote"
+            aspect="3 / 2"
+            path="/images/nest/combo.png"
+          />
+        </div>
+
         <div className="hn-bundle-body">
           <p className="hn-bundle-lede">
             The poster, the tee, and the tote — the full release, reserved as a set. Capped at 50 complete editions.

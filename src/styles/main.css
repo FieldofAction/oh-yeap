@@ -2349,6 +2349,7 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 
 /* Complete Edition bundle */
 .hn-bundle{margin:0 0 88px}
+.hn-bundle-hero{margin:0 0 48px}
 .hn-bundle-body{max-width:560px;padding:32px 0 0;border-top:1px solid var(--bd)}
 .hn-bundle-lede{font-family:var(--sans);font-size:16px;font-weight:300;line-height:1.7;color:var(--fm);margin:0 0 28px}
 .hn-bundle-list{list-style:none;padding:0;margin:0 0 28px;display:flex;flex-direction:column;gap:0}

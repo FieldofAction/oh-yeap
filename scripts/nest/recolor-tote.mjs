@@ -24,12 +24,16 @@ const toteDir = path.join(worktreeRoot, 'public', 'images', 'nest');
 // in-situ is a golden-hour street scene — mid-gray crosswalk paint and
 // sidewalk will pick up a blue tint if the ceiling is too high, so we clamp
 // tighter and fade out faster.
+// `xStart` (and `xEnd`) clamp the recolor to a horizontal slice — used for
+// the combo shot, where only the right-hand tote should shift to navy and the
+// left-hand tee must stay black.
 const INPUTS = [
   { name: 'tote-front.jpg',         spreadMax: 40, lumCeil: 120, lumFade: 50 },
   { name: 'tote-back.jpg',          spreadMax: 40, lumCeil: 120, lumFade: 50 },
   { name: 'tote-detail-handle.jpg', spreadMax: 40, lumCeil: 120, lumFade: 50 },
   { name: 'tote-detail-label.jpg',  spreadMax: 40, lumCeil: 120, lumFade: 50 },
   { name: 'tote-insitu.jpg',        spreadMax: 22, lumCeil: 70,  lumFade: 20 },
+  { name: 'combo.png',              spreadMax: 40, lumCeil: 120, lumFade: 50, xStart: 0.69, format: 'png' },
 ];
 
 // Build one HTML page that loads a given image, recolors pixels on a canvas,
@@ -40,7 +44,7 @@ const pageHtml = `<!doctype html>
 <canvas id="c"></canvas>
 <script>
 window.recolor = async function(src, opts) {
-  const { spreadMax, lumCeil, lumFade } = opts;
+  const { spreadMax, lumCeil, lumFade, xStart, xEnd, format } = opts;
   const img = new Image();
   img.crossOrigin = 'anonymous';
   img.src = src;
@@ -56,8 +60,13 @@ window.recolor = async function(src, opts) {
   // French Navy anchor (roughly Stanley/Stella C727 / #1F2A44)
   const NR = 31, NG = 42, NB = 68;
   const lumFadeStart = lumCeil - lumFade;
+  // Region of interest in pixel space (xStart/xEnd are 0..1 fractions).
+  const xMin = Math.round((xStart ?? 0) * c.width);
+  const xMax = Math.round((xEnd ?? 1) * c.width);
 
   for (let i = 0; i < d.length; i += 4) {
+    const px = (i / 4) % c.width;
+    if (px < xMin || px >= xMax) continue;
     const r = d[i], g = d[i+1], b = d[i+2];
     const maxC = Math.max(r, g, b);
     const minC = Math.min(r, g, b);
@@ -92,7 +101,7 @@ window.recolor = async function(src, opts) {
   }
 
   ctx.putImageData(imgd, 0, 0);
-  return c.toDataURL('image/jpeg', 0.93);
+  return format === 'png' ? c.toDataURL('image/png') : c.toDataURL('image/jpeg', 0.93);
 };
 </script>
 </body></html>`;
@@ -116,10 +125,18 @@ for (const input of INPUTS) {
     continue;
   }
   const bytes = fs.readFileSync(abs);
-  const srcDataUrl = 'data:image/jpeg;base64,' + bytes.toString('base64');
-  const opts = { spreadMax: input.spreadMax, lumCeil: input.lumCeil, lumFade: input.lumFade };
+  const srcMime = input.format === 'png' ? 'image/png' : 'image/jpeg';
+  const srcDataUrl = `data:${srcMime};base64,` + bytes.toString('base64');
+  const opts = {
+    spreadMax: input.spreadMax,
+    lumCeil: input.lumCeil,
+    lumFade: input.lumFade,
+    xStart: input.xStart,
+    xEnd: input.xEnd,
+    format: input.format,
+  };
   const outDataUrl = await page.evaluate((s, o) => window.recolor(s, o), srcDataUrl, opts);
-  const b64 = outDataUrl.replace(/^data:image\/jpeg;base64,/, '');
+  const b64 = outDataUrl.replace(/^data:image\/(?:jpeg|png);base64,/, '');
   fs.writeFileSync(abs, Buffer.from(b64, 'base64'));
   const kb = (fs.statSync(abs).size / 1024).toFixed(1);
   console.log(`recolored ${input.name} (${kb} KB)`);
