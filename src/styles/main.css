@@ -2308,6 +2308,7 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 .hidden-strip-label{color:#c08a3e;font-weight:600;text-transform:uppercase;letter-spacing:.1em;font-size:10px;}
 .hidden-strip-detail{color:var(--ff);font-size:10px;margin-left:auto;}
 .sb-link-has-hidden{text-decoration:underline dotted #c08a3e;text-underline-offset:3px;}
+.fc.fc-hidden{text-decoration:underline dotted #c08a3e;text-underline-offset:4px;}
 .sb-link-hidden-count{
   display:inline-block;margin-left:6px;
   font-size:9px;font-weight:600;color:#c08a3e;
