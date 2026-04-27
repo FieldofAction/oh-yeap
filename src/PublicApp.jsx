@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { THEMES } from "./data/themes";
-import { SEED } from "./data/seed";
+import { SEED, isHidden } from "./data/seed";
 import usePublicSystemCondition from "./hooks/usePublicSystemCondition";
 import useExplorationStore from "./store/useExplorationStore";
 import Public from "./components/Public";
@@ -160,10 +160,23 @@ export default function PublicApp() {
     return () => window.removeEventListener("keydown", handler);
   }, [activeItem]);
 
+  // Hidden-from-public items (Wave-1 practice + per-item `hidden: true`) are excluded from production builds.
+  // Dev (`npm run dev`) shows everything so unfinished pages can be previewed locally; visual indicators
+  // distinguish hidden material — see HIDDEN-ITEMS.md.
   const publicContent = useMemo(
-    () => SEED.filter(c => c.section !== "practice" && (import.meta.env.DEV || !c.hidden)),
+    () => SEED.filter(c => import.meta.env.DEV || !isHidden(c)),
     []
   );
+
+  // Per-section counts of hidden items, used to drive dev-only nav + section-header indicators.
+  // Empty object in production (no indicators rendered).
+  const hiddenCounts = useMemo(() => {
+    if (!import.meta.env.DEV) return {};
+    return SEED.reduce((acc, c) => {
+      if (isHidden(c)) acc[c.section] = (acc[c.section] || 0) + 1;
+      return acc;
+    }, {});
+  }, []);
 
   const filtered = useMemo(() => {
     let items = publicContent.filter(c => c.status !== "draft");
@@ -199,11 +212,11 @@ export default function PublicApp() {
 
   return (
     <div style={cv(theme)} className="app-layout">
-      <PublicSidebar view={view} navigateTo={navigateTo} filter={filter} setFilter={handleFilter} />
+      <PublicSidebar view={view} navigateTo={navigateTo} filter={filter} setFilter={handleFilter} hiddenCounts={hiddenCounts} />
       <div className="app-content">
         <DualLensBar modelActive={lens} patternActive={patternLens} onToggleModel={toggleLens} onTogglePattern={togglePatternLens} onOpenModels={() => navigateTo("models")} onOpenPatterns={() => navigateTo("patterns")} />
         <main className={`view-wrap${transitioning ? " view-leaving" : ""}`}>
-          {view === "public" && <Public items={filtered} allItems={publicContent} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={nowState} onOpen={openItem} lens={lens} patternLens={patternLens} showGraph={showGraph} />}
+          {view === "public" && <Public items={filtered} allItems={publicContent} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={nowState} onOpen={openItem} lens={lens} patternLens={patternLens} showGraph={showGraph} hiddenCounts={hiddenCounts} />}
           {view === "models" && <Models content={publicContent} onOpen={openItem} fg={theme.fg} />}
           {view === "about" && <About theme={theme} />}
           {view === "colophon" && <Colophon />}
