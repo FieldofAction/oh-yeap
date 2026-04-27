@@ -1,5 +1,6 @@
 import React, { useMemo, useCallback, useRef, useState, useEffect } from "react";
 import { VIS } from "../../data/seed";
+import { HiddenStrip } from "../HiddenIndicators";
 import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
 import VideoEmbed from "../VideoEmbed";
 
@@ -129,6 +130,7 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
     <div className={`rd-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>← Back</button>
       <div className="rd-inner">
+        <HiddenStrip item={item} />
         <h1 className={`rd-title${fn} dc dc1`}>{item.title}</h1>
         {item.subtitle && <div className={`rd-subtitle${fn} dc dc2`}>{item.subtitle}</div>}
         <div className="rd-byline dc dc2">

@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { THEMES } from "./data/themes";
-import { SEED, uid, VIS } from "./data/seed";
+import { SEED, uid, VIS, isHidden } from "./data/seed";
 import useASUStore from "./store/useASUStore";
 import Public from "./components/Public";
 import ArtOfModel from "./components/ArtOfModel";
@@ -170,13 +170,23 @@ export default function App() {
     return () => window.removeEventListener("keydown", handler);
   }, [activeItem]);
 
-  // Wave 1 launch: Practice (case studies) hidden from public-facing surfaces until Wave 2 refinement ships.
-  // Items flagged { hidden: true } in seed.js are excluded from production builds only — visible during `npm run dev`
-  // so we can preview unfinished pages locally without publishing them. Studio-gated views (Backstage, etc.) still receive full `content`.
+  // Hidden-from-public items (Wave-1 practice + per-item `hidden: true`) are excluded from production builds.
+  // Dev (`npm run dev`) shows everything so unfinished pages can be previewed locally; visual indicators
+  // distinguish hidden material — see HIDDEN-ITEMS.md. Studio-gated views (Backstage, etc.) still receive full `content`.
   const publicContent = useMemo(
-    () => content.filter(c => c.section !== "practice" && (import.meta.env.DEV || !c.hidden)),
+    () => content.filter(c => import.meta.env.DEV || !isHidden(c)),
     [content]
   );
+
+  // Per-section counts of hidden items, used to drive dev-only nav + section-header indicators.
+  // Empty object in production (no indicators rendered).
+  const hiddenCounts = useMemo(() => {
+    if (!import.meta.env.DEV) return {};
+    return content.reduce((acc, c) => {
+      if (isHidden(c)) acc[c.section] = (acc[c.section] || 0) + 1;
+      return acc;
+    }, {});
+  }, [content]);
 
   const filtered = useMemo(() => {
     let items = publicContent.filter(c => c.status !== "draft");
@@ -219,11 +229,11 @@ export default function App() {
 
   return (
     <div style={cv(theme)} className="app-layout">
-      <Sidebar view={view} navigateTo={navigateTo} filter={filter} setFilter={handleFilter} />
+      <Sidebar view={view} navigateTo={navigateTo} filter={filter} setFilter={handleFilter} hiddenCounts={hiddenCounts} />
       <div className="app-content">
         <DualLensBar modelActive={lens} patternActive={patternLens} onToggleModel={toggleLens} onTogglePattern={togglePatternLens} onOpenModels={() => navigateTo("models")} onOpenPatterns={() => navigateTo("patterns")} />
         <main className={`view-wrap${transitioning ? " view-leaving" : ""}`}>
-          {view === "public" && <Public items={filtered} allItems={publicContent} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={asu.get_system_condition()} onOpen={openItem} lens={lens} patternLens={patternLens} showGraph={showGraph} />}
+          {view === "public" && <Public items={filtered} allItems={publicContent} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={asu.get_system_condition()} onOpen={openItem} lens={lens} patternLens={patternLens} showGraph={showGraph} hiddenCounts={hiddenCounts} />}
           {view === "model" && <ArtOfModel asu={asu} />}
           {view === "playbook" && <Playbook asu={asu} />}
           {view === "backstage" && <Backstage content={content} themeKey={themeKey} onThemeChange={setThemeKey} onPublish={handlePublish} asu={asu} />}

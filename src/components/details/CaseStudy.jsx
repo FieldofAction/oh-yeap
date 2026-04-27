@@ -1,5 +1,6 @@
 import React, { useMemo, useCallback, useRef, useEffect } from "react";
 import { VIS } from "../../data/seed";
+import { HiddenStrip } from "../HiddenIndicators";
 import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
 import VideoEmbed from "../VideoEmbed";
 
@@ -425,6 +426,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
     <div ref={overlayRef} className={`cs-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>&larr; Back</button>
       <div className="cs-inner">
+        <HiddenStrip item={item} />
 
         {/* ── Title + Meta — always first (immediate, no scroll-trigger) ── */}
         <div className="cs-header dc dc1">
