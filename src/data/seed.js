@@ -1,5 +1,11 @@
 export const uid = () => Math.random().toString(36).slice(2, 10);
 
+// Hidden-from-public helper. Two ways an item can be hidden:
+//   1. `hidden: true` flag on the seed entry (per-item revisions thread)
+//   2. `section: "practice"` (Wave-1 launch gate, removed when case studies refine)
+// Used both to filter visibility (production) and to drive dev-only "HIDDEN" indicators.
+export const isHidden = (item) => Boolean(item?.hidden) || item?.section === "practice";
+
 export const SEED = [
   { id:uid(), section:"practice", title:"Apple Music", subtitle:"Designing for Orientation in a Plural System", desc:"Design systems and product surfaces for the music streaming platform.", year:"2023–", status:"live", tags:["Product","Systems","Music"], relations:[], hasVisual:true, role:"Creative Lead", deliverables:["Product Design","Design Systems","Visual Language","Feature Design"], caseStudy:{
     framing:"As Apple Music scaled, its design system prioritized cohesion across a rapidly expanding ecosystem. Genres, moods, editorial programs, live content, and algorithmic playlists all lived inside a beautifully unified structure. But cohesion began to blur distinction. The system was plural. The experience was flat. When everything looks equally important, nothing feels intentional.\n\nThe tension was subtle but meaningful. Listening modes shared similar visual treatment. Content hierarchy lacked strong intent signals. Users had limited cues about the experience they were selecting. Internal teams defaulted to aesthetic unity over semantic clarity.\n\nThe system optimized for harmony. Orientation was absent.",

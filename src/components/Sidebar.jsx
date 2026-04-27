@@ -2,10 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 
 // Wave 1 launch note:
 // - Practice hidden from WORK until case studies are refined (Wave 2).
+//   In dev (`npm run dev`) Practice is revealed with a HIDDEN indicator so we can preview locally.
 // - patternlanguage.cc external link removed from REFERENCE (per launch nav decision).
 // - STUDIO is password-gated; single entry in nav opens a password modal on click.
 const NAV = [
   { tier: "WORK", items: [
+    ...(import.meta.env.DEV ? [{ key: "public", label: "Practice", filter: "Practice" }] : []),
     { key: "public", label: "Writing", filter: "Writing" },
     { key: "public", label: "Exploration", filter: "Exploration" },
     { key: "public", label: "Artifacts", filter: "Artifacts" },
@@ -47,7 +49,7 @@ function isStudioUnlocked() {
   return sessionStorage.getItem(STUDIO_UNLOCK_KEY) === "1";
 }
 
-export default function Sidebar({ view, navigateTo, filter, setFilter }) {
+export default function Sidebar({ view, navigateTo, filter, setFilter, hiddenCounts = {} }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [unlocked, setUnlocked] = useState(() => isStudioUnlocked());
   const [gatePending, setGatePending] = useState(null); // nav item awaiting unlock
@@ -172,10 +174,13 @@ export default function Sidebar({ view, navigateTo, filter, setFilter }) {
                   </a>
                 );
               }
-              /* Standard nav item */
+              /* Standard nav item — dev-only dotted underline if its filter section contains hidden items */
+              const sectionKey = item.filter?.toLowerCase();
+              const hiddenInSection = import.meta.env.DEV && sectionKey ? hiddenCounts[sectionKey] : 0;
               return (
-                <button key={`${item.key}-${item.label}`} className={`sb-link${isActive(item) ? " on" : ""}`} style={{ paddingLeft: 20 }} onClick={() => handleNav(item)}>
+                <button key={`${item.key}-${item.label}`} className={`sb-link${isActive(item) ? " on" : ""}${hiddenInSection ? " sb-link-has-hidden" : ""}`} style={{ paddingLeft: 20 }} onClick={() => handleNav(item)} title={hiddenInSection ? `${hiddenInSection} hidden in dev` : undefined}>
                   {item.label}
+                  {hiddenInSection ? <span className="sb-link-hidden-count" aria-hidden="true">{hiddenInSection}</span> : null}
                 </button>
               );
             })}

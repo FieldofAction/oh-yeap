@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { VIS } from "../../data/seed";
+import { HiddenStrip } from "../HiddenIndicators";
 import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
 
 export default function SpecSheetDetail({ item, allItems, closing, onClose, onOpen, fg, lens, patternLens }) {
@@ -18,6 +19,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
     <div className={`sp-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>&larr; Back</button>
       <div className="sp-inner">
+        <HiddenStrip item={item} />
         <div className="sp-head dc dc1">
           <div className="sp-head-left">
             <div className="sp-badge">{typeLabel}</div>

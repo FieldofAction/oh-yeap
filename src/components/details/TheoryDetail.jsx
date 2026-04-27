@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { VIS } from "../../data/seed";
+import { HiddenStrip } from "../HiddenIndicators";
 import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
 
 /* Relational Design icon — official mark (Illustrator 29.5.1 export) */
@@ -22,6 +23,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
     <div className={`th-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>← Back</button>
       <div className="th-inner">
+        <HiddenStrip item={item} />
         {/* Title block with icon */}
         <div className="th-head dc dc1">
           <div className="th-icon">

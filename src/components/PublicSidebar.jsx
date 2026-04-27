@@ -5,8 +5,10 @@ import React, { useState } from "react";
 // No password gate, no STUDIO_PASSWORD, no STUDIO_KEYS — auth happens at the edge.
 const STUDIO_URL = "https://studio.fieldofaction.org";
 
+// In dev (`npm run dev`) Practice is revealed with a HIDDEN indicator so we can preview locally.
 const NAV = [
   { tier: "WORK", items: [
+    ...(import.meta.env.DEV ? [{ key: "public", label: "Practice", filter: "Practice" }] : []),
     { key: "public", label: "Writing", filter: "Writing" },
     { key: "public", label: "Exploration", filter: "Exploration" },
     { key: "public", label: "Artifacts", filter: "Artifacts" },
@@ -36,7 +38,7 @@ const NAV = [
   ]},
 ];
 
-export default function PublicSidebar({ view, navigateTo, filter, setFilter }) {
+export default function PublicSidebar({ view, navigateTo, filter, setFilter, hiddenCounts = {} }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleNav = (item) => {
@@ -90,9 +92,12 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter }) {
                   </a>
                 );
               }
+              const sectionKey = item.filter?.toLowerCase();
+              const hiddenInSection = import.meta.env.DEV && sectionKey ? hiddenCounts[sectionKey] : 0;
               return (
-                <button key={`${item.key}-${item.label}`} className={`sb-link${isActive(item) ? " on" : ""}`} style={{ paddingLeft: 20 }} onClick={() => handleNav(item)}>
+                <button key={`${item.key}-${item.label}`} className={`sb-link${isActive(item) ? " on" : ""}${hiddenInSection ? " sb-link-has-hidden" : ""}`} style={{ paddingLeft: 20 }} onClick={() => handleNav(item)} title={hiddenInSection ? `${hiddenInSection} hidden in dev` : undefined}>
                   {item.label}
+                  {hiddenInSection ? <span className="sb-link-hidden-count" aria-hidden="true">{hiddenInSection}</span> : null}
                 </button>
               );
             })}

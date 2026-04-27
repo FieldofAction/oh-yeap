@@ -2284,6 +2284,38 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
   .studio-card{padding:22px 20px}
 }
 
+/* ── Hidden Indicators (dev-only — see HiddenIndicators.jsx) ───
+   Visual cues that distinguish hidden material from live material.
+   Production builds never render any of these elements, but the styles
+   remain harmless if they ever do. Tone: amber dotted/dashed, restrained. */
+.hidden-chip{
+  display:inline-block;font-family:var(--mono,monospace);
+  font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;
+  padding:2px 8px;margin-left:8px;
+  color:#c08a3e;border:1px dashed #c08a3e;border-radius:100px;
+  background:transparent;line-height:1.4;vertical-align:middle;
+}
+.is-hidden-row{position:relative;outline:1px dashed color-mix(in srgb,#c08a3e 60%,transparent);outline-offset:-2px;}
+.content-section-h-hidden{color:#c08a3e;font-weight:500;letter-spacing:.08em;text-transform:uppercase;font-size:10px;margin-left:6px;}
+.hidden-strip{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px;margin:0 0 24px;
+  border:1px dashed #c08a3e;border-radius:6px;
+  background:color-mix(in srgb,#c08a3e 8%,transparent);
+  font-family:var(--mono,monospace);font-size:11px;letter-spacing:.04em;
+}
+.hidden-strip-dot{width:8px;height:8px;border-radius:50%;background:#c08a3e;flex-shrink:0;}
+.hidden-strip-label{color:#c08a3e;font-weight:600;text-transform:uppercase;letter-spacing:.1em;font-size:10px;}
+.hidden-strip-detail{color:var(--ff);font-size:10px;margin-left:auto;}
+.sb-link-has-hidden{text-decoration:underline dotted #c08a3e;text-underline-offset:3px;}
+.fc.fc-hidden{text-decoration:underline dotted #c08a3e;text-underline-offset:4px;}
+.sb-link-hidden-count{
+  display:inline-block;margin-left:6px;
+  font-size:9px;font-weight:600;color:#c08a3e;
+  font-family:var(--mono,monospace);letter-spacing:.04em;
+  vertical-align:middle;
+}
+
 /* Font fallback declarations for offline / slow network */
 @font-face{font-family:'atlas grotesk';font-style:normal;font-weight:300 700;font-display:swap;src:local('Atlas Grotesk')}
 @font-face{font-family:'Space Mono';font-style:normal;font-weight:400 700;font-display:swap;src:local('Space Mono')}

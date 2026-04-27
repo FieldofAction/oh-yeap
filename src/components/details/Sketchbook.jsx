@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import { VIS } from "../../data/seed";
+import { HiddenStrip } from "../HiddenIndicators";
 import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
 
 export default function SketchbookDetail({ item, allItems, closing, onClose, onOpen, fg, lens, patternLens }) {
@@ -9,6 +10,7 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
     <div className={`sk-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>← Back</button>
       <div className="sk-inner">
+        <HiddenStrip item={item} />
         <div className="sk-status dc dc1">
           <span className={`ex-pin-dot ${item.status}`} />
           {item.status === "wip" ? "In Progress" : item.status}
