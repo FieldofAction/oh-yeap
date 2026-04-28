@@ -13,7 +13,7 @@ const DEFAULT_STORE = {
   // Settings
   settings: {
     apiKey: "",
-    model: "claude-sonnet-4-5-20250929",
+    model: "claude-sonnet-4-6",
     anthropicVersion: "2023-06-01",
   },
   // Playbook
@@ -44,6 +44,15 @@ const DEFAULT_STORE = {
     responses: { v1:{}, v2:{}, v3:{} },
     synthesis: { v1:null, v2:null, v3:null },
   },
+  // Atrium — the Studio's connective tissue. Every field is optional context
+  // for modules; modules must boot fine when these are empty.
+  atrium: {
+    activeSignal: "",        // one line: what the user is tracking right now
+    flowLane: [],            // [{id, source, label, ts, payload}] recent module outputs
+    openLoops: [],           // [{id, label, source, ts}] unfinished work across modules
+    sequence: [],            // [moduleKey, ...] operator-defined run order
+    currentRun: null,        // { id, signal, startedAt, completedAt, steps:[{moduleKey, status, output, error, startedAt, completedAt}] } | null
+  },
 };
 
 function loadStore() {
@@ -58,6 +67,7 @@ function loadStore() {
       backstage: { ...DEFAULT_STORE.backstage, ...saved.backstage, ideas: saved.backstage?.ideas?.length ? saved.backstage.ideas : DEFAULT_STORE.backstage.ideas, agentMask: { ...DEFAULT_STORE.backstage.agentMask, ...(saved.backstage?.agentMask||{}) } },
       system: { ...DEFAULT_STORE.system, ...saved.system },
       artOfModel: { ...DEFAULT_STORE.artOfModel, ...saved.artOfModel, responses: { ...DEFAULT_STORE.artOfModel.responses, ...(saved.artOfModel?.responses||{}) }, synthesis: { ...DEFAULT_STORE.artOfModel.synthesis, ...(saved.artOfModel?.synthesis||{}) } },
+      atrium: { ...DEFAULT_STORE.atrium, ...(saved.atrium||{}), flowLane: Array.isArray(saved.atrium?.flowLane) ? saved.atrium.flowLane : [], openLoops: Array.isArray(saved.atrium?.openLoops) ? saved.atrium.openLoops : [], sequence: Array.isArray(saved.atrium?.sequence) ? saved.atrium.sequence : [], currentRun: null },
     };
   } catch { return DEFAULT_STORE; }
 }
@@ -138,6 +148,125 @@ function useASUStore() {
       }
       return ctx;
     },
+
+    // ── Atrium Tools (Studio connective tissue — modules read these as optional context) ──
+    get_active_signal: () => store.atrium?.activeSignal || "",
+    set_active_signal: (text) => setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), activeSignal:text}})),
+    get_flow_lane: () => store.atrium?.flowLane || [],
+    get_canonical_runs: () => (store.atrium?.flowLane || []).filter(it => it.canonical && it.payload?.steps),
+    push_flow_artifact: ({source, label, payload}) => {
+      const item = { id: uid(), source, label, payload: payload||null, ts: Date.now() };
+      setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), flowLane: [item, ...((s.atrium?.flowLane)||[])].slice(0, 12)}}));
+      return item;
+    },
+    clear_flow_artifact: (id) => setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), flowLane: ((s.atrium?.flowLane)||[]).filter(i => i.id !== id)}})),
+    get_open_loops: () => store.atrium?.openLoops || [],
+    add_open_loop: ({label, source}) => {
+      const loop = { id: uid(), label, source: source||null, ts: Date.now() };
+      setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), openLoops: [loop, ...((s.atrium?.openLoops)||[])]}}));
+      return loop;
+    },
+    close_open_loop: (id) => setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), openLoops: ((s.atrium?.openLoops)||[]).filter(l => l.id !== id)}})),
+
+    // ── Atrium Sequence Tools (Slice 1: orchestration shell, mocked execution) ──
+    get_sequence: () => store.atrium?.sequence || [],
+    add_to_sequence: (moduleKey) => setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), sequence: [...((s.atrium?.sequence)||[]), moduleKey]}})),
+    remove_from_sequence: (idx) => setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), sequence: ((s.atrium?.sequence)||[]).filter((_, i) => i !== idx)}})),
+    move_in_sequence: (from, to) => setStore(s => {
+      const seq = [...((s.atrium?.sequence)||[])];
+      if (from < 0 || from >= seq.length || to < 0 || to >= seq.length) return s;
+      const [it] = seq.splice(from, 1);
+      seq.splice(to, 0, it);
+      return {...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), sequence: seq}};
+    }),
+    clear_sequence: () => setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), sequence: []}})),
+
+    get_current_run: () => store.atrium?.currentRun || null,
+    start_run: (canonContext = []) => {
+      const seq = store.atrium?.sequence || [];
+      const signal = store.atrium?.activeSignal || "";
+      if (seq.length === 0) return null;
+      const run = {
+        id: uid(),
+        signal,
+        startedAt: Date.now(),
+        completedAt: null,
+        status: "running",
+        canonContext: Array.isArray(canonContext) ? canonContext : [],
+        steps: seq.map((moduleKey) => ({
+          moduleKey,
+          status: "queued",
+          output: null,
+          error: null,
+          startedAt: null,
+          completedAt: null,
+        })),
+      };
+      setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), currentRun: run}}));
+      return run;
+    },
+    update_run_step: (idx, updates) => setStore(s => {
+      const run = s.atrium?.currentRun;
+      if (!run) return s;
+      const steps = run.steps.map((st, i) => i === idx ? {...st, ...updates} : st);
+      return {...s, atrium:{...s.atrium, currentRun: {...run, steps}}};
+    }),
+    complete_run: () => setStore(s => {
+      const run = s.atrium?.currentRun;
+      if (!run) return s;
+      const completed = {...run, status: "done", completedAt: Date.now()};
+      const flowItem = {
+        id: uid(),
+        source: "Run",
+        label: completed.signal || "(no signal)",
+        ts: completed.completedAt,
+        payload: { runId: completed.id, steps: completed.steps },
+      };
+      // Stratification cap: canonical items are exempt (they never expire); non-canonical
+      // items obey a soft cap of 50. The Compost zone shows older non-canonical runs;
+      // beyond 50 they get culled to keep localStorage bounded.
+      const NON_CANONICAL_CAP = 50;
+      const next = [flowItem, ...((s.atrium?.flowLane)||[])];
+      const canonicals = next.filter(it => it.canonical);
+      const nonCanonicals = next.filter(it => !it.canonical).slice(0, NON_CANONICAL_CAP);
+      // Preserve original order (most recent first) by sorting on ts desc
+      const merged = [...canonicals, ...nonCanonicals].sort((a, b) => (b.ts || 0) - (a.ts || 0));
+      return {...s, atrium:{...s.atrium, currentRun: null, flowLane: merged}};
+    }),
+    abort_run: () => setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), currentRun: null}})),
+
+    // ── Atrium Canon (Freedom Embassy seat — operator gesture, not a module) ──
+    commit_to_canon: (flowItemId, note) => setStore(s => ({
+      ...s,
+      atrium:{
+        ...(s.atrium||DEFAULT_STORE.atrium),
+        flowLane: ((s.atrium?.flowLane)||[]).map(it => it.id === flowItemId ? {...it, canonical: true, canonicalAt: Date.now(), canonicalNote: note || null} : it),
+      },
+    })),
+    revert_canon: (flowItemId) => setStore(s => ({
+      ...s,
+      atrium:{
+        ...(s.atrium||DEFAULT_STORE.atrium),
+        flowLane: ((s.atrium?.flowLane)||[]).map(it => it.id === flowItemId ? {...it, canonical: false, canonicalAt: null, canonicalNote: null} : it),
+      },
+    })),
+    // Stratification (#2) — manual archive moves a run to Compost zone before its
+    // age-based decay would. Restore moves it back. Canon is unaffected by archive
+    // (a canonical run cannot be archived; revert_canon first if needed).
+    archive_artifact: (flowItemId) => setStore(s => ({
+      ...s,
+      atrium:{
+        ...(s.atrium||DEFAULT_STORE.atrium),
+        flowLane: ((s.atrium?.flowLane)||[]).map(it => it.id === flowItemId && !it.canonical ? {...it, archived: true, archivedAt: Date.now()} : it),
+      },
+    })),
+    restore_artifact: (flowItemId) => setStore(s => ({
+      ...s,
+      atrium:{
+        ...(s.atrium||DEFAULT_STORE.atrium),
+        flowLane: ((s.atrium?.flowLane)||[]).map(it => it.id === flowItemId ? {...it, archived: false, archivedAt: null} : it),
+      },
+    })),
 
     // ── Settings Tools ──
     get_settings: () => store.settings,
