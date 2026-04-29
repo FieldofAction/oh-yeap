@@ -104,10 +104,10 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
           {HERO_MODE === 2 && (
             <div className="hero hero--signal en">
               <div className="hero-dash-grid en d1">
-                <div className="hero-dash-cell">
+                <a className="hero-dash-cell hero-dash-cell--link" href="#relational-design">
                   <div className="hero-dash-label">Practice</div>
                   <div className="hero-dash-val">Relational Design</div>
-                </div>
+                </a>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Position</div>
                   <div className="hero-dash-val">Design Leader<br/>at Apple TV</div>
@@ -124,6 +124,10 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                   <div className="hero-dash-label">Writing</div>
                   <div className="hero-dash-val">Authoring Themes</div>
                 </div>
+                <a className="hero-dash-cell hero-dash-cell--link" href="#hotel/nest">
+                  <div className="hero-dash-label">Hosting</div>
+                  <div className="hero-dash-val">Nest · First Edition</div>
+                </a>
               </div>
               <div className="en d2">
                 <HeroCycle />

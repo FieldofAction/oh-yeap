@@ -126,6 +126,18 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .hero-dash-cell:first-child{padding-left:0}
 .hero-dash-cell:last-child{border-right:none}
 .hero-dash-cell:not(:first-child){padding-left:16px}
+/* Linked cells stay quiet at rest, light up on hover. The bloom mirrors the per-letter
+   attention state in Hero 01: soft cell-fill (matching the spotlight wash around an
+   attended letter) + var(--fm) text halo + tight var(--fg) edge crystallization. */
+a.hero-dash-cell--link{display:block;text-decoration:none;color:inherit;transition:background .25s ease}
+a.hero-dash-cell--link:hover{background:radial-gradient(at bottom right, color-mix(in srgb,var(--fg) 9%,transparent), transparent 50%)}
+a.hero-dash-cell--link .hero-dash-val{transition:text-shadow .25s ease}
+a.hero-dash-cell--link:hover .hero-dash-val{
+  text-shadow:
+    0 0 10px color-mix(in srgb,var(--fm) 50%,transparent),
+    0 0 4px color-mix(in srgb,var(--fm) 35%,transparent),
+    0 0 1px color-mix(in srgb,var(--fg) 40%,transparent);
+}
 .hero-dash-label{font-size:9px;font-weight:500;letter-spacing:0.06em;color:var(--ff);text-transform:uppercase;font-family:var(--mono);margin-bottom:6px}
 .hero-dash-val{font-size:13px;color:var(--fg);line-height:1.4}
 .hero-dash-h{margin-top:0}
