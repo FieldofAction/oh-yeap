@@ -8,7 +8,7 @@ import HeroConstraintField from "./HeroConstraintField";
 const DASH = [
   { label: "Practice", val: "Relational Design" },
   { label: "Position", val: "Design Leader\nat Apple TV" },
-  { label: "Attention", val: "Consolidation → Application" },
+  { label: "Attention", val: "Application → Transmission" },
   { label: "Building", val: "Condition Sets" },
   { label: "Writing", val: "Authoring Themes" },
 ];

@@ -96,7 +96,7 @@ export default function HotelNest() {
   useEffect(() => { document.title = "NEST — First edition from the Patio Beach archive"; }, []);
 
   // TODO: real Substack URL
-  const ESSAY_URL = "https://artofmemos.substack.com/p/nest";
+  const ESSAY_URL = "https://open.substack.com/pub/adickson/p/tideline-for-nest?utm_campaign=post&utm_medium=web";
 
   return (
     <div className="hn en">

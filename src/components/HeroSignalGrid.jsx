@@ -548,6 +548,16 @@ export default function HeroSignalGrid() {
       targetX.current += (rawX - targetX.current) * SMOOTH;
       targetY.current += (rawY - targetY.current) * SMOOTH;
       lastMoveTime.current = Date.now();
+      // Mirror tilt into the same virtual cursor + presence the desktop pointer drives,
+      // so the lit-glyph state (glow + edge stroke) fires on touch devices too.
+      // Phone flat → presence ~0, field dormant. Tilt → presence rises and the virtual
+      // cursor glides toward the side you're tilting toward; the nearest letter blooms.
+      const tx = Math.max(-1, Math.min(1, targetX.current));
+      const ty = Math.max(-1, Math.min(1, targetY.current));
+      cursorTargetX.current = (layout.vbWidth / 2) * (1 + tx);
+      cursorTargetY.current = (layout.vbHeight / 2) * (1 + ty);
+      const tiltMag = Math.min(1, Math.sqrt(tx * tx + ty * ty) * 1.5);
+      presenceTarget.current = tiltMag;
     };
     window.addEventListener("deviceorientation", handler);
     motionListenerRef.current = handler;
