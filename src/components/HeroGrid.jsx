@@ -9,8 +9,8 @@ const DASH = [
   { label: "Practice", val: "Relational Design" },
   { label: "Position", val: "Design Leader\nat Apple TV" },
   { label: "Attention", val: "Consolidation → Application" },
-  { label: "Building", val: "Energetic Fields" },
-  { label: "Writing", val: "Themes of Authoring" },
+  { label: "Building", val: "Condition Sets" },
+  { label: "Writing", val: "Authoring Themes" },
 ];
 
 // Wave 1 launch: only Hero 01 active in rotation. Others tabled for later.
