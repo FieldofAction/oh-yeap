@@ -248,7 +248,7 @@ export default function App() {
           {view === "breakground" && <BreakgroundCard />}
           {view === "desert" && <DesertVisual />}
           {view === "editor" && <ExplorationEditor />}
-          {view === "studio" && <Studio navigateTo={navigateTo} />}
+          {view === "studio" && <Studio navigateTo={navigateTo} asu={asu} />}
           {view === "patiobeach" && <PatioBeach />}
           {view === "superconscious" && <Superconscious />}
           {view === "hotelnest" && <HotelNest />}

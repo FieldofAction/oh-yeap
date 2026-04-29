@@ -2284,6 +2284,258 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
   .studio-card{padding:22px 20px}
 }
 
+/* ── Atrium (Studio home as returning room) ── */
+.studio-card-seat{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ff);font-weight:500;margin-bottom:10px}
+.studio-card-open,
+.studio-card-implicit{cursor:default;background:transparent;border-style:dashed;border-color:color-mix(in srgb,var(--bd) 80%,transparent)}
+.studio-card-open .studio-card-label,
+.studio-card-implicit .studio-card-label{color:var(--fm)}
+.studio-card-open:hover,
+.studio-card-implicit:hover{background:transparent;border-color:color-mix(in srgb,var(--bd) 80%,transparent)}
+.studio-card-open .studio-card-arrow{color:var(--ff);font-style:italic;font-size:11px;text-transform:none;letter-spacing:0}
+.studio-card-implicit{border-style:solid;opacity:.7}
+.studio-card-atrium-only{cursor:default;background:transparent;border-style:solid;border-color:color-mix(in srgb,var(--bd) 80%,transparent);opacity:.85}
+.studio-card-atrium-only:hover{background:transparent;border-color:color-mix(in srgb,var(--bd) 80%,transparent)}
+.studio-card-atrium-only .studio-card-arrow{color:var(--ff);font-style:italic;font-size:11px;text-transform:none;letter-spacing:0}
+.studio-card-action{cursor:default;background:transparent;border-style:solid;border-color:color-mix(in srgb,var(--bd) 80%,transparent);opacity:.85}
+.studio-card-action:hover{background:transparent;border-color:color-mix(in srgb,var(--bd) 80%,transparent)}
+.studio-card-action .studio-card-arrow{color:var(--ff);font-style:italic;font-size:11px;text-transform:none;letter-spacing:0}
+
+.atrium-signal{display:flex;flex-direction:column;gap:10px;margin-bottom:48px;padding:20px 24px;background:var(--sf);border:1px solid var(--bd);border-radius:10px}
+.atrium-signal-meta{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.atrium-signal-tag{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ff);font-weight:500}
+.atrium-signal-hint{font-family:var(--sans);font-size:11px;color:var(--ff);font-weight:300;font-style:italic}
+.atrium-signal-input{font-family:var(--sans);font-size:16px;color:var(--fg);background:transparent;border:none;outline:none;padding:4px 0;border-bottom:1px solid var(--bd);transition:border-color .2s}
+.atrium-signal-input::placeholder{color:var(--ff);font-weight:300}
+.atrium-signal-input:focus{border-bottom-color:var(--ac1)}
+.atrium-signal-input:disabled{opacity:.6;cursor:not-allowed}
+.atrium-signal-template-btn{margin-left:auto;background:transparent;border:1px solid var(--bd);border-radius:6px;padding:4px 10px;font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--fm);cursor:pointer;transition:border-color .2s,color .2s}
+.atrium-signal-template-btn:hover:not(:disabled){border-color:var(--fg);color:var(--fg)}
+.atrium-signal-template-btn:disabled{opacity:.4;cursor:not-allowed}
+.atrium-signal-template-hint{font-family:var(--sans);font-size:11px;color:var(--ff);font-weight:300;margin-top:2px}
+.atrium-signal-template-hint em{font-style:italic;color:var(--fm)}
+
+.atrium-ring{margin-bottom:48px}
+.atrium-ring-header{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid color-mix(in srgb,var(--bd) 60%,transparent);flex-wrap:wrap}
+.atrium-ring-label{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg);font-weight:600}
+.atrium-ring-desc{font-family:var(--sans);font-size:12px;color:var(--fm);font-weight:300}
+
+.atrium-flow{margin-top:24px;padding:20px 24px;background:var(--sf);border:1px solid var(--bd);border-radius:10px}
+.atrium-flow-header{display:flex;align-items:baseline;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.atrium-flow-label{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg);font-weight:500}
+.atrium-flow-desc{font-family:var(--sans);font-size:11px;color:var(--fm);font-weight:300}
+.atrium-flow-track{display:flex;flex-wrap:wrap;gap:8px;min-height:36px;align-items:center}
+.atrium-flow-empty{font-family:var(--sans);font-size:11px;color:var(--ff);font-weight:300;font-style:italic}
+.atrium-flow-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;background:var(--cbg);border:1px solid var(--bd);border-radius:999px;font-family:var(--sans);font-size:11px;color:var(--fg)}
+.atrium-flow-chip-source{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ff)}
+.atrium-flow-chip-label{font-weight:400}
+.atrium-flow-chip-x{background:none;border:none;cursor:pointer;color:var(--ff);font-size:14px;line-height:1;padding:0;margin-left:2px}
+.atrium-flow-chip-x:hover{color:var(--fg)}
+
+.atrium-loops{margin-top:16px;padding:16px 24px;background:var(--sf);border:1px solid var(--bd);border-radius:10px}
+.atrium-loops-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.atrium-loops-item{display:flex;align-items:baseline;gap:14px;padding:6px 0;border-bottom:1px dashed color-mix(in srgb,var(--bd) 60%,transparent);font-family:var(--sans);font-size:12px;color:var(--fm)}
+.atrium-loops-item:last-child{border-bottom:none}
+.atrium-loops-source{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);min-width:90px}
+.atrium-loops-label{flex:1;color:var(--fg)}
+.atrium-loops-close{background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ff);padding:0}
+.atrium-loops-close:hover{color:var(--ac1)}
+
+/* ── Canon Context (Memory — slice #1) ── */
+.atrium-canon-context{margin-bottom:24px;padding:14px 18px;background:color-mix(in srgb,var(--ac1) 4%,transparent);border:1px solid color-mix(in srgb,var(--ac1) 20%,var(--bd));border-radius:10px;display:flex;flex-direction:column;gap:10px}
+.atrium-canon-context-header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.atrium-canon-context-label{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ac1);font-weight:600}
+.atrium-canon-context-hint{font-family:var(--sans);font-size:11px;color:var(--fm);font-weight:300;font-style:italic;flex:1}
+.atrium-canon-toggle{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:1px solid var(--ac1);border-radius:6px;padding:4px 12px;cursor:pointer;transition:background .2s,color .2s}
+.atrium-canon-toggle-on{background:var(--ac1);color:var(--bg);font-weight:600}
+.atrium-canon-toggle-off{color:var(--ff);border-color:var(--bd)}
+.atrium-canon-toggle:hover:not(:disabled){opacity:.85}
+.atrium-canon-toggle:disabled{opacity:.4;cursor:not-allowed}
+.atrium-canon-context-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.atrium-canon-context-item{margin:0}
+.atrium-canon-context-chip{display:flex;align-items:baseline;gap:12px;width:100%;text-align:left;padding:8px 12px;background:var(--cbg);border:1px solid var(--bd);border-radius:6px;font-family:var(--sans);font-size:11px;color:var(--fg);cursor:pointer;transition:opacity .2s,border-color .2s}
+.atrium-canon-context-chip:hover:not(:disabled){border-color:var(--ac1)}
+.atrium-canon-context-chip:disabled{cursor:not-allowed}
+.atrium-canon-context-item-excluded .atrium-canon-context-chip{opacity:.4;border-style:dashed}
+.atrium-canon-context-fieldtype{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ac1);min-width:120px;font-weight:500}
+.atrium-canon-context-item-excluded .atrium-canon-context-fieldtype{color:var(--ff)}
+.atrium-canon-context-reveal{flex:1;color:var(--fg);font-weight:400;line-height:1.5}
+.atrium-canon-context-item-excluded .atrium-canon-context-reveal{color:var(--ff)}
+.atrium-canon-context-state{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ff);font-weight:500}
+
+/* ── Atrium Sequence Builder (slice 1) ── */
+.atrium-sequence{margin-bottom:48px;padding:20px 24px;background:var(--sf);border:1px solid var(--bd);border-radius:10px;display:flex;flex-direction:column;gap:14px}
+.atrium-sequence-header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.atrium-sequence-label{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg);font-weight:500}
+.atrium-sequence-desc{font-family:var(--sans);font-size:11px;color:var(--fm);font-weight:300}
+
+.atrium-sequence-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+.atrium-step{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--cbg);border:1px solid var(--bd);border-radius:6px;font-family:var(--sans);font-size:12px;transition:border-color .2s,background .2s}
+.atrium-step-running{border-color:var(--ac1);background:color-mix(in srgb,var(--ac1) 8%,var(--cbg))}
+.atrium-step-done{border-color:color-mix(in srgb,var(--fg) 20%,var(--bd));opacity:.85}
+.atrium-step-error{border-color:#c34d4d}
+.atrium-step-idx{font-family:var(--mono);font-size:10px;color:var(--ff);min-width:18px;text-align:center}
+.atrium-step-role{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);min-width:140px}
+.atrium-step-label{flex:1;color:var(--fg);font-weight:500}
+.atrium-step-status{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;font-weight:500}
+.atrium-step-status-idle{color:var(--ff)}
+.atrium-step-status-queued{color:var(--ff)}
+.atrium-step-status-running{color:var(--ac1)}
+.atrium-step-status-done{color:color-mix(in srgb,var(--fg) 50%,transparent)}
+.atrium-step-status-error{color:#c34d4d}
+.atrium-step-actions{display:inline-flex;gap:4px;margin-left:8px}
+.atrium-step-btn{background:none;border:1px solid var(--bd);border-radius:4px;width:22px;height:22px;font-size:11px;color:var(--fm);cursor:pointer;padding:0;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+.atrium-step-btn:hover:not(:disabled){border-color:var(--fg);color:var(--fg)}
+.atrium-step-btn:disabled{opacity:.3;cursor:not-allowed}
+.atrium-step-btn-x:hover:not(:disabled){border-color:#c34d4d;color:#c34d4d}
+
+.atrium-palette{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.atrium-palette-label{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ff);font-weight:500}
+.atrium-palette-chips{display:flex;flex-wrap:wrap;gap:6px}
+.atrium-palette-chip{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;background:transparent;border:1px dashed var(--bd);border-radius:999px;font-family:var(--sans);font-size:11px;color:var(--fg);cursor:pointer;transition:border-color .2s,background .2s}
+.atrium-palette-chip:hover:not(:disabled){border-style:solid;border-color:color-mix(in srgb,var(--fg) 20%,transparent);background:var(--cbg)}
+.atrium-palette-chip:disabled{opacity:.4;cursor:not-allowed}
+.atrium-palette-chip-role{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ff)}
+.atrium-palette-chip-label{font-weight:400}
+.atrium-palette-chip-count{font-family:var(--mono);font-size:9px;color:var(--ac1);font-weight:600}
+
+.atrium-sequence-controls{display:flex;gap:8px;align-items:center;margin-top:4px}
+.atrium-run-btn{font-family:var(--sans);font-size:12px;font-weight:500;color:var(--bg);background:var(--fg);border:1px solid var(--fg);border-radius:6px;padding:8px 18px;cursor:pointer;transition:opacity .2s}
+.atrium-run-btn:hover:not(:disabled){opacity:.85}
+.atrium-run-btn:disabled{opacity:.3;cursor:not-allowed}
+.atrium-clear-btn{font-family:var(--sans);font-size:11px;color:var(--fm);background:transparent;border:1px solid var(--bd);border-radius:6px;padding:8px 14px;cursor:pointer;transition:border-color .2s,color .2s}
+.atrium-clear-btn:hover{border-color:var(--fg);color:var(--fg)}
+.atrium-sequence-note{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--ff);font-style:italic}
+
+/* Flow Lane chip extensions for runs */
+.atrium-flow-chip{flex-direction:column;align-items:stretch;padding:0;background:var(--cbg);border-radius:8px;overflow:hidden;width:100%;max-width:100%;min-width:240px}
+.atrium-flow-chip-header{display:flex;align-items:baseline;gap:10px;padding:10px 36px 8px 12px;font-family:var(--sans);font-size:11px;color:var(--fg);text-align:left;flex-wrap:wrap}
+.atrium-flow-chip-toggle{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--ff);min-width:14px;text-align:center}
+
+/* Stratification (#2) — Canon / Active / Compost zones in the Flow Lane */
+.atrium-flow-search{margin-left:auto;font-family:var(--sans);font-size:11px;color:var(--fg);background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:6px 10px;outline:none;min-width:240px;transition:border-color .2s}
+.atrium-flow-search:focus{border-color:var(--ac1)}
+.atrium-flow-search::placeholder{color:var(--ff);font-weight:300}
+
+.atrium-flow-zone{margin-top:18px;padding-top:14px;border-top:1px solid color-mix(in srgb,var(--bd) 60%,transparent)}
+.atrium-flow-zone:first-of-type{margin-top:6px;padding-top:0;border-top:none}
+.atrium-flow-zone-header{display:flex;align-items:baseline;gap:10px;margin-bottom:10px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg);font-weight:600;background:transparent;border:none;width:100%;text-align:left;padding:0}
+.atrium-flow-zone-header-clickable{cursor:pointer}
+.atrium-flow-zone-header-clickable:hover .atrium-flow-zone-label{color:var(--ac1)}
+.atrium-flow-zone-label{font-weight:700}
+.atrium-flow-zone-count{font-family:var(--mono);font-size:10px;color:var(--ff);font-weight:500;letter-spacing:0;background:var(--cbg);border:1px solid var(--bd);border-radius:99px;padding:1px 8px;min-width:22px;text-align:center}
+.atrium-flow-zone-hint{flex:1;font-family:var(--sans);font-size:11px;letter-spacing:0;text-transform:none;color:var(--fm);font-weight:300;font-style:italic}
+.atrium-flow-zone-toggle{font-family:var(--mono);font-size:13px;color:var(--ff);font-weight:500;min-width:14px;text-align:center}
+
+.atrium-flow-zone-canon .atrium-flow-zone-label{color:var(--ac1)}
+.atrium-flow-zone-canon .atrium-flow-zone-count{border-color:color-mix(in srgb,var(--ac1) 50%,var(--bd));color:var(--ac1)}
+.atrium-flow-zone-compost{opacity:.85}
+.atrium-flow-zone-compost .atrium-flow-zone-label{color:var(--ff)}
+.atrium-flow-zone-compost .atrium-flow-track .atrium-flow-chip{opacity:.7}
+
+.atrium-archive-btn{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ff);background:transparent;border:1px solid var(--bd);border-radius:6px;padding:7px 12px;cursor:pointer;transition:border-color .2s,color .2s}
+.atrium-archive-btn:hover{border-color:var(--fm);color:var(--fm)}
+.atrium-restore-btn{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg);background:transparent;border:1px solid var(--fg);border-radius:6px;padding:7px 14px;cursor:pointer;transition:background .2s,color .2s}
+.atrium-restore-btn:hover{background:var(--fg);color:var(--bg)}
+
+/* Run synthesis — primary output of any run, always visible */
+.atrium-flow-chip-synthesis{padding:12px 12px 14px;background:color-mix(in srgb,var(--fg) 3%,transparent);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+.atrium-flow-chip-synthesis-auto{background:transparent;border-top:1px dashed var(--bd);border-bottom:1px dashed var(--bd)}
+.atrium-flow-chip-synthesis-label{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg);font-weight:600;margin-bottom:8px}
+.atrium-flow-chip-synthesis-auto .atrium-flow-chip-synthesis-label{color:var(--ff)}
+.atrium-flow-chip-synthesis-text{font-family:var(--sans);font-size:13px;line-height:1.55;color:var(--fg);margin:0 0 10px;font-weight:400}
+.atrium-flow-chip-synthesis-auto .atrium-flow-chip-synthesis-text{color:var(--fm);font-style:italic}
+.atrium-flow-chip-synthesis-sublabel{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ff);font-weight:500;display:block;margin-bottom:4px}
+.atrium-flow-chip-synthesis-tensions{list-style:none;padding:0;margin:0 0 10px;display:flex;flex-direction:column;gap:3px;font-family:var(--sans);font-size:11px;color:var(--fm)}
+.atrium-flow-chip-synthesis-tensions li{padding-left:12px;position:relative}
+.atrium-flow-chip-synthesis-tensions li::before{content:"·";position:absolute;left:4px;color:var(--ff)}
+.atrium-flow-chip-synthesis-next{display:flex;flex-direction:column;gap:2px}
+.atrium-flow-chip-synthesis-next-text{font-family:var(--sans);font-size:11px;color:var(--fg);font-weight:500;line-height:1.5}
+.atrium-flow-chip-synthesis-fieldtype{color:var(--ac1);font-weight:600}
+.atrium-flow-chip-synthesis-surface{display:flex;flex-direction:column;gap:2px;margin-top:8px}
+.atrium-flow-chip-synthesis-surface-text{font-family:var(--sans);font-size:11px;color:var(--fm);font-weight:400;line-height:1.5;font-style:italic}
+
+/* Takeaway — the punchy headline above the prose reading */
+.atrium-flow-chip-synthesis-takeaway{font-family:var(--display);font-size:17px;line-height:1.35;color:var(--fg);font-weight:600;letter-spacing:-.01em;margin:2px 0 12px;padding:10px 12px;background:color-mix(in srgb,var(--ac1) 6%,transparent);border-left:2px solid var(--ac1);border-radius:2px}
+.atrium-flow-chip-synthesis-auto .atrium-flow-chip-synthesis-takeaway{background:transparent;border-left-color:var(--bd);color:var(--fm);font-style:italic;font-weight:500}
+
+/* Promote / canonical — Freedom Embassy as Flow Lane action */
+.atrium-flow-chip-synthesis-actions{margin-top:14px;padding-top:12px;border-top:1px dashed color-mix(in srgb,var(--bd) 60%,transparent);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.atrium-promote-btn{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg);background:transparent;border:1px solid var(--fg);border-radius:6px;padding:7px 14px;cursor:pointer;transition:background .2s,color .2s}
+.atrium-promote-btn:hover{background:var(--fg);color:var(--bg)}
+.atrium-canonical-badge{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+.atrium-canonical-mark{color:var(--ac1);font-weight:700;letter-spacing:.18em}
+.atrium-canonical-ts{color:var(--ff);text-transform:none;letter-spacing:0;font-family:var(--sans);font-size:11px;font-style:italic}
+.atrium-canonical-undo{background:transparent;border:none;font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ff);cursor:pointer;padding:0;text-decoration:underline}
+.atrium-canonical-undo:hover{color:var(--fg)}
+
+/* Canonical chip — distinct visual mark on the whole Flow Lane chip */
+.atrium-flow-chip-canonical{border:1px solid color-mix(in srgb,var(--ac1) 50%,var(--bd));box-shadow:0 0 0 1px color-mix(in srgb,var(--ac1) 18%,transparent) inset}
+
+/* Export bundle (#3) — inline panel for canonical runs */
+.atrium-export-btn{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ac1);background:transparent;border:1px solid color-mix(in srgb,var(--ac1) 50%,var(--bd));border-radius:6px;padding:6px 12px;cursor:pointer;transition:background .2s,color .2s}
+.atrium-export-btn:hover{background:color-mix(in srgb,var(--ac1) 12%,transparent)}
+.atrium-bundle-panel{margin-top:12px;padding:12px;background:var(--bg);border:1px solid color-mix(in srgb,var(--ac1) 30%,var(--bd));border-radius:8px;display:flex;flex-direction:column;gap:8px}
+.atrium-bundle-panel-header{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.atrium-bundle-panel-label{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ac1);font-weight:600;flex:1}
+.atrium-bundle-format{display:inline-flex;gap:2px;background:var(--cbg);border:1px solid var(--bd);border-radius:6px;padding:2px}
+.atrium-bundle-format-btn{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);background:transparent;border:none;border-radius:4px;padding:4px 10px;cursor:pointer;transition:background .2s,color .2s}
+.atrium-bundle-format-btn.on{background:var(--fg);color:var(--bg)}
+.atrium-bundle-format-btn:hover:not(.on){color:var(--fg)}
+.atrium-bundle-copy-btn{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--bg);background:var(--ac1);border:1px solid var(--ac1);border-radius:6px;padding:6px 14px;cursor:pointer;transition:opacity .2s}
+.atrium-bundle-copy-btn:hover{opacity:.85}
+.atrium-bundle-body{font-family:var(--mono);font-size:10px;line-height:1.5;color:var(--fg);background:var(--cbg);border:1px solid var(--bd);border-radius:6px;padding:10px 12px;margin:0;max-height:380px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+.atrium-bundle-hint{font-family:var(--sans);font-size:11px;color:var(--fm);font-weight:300;font-style:italic;line-height:1.55}
+
+/* Trace toggle — secondary affordance to reveal substeps */
+.atrium-flow-chip-trace-toggle{display:block;width:100%;padding:8px 12px;background:transparent;border:none;border-top:1px solid var(--bd);font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--fm);cursor:pointer;text-align:left;transition:color .2s,background .2s}
+.atrium-flow-chip-trace-toggle:hover{background:color-mix(in srgb,var(--fg) 4%,transparent);color:var(--fg)}
+.atrium-flow-chip-trace-count{color:var(--ff);text-transform:none;letter-spacing:0}
+.atrium-flow-chip-x{position:absolute;top:6px;right:8px;background:none;border:none;cursor:pointer;color:var(--ff);font-size:14px;line-height:1;padding:0}
+.atrium-flow-chip{position:relative}
+.atrium-flow-substeps{list-style:none;padding:0 12px 10px;margin:0;display:flex;flex-direction:column;gap:4px;border-top:1px solid var(--bd)}
+.atrium-flow-substep{display:flex;align-items:baseline;gap:10px;padding:6px 0;font-family:var(--sans);font-size:11px}
+.atrium-flow-substep-idx{font-family:var(--mono);font-size:9px;color:var(--ff);min-width:14px}
+.atrium-flow-substep-label{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--fg);min-width:140px}
+.atrium-flow-substep-output{flex:1;color:var(--fm);font-weight:300}
+.atrium-flow-substep-done .atrium-flow-substep-label{color:color-mix(in srgb,var(--fg) 60%,transparent)}
+.atrium-flow-substep-error .atrium-flow-substep-label{color:#c34d4d}
+.atrium-flow-substep-error .atrium-flow-substep-output{color:#c34d4d;font-style:italic}
+.atrium-flow-substep-error .atrium-flow-substep-row{background:color-mix(in srgb,#c34d4d 5%,transparent)}
+
+/* Substep row is now a button so the whole row is clickable for expand */
+.atrium-flow-substep{display:flex;flex-direction:column;align-items:stretch;gap:0;padding:0}
+.atrium-flow-substep-row{display:flex;align-items:baseline;gap:10px;padding:6px 0;background:transparent;border:none;width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.atrium-flow-substep-row:disabled{cursor:default}
+.atrium-flow-substep-row:hover:not(:disabled){background:color-mix(in srgb,var(--fg) 3%,transparent)}
+.atrium-flow-substep-toggle{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--ff);min-width:14px;text-align:center}
+.atrium-flow-substep-open{background:color-mix(in srgb,var(--fg) 3%,transparent)}
+.atrium-flow-substep-detail{padding:10px 12px 14px 30px;border-top:1px dashed color-mix(in srgb,var(--bd) 60%,transparent);background:var(--bg)}
+
+/* Per-kind detail blocks */
+.atrium-detail-block,.atrium-detail-list{display:flex;flex-direction:column;gap:6px;font-family:var(--sans);font-size:11px}
+.atrium-detail-list{list-style:none;padding:0;margin:0}
+.atrium-detail-list li{margin:0}
+.atrium-detail-row{display:flex;gap:12px;align-items:baseline;line-height:1.55}
+.atrium-detail-key{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);min-width:120px;flex-shrink:0;font-weight:500}
+.atrium-detail-val{flex:1;color:var(--fm);font-weight:300}
+.atrium-detail-section-label{font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg);font-weight:500;margin-top:6px}
+.atrium-detail-section-label:first-child{margin-top:0}
+.atrium-detail-raw{font-family:var(--mono);font-size:10px;color:var(--fm);background:transparent;margin:0;white-space:pre-wrap;word-break:break-word}
+
+@media(max-width:768px){
+  .atrium-flow-substep-detail{padding-left:14px}
+  .atrium-detail-key{min-width:auto}
+  .atrium-detail-row{flex-wrap:wrap;gap:4px}
+}
+
+@media(max-width:768px){
+  .atrium-step{flex-wrap:wrap}
+  .atrium-step-role{min-width:auto}
+  .atrium-flow-substep{flex-wrap:wrap}
+  .atrium-flow-substep-label{min-width:auto}
+}
+
 /* ── Hidden Indicators (dev-only — see HiddenIndicators.jsx) ───
    Visual cues that distinguish hidden material from live material.
    Production builds never render any of these elements, but the styles
