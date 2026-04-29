@@ -114,7 +114,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 </div>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Attention</div>
-                  <div className="hero-dash-val">Consolidation → Application</div>
+                  <div className="hero-dash-val">Application → Transmission</div>
                 </div>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Building</div>
@@ -144,7 +144,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 </div>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Attention</div>
-                  <div className="hero-dash-val">Consolidation → Application</div>
+                  <div className="hero-dash-val">Application → Transmission</div>
                 </div>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Building</div>
