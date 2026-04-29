@@ -122,7 +122,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 /* Mode 3 — Ambient Dashboard */
 .hero--dash{display:flex;flex-direction:column;justify-content:flex-end;min-height:40vh;padding-top:100px;padding-bottom:40px}
 .hero-dash-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);margin-bottom:32px}
-.hero-dash-cell{padding:16px 0;border-right:1px solid var(--bd)}
+.hero-dash-cell{padding:16px 16px 16px 0;border-right:1px solid var(--bd)}
 .hero-dash-cell:first-child{padding-left:0}
 .hero-dash-cell:last-child{border-right:none}
 .hero-dash-cell:not(:first-child){padding-left:16px}
