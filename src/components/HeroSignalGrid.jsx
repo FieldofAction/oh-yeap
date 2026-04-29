@@ -40,6 +40,9 @@ const LAYOUTS = {
     // Background spotlight: a soft radial gradient centered on the cursor, tied to
     // presence so it fades in/out with the field. Very low opacity — barely there.
     background: { spotOpacity: 0.05, spotRadius: 520 },
+    // Per-letter glow + edge stroke that bloom only inside the radial attention zone.
+    // Letters at rest stay flat; the WWDC-style "lit glyph" is the resting state of full attention.
+    glow: { inner: 1.0, outer: 2.4, peakOpacity: 0.32, stroke: 0.32, strokePeak: 0.7 },
   },
   square: {
     viewBox: "0 0 1000 1000",
@@ -72,6 +75,7 @@ const LAYOUTS = {
       letterOpacity: 0.045, connOpacity: 0.022,
     },
     background: { spotOpacity: 0.05, spotRadius: 600 },
+    glow: { inner: 2.4, outer: 5.5, peakOpacity: 0.36, stroke: 0.6, strokePeak: 0.7 },
   },
 };
 
@@ -181,6 +185,11 @@ function FieldSVG({ pullX, pullY, echoX, echoY, cursorVX, cursorVY, cursorPresen
     const focused = att.letterDim + prox * (att.letterPeak - att.letterDim);
     return att.letterBase + (focused - att.letterBase) * cursorPresence;
   };
+  // Raw 0–1 attended-ness: drives glow bloom + edge crystallization, independent of base opacity.
+  const letterAttentionFor = (x, y) => {
+    if (!fieldOn) return 0;
+    return radialProximity(x, y, cursorVX, cursorVY, att.radius) * cursorPresence;
+  };
   const connOpacityFor = (mx, my) => {
     if (!fieldOn) return att.connBase;
     const prox = radialProximity(mx, my, cursorVX, cursorVY, att.radius);
@@ -191,17 +200,45 @@ function FieldSVG({ pullX, pullY, echoX, echoY, cursorVX, cursorVY, cursorPresen
   const spotCX = fieldOn ? cursorVX : layout.vbWidth / 2;
   const spotCY = fieldOn ? cursorVY : layout.vbHeight / 2;
   const spotAlpha = bgCfg.spotOpacity * cursorPresence;
-  // Unique gradient id per layout so wide/square don't collide if both are in the DOM briefly.
+  // Unique ids per layout so wide/square don't collide if both are in the DOM briefly.
   const spotId = `hg-spot-${layout.vbWidth}-${layout.vbHeight}`;
+  const noiseId = `hg-noise-${layout.vbWidth}-${layout.vbHeight}`;
+  const glowId = `hg-glow-${layout.vbWidth}-${layout.vbHeight}`;
+  const glowCfg = layout.glow;
+  // Smoothstep-shaped falloff for the spotlight: alpha = (1-x)^2 * (1+2x).
+  // Multi-stop curve reads more like natural light than a 2-stop linear ramp; the
+  // visible ring banding it leaves behind is killed by the noise dither overlay below.
+  const spotStops = [0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.88, 1.0];
   return (
     <svg className="hg-svg" viewBox={layout.viewBox} preserveAspectRatio="xMidYMid meet">
       <defs>
         <radialGradient id={spotId} cx={spotCX} cy={spotCY} r={bgCfg.spotRadius} gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="var(--fg)" stopOpacity={spotAlpha} />
-          <stop offset="100%" stopColor="var(--fg)" stopOpacity="0" />
+          {spotStops.map((x) => {
+            const f = (1 - x) * (1 - x) * (1 + 2 * x);
+            return <stop key={x} offset={`${x * 100}%`} stopColor="var(--fg)" stopOpacity={spotAlpha * f} />;
+          })}
         </radialGradient>
+        {/* Static fine-grain noise — breaks the residual ring banding from low-alpha gradient quantization */}
+        <filter id={noiseId} x="0%" y="0%" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" stitchTiles="stitch" />
+          <feColorMatrix type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.05 0" />
+        </filter>
+        {/* Stacked Gaussian glow — tight inner shimmer + soft outer halo, merged additively. */}
+        <filter id={glowId} x="-30%" y="-30%" width="160%" height="160%" colorInterpolationFilters="sRGB">
+          <feGaussianBlur in="SourceGraphic" stdDeviation={glowCfg.inner} result="b1" />
+          <feGaussianBlur in="SourceGraphic" stdDeviation={glowCfg.outer} result="b2" />
+          <feMerge>
+            <feMergeNode in="b2" />
+            <feMergeNode in="b1" />
+          </feMerge>
+        </filter>
       </defs>
       <rect x="0" y="0" width={layout.vbWidth} height={layout.vbHeight} fill={`url(#${spotId})`} pointerEvents="none" />
+      {/* Dither: only on while the spotlight is materially visible. */}
+      {cursorPresence > 0.01 && (
+        <rect x="0" y="0" width={layout.vbWidth} height={layout.vbHeight}
+          filter={`url(#${noiseId})`} opacity={cursorPresence} pointerEvents="none" />
+      )}
       {/* Echo layer — dim, static diagonal offset, no per-letter radial modulation. */}
       <g transform={`translate(${echoCfg.offsetX} ${echoCfg.offsetY})`} aria-hidden="true">
         {CONNECTIONS.map(([a, b], i) => {
@@ -238,9 +275,25 @@ function FieldSVG({ pullX, pullY, echoX, echoY, cursorVX, cursorVY, cursorPresen
             strokeDasharray={shortened} strokeDashoffset="0" />
         );
       })}
-      {letters.map((l, i) => (
-        <text key={`t${i}`} x={l.dx} y={l.y} textAnchor="middle" dominantBaseline="central" className="hg-glyph" opacity={letterOpacityFor(l.dx, l.y)}>{l.ch}</text>
-      ))}
+      {/* Three-layer letter: outer glow halo (proximity-blooms), filled glyph (existing), hairline edge stroke (proximity-crystallizes). */}
+      {letters.flatMap((l, i) => {
+        const att = letterAttentionFor(l.dx, l.y);
+        const fillOpacity = letterOpacityFor(l.dx, l.y);
+        return [
+          att > 0.01 ? (
+            <text key={`tg${i}`} x={l.dx} y={l.y} textAnchor="middle" dominantBaseline="central"
+              className="hg-glyph" fill="var(--fm)" filter={`url(#${glowId})`}
+              opacity={att * glowCfg.peakOpacity}>{l.ch}</text>
+          ) : null,
+          <text key={`tf${i}`} x={l.dx} y={l.y} textAnchor="middle" dominantBaseline="central"
+            className="hg-glyph" opacity={fillOpacity}>{l.ch}</text>,
+          att > 0.01 ? (
+            <text key={`ts${i}`} x={l.dx} y={l.y} textAnchor="middle" dominantBaseline="central"
+              className="hg-glyph" fill="none" stroke="var(--fg)" strokeWidth={glowCfg.stroke}
+              opacity={att * glowCfg.strokePeak}>{l.ch}</text>
+          ) : null,
+        ];
+      })}
     </svg>
   );
 }
