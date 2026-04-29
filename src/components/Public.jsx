@@ -118,11 +118,11 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 </div>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Building</div>
-                  <div className="hero-dash-val">Energetic Fields</div>
+                  <div className="hero-dash-val">Condition Sets</div>
                 </div>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Writing</div>
-                  <div className="hero-dash-val">Themes of Authoring</div>
+                  <div className="hero-dash-val">Authoring Themes</div>
                 </div>
               </div>
               <div className="en d2">
@@ -148,11 +148,11 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 </div>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Building</div>
-                  <div className="hero-dash-val">Energetic Fields</div>
+                  <div className="hero-dash-val">Condition Sets</div>
                 </div>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Writing</div>
-                  <div className="hero-dash-val">Themes of Authoring</div>
+                  <div className="hero-dash-val">Authoring Themes</div>
                 </div>
                 <div className="hero-dash-cell">
                   <div className="hero-dash-label">Links</div>
