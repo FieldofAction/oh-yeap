@@ -1,9 +1,14 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import { VIS } from "../../data/seed";
 import { HiddenStrip } from "../HiddenIndicators";
 import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
 
 export default function SpecSheetDetail({ item, allItems, closing, onClose, onOpen, fg, lens, patternLens }) {
+  const overlayRef = useRef(null);
+  useEffect(() => {
+    if (overlayRef.current) overlayRef.current.scrollTo(0, 0);
+  }, [item.id]);
+
   const artVi = useCallback((i) => VIS[(Math.abs(item.title.charCodeAt(0)) + i) % VIS.length](fg), [item.title, fg]);
   const typeLabel = {diagram:"Diagram",prompt:"Prompt",framework:"Framework",model:"Model",method:"Method"}[item.artifactType] || "Artifact";
   const [copied, setCopied] = useState(false);
@@ -16,7 +21,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
   }, []);
 
   return (
-    <div className={`sp-overlay ${closing ? "closing" : ""}`}>
+    <div ref={overlayRef} className={`sp-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>&larr; Back</button>
       <div className="sp-inner">
         <HiddenStrip item={item} />
@@ -143,7 +148,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
             {item.spec.source.map((s, i) => {
               const linked = allItems.find(a => a.title === s.title);
               return (
-                <div key={i} className="sp-source-item" onClick={() => { if(linked && (linked.body || linked.caseStudy || linked.sketch || linked.spec)){onOpen(linked);window.scrollTo(0,0)} }}>
+                <div key={i} className="sp-source-item" onClick={() => { if(linked && (linked.body || linked.caseStudy || linked.sketch || linked.spec)){onOpen(linked)} }}>
                   <div className="sp-source-title">{s.title} &rarr;</div>
                   <div className="sp-source-why">{s.why}</div>
                 </div>

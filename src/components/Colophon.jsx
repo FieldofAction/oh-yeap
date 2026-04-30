@@ -11,6 +11,13 @@ const TECH = [
   { h:"Persistence", v:"Client-side localStorage. No database, no server" },
 ];
 
+const FORMS = [
+  { h:"Memo", v:"Numbered entry in an ongoing series. Builds an argument over time, theme by theme." },
+  { h:"Field Note", v:"A singular observation from the work. Not part of a series; stands alone." },
+  { h:"Exploration", v:"An active experiment. Open-ended; the form is unsettled by design." },
+  { h:"Artifact", v:"A system reference — specs, models, frameworks. A standing form intended for reuse." },
+];
+
 const PRINCIPLES = [
   "Two typefaces only: Inter for display and body, Space Mono for code.",
   "CSS custom properties drive theming. Every color is a variable.",
@@ -38,6 +45,18 @@ export default function Colophon() {
         <div className="co-pre">Site</div>
         <h2 className="co-h">Colophon</h2>
         <p className="co-sub">How this was built. The tools, principles, and decisions behind the surface.</p>
+      </div>
+
+      <div className="co-section en d2">
+        <div className="co-sl">Forms</div>
+        <div className="co-grid">
+          {FORMS.map(t => (
+            <div key={t.h} className="co-item">
+              <div className="co-item-h">{t.h}</div>
+              <div className="co-item-v">{t.v}</div>
+            </div>
+          ))}
+        </div>
       </div>
 
       <div className="co-section en d2">

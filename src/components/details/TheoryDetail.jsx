@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { VIS } from "../../data/seed";
 import { HiddenStrip } from "../HiddenIndicators";
 import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
@@ -15,12 +15,17 @@ function RDIcon({ color = "currentColor", size = 36 }) {
 }
 
 export default function TheoryDetail({ item, allItems, closing, onClose, onOpen, onRelation, fg, lens, patternLens }) {
+  const overlayRef = useRef(null);
+  useEffect(() => {
+    if (overlayRef.current) overlayRef.current.scrollTo(0, 0);
+  }, [item.id]);
+
   const artVi = useCallback((i) => VIS[(Math.abs(item.title.charCodeAt(0)) + i) % VIS.length](fg), [item.title, fg]);
   const theory = item.theory;
   const imgs = theory?.images || {};
 
   return (
-    <div className={`th-overlay ${closing ? "closing" : ""}`}>
+    <div ref={overlayRef} className={`th-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>← Back</button>
       <div className="th-inner">
         <HiddenStrip item={item} />
@@ -180,7 +185,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
             <div className="rd-related">
               <div className="rd-related-h">Connected Work</div>
               {related.map(r => (
-                <div key={r.id} className="rd-related-item" onClick={() => { if (r.body || r.caseStudy || r.sketch || r.spec || r.theory) { onOpen(r); window.scrollTo(0, 0) } else { onClose(); setTimeout(() => onRelation(r.title), 350) } }}>
+                <div key={r.id} className="rd-related-item" onClick={() => { if (r.body || r.caseStudy || r.sketch || r.spec || r.theory) { onOpen(r) } else { onClose(); setTimeout(() => onRelation(r.title), 350) } }}>
                   <div>
                     <div className="rd-related-title">{r.title}</div>
                     <div className="rd-related-sub">{r.subtitle || r.section} · {r.year}</div>
