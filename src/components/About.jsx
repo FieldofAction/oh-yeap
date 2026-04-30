@@ -8,7 +8,7 @@ export default function About({ theme }) {
   return (
     <div className="ab en">
       <div className="ab-header en d1">
-        <div className="ab-pre">Field of Action</div>
+        <div className="ab-pre">Alfred (Daniel) Dickson II</div>
         <h1 className="ab-h">About</h1>
         <p className="ab-sub">Position + Practice</p>
       </div>
@@ -17,7 +17,7 @@ export default function About({ theme }) {
       <div className="ab-section en d2">
         <div className="ab-sl">Position</div>
         <p className="ab-display">
-          Design leader setting direction across systems, brand, and emerging technology.
+          Alfred (Daniel) Dickson II. Design leader setting direction across systems, brand, and emerging technology.
         </p>
         <p className="ab-body">
           My practice combines design leadership and generative research to shape the conditions for aligned teams, clear decisions, and coherent creative output. I build frameworks and systems that translate ideas into action.

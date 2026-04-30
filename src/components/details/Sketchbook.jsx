@@ -1,13 +1,18 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { VIS } from "../../data/seed";
 import { HiddenStrip } from "../HiddenIndicators";
 import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
 
 export default function SketchbookDetail({ item, allItems, closing, onClose, onOpen, fg, lens, patternLens }) {
+  const overlayRef = useRef(null);
+  useEffect(() => {
+    if (overlayRef.current) overlayRef.current.scrollTo(0, 0);
+  }, [item.id]);
+
   const artVi = useCallback((i) => VIS[(Math.abs(item.title.charCodeAt(0)) + i) % VIS.length](fg), [item.title, fg]);
 
   return (
-    <div className={`sk-overlay ${closing ? "closing" : ""}`}>
+    <div ref={overlayRef} className={`sk-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>← Back</button>
       <div className="sk-inner">
         <HiddenStrip item={item} />
@@ -100,7 +105,7 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
             {item.sketch.connections.map((c, i) => {
               const linked = allItems.find(a => a.title === c.title);
               return (
-                <div key={i} className="sk-conn-item" onClick={() => { if(linked && (linked.body || linked.caseStudy || linked.sketch || linked.spec || linked.theory)){onOpen(linked);window.scrollTo(0,0)} }}>
+                <div key={i} className="sk-conn-item" onClick={() => { if(linked && (linked.body || linked.caseStudy || linked.sketch || linked.spec || linked.theory)){onOpen(linked)} }}>
                   <div className="sk-conn-title">{c.title} →</div>
                   <div className="sk-conn-why">{c.why}</div>
                 </div>

@@ -49,6 +49,19 @@ const viewFromHash = () => {
   return PUBLIC_VIEWS.has(target) ? target : "public";
 };
 
+const HASH_ITEM_RE = /^#\/?item\/([^/?#]+)$/;
+const hashItemId = () => {
+  if (typeof window === "undefined") return null;
+  const m = window.location.hash.match(HASH_ITEM_RE);
+  return m ? decodeURIComponent(m[1]) : null;
+};
+const pushHashForItem = (item) => {
+  const target = `#item/${encodeURIComponent(item.id)}`;
+  if (window.location.hash !== target) {
+    window.history.pushState({ itemId: item.id }, "", target);
+  }
+};
+
 const WORK_VIEWS = new Set(["public", "superconscious", "patiobeach"]);
 const CANON_VIEWS = new Set(["canon"]);
 const INFO_VIEWS = new Set(["about", "colophon"]);
@@ -74,7 +87,11 @@ export default function PublicApp() {
   const [lens, setLens] = useState(false);
   const [patternLens, setPatternLens] = useState(false);
   const [showGraph, setShowGraph] = useState(false);
-  const [activeItem, setActiveItem] = useState(null);
+  const [activeItem, setActiveItem] = useState(() => {
+    const id = hashItemId();
+    if (!id) return null;
+    return SEED.find(c => c.id === id) || null;
+  });
   const [closing, setClosing] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
   const explorationStore = useExplorationStore();
@@ -124,6 +141,25 @@ export default function PublicApp() {
   }, [view]);
 
   useEffect(() => {
+    const handler = () => {
+      const id = hashItemId();
+      if (id) {
+        const item = SEED.find(c => c.id === id);
+        if (item && item.id !== activeItem?.id) {
+          setClosing(false);
+          setActiveItem(item);
+          window.scrollTo(0, 0);
+        }
+      } else if (activeItem) {
+        setClosing(true);
+        setTimeout(() => { setActiveItem(null); setClosing(false); }, 200);
+      }
+    };
+    window.addEventListener("popstate", handler);
+    return () => window.removeEventListener("popstate", handler);
+  }, [activeItem]);
+
+  useEffect(() => {
     const obs = new IntersectionObserver((entries) => {
       entries.forEach(e => {
         if (e.isIntersecting) {
@@ -138,6 +174,22 @@ export default function PublicApp() {
     return () => { clearTimeout(timer); obs.disconnect(); };
   }, [view, filter, relFilter]);
 
+  const openItem = useCallback((item) => {
+    if (item.body || item.caseStudy || item.sketch || item.spec || item.theory) {
+      setActiveItem(item);
+      window.scrollTo(0, 0);
+      pushHashForItem(item);
+    }
+  }, []);
+  const closeItem = useCallback(() => {
+    if (hashItemId()) {
+      window.history.back();
+    } else {
+      setClosing(true);
+      setTimeout(() => { setActiveItem(null); setClosing(false); }, 200);
+    }
+  }, []);
+
   React.useEffect(() => {
     const handler = (e) => {
       const tag = e.target.tagName;
@@ -150,15 +202,12 @@ export default function PublicApp() {
         setEgg(false);
         setShowGraph(false);
         setRelFilter(null);
-        if (activeItem) {
-          setClosing(true);
-          setTimeout(() => { setActiveItem(null); setClosing(false) }, 200);
-        }
+        if (activeItem) closeItem();
       }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [activeItem]);
+  }, [activeItem, closeItem]);
 
   // Hidden-from-public items (Wave-1 practice + per-item `hidden: true`) are excluded from production builds.
   // Dev (`npm run dev`) shows everything so unfinished pages can be previewed locally; visual indicators
@@ -199,17 +248,6 @@ export default function PublicApp() {
     setRelFilter(null);
     setFilter(f);
   }, []);
-  const openItem = useCallback((item) => {
-    if (item.body || item.caseStudy || item.sketch || item.spec || item.theory) {
-      setActiveItem(item);
-      window.scrollTo(0, 0);
-    }
-  }, []);
-  const closeItem = useCallback(() => {
-    setClosing(true);
-    setTimeout(() => { setActiveItem(null); setClosing(false); }, 200);
-  }, []);
-
   return (
     <div style={cv(theme)} className="app-layout">
       <PublicSidebar view={view} navigateTo={navigateTo} filter={filter} setFilter={handleFilter} hiddenCounts={hiddenCounts} />

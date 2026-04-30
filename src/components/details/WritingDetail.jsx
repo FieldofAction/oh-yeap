@@ -88,6 +88,11 @@ function AudioPlayer({ src, dur, itemKey }) {
 }
 
 export default function WritingDetail({ item, allItems, closing, onClose, onRelation, onOpen, fg, lens, patternLens }) {
+  const overlayRef = useRef(null);
+  useEffect(() => {
+    if (overlayRef.current) overlayRef.current.scrollTo(0, 0);
+  }, [item.id]);
+
   const writings = useMemo(() => allItems.filter(c => c.body && c.status !== "draft"), [allItems]);
   const idx = writings.findIndex(w => w.id === item.id);
   const prev = idx > 0 ? writings[idx - 1] : null;
@@ -127,7 +132,7 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
   }, [item.title]);
 
   return (
-    <div className={`rd-overlay ${closing ? "closing" : ""}`}>
+    <div ref={overlayRef} className={`rd-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>← Back</button>
       <div className="rd-inner">
         <HiddenStrip item={item} />
@@ -252,7 +257,7 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
           <div className="rd-related dc dc8">
             <div className="rd-related-h">Connected Work</div>
             {related.map(r => (
-              <div key={r.id} className="rd-related-item" onClick={() => { if(r.body){onOpen(r);window.scrollTo(0,0)} else {onClose();setTimeout(()=>onRelation(r.title),350)} }}>
+              <div key={r.id} className="rd-related-item" onClick={() => { if(r.body){onOpen(r)} else {onClose();setTimeout(()=>onRelation(r.title),350)} }}>
                 <div>
                   <div className="rd-related-title">{r.title}</div>
                   <div className="rd-related-sub">{r.subtitle || r.section} · {r.year}</div>
@@ -264,13 +269,13 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
         )}
         <div className="rd-nav dc dc8">
           {prev ? (
-            <button className="rd-nav-btn" onClick={() => { onOpen(prev); window.scrollTo(0,0); }}>
+            <button className="rd-nav-btn" onClick={() => onOpen(prev)}>
               <span className="rd-nav-label">← Previous</span>
               <span className="rd-nav-title">{prev.title}</span>
             </button>
           ) : <div />}
           {next ? (
-            <button className="rd-nav-btn next" onClick={() => { onOpen(next); window.scrollTo(0,0); }}>
+            <button className="rd-nav-btn next" onClick={() => onOpen(next)}>
               <span className="rd-nav-label">Next →</span>
               <span className="rd-nav-title">{next.title}</span>
             </button>

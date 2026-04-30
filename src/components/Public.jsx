@@ -10,6 +10,12 @@ import HeroGrid from "./HeroGrid";
 /* ── Hero mode: 1 = Threshold Strip, 2 = Signal Bar, 3 = Ambient Dashboard, 4 = Available Light Grid ── */
 const HERO_MODE = 4;
 
+const SECTION_GLOSSES = {
+  Writing: "Evolving documents. Memos build in numbered series; Field Notes stand alone.",
+  Exploration: "Active experiments. Work still in motion.",
+  Artifacts: "System artifacts. Specs, models, frameworks.",
+};
+
 /* ── Extract artwork images from item body for hover preview ── */
 function getPreviewImages(item) {
   // Writing items: pull artwork blocks
@@ -191,6 +197,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
       {!isHome && !relFilter && (
         <div className="section-header en">
           <h1 className="section-header-h">{filter}<HiddenCountSuffix section={filter.toLowerCase()} hiddenCounts={hiddenCounts} /></h1>
+          {SECTION_GLOSSES[filter] && <p className="section-header-gloss">{SECTION_GLOSSES[filter]}</p>}
         </div>
       )}
 
@@ -251,6 +258,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
               return (
                 <div className={`content-section${showAll ? " reveal" : ""}`}>
                   {showAll && <div className="content-section-h">Writing<HiddenCountSuffix section="writing" hiddenCounts={hiddenCounts} /></div>}
+                  {showAll && <div className="content-section-gloss">{SECTION_GLOSSES.Writing}</div>}
                   {featured.length > 0 && (
                     <div className="ix-wr-feat">
                       {featured.map((item, i) => (
@@ -296,6 +304,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
             {(showAll || filter === "Exploration" || relFilter) && exploration.length > 0 && (
               <div className={`content-section${showAll ? " reveal" : ""}`}>
                 {showAll && <div className="content-section-h">Exploration<HiddenCountSuffix section="exploration" hiddenCounts={hiddenCounts} /></div>}
+                {showAll && <div className="content-section-gloss">{SECTION_GLOSSES.Exploration}</div>}
                 <div className="ix-art">
                   {exploration.map((item, i) => (
                     <div key={item.id} className={`ix-art-item${showAll ? " en" : ""}${import.meta.env.DEV && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.05+i*0.04}s`} : undefined}>
@@ -322,6 +331,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
             {(showAll || filter === "Artifacts" || relFilter) && artifacts.length > 0 && (
               <div className={`content-section${showAll ? " reveal" : ""}`}>
                 {showAll && <div className="content-section-h">Artifacts<HiddenCountSuffix section="artifacts" hiddenCounts={hiddenCounts} /></div>}
+                {showAll && <div className="content-section-gloss">{SECTION_GLOSSES.Artifacts}</div>}
                 <div className="ix-art">
                   {artifacts.map((item, i) => (
                     <div key={item.id} className={`ix-art-item${showAll ? " en" : ""}${import.meta.env.DEV && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.05+i*0.04}s`} : undefined}>
