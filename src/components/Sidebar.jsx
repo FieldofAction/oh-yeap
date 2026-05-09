@@ -22,6 +22,7 @@ const NAV = [
   ]},
   { tier: "STUDIO", gated: true, items: [
     { key: "studio", label: "Studio" },
+    { key: "press", label: "Press" },
   ]},
   { tier: "INFO", items: [
     { key: "about", label: "About" },
@@ -42,7 +43,7 @@ const NAV = [
 // Note: this password ships in the public JS bundle — it's a soft gate, not real security.
 const STUDIO_PASSWORD = "M!G0S";
 const STUDIO_UNLOCK_KEY = "foa_studio_unlocked";
-const STUDIO_KEYS = new Set(["studio","model","playbook","console","foa","breakground","desert","backstage","editor","lab"]);
+const STUDIO_KEYS = new Set(["studio","model","playbook","console","foa","breakground","desert","backstage","editor","lab","press","nestcompositor","nestreel"]);
 
 function isStudioUnlocked() {
   if (typeof window === "undefined") return false;
@@ -126,6 +127,7 @@ export default function Sidebar({ view, navigateTo, filter, setFilter, hiddenCou
     if (item.filter) return view === "public" && filter === item.filter;
     if (item.key === "public" && !item.filter) return view === "public" && (filter === "All" || !filter);
     if (item.key === "studio") return STUDIO_VIEWS.has(view);
+    if (item.key === "press") return view === "press" || view === "nestcompositor" || view === "nestreel";
     return view === item.key;
   };
 

@@ -24,6 +24,9 @@ import PatioBeach from "./components/PatioBeach";
 import Superconscious from "./components/Superconscious";
 import Studio from "./components/Studio";
 import HotelNest from "./components/HotelNest";
+import Press from "./components/Press";
+import NestCompositor from "./components/NestCompositor";
+import NestReel from "./components/NestReel";
 import { DualLensToggle, DualLensBar } from "./components/PatternLens";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
@@ -43,6 +46,9 @@ const VIEW_TO_HASH = {
   models: "mental-models",
   patterns: "pattern-language",
   hotelnest: "hotel/nest",
+  press: "press",
+  nestcompositor: "press/nest-compositor",
+  nestreel: "press/nest-reel",
 };
 const HASH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_HASH).map(([view, hash]) => [hash, view])
@@ -252,6 +258,9 @@ export default function App() {
           {view === "patiobeach" && <PatioBeach />}
           {view === "superconscious" && <Superconscious />}
           {view === "hotelnest" && <HotelNest />}
+          {view === "press" && <Press navigateTo={navigateTo} />}
+          {view === "nestcompositor" && <NestCompositor navigateTo={navigateTo} />}
+          {view === "nestreel" && <NestReel navigateTo={navigateTo} />}
         </main>
 
           <SiteFooter />

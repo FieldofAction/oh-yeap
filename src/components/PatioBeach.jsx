@@ -27,7 +27,10 @@ const cleanCaption = (raw, by) => {
   if (!/[a-z0-9]/i.test(c)) return "";
   return c;
 };
-const MONTHS = {
+// Exported for use by Press tools (NestCompositor, NestReel) which sample
+// random photos from this archive. Long-term this data could move to
+// src/data/, but exporting in place keeps the diff small.
+export const MONTHS = {
   "2018-04": {
     label: "April 2018",
     posts: [
