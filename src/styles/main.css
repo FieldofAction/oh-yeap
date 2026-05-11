@@ -63,6 +63,8 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 /* ── Sidebar sub-groups (STUDIO tier) ── */
 .sb-group{margin:0}
 .sb-group-h{font-size:8px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);opacity:.5;padding:10px 20px 2px}
+.sb-group-h-lc{text-transform:none;letter-spacing:.02em;font-size:9px}
+.sb-link-dot{display:inline-block;width:10px;color:var(--ff);opacity:.6;margin-right:2px;text-align:center}
 
 /* ── Sidebar lock indicator (gated tier) ── */
 .sb-tier-h{display:flex;align-items:center;gap:8px}
