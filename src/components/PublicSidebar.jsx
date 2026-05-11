@@ -8,12 +8,16 @@ const STUDIO_URL = "https://studio.fieldofaction.org";
 // In dev (`npm run dev`) Practice is revealed with a HIDDEN indicator so we can preview locally.
 const NAV = [
   { tier: "WORK", items: [
-    ...(import.meta.env.DEV ? [{ key: "public", label: "Practice", filter: "Practice" }] : []),
-    { key: "public", label: "Writing", filter: "Writing" },
-    { key: "public", label: "Exploration", filter: "Exploration" },
-    { key: "public", label: "Artifacts", filter: "Artifacts" },
-    { key: "patiobeach", label: "Patio Beach" },
-    { key: "superconscious", label: "Share Location" },
+    { group: "sections", children: [
+      ...(import.meta.env.DEV ? [{ key: "public", label: "Practice", filter: "Practice" }] : []),
+      { key: "public", label: "Writing", filter: "Writing" },
+      { key: "public", label: "Exploration", filter: "Exploration" },
+      { key: "public", label: "Artifacts", filter: "Artifacts" },
+    ]},
+    { group: "spaces", children: [
+      { key: "patiobeach", label: "Patio Beach" },
+      { key: "superconscious", label: "Share Location" },
+    ]},
   ]},
   { tier: "HOTEL", items: [
     { key: "hotelnest", label: "Nest" },
@@ -79,6 +83,30 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter, hid
               )}
             </div>
             {group.items.map((item) => {
+              if (item.group) {
+                return (
+                  <div key={item.group} className="sb-group">
+                    <div className="sb-group-h sb-group-h-lc">{item.group}</div>
+                    {item.children.map(child => {
+                      const childKey = child.filter?.toLowerCase();
+                      const childHidden = import.meta.env.DEV && childKey ? hiddenCounts[childKey] : 0;
+                      return (
+                        <button
+                          key={`${child.key}-${child.label}`}
+                          className={`sb-link${child.filter ? " sb-link-filter" : ""}${isActive(child) ? " on" : ""}${childHidden ? " sb-link-has-hidden" : ""}`}
+                          style={{ paddingLeft: 20 }}
+                          onClick={() => handleNav(child)}
+                          title={childHidden ? `${childHidden} hidden in dev` : undefined}
+                        >
+                          {child.filter && <span className="sb-link-dot" aria-hidden="true">·</span>}
+                          {child.label}
+                          {childHidden ? <span className="sb-link-hidden-count" aria-hidden="true">{childHidden}</span> : null}
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              }
               if (item.href) {
                 return (
                   <a
@@ -96,7 +124,8 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter, hid
               const sectionKey = item.filter?.toLowerCase();
               const hiddenInSection = import.meta.env.DEV && sectionKey ? hiddenCounts[sectionKey] : 0;
               return (
-                <button key={`${item.key}-${item.label}`} className={`sb-link${isActive(item) ? " on" : ""}${hiddenInSection ? " sb-link-has-hidden" : ""}`} style={{ paddingLeft: 20 }} onClick={() => handleNav(item)} title={hiddenInSection ? `${hiddenInSection} hidden in dev` : undefined}>
+                <button key={`${item.key}-${item.label}`} className={`sb-link${item.filter ? " sb-link-filter" : ""}${isActive(item) ? " on" : ""}${hiddenInSection ? " sb-link-has-hidden" : ""}`} style={{ paddingLeft: 20 }} onClick={() => handleNav(item)} title={hiddenInSection ? `${hiddenInSection} hidden in dev` : undefined}>
+                  {item.filter && <span className="sb-link-dot" aria-hidden="true">·</span>}
                   {item.label}
                   {hiddenInSection ? <span className="sb-link-hidden-count" aria-hidden="true">{hiddenInSection}</span> : null}
                 </button>
