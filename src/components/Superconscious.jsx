@@ -125,7 +125,7 @@ export default function Superconscious() {
               <img
                 src={d.thumb}
                 alt={`Drawing ${d.id}`}
-                loading="lazy"
+                loading="eager"
                 className="sc-grid-img"
               />
             </div>
