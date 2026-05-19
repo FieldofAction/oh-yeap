@@ -3,9 +3,10 @@
   "configurations": [
     {
       "name": "dev",
-      "runtimeExecutable": "npx",
-      "runtimeArgs": ["vite", "--port", "5180", "--strictPort"],
-      "port": 5180
+      "runtimeExecutable": "sh",
+      "runtimeArgs": ["-c", "npx vite --port $PORT --strictPort"],
+      "port": 5180,
+      "autoPort": true
     }
   ]
 }
