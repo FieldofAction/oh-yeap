@@ -173,6 +173,112 @@ function GeomFlower({ f }) {
 }
 
 const FLOWER_COUNT = 90;
+const OPAL_COUNT = 6;
+const OPAL_FLECK_HUES = [340, 320, 200, 165, 50, 30, 285, 15];
+
+function blobPath(cx, cy, baseRx, baseRy, n, jitter) {
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const angle = (i / n) * Math.PI * 2 + (Math.random() - 0.5) * (Math.PI / n);
+    const j = 1 + (Math.random() - 0.5) * jitter;
+    pts.push({
+      x: cx + Math.cos(angle) * baseRx * j,
+      y: cy + Math.sin(angle) * baseRy * j,
+    });
+  }
+  let d = `M ${pts[0].x.toFixed(2)} ${pts[0].y.toFixed(2)}`;
+  for (let i = 0; i < n; i++) {
+    const p0 = pts[(i - 1 + n) % n];
+    const p1 = pts[i];
+    const p2 = pts[(i + 1) % n];
+    const p3 = pts[(i + 2) % n];
+    const c1x = p1.x + (p2.x - p0.x) / 6;
+    const c1y = p1.y + (p2.y - p0.y) / 6;
+    const c2x = p2.x - (p3.x - p1.x) / 6;
+    const c2y = p2.y - (p3.y - p1.y) / 6;
+    d += ` C ${c1x.toFixed(2)} ${c1y.toFixed(2)}, ${c2x.toFixed(2)} ${c2y.toFixed(2)}, ${p2.x.toFixed(2)} ${p2.y.toFixed(2)}`;
+  }
+  return d + " Z";
+}
+
+function makeOpal(slot) {
+  const pos = clusterPosition();
+  const aspect = rand(0.55, 0.85);
+  const baseRx = 42;
+  const baseRy = 42 * aspect;
+  const path = blobPath(50, 36, baseRx, baseRy, 7 + Math.floor(Math.random() * 4), 0.42);
+  const flecks = [];
+  const fleckN = 5 + Math.floor(Math.random() * 3);
+  for (let i = 0; i < fleckN; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const r = Math.random() * 0.6;
+    flecks.push({
+      x: 50 + Math.cos(a) * r * baseRx * 0.75,
+      y: 36 + Math.sin(a) * r * baseRy * 0.75,
+      r: 3 + Math.random() * 5,
+      hue: pick(OPAL_FLECK_HUES),
+      baseAlpha: 0.45 + Math.random() * 0.35,
+      dur: 4 + Math.random() * 5,
+      delay: -Math.random() * 6,
+    });
+  }
+  return {
+    key: `op-${slot}-${Math.random().toString(36).slice(2, 8)}`,
+    slot,
+    ox: pos.ox,
+    oy: pos.oy,
+    size: rand(38, 64),
+    duration: rand(26, 40),
+    rot: rand(-25, 25),
+    dx: rand(-14, 14),
+    dy: rand(10, 30),
+    aspect,
+    bodyTint: pick([210, 200, 220, 195, 230]),
+    path,
+    flecks,
+  };
+}
+
+function Opal({ o }) {
+  const clipId = `opal-clip-${o.key}`;
+  return (
+    <svg viewBox="0 0 100 70" width="100%" height="100%" style={{ overflow: "visible" }}>
+      <defs>
+        <radialGradient id={`opal-body-${o.key}`} cx="45%" cy="38%" r="60%">
+          <stop offset="0%"  stopColor="rgba(255,255,255,0.85)" />
+          <stop offset="45%" stopColor={`hsla(${o.bodyTint}, 35%, 86%, 0.55)`} />
+          <stop offset="100%" stopColor={`hsla(${o.bodyTint}, 40%, 70%, 0.20)`} />
+        </radialGradient>
+        <radialGradient id={`opal-hi-${o.key}`} cx="35%" cy="28%" r="35%">
+          <stop offset="0%"  stopColor="rgba(255,255,255,0.85)" />
+          <stop offset="100%" stopColor="rgba(255,255,255,0)" />
+        </radialGradient>
+        <clipPath id={clipId}>
+          <path d={o.path} />
+        </clipPath>
+      </defs>
+      <path d={o.path} fill={`url(#opal-body-${o.key})`} />
+      <g clipPath={`url(#${clipId})`}>
+        {o.flecks.map((f, i) => (
+          <circle
+            key={i}
+            cx={f.x}
+            cy={f.y}
+            r={f.r}
+            fill={`hsl(${f.hue}, 95%, 72%)`}
+            style={{
+              mixBlendMode: "screen",
+              opacity: f.baseAlpha,
+              animation: `fl-opal-shimmer ${f.dur}s ease-in-out ${f.delay}s infinite`,
+              transformOrigin: `${f.x}px ${f.y}px`,
+            }}
+          />
+        ))}
+        <ellipse cx="42" cy="26" rx="22" ry="10" fill={`url(#opal-hi-${o.key})`} />
+      </g>
+    </svg>
+  );
+}
 
 function computeStars(loc, now) {
   const jd = julianDate(now);
@@ -205,6 +311,9 @@ function computeStars(loc, now) {
 export default function Flowers() {
   const [flowers, setFlowers] = useState(() =>
     Array.from({ length: FLOWER_COUNT }, (_, i) => makeFlower(i))
+  );
+  const [opals, setOpals] = useState(() =>
+    Array.from({ length: OPAL_COUNT }, (_, i) => makeOpal(i))
   );
   const [palette, setPalette] = useState(() => paletteForHour(new Date().getHours()));
   const [loc, setLoc] = useState(FALLBACK_LOC);
@@ -247,6 +356,18 @@ export default function Flowers() {
         return next;
       });
     }, 1700);
+    return () => clearInterval(id);
+  }, []);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setOpals((prev) => {
+        const next = prev.slice();
+        const idx = Math.floor(Math.random() * next.length);
+        next[idx] = makeOpal(idx);
+        return next;
+      });
+    }, 5200);
     return () => clearInterval(id);
   }, []);
 
@@ -308,6 +429,27 @@ export default function Flowers() {
             ) : (
               <GeomFlower f={f} />
             )}
+          </div>
+        ))}
+      </div>
+
+      <div className="fl-opals" aria-hidden="true">
+        {opals.map((o) => (
+          <div
+            key={o.key}
+            className="fl-opal"
+            style={{
+              left: `calc(50% + ${o.ox}vmin)`,
+              top: `calc(50% + ${o.oy}vmin)`,
+              width: `${o.size}px`,
+              height: `${o.size * o.aspect}px`,
+              "--dur": `${o.duration}s`,
+              "--rot": `${o.rot}deg`,
+              "--dx": `${o.dx}px`,
+              "--dy": `${o.dy}px`,
+            }}
+          >
+            <Opal o={o} />
           </div>
         ))}
       </div>
@@ -379,8 +521,32 @@ export default function Flowers() {
           92%  { opacity: 0.25; transform: translate(var(--dx), calc(var(--dy) * -1.05)) scale(0.78) rotate(calc(var(--rot) + 30deg)); }
           100% { opacity: 0;    transform: translate(var(--dx), calc(var(--dy) * -1.15)) scale(0.7) rotate(calc(var(--rot) + 34deg)); }
         }
+        .fl-opals {
+          position: absolute;
+          inset: 0;
+        }
+        .fl-opal {
+          position: absolute;
+          transform: translate(-50%, -50%);
+          transform-origin: center center;
+          animation: fl-opal-cycle var(--dur) ease-in-out infinite;
+          will-change: transform, opacity;
+          filter: drop-shadow(0 0 18px rgba(220, 230, 255, 0.35));
+        }
+        @keyframes fl-opal-cycle {
+          0%   { opacity: 0;    transform: translate(-50%, -50%) scale(0.4) rotate(var(--rot)); }
+          18%  { opacity: 0.9;  transform: translate(calc(-50% + var(--dx) * 0.25), calc(-50% + var(--dy) * -0.25)) scale(1) rotate(calc(var(--rot) + 8deg)); }
+          50%  { opacity: 0.95; transform: translate(calc(-50% + var(--dx) * 0.55), calc(-50% + var(--dy) * -0.55)) scale(1) rotate(calc(var(--rot) + 20deg)); }
+          82%  { opacity: 0.9;  transform: translate(calc(-50% + var(--dx) * 0.85), calc(-50% + var(--dy) * -0.85)) scale(0.98) rotate(calc(var(--rot) + 32deg)); }
+          100% { opacity: 0;    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) * -1.05)) scale(0.8) rotate(calc(var(--rot) + 40deg)); }
+        }
+        @keyframes fl-opal-shimmer {
+          0%, 100% { opacity: 0.25; }
+          50%      { opacity: 1; }
+        }
         @media (prefers-reduced-motion: reduce) {
           .fl-bloom { animation-duration: 40s; }
+          .fl-opal  { animation-duration: 60s; }
           .fl-star  { animation: none; opacity: 0.5; }
         }
       `}</style>
