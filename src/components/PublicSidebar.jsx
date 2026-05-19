@@ -17,6 +17,7 @@ const NAV = [
     { group: "spaces", children: [
       { key: "patiobeach", label: "Patio Beach" },
       { key: "superconscious", label: "Share Location" },
+      { key: "flowers", label: "Bloom" },
     ]},
   ]},
   { tier: "HOTEL", items: [
