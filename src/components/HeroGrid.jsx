@@ -19,7 +19,7 @@ const DASH = [
 // Wave 1 launch: only Hero 01 active in rotation. Others tabled for later.
 const HEROES = [HeroSignalGrid];
 
-export default function HeroGrid() {
+export default function HeroGrid({ isLight }) {
   const chosen = useRef(HEROES[Math.floor(Math.random() * HEROES.length)]);
   const Hero = chosen.current;
 
@@ -40,7 +40,7 @@ export default function HeroGrid() {
       </div>
 
       {/* Selected composition */}
-      <Hero />
+      <Hero isLight={isLight} />
     </div>
   );
 }
