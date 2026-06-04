@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 
 /* ── Hero 01: "Signal Grid" ──
    Letters as nodes in a relational network.
@@ -78,6 +78,28 @@ const LAYOUTS = {
     glow: { inner: 2.4, outer: 5.5, peakOpacity: 0.36, stroke: 0.6, strokePeak: 0.7 },
   },
 };
+
+// Light-mode adaptation: glyphs/connections are painted with var(--fg). On the dark
+// (threshold) theme a low alpha reads as a soft glow; on the daylight theme the same
+// alpha of near-black ink is barely visible. Boost the opacity-bearing fields only —
+// colors already follow the theme vars, and physics/geometry stay untouched.
+function lightenLayout(layout) {
+  return {
+    ...layout,
+    attention: {
+      ...layout.attention,
+      letterBase: 0.6, letterPeak: 0.9, letterDim: 0.4,
+      connBase: 0.26, connPeak: 0.5, connDim: 0.16,
+    },
+    echo: { ...layout.echo, letterOpacity: 0.06, connOpacity: 0.03 },
+    background: { ...layout.background, spotOpacity: 0.035 },
+    glow: {
+      ...layout.glow,
+      peakOpacity: layout.glow.peakOpacity * 0.7,
+      strokePeak: layout.glow.strokePeak * 0.7,
+    },
+  };
+}
 
 function buildBase({ bound, midY }) {
   // Evenly distribute interior letters between the left/right anchor columns,
@@ -341,7 +363,7 @@ function FieldSVGAnimated({ onComplete, layout }) {
           <line key={`l${i}`} x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--fg)" strokeWidth={layout.connDashWidth} opacity="0">
             <set attributeName="stroke-dasharray" to={`${shortened}`} />
             <animate attributeName="stroke-dashoffset" from={shortened} to="0" dur="1.6s" begin={`${delay}s`} fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1" keyTimes="0;1" />
-            <animate attributeName="opacity" from="0" to="0.1" dur="0.8s" begin={`${delay}s`} fill="freeze" />
+            <animate attributeName="opacity" from="0" to={`${layout.attention.connBase}`} dur="0.8s" begin={`${delay}s`} fill="freeze" />
           </line>
         );
       })}
@@ -349,14 +371,14 @@ function FieldSVGAnimated({ onComplete, layout }) {
         <text key={`t${i}`} x={compressed[i]} y={l.y} textAnchor="middle" dominantBaseline="central" className="hg-glyph" opacity="0">
           {l.ch}
           <animate attributeName="x" from={compressed[i]} to={l.x} dur="1.1s" begin={`${DELAYS[i]}s`} fill="freeze" calcMode="spline" keySplines="0.22 1 0.36 1" keyTimes="0;1" />
-          <animate attributeName="opacity" from="0" to="0.22" dur="1s" begin={`${DELAYS[i]}s`} fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1" keyTimes="0;1" />
+          <animate attributeName="opacity" from="0" to={`${layout.attention.letterBase}`} dur="1s" begin={`${DELAYS[i]}s`} fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1" keyTimes="0;1" />
         </text>
       ))}
     </svg>
   );
 }
 
-export default function HeroSignalGrid() {
+export default function HeroSignalGrid({ isLight }) {
   const fieldRef = useRef(null);
   const [pullX, setPullX] = useState(0);
   const [pullY, setPullY] = useState(0);
@@ -386,7 +408,12 @@ export default function HeroSignalGrid() {
       mq.removeEventListener ? mq.removeEventListener("change", handler) : mq.removeListener(handler);
     };
   }, []);
-  const layout = LAYOUTS[layoutKey];
+  // On daylight, swap in the opacity-boosted layout so ink stays legible on paper.
+  // Memoized so the object identity is stable across renders (spring effects depend on it).
+  const layout = useMemo(
+    () => isLight ? lightenLayout(LAYOUTS[layoutKey]) : LAYOUTS[layoutKey],
+    [layoutKey, isLight]
+  );
   const rafRef = useRef(null);
   const targetX = useRef(0);
   const targetY = useRef(0);

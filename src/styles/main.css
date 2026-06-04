@@ -1479,6 +1479,13 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 @media(max-width:600px){.dl-toggle{bottom:16px;right:16px}.dl-btn{padding:6px 10px}}
 @media(max-width:480px){.dl-toggle{bottom:12px;right:12px}}
 
+/* Light/dark toggle — floating, bottom-left (mirrors dl-toggle, kept clear of it) */
+.theme-toggle{position:fixed;bottom:24px;left:24px;z-index:180;display:flex;align-items:center;justify-content:center;width:34px;height:34px;background:var(--sf);border:1px solid var(--bd);color:var(--ff);cursor:pointer;opacity:.45;transition:opacity .3s ease,color .3s ease,border-color .3s ease}
+.theme-toggle:hover{opacity:1;color:var(--fg);border-color:var(--fg)}
+.theme-toggle svg{flex-shrink:0;display:block}
+@media(max-width:600px){.theme-toggle{bottom:16px;left:16px}}
+@media(max-width:480px){.theme-toggle{bottom:12px;left:12px}}
+
 /* ── Alexander Chips (Pattern Lens — outlined/hollow) ── */
 .al-chips{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;animation:en .3s ease both}
 .al-chips.compact{margin-top:5px}

@@ -82,7 +82,7 @@ function HoverPreview({ images, fallbackBg }) {
   );
 }
 
-export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens, patternLens, showGraph, hiddenCounts }) {
+export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens, patternLens, showGraph, hiddenCounts, isLight }) {
   const isHome = filter === "All" && !relFilter;
 
   return (
@@ -181,7 +181,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
           )}
 
           {HERO_MODE === 4 && (
-            <HeroGrid />
+            <HeroGrid isLight={isLight} />
           )}
 
           {/* Network diagram — easter egg, press G to toggle */}

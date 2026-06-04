@@ -67,8 +67,11 @@ const pushHashForItem = (item) => {
 const WORK_VIEWS = new Set(["public", "superconscious", "patiobeach", "flowers"]);
 const CANON_VIEWS = new Set(["canon"]);
 const INFO_VIEWS = new Set(["about", "colophon"]);
-const themeForView = (v) =>
-  WORK_VIEWS.has(v) ? "threshold" :
+// Work views honor a visitor-controllable light preference (daylight) over the default dark (threshold).
+const readWorkLight = () =>
+  typeof window !== "undefined" && localStorage.getItem("foa-work-light") === "1";
+const themeForView = (v, workLight = readWorkLight()) =>
+  WORK_VIEWS.has(v) ? (workLight ? "daylight" : "threshold") :
   CANON_VIEWS.has(v) ? "canon" :
   INFO_VIEWS.has(v) ? "info" : "light";
 
@@ -82,7 +85,8 @@ function cv(t) {
 
 export default function PublicApp() {
   const [view, setView] = useState(() => viewFromHash());
-  const [themeKey, setThemeKey] = useState(() => themeForView(viewFromHash()));
+  const [workLight, setWorkLight] = useState(readWorkLight);
+  const [themeKey, setThemeKey] = useState(() => themeForView(viewFromHash(), readWorkLight()));
   const [filter, setFilter] = useState("All");
   const [relFilter, setRelFilter] = useState(null);
   const [egg, setEgg] = useState(false);
@@ -112,7 +116,7 @@ export default function PublicApp() {
   const navigateTo = useCallback((target) => {
     if (target === view && !transitioning) return;
     setTransitioning(true);
-    setThemeKey(themeForView(target));
+    setThemeKey(themeForView(target, workLight));
     setTimeout(() => {
       setView(target);
       window.scrollTo(0, 0);
@@ -124,13 +128,24 @@ export default function PublicApp() {
         window.history.pushState(null, "", url);
       }
     }, 200);
-  }, [view, transitioning]);
+  }, [view, transitioning, workLight]);
+
+  // Visitor light/dark toggle for the work views. Persists per-visitor; applies live when on a work view.
+  const isLight = themeKey === "daylight";
+  const toggleWorkLight = useCallback(() => {
+    setWorkLight(prev => {
+      const next = !prev;
+      try { localStorage.setItem("foa-work-light", next ? "1" : "0"); } catch (_) { /* ignore */ }
+      if (WORK_VIEWS.has(view)) setThemeKey(next ? "daylight" : "threshold");
+      return next;
+    });
+  }, [view]);
 
   useEffect(() => {
     const handler = () => {
       const target = viewFromHash();
       if (target === view) return;
-      setThemeKey(themeForView(target));
+      setThemeKey(themeForView(target, workLight));
       setView(target);
       window.scrollTo(0, 0);
     };
@@ -140,7 +155,7 @@ export default function PublicApp() {
       window.removeEventListener("popstate", handler);
       window.removeEventListener("hashchange", handler);
     };
-  }, [view]);
+  }, [view, workLight]);
 
   useEffect(() => {
     const handler = () => {
@@ -256,7 +271,7 @@ export default function PublicApp() {
       <div className="app-content">
         <DualLensBar modelActive={lens} patternActive={patternLens} onToggleModel={toggleLens} onTogglePattern={togglePatternLens} onOpenModels={() => navigateTo("models")} onOpenPatterns={() => navigateTo("patterns")} />
         <main className={`view-wrap${transitioning ? " view-leaving" : ""}`}>
-          {view === "public" && <Public items={filtered} allItems={publicContent} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={nowState} onOpen={openItem} lens={lens} patternLens={patternLens} showGraph={showGraph} hiddenCounts={hiddenCounts} />}
+          {view === "public" && <Public items={filtered} allItems={publicContent} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={nowState} onOpen={openItem} lens={lens} patternLens={patternLens} showGraph={showGraph} hiddenCounts={hiddenCounts} isLight={isLight} />}
           {view === "models" && <Models content={publicContent} onOpen={openItem} fg={theme.fg} />}
           {view === "about" && <About theme={theme} />}
           {view === "colophon" && <Colophon />}
@@ -276,6 +291,28 @@ export default function PublicApp() {
       {activeItem && activeItem.sketch && <SketchbookDetail item={enrichedActiveItem} allItems={publicContent} closing={closing} onClose={closeItem} onOpen={openItem} fg={theme.fg} lens={lens} patternLens={patternLens} />}
       {activeItem && activeItem.theory && <TheoryDetail item={activeItem} allItems={publicContent} closing={closing} onClose={closeItem} onOpen={openItem} onRelation={handleRelation} fg={theme.fg} lens={lens} patternLens={patternLens} />}
       {activeItem && activeItem.spec && !activeItem.sketch && !activeItem.theory && <SpecSheetDetail item={activeItem} allItems={publicContent} closing={closing} onClose={closeItem} onOpen={openItem} fg={theme.fg} lens={lens} patternLens={patternLens} />}
+
+      {/* Light/dark toggle — floating, only on work views (home / Superconscious / Patio Beach / Flowers) */}
+      {WORK_VIEWS.has(view) && (
+        <button
+          type="button"
+          className="theme-toggle"
+          onClick={toggleWorkLight}
+          title={isLight ? "Switch to dark" : "Switch to light"}
+          aria-label={isLight ? "Switch to dark mode" : "Switch to light mode"}
+        >
+          {isLight ? (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="14" height="14">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="14" height="14">
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+          )}
+        </button>
+      )}
 
       {view !== "models" && view !== "patterns" && <DualLensToggle modelActive={lens} patternActive={patternLens} onToggleModel={toggleLens} onTogglePattern={togglePatternLens} />}
 
