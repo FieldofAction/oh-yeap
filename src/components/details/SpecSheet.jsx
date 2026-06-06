@@ -72,6 +72,11 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           </div>
         </div>
 
+        {/* One atmospheric hero \u2014 a single piece of art at the top */}
+        {item.spec?.hero && (
+          <figure className="sp-hero" style={{ backgroundImage: `url("${item.spec.hero}")` }} aria-hidden="true" />
+        )}
+
         {/* Premise — why the instrument exists, with an optional cause/effect table */}
         {item.spec?.premise && (
           <div className="sp-section dc dc2">
