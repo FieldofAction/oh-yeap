@@ -988,7 +988,7 @@ export const SEED = [
     usageArt:"/images/artifacts/condition-set/atmosphere-10.jpg",
     premise:"Design work can weaken when decisions detach from the condition that produced them. A system begins to imitate itself. A Condition Set exists to keep decisions connected to origin.",
     premiseTable:{head:["Element","Hardens into"],rows:[["Color","Style"],["Behavior","Pattern"],["Phrase","Tone"],["Reference","Aesthetic"],["System","Self-imitation"]]},
-    framing:{label:"What it is",body:"A Condition Set is the minimum portable payload for designing from a named condition.\n\nIt gives a collaborator, team, or future self the source, path, and test behind a system's decisions.\n\nA decision carries weight when it can name the condition it came from."},
+    framing:{label:"What it is",body:"A Condition Set makes a system's decisions traceable to what produced them."},
     stabilizes:[
       {layer:"Brand guidelines",value:"Expression"},
       {layer:"Strategy",value:"Intent"},
