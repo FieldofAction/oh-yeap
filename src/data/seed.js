@@ -984,6 +984,12 @@ export const SEED = [
   }},
   { id:uid(), section:"artifacts", title:"Condition Set", subtitle:"Portable design instrument", desc:"A derivation instrument for condition-first design.", year:"2026", status:"v0.1", tags:["Template","Method","v0.1"], relations:["Condition-First"], hasVisual:false, artifactType:"method", version:"0.1", spec:{
     specimen:true,
+    atmosphere:{
+      premise:"/images/artifacts/condition-set/atmosphere-3.jpg",
+      stabilize:"/images/artifacts/condition-set/atmosphere-5.jpg",
+      chain:"/images/artifacts/condition-set/atmosphere-2.jpg",
+      moments:"/images/artifacts/condition-set/atmosphere-4.jpg",
+    },
     premise:"Design work can weaken when decisions detach from the condition that produced them. A system begins to imitate itself. A Condition Set exists to keep decisions connected to origin.",
     premiseTable:{head:["Element","Hardens into"],rows:[["Color","Style"],["Behavior","Pattern"],["Phrase","Tone"],["Reference","Aesthetic"],["System","Self-imitation"]]},
     framing:{label:"What it is",body:"A Condition Set is the minimum portable payload for designing from a named condition.\n\nIt gives a collaborator, team, or future self the source, path, and test behind a system's decisions.\n\nA decision carries weight when it can name the condition it came from."},
