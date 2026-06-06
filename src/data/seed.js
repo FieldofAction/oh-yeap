@@ -994,12 +994,12 @@ export const SEED = [
       {layer:"Condition Set",value:"Derivation"},
     ],
     components:[
-      {num:1,label:"Named Condition",desc:"The sentence the system derives from.\n\nIt has to be precise enough to refuse things. A condition that can accept any move is still atmosphere."},
-      {num:2,label:"Refusal Criteria",desc:"The edges of the condition.\n\nThese are the moves the condition will not hold. They protect the system from drift, imitation, and false coherence."},
-      {num:3,label:"Diagnostic Questions",desc:"The tests the condition generates.\n\nFour or five questions create enough pressure to evaluate a proposed move without overbuilding the frame.\n\nEach question reveals whether the decision is carrying the condition or borrowing its language."},
-      {num:4,label:"Behavioral Translations",desc:"The functions the condition produces.\n\nEach translation is written as a role. What it does. How it behaves. What kind of pressure it applies in the field.\n\nThis is where condition becomes design vocabulary."},
-      {num:5,label:"Derivation Rules",desc:"The sentences that make decisions traceable.\n\nEvery meaningful decision should be able to name why it exists.\n\nA decision without its sentence becomes ornament."},
-      {num:6,label:"Whimsy Allowance",desc:"The sanctioned break in the discipline.\n\nOne allowance keeps the system from becoming brittle. It gives the work a place to breathe without letting exception become style."},
+      {num:1,label:"Named Condition",desc:"Sentence the system derives from.\n\nIt has to be precise enough to refuse things. A condition that can accept any move is still atmosphere."},
+      {num:2,label:"Refusal Criteria",desc:"Edges of the condition.\n\nThese are the moves the condition will not hold. They protect the system from drift, imitation, and false coherence."},
+      {num:3,label:"Diagnostic Questions",desc:"Tests the condition generates.\n\nFour or five questions create enough pressure to evaluate a proposed move without overbuilding the frame.\n\nEach question reveals whether the decision is carrying the condition or borrowing its language."},
+      {num:4,label:"Behavioral Translations",desc:"Functions the condition produces.\n\nEach translation is written as a role. What it does. How it behaves. What kind of pressure it applies in the field.\n\nThis is where condition becomes design vocabulary."},
+      {num:5,label:"Derivation Rules",desc:"Sentences that make decisions traceable.\n\nEvery meaningful decision should be able to name why it exists.\n\nA decision without its sentence becomes ornament."},
+      {num:6,label:"Whimsy Allowance",desc:"Sanctioned break in the discipline.\n\nOne allowance keeps the system from becoming brittle. It gives the work a place to breathe without letting exception become style."},
     ],
     glue:{label:"Reversible Chain",body:"Condition Set becomes portable through the chain. It reads in either direction: condition to decision, and decision back to condition.",chainNodes:["Named Condition","Diagnostic Question","Behavioral Translation","Derivation Rule","Decision"],instrument:"The chain is the instrument.",after:"A decision stays inside the system as long as its path holds. Once the path disappears, the decision drifts free of the condition, however polished it remains."},
     usageSteps:[
