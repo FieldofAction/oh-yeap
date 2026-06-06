@@ -1199,13 +1199,14 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 /* Soft eased fade over the bottom of the art so it dissolves into the page with
    no visible band edge. Multi-stop easing avoids a hard start; fades to --bg so
    it tracks light/dark. */
-.sp-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:62%;pointer-events:none;background:linear-gradient(to bottom,
+.sp-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:78%;pointer-events:none;background:linear-gradient(to bottom,
   color-mix(in srgb,var(--bg) 0%,transparent) 0%,
-  color-mix(in srgb,var(--bg) 3%,transparent) 26%,
-  color-mix(in srgb,var(--bg) 10%,transparent) 45%,
-  color-mix(in srgb,var(--bg) 24%,transparent) 62%,
-  color-mix(in srgb,var(--bg) 46%,transparent) 77%,
-  color-mix(in srgb,var(--bg) 74%,transparent) 90%,
+  color-mix(in srgb,var(--bg) 2%,transparent) 30%,
+  color-mix(in srgb,var(--bg) 6%,transparent) 48%,
+  color-mix(in srgb,var(--bg) 14%,transparent) 62%,
+  color-mix(in srgb,var(--bg) 28%,transparent) 74%,
+  color-mix(in srgb,var(--bg) 50%,transparent) 85%,
+  color-mix(in srgb,var(--bg) 78%,transparent) 94%,
   var(--bg) 100%)}
 
 /* Accent gesture — a quiet accent tick on the emphasized key row */
