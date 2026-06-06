@@ -1015,7 +1015,7 @@ export const SEED = [
       "What happens when the named condition is wrong or incomplete?",
       "How many working instances does a Condition Set need before the form should harden?",
       "Does the whimsy allowance belong inside the set, or beside it?",
-      "Can a Condition Set be authored collaboratively, or does it require a single namer?",
+      "How can teams author a Condition Set collectively?",
       "What is the minimum viable Condition Set?",
     ],
     source:[
