@@ -3,6 +3,25 @@ import { VIS } from "../../data/seed";
 import { HiddenStrip } from "../HiddenIndicators";
 import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
 
+// Simple 2-column table — optional header row, optional emphasized last row.
+function SpecTable({ head, rows, emphasizeLast }) {
+  if (!rows?.length) return null;
+  return (
+    <div className="sp-table">
+      {head && (
+        <div className="sp-table-row sp-table-head">
+          <span>{head[0]}</span><span>{head[1]}</span>
+        </div>
+      )}
+      {rows.map((r, i) => (
+        <div key={i} className={`sp-table-row${emphasizeLast && i === rows.length - 1 ? " sp-table-row--key" : ""}`}>
+          <span>{r[0]}</span><span>{r[1]}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function SpecSheetDetail({ item, allItems, closing, onClose, onOpen, fg, lens, patternLens }) {
   const overlayRef = useRef(null);
   useEffect(() => {
@@ -39,14 +58,20 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           </div>
         </div>
 
-        {/* Optional intro lede — plain prose under the head */}
-        {item.spec?.intro && (
+        {/* Premise — why the instrument exists, with an optional cause/effect table */}
+        {item.spec?.premise && (
           <div className="sp-section dc dc2">
-            <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.intro}</div>
+            <div className="sp-section-label">Premise</div>
+            <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.premise}</div>
+            {item.spec.premiseTable && (
+              <div style={{ marginTop: 18 }}>
+                <SpecTable head={item.spec.premiseTable.head} rows={item.spec.premiseTable.rows} />
+              </div>
+            )}
           </div>
         )}
 
-        {/* Optional framing block — left-bordered, used to frame the artifact */}
+        {/* What it is — short definition */}
         {item.spec?.framing && (
           <div className="sp-framing dc dc2">
             <div className="sp-framing-label">{item.spec.framing.label}</div>
@@ -54,9 +79,9 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           </div>
         )}
 
-        {/* Optional comparison table — e.g. which layer each artifact stabilizes */}
+        {/* What each layer stabilizes */}
         {item.spec?.stabilizes?.length > 0 && (
-          <div className="sp-section dc dc2">
+          <div className="sp-section dc dc3">
             <div className="sp-section-label">What each layer stabilizes</div>
             <div className="sp-stabilize">
               {item.spec.stabilizes.map((r, i) => (
@@ -70,15 +95,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           </div>
         )}
 
-        {/* Optional premise block — prose, sits before the components */}
-        {item.spec?.premise && (
-          <div className="sp-section dc dc3">
-            <div className="sp-section-label">Premise</div>
-            <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.premise}</div>
-          </div>
-        )}
-
-        {/* Numbered components — used for method/template artifacts */}
+        {/* Numbered components — canvas grid of zones */}
         {item.spec?.components?.length > 0 && (
           <div className="sp-section dc dc3">
             <div className="sp-section-label">Components</div>
@@ -96,28 +113,37 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           </div>
         )}
 
-        {/* Glue block — second framed moment, carries the derivation chain */}
+        {/* The Derivation Chain — the hero: vertical flow, forward and backward */}
         {item.spec?.glue && (
-          <div className="sp-framing sp-glue dc dc4">
-            <div className="sp-framing-label">{item.spec.glue.label}</div>
-            <div className="sp-framing-body" style={{ whiteSpace: "pre-line" }}>{item.spec.glue.body}</div>
+          <div className="sp-section dc dc4">
+            <div className="sp-section-label">{item.spec.glue.label}</div>
+            {item.spec.glue.body && <div className="sp-framing-body" style={{ whiteSpace: "pre-line", maxWidth: 680 }}>{item.spec.glue.body}</div>}
             {item.spec.glue.chainNodes?.length > 0 ? (
-              <div className="sp-chain" role="img" aria-label={`Derivation chain: ${item.spec.glue.chainNodes.join(" to ")}; reads in both directions`}>
-                <div className="sp-chain-flow">
+              <div className="sp-chainv" role="img" aria-label={`Derivation chain: ${item.spec.glue.chainNodes.join(" to ")}, and back again`}>
+                <div className="sp-chainv-flow">
                   {item.spec.glue.chainNodes.map((n, i) => (
-                    <React.Fragment key={i}>
-                      <span className="sp-chain-node">{n}</span>
-                      {i < item.spec.glue.chainNodes.length - 1 && <span className="sp-chain-arrow" aria-hidden="true">&rarr;</span>}
+                    <React.Fragment key={`f${i}`}>
+                      <div className="sp-chainv-node">{n}</div>
+                      {i < item.spec.glue.chainNodes.length - 1 && <div className="sp-chainv-arrow" aria-hidden="true">&darr;</div>}
                     </React.Fragment>
                   ))}
                 </div>
-                <div className="sp-chain-return" aria-hidden="true"><span className="sp-chain-return-label">&larr; reads backward</span></div>
+                {item.spec.glue.backward && <div className="sp-chainv-note">{item.spec.glue.backward}</div>}
+                <div className="sp-chainv-flow">
+                  {[...item.spec.glue.chainNodes].reverse().map((n, i, arr) => (
+                    <React.Fragment key={`b${i}`}>
+                      <div className="sp-chainv-node">{n}</div>
+                      {i < arr.length - 1 && <div className="sp-chainv-arrow" aria-hidden="true">&uarr;</div>}
+                    </React.Fragment>
+                  ))}
+                </div>
+                {item.spec.glue.instrument && <div className="sp-chainv-instrument">{item.spec.glue.instrument}</div>}
               </div>
             ) : item.spec.glue.chain && (
               <div className="sp-glue-chain">{item.spec.glue.chain}</div>
             )}
             {item.spec.glue.after && (
-              <div className="sp-framing-body sp-glue-after" style={{ whiteSpace: "pre-line" }}>{item.spec.glue.after}</div>
+              <div className="sp-framing-body sp-glue-after" style={{ whiteSpace: "pre-line", maxWidth: 680 }}>{item.spec.glue.after}</div>
             )}
           </div>
         )}
@@ -171,12 +197,37 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
             </div>
           </div>
         )}
-        {item.spec?.usage && (
+        {/* How to use it — numbered step tiles */}
+        {item.spec?.usageSteps?.length > 0 ? (
+          <div className="sp-section dc dc6">
+            <div className="sp-section-label">How to use it</div>
+            <div className="sp-steps">
+              {item.spec.usageSteps.map((s, i) => (
+                <div key={i} className="sp-step">
+                  <div className="sp-step-num">{String(s.num ?? i + 1).padStart(2, "0")}</div>
+                  <div className="sp-step-body">
+                    <div className="sp-step-title">{s.title}</div>
+                    <div className="sp-step-desc" style={{ whiteSpace: "pre-line" }}>{s.desc}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : item.spec?.usage && (
           <div className="sp-section dc dc6">
             <div className="sp-section-label">{item.spec.components ? "How to use it" : "Usage"}</div>
             <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.usage}</div>
           </div>
         )}
+
+        {/* Use moments — when the instrument earns its keep */}
+        {item.spec?.useMoments?.rows?.length > 0 && (
+          <div className="sp-section dc dc6">
+            <div className="sp-section-label">Use moments</div>
+            <SpecTable head={item.spec.useMoments.head} rows={item.spec.useMoments.rows} />
+          </div>
+        )}
+
         {item.spec?.protects && (
           <div className="sp-section dc dc6">
             <div className="sp-section-label">What it protects</div>
