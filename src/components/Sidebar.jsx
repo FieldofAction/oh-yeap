@@ -176,11 +176,12 @@ export default function Sidebar({ view, navigateTo, filter, setFilter, hiddenCou
                   </a>
                 );
               }
-              /* Standard nav item — dev-only dotted underline if its filter section contains hidden items */
+              /* Standard nav item — dotted underline if its filter section contains hidden items.
+                 hiddenCounts is populated only when hidden work is revealed (dev or ?preview). */
               const sectionKey = item.filter?.toLowerCase();
-              const hiddenInSection = import.meta.env.DEV && sectionKey ? hiddenCounts[sectionKey] : 0;
+              const hiddenInSection = sectionKey ? (hiddenCounts[sectionKey] || 0) : 0;
               return (
-                <button key={`${item.key}-${item.label}`} className={`sb-link${isActive(item) ? " on" : ""}${hiddenInSection ? " sb-link-has-hidden" : ""}`} style={{ paddingLeft: 20 }} onClick={() => handleNav(item)} title={hiddenInSection ? `${hiddenInSection} hidden in dev` : undefined}>
+                <button key={`${item.key}-${item.label}`} className={`sb-link${isActive(item) ? " on" : ""}${hiddenInSection ? " sb-link-has-hidden" : ""}`} style={{ paddingLeft: 20 }} onClick={() => handleNav(item)} title={hiddenInSection ? `${hiddenInSection} hidden` : undefined}>
                   {item.label}
                   {hiddenInSection ? <span className="sb-link-hidden-count" aria-hidden="true">{hiddenInSection}</span> : null}
                 </button>
