@@ -81,12 +81,12 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         {item.spec?.premise && (
           <div className="sp-section dc dc2">
             {sectionHead("premise", "Premise")}
-            <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.premise}</div>
-            {item.spec.premiseTable && (
-              <div style={{ marginTop: 18 }}>
+            <div className={item.spec.premiseTable ? "sp-premise-split" : undefined}>
+              <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.premise}</div>
+              {item.spec.premiseTable && (
                 <SpecTable head={item.spec.premiseTable.head} rows={item.spec.premiseTable.rows} />
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
 

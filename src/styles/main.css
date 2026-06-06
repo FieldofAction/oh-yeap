@@ -1118,6 +1118,11 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .sp-chain-return{margin-top:14px;padding-top:12px;border-top:1px dashed var(--bd);display:flex;justify-content:center}
 .sp-chain-return-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ff)}
 
+/* Premise: prose left, cause/effect table right */
+.sp-premise-split{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
+.sp-premise-split .sp-table{margin-top:0;max-width:none}
+@media(max-width:768px){.sp-premise-split{grid-template-columns:1fr;gap:24px;align-items:start}}
+
 /* Generic 2-column table — premise cause/effect, use moments, etc. */
 .sp-table{display:flex;flex-direction:column;max-width:520px;border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-top:6px}
 .sp-table-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:12px 16px;border-top:1px solid var(--bd);font-size:14px;color:var(--fm)}
