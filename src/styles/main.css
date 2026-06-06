@@ -1122,7 +1122,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 
 /* Reversible chain — single horizontal flow, arrows read both directions */
 .sp-chainr-wrap{margin:24px 0}
-.sp-chainr{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:10px;padding:28px 20px;border:1px solid var(--bd);border-radius:16px;background:var(--sf)}
+.sp-chainr{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:16px 10px;padding:52px 24px;border:1px solid var(--bd);border-radius:16px;background:var(--sf)}
 .sp-chainr-node{display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:-0.005em;color:var(--fg);padding:12px 18px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);min-width:124px}
 .sp-chainr-arrow{display:flex;align-items:center;font-family:var(--mono);font-size:18px;color:var(--ff)}
 .sp-chainr-instrument{text-align:center;font-family:var(--display);font-size:15px;font-weight:600;color:var(--fg);margin-top:16px}
