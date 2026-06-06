@@ -1141,7 +1141,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 
 /* Rotated technical spine label down the left margin */
 .sp-specimen .sp-inner{position:relative}
-.sp-spine{position:absolute;left:12px;top:150px;writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--ff);pointer-events:none;user-select:none}
+.sp-spine{position:absolute;left:12px;top:150px;z-index:2;writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--fm);mix-blend-mode:multiply;pointer-events:none;user-select:none}
 @media(max-width:1080px){.sp-spine{display:none}}
 
 /* Reversible-chain panel becomes a grained tonal specimen */
