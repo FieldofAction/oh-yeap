@@ -133,7 +133,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
                   {item.spec.glue.chainNodes.map((n, i) => (
                     <React.Fragment key={i}>
                       <div className="sp-chainr-node">{n}</div>
-                      {i < item.spec.glue.chainNodes.length - 1 && <div className="sp-chainr-arrow" aria-hidden="true">&#8644;</div>}
+                      {i < item.spec.glue.chainNodes.length - 1 && <div className="sp-chainr-arrow" aria-hidden="true">&#8645;</div>}
                     </React.Fragment>
                   ))}
                 </div>

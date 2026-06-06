@@ -1148,9 +1148,9 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 
 /* Reversible chain — single horizontal flow, arrows read both directions */
 .sp-chainr-wrap{margin:24px 0}
-.sp-chainr{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:16px 10px;padding:52px 24px;border:1px solid var(--bd);border-radius:16px;background:var(--sf)}
-.sp-chainr-node{display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:-0.005em;color:var(--fg);padding:12px 18px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);min-width:124px}
-.sp-chainr-arrow{display:flex;align-items:center;font-family:var(--mono);font-size:18px;color:var(--ff)}
+.sp-chainr{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:64px 24px;border:1px solid var(--bd);border-radius:16px;background:var(--sf)}
+.sp-chainr-node{display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:-0.005em;color:var(--fg);padding:18px 30px;border:1px solid var(--bd);border-radius:12px;background:var(--bg);min-width:320px}
+.sp-chainr-arrow{display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:20px;color:var(--ff)}
 .sp-chainr-instrument{text-align:center;font-family:var(--display);font-size:15px;font-weight:600;color:var(--fg);margin-top:16px}
 
 /* How to use it — numbered step tiles */
@@ -1159,7 +1159,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .sp-step-num{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--ff);padding-top:2px}
 .sp-step-title{font-size:15px;font-weight:600;letter-spacing:-0.005em;color:var(--fg);margin-bottom:7px}
 .sp-step-desc{font-size:13px;font-weight:300;color:var(--fm);line-height:1.6}
-@media(max-width:768px){.sp-steps{grid-template-columns:1fr}.sp-chainr-node{min-width:0}}
+@media(max-width:768px){.sp-steps{grid-template-columns:1fr}.sp-chainr-node{min-width:0;width:100%;font-size:16px;padding:15px 20px}.sp-chainr{padding:40px 18px}}
 
 /* ── Specimen styling — opt-in "plus up" for instrument artifacts (spec.specimen) ──
    Distilled from reference set: film grain + tonal panel, technical annotation,
