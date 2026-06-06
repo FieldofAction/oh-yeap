@@ -179,20 +179,28 @@ export default function App() {
   // Hidden-from-public items (Wave-1 practice + per-item `hidden: true`) are excluded from production builds.
   // Dev (`npm run dev`) shows everything so unfinished pages can be previewed locally; visual indicators
   // distinguish hidden material — see HIDDEN-ITEMS.md. Studio-gated views (Backstage, etc.) still receive full `content`.
+  //
+  // Browser preview escape hatch: append `?preview` to any URL to reveal hidden/unfinished
+  // work on the live site (same as dev). Not secret — anyone who appends it can see drafts.
+  const revealHidden = useMemo(() => {
+    if (import.meta.env.DEV) return true;
+    if (typeof window === "undefined") return false;
+    return new URLSearchParams(window.location.search).has("preview");
+  }, []);
   const publicContent = useMemo(
-    () => content.filter(c => import.meta.env.DEV || !isHidden(c)),
-    [content]
+    () => content.filter(c => revealHidden || !isHidden(c)),
+    [content, revealHidden]
   );
 
-  // Per-section counts of hidden items, used to drive dev-only nav + section-header indicators.
-  // Empty object in production (no indicators rendered).
+  // Per-section counts of hidden items, used to drive the nav + section-header indicators
+  // wherever hidden material is revealed (dev or ?preview). Empty otherwise (no indicators).
   const hiddenCounts = useMemo(() => {
-    if (!import.meta.env.DEV) return {};
+    if (!revealHidden) return {};
     return content.reduce((acc, c) => {
       if (isHidden(c)) acc[c.section] = (acc[c.section] || 0) + 1;
       return acc;
     }, {});
-  }, [content]);
+  }, [content, revealHidden]);
 
   const filtered = useMemo(() => {
     let items = publicContent.filter(c => c.status !== "draft");
