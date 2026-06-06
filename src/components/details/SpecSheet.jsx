@@ -83,26 +83,13 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         {item.spec?.premise && (
           <div className="sp-section dc dc2">
             {sectionHead("premise", "Premise")}
-            <div className={item.spec.premiseTable ? "sp-premise-split" : undefined}>
-              <div className="sp-premise-text">
-                <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.premise}</div>
-                {item.spec.stabilizesProse && (
-                  <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.stabilizesProse}</div>
-                )}
-              </div>
-              {item.spec.premiseTable && (
-                <div className="sp-decay">
-                  {item.spec.premiseTable.lead && <div className="sp-decay-lead">{item.spec.premiseTable.lead}</div>}
-                  <div className="sp-decay-rows">
-                    {item.spec.premiseTable.rows.map((r, i) => (
-                      <div key={i} className="sp-decay-row">
-                        <span className="sp-decay-from">{r[0]}</span>
-                        <span className="sp-decay-arrow" aria-hidden="true">&rarr;</span>
-                        <span className="sp-decay-to">{r[1]}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+            <div className="sp-premise-text">
+              <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.premise}</div>
+              {item.spec.premiseLead && (
+                <div className="sp-premise-lead">{item.spec.premiseLead}</div>
+              )}
+              {item.spec.stabilizesProse && (
+                <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.stabilizesProse}</div>
               )}
             </div>
           </div>

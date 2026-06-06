@@ -1142,11 +1142,9 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .sp-decay-arrow{font-family:var(--mono);font-size:12px;color:var(--ff);text-align:center}
 .sp-decay-to{color:var(--fg);font-weight:500}
 
-/* Premise: prose left (stacked paragraphs), cause/effect table right, top-aligned */
-.sp-premise-split{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
-.sp-premise-split .sp-table{margin-top:0;max-width:none}
-.sp-premise-text{display:flex;flex-direction:column;gap:24px}
-@media(max-width:768px){.sp-premise-split{grid-template-columns:1fr;gap:24px}}
+/* Premise: stacked prose, with a scaled-up decay line as a lead-in between paragraphs */
+.sp-premise-text{display:flex;flex-direction:column;gap:26px;max-width:760px}
+.sp-premise-lead{font-family:var(--display);font-size:clamp(20px,2.3vw,26px);font-weight:500;line-height:1.4;letter-spacing:-0.01em;color:var(--fg)}
 
 /* Generic 2-column table — premise cause/effect, use moments, etc. */
 .sp-table{display:flex;flex-direction:column;max-width:520px;border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-top:6px}
