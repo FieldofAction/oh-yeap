@@ -119,25 +119,16 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
             <div className="sp-section-label">{item.spec.glue.label}</div>
             {item.spec.glue.body && <div className="sp-framing-body" style={{ whiteSpace: "pre-line", maxWidth: 680 }}>{item.spec.glue.body}</div>}
             {item.spec.glue.chainNodes?.length > 0 ? (
-              <div className="sp-chainv" role="img" aria-label={`Derivation chain: ${item.spec.glue.chainNodes.join(" to ")}, and back again`}>
-                <div className="sp-chainv-flow">
+              <div className="sp-chainr-wrap">
+                <div className="sp-chainr" role="img" aria-label={`Reversible chain: ${item.spec.glue.chainNodes.join(", ")}; reads in either direction`}>
                   {item.spec.glue.chainNodes.map((n, i) => (
-                    <React.Fragment key={`f${i}`}>
-                      <div className="sp-chainv-node">{n}</div>
-                      {i < item.spec.glue.chainNodes.length - 1 && <div className="sp-chainv-arrow" aria-hidden="true">&darr;</div>}
+                    <React.Fragment key={i}>
+                      <div className="sp-chainr-node">{n}</div>
+                      {i < item.spec.glue.chainNodes.length - 1 && <div className="sp-chainr-arrow" aria-hidden="true">&#8644;</div>}
                     </React.Fragment>
                   ))}
                 </div>
-                {item.spec.glue.backward && <div className="sp-chainv-note">{item.spec.glue.backward}</div>}
-                <div className="sp-chainv-flow">
-                  {[...item.spec.glue.chainNodes].reverse().map((n, i, arr) => (
-                    <React.Fragment key={`b${i}`}>
-                      <div className="sp-chainv-node">{n}</div>
-                      {i < arr.length - 1 && <div className="sp-chainv-arrow" aria-hidden="true">&uarr;</div>}
-                    </React.Fragment>
-                  ))}
-                </div>
-                {item.spec.glue.instrument && <div className="sp-chainv-instrument">{item.spec.glue.instrument}</div>}
+                {item.spec.glue.instrument && <div className="sp-chainr-instrument">{item.spec.glue.instrument}</div>}
               </div>
             ) : item.spec.glue.chain && (
               <div className="sp-glue-chain">{item.spec.glue.chain}</div>

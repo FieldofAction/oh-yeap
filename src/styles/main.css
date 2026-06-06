@@ -1115,13 +1115,12 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .sp-table-head{background:var(--sf);font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ff)}
 .sp-table-row--key{color:var(--fg);font-weight:600}
 
-/* Derivation chain — vertical hero, reads forward and backward */
-.sp-chainv{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;margin:24px 0;padding:36px 20px;border:1px solid var(--bd);border-radius:16px;background:var(--sf)}
-.sp-chainv-flow{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%}
-.sp-chainv-node{font-family:var(--display);font-size:16px;font-weight:600;letter-spacing:-0.01em;color:var(--fg);padding:13px 24px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);min-width:260px}
-.sp-chainv-arrow{font-family:var(--mono);font-size:16px;color:var(--ff);line-height:1}
-.sp-chainv-note{font-size:13px;color:var(--fm);margin:18px 0 6px}
-.sp-chainv-instrument{font-family:var(--display);font-size:15px;font-weight:600;color:var(--fg);margin-top:20px}
+/* Reversible chain — single horizontal flow, arrows read both directions */
+.sp-chainr-wrap{margin:24px 0}
+.sp-chainr{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:10px;padding:28px 20px;border:1px solid var(--bd);border-radius:16px;background:var(--sf)}
+.sp-chainr-node{display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:-0.005em;color:var(--fg);padding:12px 18px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);min-width:124px}
+.sp-chainr-arrow{display:flex;align-items:center;font-family:var(--mono);font-size:18px;color:var(--ff)}
+.sp-chainr-instrument{text-align:center;font-family:var(--display);font-size:15px;font-weight:600;color:var(--fg);margin-top:16px}
 
 /* How to use it — numbered step tiles */
 .sp-steps{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
