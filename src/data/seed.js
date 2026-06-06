@@ -1011,7 +1011,7 @@ export const SEED = [
     example:{
       subject:"Reddit",
       accent:"#FF4500",
-      mark:"/images/artifacts/condition-set/snoo.svg",
+      mark:"/images/artifacts/condition-set/snoo.jpg",
       run:[
         {stage:"Named Condition",text:"Every community sets its own terms."},
         {stage:"Diagnostic Question",text:"Does this let a community feel like itself?"},

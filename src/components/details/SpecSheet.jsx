@@ -212,9 +212,6 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
                 )}
                 <span>A Condition Set, filled for {item.spec.example.subject}</span>
               </div>
-              {item.spec.example.mark && (
-                <img className="sp-example-wm" src={item.spec.example.mark} alt="" aria-hidden="true" onError={(e) => { e.currentTarget.style.display = "none"; }} />
-              )}
               <ol className="sp-example-run">
                 {item.spec.example.run.map((step, i) => (
                   <li key={i} className={`sp-example-step${i === 0 ? " is-anchor" : ""}${step.stage === "Decision" ? " is-decision" : ""}`}>

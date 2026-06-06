@@ -1121,8 +1121,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 /* In practice — a worked specimen card: the chain run once, ending on the decision */
 .sp-example-card{position:relative;overflow:hidden;border:1px solid var(--bd);border-radius:18px;background:var(--sf);padding:40px 44px}
 .sp-example-subject{display:flex;align-items:center;gap:11px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);margin-bottom:34px}
-.sp-example-mark{width:24px;height:24px;object-fit:contain;flex-shrink:0}
-.sp-example-wm{position:absolute;right:-26px;bottom:-34px;width:240px;height:auto;opacity:.05;pointer-events:none;z-index:0}
+.sp-example-mark{width:26px;height:26px;object-fit:cover;border-radius:7px;flex-shrink:0}
 .sp-example-run{list-style:none;margin:0;padding:0;max-width:680px;border-left:1px solid var(--bd);position:relative;z-index:1}
 .sp-example-step{position:relative;padding:0 0 30px 30px}
 .sp-example-step:last-child{padding-bottom:0}
@@ -1200,11 +1199,13 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 /* Soft eased fade over the bottom of the art so it dissolves into the page with
    no visible band edge. Multi-stop easing avoids a hard start; fades to --bg so
    it tracks light/dark. */
-.sp-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:46%;pointer-events:none;background:linear-gradient(to bottom,
+.sp-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:62%;pointer-events:none;background:linear-gradient(to bottom,
   color-mix(in srgb,var(--bg) 0%,transparent) 0%,
-  color-mix(in srgb,var(--bg) 8%,transparent) 34%,
-  color-mix(in srgb,var(--bg) 28%,transparent) 58%,
-  color-mix(in srgb,var(--bg) 60%,transparent) 80%,
+  color-mix(in srgb,var(--bg) 3%,transparent) 26%,
+  color-mix(in srgb,var(--bg) 10%,transparent) 45%,
+  color-mix(in srgb,var(--bg) 24%,transparent) 62%,
+  color-mix(in srgb,var(--bg) 46%,transparent) 77%,
+  color-mix(in srgb,var(--bg) 74%,transparent) 90%,
   var(--bg) 100%)}
 
 /* Accent gesture — a quiet accent tick on the emphasized key row */
