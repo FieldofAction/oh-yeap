@@ -162,7 +162,7 @@ export const PATTERNS = [
   { id:"pl-079", num:79, title:"Your Own Home", scale:"towns", group:"families", desc:"Ensure every person has a place they can genuinely call their own.", appliedIn:["Safety Trap"], notes:"" },
 
   // ── Towns: Workgroups ──
-  { id:"pl-080", num:80, title:"Self-Governing Workshops and Offices", scale:"towns", group:"workgroups", desc:"Let small work groups manage their own workspace, schedules, and organizational structure.", appliedIn:["Hybrid Intelligence"], notes:"" },
+  { id:"pl-080", num:80, title:"Self-Governing Workshops and Offices", scale:"towns", group:"workgroups", desc:"Let small work groups manage their own workspace, schedules, and organizational structure.", appliedIn:["Hybrid Intelligence","Workbench"], notes:"" },
   { id:"pl-081", num:81, title:"Small Services Without Red Tape", scale:"towns", group:"workgroups", desc:"Deliver community services through small, accessible, human-scale outlets.", appliedIn:[], notes:"" },
   { id:"pl-082", num:82, title:"Office Connections", scale:"towns", group:"workgroups", desc:"Connect offices to the street and public life rather than isolating them in sealed buildings.", appliedIn:[], notes:"" },
   { id:"pl-083", num:83, title:"Master and Apprentices", scale:"towns", group:"workgroups", desc:"Structure work around experienced practitioners who teach through shared practice.", appliedIn:["Hybrid Intelligence","Beyond Age"], notes:"" },
@@ -244,7 +244,7 @@ export const PATTERNS = [
   { id:"pl-145", num:145, title:"Bulk Storage", scale:"buildings", group:"private-rooms", desc:"Provide large, accessible storage areas for seasonal items and seldom-used belongings.", appliedIn:[], notes:"" },
 
   // ── Buildings: Public Rooms ──
-  { id:"pl-146", num:146, title:"Flexible Office Space", scale:"buildings", group:"public-rooms", desc:"Create workspaces that can be easily rearranged as group sizes and needs change.", appliedIn:[], notes:"" },
+  { id:"pl-146", num:146, title:"Flexible Office Space", scale:"buildings", group:"public-rooms", desc:"Create workspaces that can be easily rearranged as group sizes and needs change.", appliedIn:["Workbench"], notes:"" },
   { id:"pl-147", num:147, title:"Communal Eating", scale:"buildings", group:"public-rooms", desc:"Design a central eating space that naturally brings people together for shared meals.", appliedIn:[], notes:"" },
   { id:"pl-148", num:148, title:"Small Work Groups", scale:"buildings", group:"public-rooms", desc:"Arrange workspaces so groups of eight or fewer can work together with their own identity.", appliedIn:["Hybrid Intelligence"], notes:"" },
   { id:"pl-149", num:149, title:"Reception Welcomes You", scale:"buildings", group:"public-rooms", desc:"Design the first space visitors encounter to feel warm, personal, and genuinely welcoming.", appliedIn:[], notes:"" },
@@ -256,8 +256,8 @@ export const PATTERNS = [
   { id:"pl-153", num:153, title:"Rooms to Rent", scale:"buildings", group:"outbuildings", desc:"Include small rentable rooms within or adjacent to homes for tenants or visitors.", appliedIn:[], notes:"" },
   { id:"pl-154", num:154, title:"Teenager's Cottage", scale:"buildings", group:"outbuildings", desc:"Provide adolescents with a small, semi-independent space near the family home.", appliedIn:[], notes:"" },
   { id:"pl-155", num:155, title:"Old Age Cottage", scale:"buildings", group:"outbuildings", desc:"Create small, comfortable dwellings for aging family members close to but separate from the main house.", appliedIn:[], notes:"" },
-  { id:"pl-156", num:156, title:"Settled Work", scale:"buildings", group:"outbuildings", desc:"Let long-established work settle into dedicated, well-adapted spaces shaped by practice.", appliedIn:[], notes:"" },
-  { id:"pl-157", num:157, title:"Home Workshop", scale:"buildings", group:"outbuildings", desc:"Include workspace in or near the home for crafts, repairs, and creative projects.", appliedIn:[], notes:"" },
+  { id:"pl-156", num:156, title:"Settled Work", scale:"buildings", group:"outbuildings", desc:"Let long-established work settle into dedicated, well-adapted spaces shaped by practice.", appliedIn:["Workbench"], notes:"" },
+  { id:"pl-157", num:157, title:"Home Workshop", scale:"buildings", group:"outbuildings", desc:"Include workspace in or near the home for crafts, repairs, and creative projects.", appliedIn:["Workbench"], notes:"" },
   { id:"pl-158", num:158, title:"Open Stairs", scale:"buildings", group:"outbuildings", desc:"Place external stairs along building facades to enliven the exterior and connect levels visibly.", appliedIn:[], notes:"" },
 
   // ── Buildings: Liminal Space ──
@@ -289,7 +289,7 @@ export const PATTERNS = [
   { id:"pl-180", num:180, title:"Window Place", scale:"buildings", group:"minor-rooms", desc:"Build seating into window bays where natural light and the outside view converge.", appliedIn:["The Grieving Interface"], notes:"" },
   { id:"pl-181", num:181, title:"The Fire", scale:"buildings", group:"minor-rooms", desc:"Place an open fire or hearth as a communal focal point in the main living space.", appliedIn:[], notes:"" },
   { id:"pl-182", num:182, title:"Eating Atmosphere", scale:"buildings", group:"minor-rooms", desc:"Shape the eating area with focused light, partial enclosure, and warmth to make meals feel special.", appliedIn:[], notes:"" },
-  { id:"pl-183", num:183, title:"Workspace Enclosure", scale:"buildings", group:"minor-rooms", desc:"Partially enclose individual workspaces to create focus without total isolation.", appliedIn:[], notes:"" },
+  { id:"pl-183", num:183, title:"Workspace Enclosure", scale:"buildings", group:"minor-rooms", desc:"Partially enclose individual workspaces to create focus without total isolation.", appliedIn:["Workbench"], notes:"" },
   { id:"pl-184", num:184, title:"Cooking Layout", scale:"buildings", group:"minor-rooms", desc:"Arrange the kitchen so the cook faces the family and the room rather than a blank wall.", appliedIn:[], notes:"" },
   { id:"pl-185", num:185, title:"Sitting Circle", scale:"buildings", group:"minor-rooms", desc:"Arrange seats in a rough circle to encourage face-to-face conversation and social warmth.", appliedIn:[], notes:"" },
   { id:"pl-186", num:186, title:"Communal Sleeping", scale:"buildings", group:"minor-rooms", desc:"Create sleeping arrangements that can bring family members close together when desired.", appliedIn:[], notes:"" },
