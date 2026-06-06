@@ -75,7 +75,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         {/* One atmospheric hero \u2014 a single piece of art at the top */}
         {item.spec?.hero && (
           <figure className="sp-hero" aria-hidden="true">
-            <div className="sp-hero-art" style={{ backgroundImage: `url("${item.spec.hero}")` }} />
+            <div className="sp-hero-art" style={{ backgroundImage: `url("${item.spec.hero}")`, backgroundSize: "132%", backgroundPosition: "100% 50%" }} />
           </figure>
         )}
 
