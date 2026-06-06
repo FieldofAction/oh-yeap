@@ -211,7 +211,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
 
       {(filter !== "All" || relFilter) && (
         <div className="filters en d5">
-          {(import.meta.env.DEV ? [FILTERS[0], "Practice", ...FILTERS.slice(1)] : FILTERS).map(f => <button key={f} className={`fc ${!relFilter && filter===f?"on":""}${import.meta.env.DEV && f === "Practice" ? " fc-hidden" : ""}`} onClick={() => setFilter(f)}>{f}</button>)}
+          {[FILTERS[0], "Practice", ...FILTERS.slice(1)].map(f => <button key={f} className={`fc ${!relFilter && filter===f?"on":""}`} onClick={() => setFilter(f)}>{f}</button>)}
         </div>
       )}
       {/* ── Differentiated Sections ── */}
