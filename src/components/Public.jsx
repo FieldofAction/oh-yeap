@@ -211,7 +211,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
 
       {(filter !== "All" || relFilter) && (
         <div className="filters en d5">
-          {[FILTERS[0], "Practice", ...FILTERS.slice(1)].map(f => <button key={f} className={`fc ${!relFilter && filter===f?"on":""}`} onClick={() => setFilter(f)}>{f}</button>)}
+          {[FILTERS[0], "Practice", ...FILTERS.slice(1)].filter(f => import.meta.env.DEV || f !== "Exploration").map(f => <button key={f} className={`fc ${!relFilter && filter===f?"on":""}`} onClick={() => setFilter(f)}>{f}</button>)}
         </div>
       )}
       {/* ── Differentiated Sections ── */}
@@ -300,8 +300,9 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
               );
             })()}
 
-            {/* Exploration — 2-col compact (matches Artifacts) */}
-            {(showAll || filter === "Exploration" || relFilter) && exploration.length > 0 && (
+            {/* Exploration — 2-col compact (matches Artifacts). Empty publicly, so
+                only surfaces in dev or via relation navigation, not on the public All view. */}
+            {((import.meta.env.DEV && (showAll || filter === "Exploration")) || relFilter) && exploration.length > 0 && (
               <div className={`content-section${showAll ? " reveal" : ""}`}>
                 {showAll && <div className="content-section-h">Exploration<HiddenCountSuffix section="exploration" hiddenCounts={hiddenCounts} /></div>}
                 {showAll && <div className="content-section-gloss">{SECTION_GLOSSES.Exploration}</div>}
