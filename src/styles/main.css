@@ -1196,13 +1196,16 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .sp-specimen .sp-components-num::before,.sp-specimen .sp-step-num::before{content:"";position:absolute;left:0;top:5px;width:5px;height:1px;background:var(--ff)}
 
 /* One atmospheric hero — a single full-bleed piece of art at the top */
-.sp-hero{position:relative;left:50%;width:100vw;max-width:1500px;transform:translateX(-50%);margin:8px 0 48px;aspect-ratio:16/6;min-height:200px;max-height:380px;background-size:cover;background-position:center;overflow:hidden}
+.sp-hero{position:relative;left:50%;width:100vw;max-width:1500px;transform:translateX(-50%);margin:8px 0 48px;aspect-ratio:16/6;min-height:200px;max-height:380px;overflow:hidden}
+/* Art on its own layer, color-corrected to match the UI's neutral grey->white range:
+   grayscale removes the cool cast; brightness/contrast lift it into the light UI range. */
+.sp-hero-art{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;filter:grayscale(1) brightness(1.05) contrast(0.94)}
 /* Mute the art toward the page background by 35% so it sits back. Tracks light/dark via --bg. */
-.sp-hero::before{content:"";position:absolute;inset:0;background:var(--bg);opacity:.35;pointer-events:none}
+.sp-hero::before{content:"";position:absolute;inset:0;z-index:1;background:var(--bg);opacity:.35;pointer-events:none}
 /* Soft eased fade over the bottom of the art so it dissolves into the page with
    no visible band edge. Multi-stop easing avoids a hard start; fades to --bg so
    it tracks light/dark. */
-.sp-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:78%;pointer-events:none;background:linear-gradient(to bottom,
+.sp-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:78%;z-index:2;pointer-events:none;background:linear-gradient(to bottom,
   color-mix(in srgb,var(--bg) 0%,transparent) 0%,
   color-mix(in srgb,var(--bg) 2%,transparent) 30%,
   color-mix(in srgb,var(--bg) 6%,transparent) 48%,
