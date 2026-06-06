@@ -986,7 +986,7 @@ export const SEED = [
     hero:"/images/artifacts/condition-set/atmosphere-8.jpg",
     usageArt:"/images/artifacts/condition-set/atmosphere-10.jpg",
     premise:"Design work can weaken when decisions detach from the condition that produced them. A Condition Set exists to keep decisions connected to origin.",
-    premiseLead:"Cut from its condition, a decision hardens. Color bleeds style without reason. Behavior leaks pattern without situation. Phrase mutes tone without pressure. Reference morphs aesthetic without inquiry. The system begins to imitate itself.",
+    premiseLead:"Cut from its condition, a decision hardens. Color bleeds into style far from reason. Behavior settles into pattern outside situation. Phrase thins into tone after pressure leaves. Reference morphs into aesthetic once inquiry falls away. The system begins to imitate itself.",
     framing:{label:"What it is",body:"A Condition Set makes a system's decisions traceable to what produced them."},
     stabilizesProse:"A Condition Set gives derivation a stable form, as brand guidelines do for expression, strategy does for intent, and design systems do for implementation.",
     components:[
