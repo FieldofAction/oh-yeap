@@ -989,12 +989,7 @@ export const SEED = [
     premise:"Design work can weaken when decisions detach from the condition that produced them. A system begins to imitate itself. A Condition Set exists to keep decisions connected to origin.",
     premiseTable:{head:["Element","Hardens into"],rows:[["Color","Style"],["Behavior","Pattern"],["Phrase","Tone"],["Reference","Aesthetic"],["System","Self-imitation"]]},
     framing:{label:"What it is",body:"A Condition Set makes a system's decisions traceable to what produced them."},
-    stabilizes:[
-      {layer:"Brand guidelines",value:"Expression"},
-      {layer:"Strategy",value:"Intent"},
-      {layer:"Design systems",value:"Implementation"},
-      {layer:"Condition Set",value:"Derivation"},
-    ],
+    stabilizesProse:"Brand guidelines stabilize expression, strategy stabilizes intent, and design systems stabilize implementation. A Condition Set stabilizes derivation.",
     components:[
       {num:1,label:"Named Condition",desc:"Sentence the system derives from.\n\nIt has to be precise enough to refuse things. A condition that can accept any move is still atmosphere."},
       {num:2,label:"Refusal Criteria",desc:"Edges of the condition.\n\nThese are the moves the condition will not hold. They protect the system from drift, imitation, and false coherence."},

@@ -82,7 +82,12 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           <div className="sp-section dc dc2">
             {sectionHead("premise", "Premise")}
             <div className={item.spec.premiseTable ? "sp-premise-split" : undefined}>
-              <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.premise}</div>
+              <div className="sp-premise-text">
+                <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.premise}</div>
+                {item.spec.stabilizesProse && (
+                  <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.stabilizesProse}</div>
+                )}
+              </div>
               {item.spec.premiseTable && (
                 <SpecTable head={item.spec.premiseTable.head} rows={item.spec.premiseTable.rows} />
               )}
@@ -95,22 +100,6 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           <div className="sp-framing dc dc2">
             <div className="sp-framing-label">{item.spec.framing.label}</div>
             <div className="sp-framing-body" style={{ whiteSpace: "pre-line" }}>{item.spec.framing.body}</div>
-          </div>
-        )}
-
-        {/* What each layer stabilizes */}
-        {item.spec?.stabilizes?.length > 0 && (
-          <div className="sp-section dc dc3">
-            {sectionHead("stabilize", "What each layer stabilizes")}
-            <div className="sp-stabilize">
-              {item.spec.stabilizes.map((r, i) => (
-                <div key={i} className={`sp-stabilize-row${i === item.spec.stabilizes.length - 1 ? " sp-stabilize-row--key" : ""}`}>
-                  <span className="sp-stabilize-layer">{r.layer}</span>
-                  <span className="sp-stabilize-arrow" aria-hidden="true">&rarr;</span>
-                  <span className="sp-stabilize-val">{r.value}</span>
-                </div>
-              ))}
-            </div>
           </div>
         )}
 
