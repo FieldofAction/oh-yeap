@@ -1152,6 +1152,8 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .sp-chainr-row{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;width:100%}
 .sp-chainr-node{display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:-0.005em;color:var(--fg);padding:18px 28px;border:1px solid var(--bd);border-radius:12px;background:var(--bg);min-width:248px}
 .sp-chainr-arrow{display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:20px;color:var(--ff)}
+/* Decision pill pops as the culmination: filled ink, larger, lifted */
+.sp-chainr-node.is-decision{font-size:20px;padding:22px 38px;background:var(--fg);color:var(--bg);border-color:var(--fg);box-shadow:0 10px 30px color-mix(in srgb,var(--fg) 16%,transparent)}
 .sp-chainr-instrument{text-align:center;font-family:var(--display);font-size:15px;font-weight:600;color:var(--fg);margin-top:16px}
 
 /* How to use it — numbered step tiles */
@@ -1189,6 +1191,8 @@ a.hero-dash-cell--link:hover .hero-dash-val{
   linear-gradient(var(--fm),var(--fm)) 100% 100%/12px 1px no-repeat,
   linear-gradient(var(--fm),var(--fm)) 100% 100%/1px 12px no-repeat,
   var(--bg)}
+/* Decision overrides the corner-bracket tile with a solid filled pill so it pops */
+.sp-specimen .sp-chainr-node.is-decision{background:var(--fg);color:var(--bg)}
 .sp-specimen .sp-chainr-arrow{position:relative;z-index:1}
 
 /* Technical index ticks on numbered items */

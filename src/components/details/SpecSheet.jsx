@@ -141,7 +141,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
                     return rows.map((row, ri) => (
                       <React.Fragment key={ri}>
                         <div className="sp-chainr-row">
-                          {row.map((n, ni) => <div key={ni} className="sp-chainr-node">{n}</div>)}
+                          {row.map((n, ni) => <div key={ni} className={`sp-chainr-node${ri === rows.length - 1 && ni === row.length - 1 ? " is-decision" : ""}`}>{n}</div>)}
                         </div>
                         {ri < rows.length - 1 && <div className="sp-chainr-arrow" aria-hidden="true">&#8645;</div>}
                       </React.Fragment>
