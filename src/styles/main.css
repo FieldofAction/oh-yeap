@@ -1197,6 +1197,9 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 
 /* One atmospheric hero — a single full-bleed piece of art at the top */
 .sp-hero{position:relative;left:50%;width:100vw;max-width:1500px;transform:translateX(-50%);margin:8px 0 48px;aspect-ratio:16/6;min-height:200px;max-height:380px;background-size:cover;background-position:center;overflow:hidden}
+/* Gradient fade over the bottom quarter so the art dissolves into the page
+   instead of ending on a hard band edge. Fades to --bg, so it tracks light/dark. */
+.sp-hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:25%;background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none}
 
 /* Accent gesture — a quiet accent tick on the emphasized key row */
 .sp-specimen .sp-stabilize-row--key{position:relative}
