@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 
-// Wave 1 launch note:
-// - Practice hidden from WORK until case studies are refined (Wave 2).
-//   In dev (`npm run dev`) Practice is revealed with a HIDDEN indicator so we can preview locally.
+// Launch note:
+// - Practice is public in WORK (Workbench published; other case studies stay
+//   hidden via isHidden in seed.js until they're ready — see HIDDEN-ITEMS.md).
 // - patternlanguage.cc external link removed from REFERENCE (per launch nav decision).
 // - STUDIO is password-gated; single entry in nav opens a password modal on click.
 const NAV = [
   { tier: "WORK", items: [
-    ...(import.meta.env.DEV ? [{ key: "public", label: "Practice", filter: "Practice" }] : []),
+    { key: "public", label: "Practice", filter: "Practice" },
     { key: "public", label: "Writing", filter: "Writing" },
     { key: "public", label: "Exploration", filter: "Exploration" },
     { key: "public", label: "Artifacts", filter: "Artifacts" },
