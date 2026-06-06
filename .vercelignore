@@ -1,0 +1,25 @@
+# Local / build artifacts (not part of the deployed site)
+.git
+.claude
+node_modules
+dist
+screenshots
+art_templates
+instagram
+motion
+threads-backup-*.json
+*.md
+
+# Unserved source/cache media (verified: not referenced anywhere in src/).
+# NOTE: keep public/media/drawings (its full/ + thumbs/ web versions ARE served);
+# only the raw .tif sources there are dropped via the *.tif rule below.
+public/media/cache
+public/images/case-studies/PORTO ROCHA - Gemini
+public/images/case-studies/Workbench/workbench_architecture
+
+# Raw source asset types never referenced by the site
+*.tif
+*.tiff
+*.wav
+*.psd
+*.ai
