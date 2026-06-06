@@ -985,7 +985,7 @@ export const SEED = [
   { id:uid(), section:"artifacts", title:"Condition Set", subtitle:"Portable design instrument", desc:"A derivation instrument for condition-first design.", year:"2026", status:"v0.1", tags:["Template","Method","v0.1"], relations:["Condition-First"], hasVisual:false, artifactType:"method", version:"0.1", spec:{
     specimen:true,
     premise:"Design work can weaken when decisions detach from the condition that produced them. A system begins to imitate itself. A Condition Set exists to keep decisions connected to origin.",
-    premiseTable:{head:["Detached element","Hardens into"],rows:[["Color","Style"],["Behavior","Pattern"],["Phrase","Tone"],["Reference","Aesthetic"],["System","Self-imitation"]]},
+    premiseTable:{head:["Element","Hardens into"],rows:[["Color","Style"],["Behavior","Pattern"],["Phrase","Tone"],["Reference","Aesthetic"],["System","Self-imitation"]]},
     framing:{label:"What it is",body:"A Condition Set is the minimum portable payload for designing from a named condition.\n\nIt gives a collaborator, team, or future self the source, path, and test behind a system's decisions.\n\nA decision carries weight when it can name the condition it came from."},
     stabilizes:[
       {layer:"Brand guidelines",value:"Expression"},
@@ -1001,7 +1001,7 @@ export const SEED = [
       {num:5,label:"Derivation Rules",desc:"The sentences that make decisions traceable.\n\nEvery meaningful decision should be able to name why it exists.\n\nA decision without its sentence becomes ornament."},
       {num:6,label:"Whimsy Allowance",desc:"The sanctioned break in the discipline.\n\nOne allowance keeps the system from becoming brittle. It gives the work a place to breathe without letting exception become style."},
     ],
-    glue:{label:"Reversible Chain",body:"The Condition Set becomes portable through the chain. It reads in either direction: condition to decision, and decision back to condition.",chainNodes:["Named Condition","Diagnostic Question","Behavioral Translation","Derivation Rule","Decision"],instrument:"The chain is the instrument.",after:"A decision stays inside the system as long as its path holds. Once the path disappears, the decision drifts free of the condition, however polished it remains."},
+    glue:{label:"Reversible Chain",body:"Condition Set becomes portable through the chain. It reads in either direction: condition to decision, and decision back to condition.",chainNodes:["Named Condition","Diagnostic Question","Behavioral Translation","Derivation Rule","Decision"],instrument:"The chain is the instrument.",after:"A decision stays inside the system as long as its path holds. Once the path disappears, the decision drifts free of the condition, however polished it remains."},
     usageSteps:[
       {num:1,title:"Name the condition",desc:"Start with the sentence the system derives from.\n\nThe condition is load-bearing. Name it before reaching for components, references, visual language, tone, or outputs."},
       {num:2,title:"Write the refusals",desc:"Define what the condition will not hold.\n\nRefusals reveal whether the condition has enough edge to govern decisions."},
