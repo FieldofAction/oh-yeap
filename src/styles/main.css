@@ -1133,6 +1133,15 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .sp-example-step.is-decision .sp-example-text{font-weight:600;font-size:17px}
 @media(max-width:768px){.sp-example-card{padding:28px 22px}}
 
+/* Premise decay — a framed 'element -> hardened surface' list; the failure mode */
+.sp-decay-lead{font-family:var(--display);font-size:16px;line-height:1.45;color:var(--fm);margin-bottom:16px;max-width:340px}
+.sp-decay-rows{display:flex;flex-direction:column;max-width:420px}
+.sp-decay-row{display:grid;grid-template-columns:1fr 22px 1fr;align-items:center;gap:14px;padding:13px 2px;border-top:1px solid var(--bd);font-size:15px}
+.sp-decay-row:last-child{border-bottom:1px solid var(--bd)}
+.sp-decay-from{color:var(--fm)}
+.sp-decay-arrow{font-family:var(--mono);font-size:12px;color:var(--ff);text-align:center}
+.sp-decay-to{color:var(--fg);font-weight:500}
+
 /* Premise: prose left (stacked paragraphs), cause/effect table right, top-aligned */
 .sp-premise-split{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
 .sp-premise-split .sp-table{margin-top:0;max-width:none}

@@ -91,7 +91,18 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
                 )}
               </div>
               {item.spec.premiseTable && (
-                <SpecTable head={item.spec.premiseTable.head} rows={item.spec.premiseTable.rows} />
+                <div className="sp-decay">
+                  {item.spec.premiseTable.lead && <div className="sp-decay-lead">{item.spec.premiseTable.lead}</div>}
+                  <div className="sp-decay-rows">
+                    {item.spec.premiseTable.rows.map((r, i) => (
+                      <div key={i} className="sp-decay-row">
+                        <span className="sp-decay-from">{r[0]}</span>
+                        <span className="sp-decay-arrow" aria-hidden="true">&rarr;</span>
+                        <span className="sp-decay-to">{r[1]}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
           </div>
