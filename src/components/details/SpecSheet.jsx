@@ -54,6 +54,22 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           </div>
         )}
 
+        {/* Optional comparison table — e.g. which layer each artifact stabilizes */}
+        {item.spec?.stabilizes?.length > 0 && (
+          <div className="sp-section dc dc2">
+            <div className="sp-section-label">What each layer stabilizes</div>
+            <div className="sp-stabilize">
+              {item.spec.stabilizes.map((r, i) => (
+                <div key={i} className={`sp-stabilize-row${i === item.spec.stabilizes.length - 1 ? " sp-stabilize-row--key" : ""}`}>
+                  <span className="sp-stabilize-layer">{r.layer}</span>
+                  <span className="sp-stabilize-arrow" aria-hidden="true">&rarr;</span>
+                  <span className="sp-stabilize-val">{r.value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Optional premise block — prose, sits before the components */}
         {item.spec?.premise && (
           <div className="sp-section dc dc3">
@@ -66,7 +82,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         {item.spec?.components?.length > 0 && (
           <div className="sp-section dc dc3">
             <div className="sp-section-label">Components</div>
-            <div className="sp-components">
+            <div className="sp-components sp-components--grid">
               {item.spec.components.map((c, i) => (
                 <div key={i} className="sp-components-item">
                   <div className="sp-components-num">{String(c.num ?? i + 1).padStart(2, "0")}</div>
@@ -85,7 +101,19 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           <div className="sp-framing sp-glue dc dc4">
             <div className="sp-framing-label">{item.spec.glue.label}</div>
             <div className="sp-framing-body" style={{ whiteSpace: "pre-line" }}>{item.spec.glue.body}</div>
-            {item.spec.glue.chain && (
+            {item.spec.glue.chainNodes?.length > 0 ? (
+              <div className="sp-chain" role="img" aria-label={`Derivation chain: ${item.spec.glue.chainNodes.join(" to ")}; reads in both directions`}>
+                <div className="sp-chain-flow">
+                  {item.spec.glue.chainNodes.map((n, i) => (
+                    <React.Fragment key={i}>
+                      <span className="sp-chain-node">{n}</span>
+                      {i < item.spec.glue.chainNodes.length - 1 && <span className="sp-chain-arrow" aria-hidden="true">&rarr;</span>}
+                    </React.Fragment>
+                  ))}
+                </div>
+                <div className="sp-chain-return" aria-hidden="true"><span className="sp-chain-return-label">&larr; reads backward</span></div>
+              </div>
+            ) : item.spec.glue.chain && (
               <div className="sp-glue-chain">{item.spec.glue.chain}</div>
             )}
             {item.spec.glue.after && (
