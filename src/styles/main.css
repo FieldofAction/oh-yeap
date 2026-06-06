@@ -481,13 +481,16 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .ix-pre{font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ff)}
 .ix-title{font-family:var(--display);font-size:clamp(22px,3vw,32px);font-weight:600;line-height:1.15;letter-spacing:-0.02em}
 .ix-sub{font-size:13px;color:var(--fm);line-height:1.65;max-width:480px;font-weight:300}
-.ix-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;position:relative;z-index:1}
+.ix-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;position:relative;z-index:2}
 .ix-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.ix-tag{font-size:10px;font-weight:500;letter-spacing:.02em;text-transform:uppercase;color:var(--ff);padding:5px 14px;border:1px solid var(--bd);border-radius:100px;transition:border-color .2s,color .2s}
-.ix-row:hover .ix-tag{border-color:var(--fm);color:var(--fm)}
+.ix-tag{font-size:10px;font-weight:500;letter-spacing:.02em;text-transform:uppercase;color:var(--ff);padding:5px 14px;border:1px solid var(--bd);border-radius:100px;transition:border-color .2s,color .2s,background .2s,backdrop-filter .2s}
+/* On hover the preview image slides in behind the metadata. Give the pills and year a
+   frosted, near-opaque backing so they stay legible over any image, in either theme. */
+.ix-row:hover .ix-tag{border-color:var(--bd);color:var(--fm);background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .ix-tag-rel{cursor:pointer;border-style:dashed}
 .ix-tag-rel:hover{color:var(--ac1);border-color:var(--ac1)}
-.ix-year{font-size:11px;color:var(--ff);letter-spacing:.01em}
+.ix-year{font-size:11px;color:var(--ff);letter-spacing:.01em;padding:3px 8px;border-radius:100px;transition:color .2s,background .2s,backdrop-filter .2s}
+.ix-row:hover .ix-year{color:var(--fm);background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .ix-dot{width:7px;height:7px;border-radius:50%;display:inline-block}
 .ix-dot.wip{background:var(--ac2)}.ix-dot.live{background:var(--ac1)}.ix-dot.seed{background:var(--ff)}
 .ix-row:last-child{border-bottom:none}
