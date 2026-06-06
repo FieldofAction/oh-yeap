@@ -209,7 +209,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         {/* A second atmospheric band, before the how-to */}
         {item.spec?.usageArt && (
           <figure className="sp-hero" aria-hidden="true">
-            <div className="sp-hero-art" style={{ backgroundImage: `url("${item.spec.usageArt}")` }} />
+            <div className="sp-hero-art" style={{ backgroundImage: `url("${item.spec.usageArt}")`, backgroundSize: "132%" }} />
           </figure>
         )}
         {/* In practice — a worked specimen: the chain run once on a real subject */}
