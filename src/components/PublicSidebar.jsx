@@ -13,7 +13,8 @@ const NAV = [
     { group: "sections", children: [
       { key: "public", label: "Practice", filter: "Practice" },
       { key: "public", label: "Writing", filter: "Writing" },
-      { key: "public", label: "Exploration", filter: "Exploration" },
+      // Exploration is empty publicly; keep it dev-only until it has ready work.
+      ...(import.meta.env.DEV ? [{ key: "public", label: "Exploration", filter: "Exploration" }] : []),
       { key: "public", label: "Artifacts", filter: "Artifacts" },
     ]},
     { group: "spaces", children: [
