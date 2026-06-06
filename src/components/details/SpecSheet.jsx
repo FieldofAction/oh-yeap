@@ -201,6 +201,32 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         {item.spec?.usageArt && (
           <figure className="sp-hero" style={{ backgroundImage: `url("${item.spec.usageArt}")` }} aria-hidden="true" />
         )}
+        {/* In practice — a worked specimen: the chain run once on a real subject */}
+        {item.spec?.example?.run?.length > 0 && (
+          <div className="sp-section dc dc5">
+            <div className="sp-section-label">In practice</div>
+            <div className="sp-example-card" style={item.spec.example.accent ? { "--ex-accent": item.spec.example.accent } : undefined}>
+              <div className="sp-example-subject">
+                {item.spec.example.mark && (
+                  <img className="sp-example-mark" src={item.spec.example.mark} alt="" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                )}
+                <span>A Condition Set, filled for {item.spec.example.subject}</span>
+              </div>
+              {item.spec.example.mark && (
+                <img className="sp-example-wm" src={item.spec.example.mark} alt="" aria-hidden="true" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+              )}
+              <ol className="sp-example-run">
+                {item.spec.example.run.map((step, i) => (
+                  <li key={i} className={`sp-example-step${i === 0 ? " is-anchor" : ""}${step.stage === "Decision" ? " is-decision" : ""}`}>
+                    <div className="sp-example-stage">{step.stage}</div>
+                    <div className="sp-example-text">{step.text}</div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        )}
+
         {/* How to use it — numbered step tiles */}
         {item.spec?.usageSteps?.length > 0 ? (
           <div className="sp-section dc dc6">
@@ -232,21 +258,6 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           </div>
         )}
 
-        {/* In practice — the chain run once on a real subject */}
-        {item.spec?.example?.run?.length > 0 && (
-          <div className="sp-section dc dc6">
-            <div className="sp-section-label">In practice</div>
-            <div className="sp-example-lead">A Condition Set, filled for {item.spec.example.subject}.</div>
-            <ol className="sp-example-run">
-              {item.spec.example.run.map((step, i) => (
-                <li key={i} className={`sp-example-step${step.stage === "Decision" ? " is-decision" : ""}`}>
-                  <div className="sp-example-stage">{step.stage}</div>
-                  <div className="sp-example-text">{step.text}</div>
-                </li>
-              ))}
-            </ol>
-          </div>
-        )}
 
         {item.spec?.protects && (
           <div className="sp-section dc dc6">

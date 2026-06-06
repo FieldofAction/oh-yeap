@@ -1118,16 +1118,21 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .sp-chain-return{margin-top:14px;padding-top:12px;border-top:1px dashed var(--bd);display:flex;justify-content:center}
 .sp-chain-return-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ff)}
 
-/* In practice — the chain run once, as a left-railed sequence ending on the decision */
-.sp-example-lead{font-family:var(--display);font-size:18px;line-height:1.5;color:var(--fm);margin-bottom:28px}
-.sp-example-run{list-style:none;margin:0;padding:0;max-width:640px;border-left:1px solid var(--bd)}
-.sp-example-step{position:relative;padding:0 0 26px 26px}
+/* In practice — a worked specimen card: the chain run once, ending on the decision */
+.sp-example-card{position:relative;overflow:hidden;border:1px solid var(--bd);border-radius:18px;background:var(--sf);padding:40px 44px}
+.sp-example-subject{display:flex;align-items:center;gap:11px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);margin-bottom:34px}
+.sp-example-mark{width:24px;height:24px;object-fit:contain;flex-shrink:0}
+.sp-example-wm{position:absolute;right:-26px;bottom:-34px;width:240px;height:auto;opacity:.05;pointer-events:none;z-index:0}
+.sp-example-run{list-style:none;margin:0;padding:0;max-width:680px;border-left:1px solid var(--bd);position:relative;z-index:1}
+.sp-example-step{position:relative;padding:0 0 30px 30px}
 .sp-example-step:last-child{padding-bottom:0}
-.sp-example-step::before{content:"";position:absolute;left:-5px;top:4px;width:9px;height:9px;border-radius:50%;background:var(--bg);border:1px solid var(--ff)}
-.sp-example-stage{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);margin-bottom:6px}
+.sp-example-step::before{content:"";position:absolute;left:-5px;top:6px;width:9px;height:9px;border-radius:50%;background:var(--sf);border:1px solid var(--ff)}
+.sp-example-stage{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);margin-bottom:7px}
 .sp-example-text{font-size:15px;line-height:1.5;color:var(--fg)}
-.sp-example-step.is-decision::before{background:var(--ac1);border-color:var(--ac1)}
-.sp-example-step.is-decision .sp-example-text{font-weight:600}
+.sp-example-step.is-anchor .sp-example-text{font-family:var(--display);font-size:clamp(20px,2.4vw,26px);font-weight:600;letter-spacing:-0.01em;line-height:1.3}
+.sp-example-step.is-decision::before{background:var(--ex-accent,var(--ac1));border-color:var(--ex-accent,var(--ac1));box-shadow:0 0 0 4px color-mix(in srgb,var(--ex-accent,var(--ac1)) 16%,transparent)}
+.sp-example-step.is-decision .sp-example-text{font-weight:600;font-size:17px}
+@media(max-width:768px){.sp-example-card{padding:28px 22px}}
 
 /* Premise: prose left (stacked paragraphs), cause/effect table right, top-aligned */
 .sp-premise-split{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
