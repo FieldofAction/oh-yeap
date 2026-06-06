@@ -5,11 +5,13 @@ import React, { useState } from "react";
 // No password gate, no STUDIO_PASSWORD, no STUDIO_KEYS — auth happens at the edge.
 const STUDIO_URL = "https://studio.fieldofaction.org";
 
-// In dev (`npm run dev`) Practice is revealed with a HIDDEN indicator so we can preview locally.
+// Practice is always shown in the public Work nav (Workbench is published; other
+// case studies stay hidden via isHidden in seed.js until marked published). In dev,
+// hidden items are additionally revealed with a HIDDEN indicator for local preview.
 const NAV = [
   { tier: "WORK", items: [
     { group: "sections", children: [
-      ...(import.meta.env.DEV ? [{ key: "public", label: "Practice", filter: "Practice" }] : []),
+      { key: "public", label: "Practice", filter: "Practice" },
       { key: "public", label: "Writing", filter: "Writing" },
       { key: "public", label: "Exploration", filter: "Exploration" },
       { key: "public", label: "Artifacts", filter: "Artifacts" },
