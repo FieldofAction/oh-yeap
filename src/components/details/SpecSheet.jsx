@@ -40,10 +40,13 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
   }, []);
 
   return (
-    <div ref={overlayRef} className={`sp-overlay ${closing ? "closing" : ""}`}>
+    <div ref={overlayRef} className={`sp-overlay ${closing ? "closing" : ""}${item.spec?.specimen ? " sp-specimen" : ""}`}>
       <button className="rd-back" onClick={onClose}>&larr; Back</button>
       <div className="sp-inner">
         <HiddenStrip item={item} />
+        {item.spec?.specimen && (
+          <div className="sp-spine" aria-hidden="true">{`${item.title} · v${item.version} · ${typeLabel.toUpperCase()}`}</div>
+        )}
         <div className="sp-head dc dc1">
           <div className="sp-head-left">
             <div className="sp-badge">{typeLabel}</div>
@@ -121,6 +124,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
             {item.spec.glue.chainNodes?.length > 0 ? (
               <div className="sp-chainr-wrap">
                 <div className="sp-chainr" role="img" aria-label={`Reversible chain: ${item.spec.glue.chainNodes.join(", ")}; reads in either direction`}>
+                  {item.spec.specimen && <span className="sp-chainr-mark" aria-hidden="true" />}
                   {item.spec.glue.chainNodes.map((n, i) => (
                     <React.Fragment key={i}>
                       <div className="sp-chainr-node">{n}</div>
