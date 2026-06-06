@@ -32,13 +32,16 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
   const typeLabel = {diagram:"Diagram",prompt:"Prompt",framework:"Framework",model:"Model",method:"Method"}[item.artifactType] || "Artifact";
   const [copied, setCopied] = useState(false);
 
-  // Atmospheric backing — large editorial plates that break out of the column and
-  // float behind the operable structure. A condition arrives out of atmosphere.
+  // Atmosphere gets its own space: a full-bleed editorial image band that carries the
+  // section headline, with clean content below. A condition arrives out of atmosphere.
   const atmo = item.spec?.atmosphere || {};
-  const hostCls = (key) => atmo[key] ? " sp-atmo-host" : "";
-  const atmoPlate = (key, variant) => atmo[key] ? (
-    <div className={`sp-atmo-plate${variant ? ` sp-atmo-plate--${variant}` : ""}`} style={{ backgroundImage: `url("${atmo[key]}")` }} aria-hidden="true" />
-  ) : null;
+  const sectionHead = (key, label) => atmo[key] ? (
+    <figure className="sp-plate" style={{ backgroundImage: `url("${atmo[key]}")` }}>
+      <figcaption className="sp-plate-h">{label}</figcaption>
+    </figure>
+  ) : (
+    <div className="sp-section-label">{label}</div>
+  );
 
   const handleCopy = useCallback((text) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -71,9 +74,8 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
 
         {/* Premise — why the instrument exists, with an optional cause/effect table */}
         {item.spec?.premise && (
-          <div className={`sp-section dc dc2${hostCls("premise")}`}>
-            {atmoPlate("premise")}
-            <div className="sp-section-label">Premise</div>
+          <div className="sp-section dc dc2">
+            {sectionHead("premise", "Premise")}
             <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.premise}</div>
             {item.spec.premiseTable && (
               <div style={{ marginTop: 18 }}>
@@ -93,9 +95,8 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
 
         {/* What each layer stabilizes */}
         {item.spec?.stabilizes?.length > 0 && (
-          <div className={`sp-section dc dc3${hostCls("stabilize")}`}>
-            {atmoPlate("stabilize")}
-            <div className="sp-section-label">What each layer stabilizes</div>
+          <div className="sp-section dc dc3">
+            {sectionHead("stabilize", "What each layer stabilizes")}
             <div className="sp-stabilize">
               {item.spec.stabilizes.map((r, i) => (
                 <div key={i} className={`sp-stabilize-row${i === item.spec.stabilizes.length - 1 ? " sp-stabilize-row--key" : ""}`}>
@@ -129,13 +130,12 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         {/* The Derivation Chain — the hero: vertical flow, forward and backward */}
         {item.spec?.glue && (
           <div className="sp-section dc dc4">
-            <div className="sp-section-label">{item.spec.glue.label}</div>
+            {sectionHead("chain", item.spec.glue.label)}
             {item.spec.glue.body && <div className="sp-framing-body" style={{ whiteSpace: "pre-line", maxWidth: 680 }}>{item.spec.glue.body}</div>}
             {item.spec.glue.chainNodes?.length > 0 ? (
-              <div className={`sp-chainr-wrap${hostCls("chain")}`}>
-                {atmoPlate("chain", "chain")}
-                <div className={`sp-chainr${atmo.chain ? " sp-chainr--bare" : ""}`} role="img" aria-label={`Reversible chain: ${item.spec.glue.chainNodes.join(", ")}; reads in either direction`}>
-                  {item.spec.specimen && !atmo.chain && <span className="sp-chainr-mark" aria-hidden="true" />}
+              <div className="sp-chainr-wrap">
+                <div className="sp-chainr" role="img" aria-label={`Reversible chain: ${item.spec.glue.chainNodes.join(", ")}; reads in either direction`}>
+                  {item.spec.specimen && <span className="sp-chainr-mark" aria-hidden="true" />}
                   {item.spec.glue.chainNodes.map((n, i) => (
                     <React.Fragment key={i}>
                       <div className="sp-chainr-node">{n}</div>
@@ -228,9 +228,8 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
 
         {/* Use moments — when the instrument earns its keep */}
         {item.spec?.useMoments?.rows?.length > 0 && (
-          <div className={`sp-section dc dc6${hostCls("moments")}`}>
-            {atmoPlate("moments")}
-            <div className="sp-section-label">Use moments</div>
+          <div className="sp-section dc dc6">
+            {sectionHead("moments", "Use moments")}
             <SpecTable head={item.spec.useMoments.head} rows={item.spec.useMoments.rows} />
           </div>
         )}
