@@ -109,6 +109,20 @@ export default function PublicApp() {
     return merged || activeItem;
   }, [activeItem, explorationStore]);
 
+  // Deep-link Back fix: when the app loads directly on an #item/<slug> URL (a shared
+  // link), there's no listing entry behind it in history, so the browser Back button
+  // would leave the site. Synthesize a home entry behind the item so Back returns to
+  // the listing instead. Runs once on mount.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const itemHash = window.location.hash;
+    if (HASH_ITEM_RE.test(itemHash) && !window.history.state?.itemId) {
+      const base = window.location.pathname + window.location.search;
+      window.history.replaceState(null, "", base);              // current entry → home (listing)
+      window.history.pushState({ itemId: true }, "", itemHash); // re-push the item on top
+    }
+  }, []);
+
   const theme = THEMES[themeKey];
   const toggleLens = useCallback(() => setLens(p => !p), []);
   const togglePatternLens = useCallback(() => setPatternLens(p => !p), []);
