@@ -57,8 +57,12 @@ const hashItemId = () => {
   const m = window.location.hash.match(HASH_ITEM_RE);
   return m ? decodeURIComponent(m[1]) : null;
 };
+// Prefer a stable, human-readable slug so shared links survive reloads.
+// (item.id is a random uid() regenerated each load and is not shareable.)
+const itemHashKey = (item) => item.slug || item.id;
+const findItemByHash = (key) => key ? (SEED.find(c => c.slug === key) || SEED.find(c => c.id === key) || null) : null;
 const pushHashForItem = (item) => {
-  const target = `#item/${encodeURIComponent(item.id)}`;
+  const target = `#item/${encodeURIComponent(itemHashKey(item))}`;
   if (window.location.hash !== target) {
     window.history.pushState({ itemId: item.id }, "", target);
   }
@@ -93,11 +97,7 @@ export default function PublicApp() {
   const [lens, setLens] = useState(false);
   const [patternLens, setPatternLens] = useState(false);
   const [showGraph, setShowGraph] = useState(false);
-  const [activeItem, setActiveItem] = useState(() => {
-    const id = hashItemId();
-    if (!id) return null;
-    return SEED.find(c => c.id === id) || null;
-  });
+  const [activeItem, setActiveItem] = useState(() => findItemByHash(hashItemId()));
   const [closing, setClosing] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
   const explorationStore = useExplorationStore();
@@ -161,7 +161,7 @@ export default function PublicApp() {
     const handler = () => {
       const id = hashItemId();
       if (id) {
-        const item = SEED.find(c => c.id === id);
+        const item = findItemByHash(id);
         if (item && item.id !== activeItem?.id) {
           setClosing(false);
           setActiveItem(item);

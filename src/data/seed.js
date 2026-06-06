@@ -8,7 +8,7 @@ export const uid = () => Math.random().toString(36).slice(2, 10);
 export const isHidden = (item) => Boolean(item?.hidden) || (item?.section === "practice" && !item?.published);
 
 export const SEED = [
-  { id:uid(), section:"practice", published:true, title:"Workbench", subtitle:"Field of Action's Studio Surface", desc:"The Studio surface of Field of Action. Nine instruments where synthesis, generation, governance, and reflection become actions.", year:"2026", status:"live", tags:["Studio","Method","Systems"], relations:[], hasVisual:true, role:"Designer & Builder", deliverables:["Interface Design","Tool Architecture","Method Design","Front-End Build"], caseStudy:{
+  { id:uid(), slug:"workbench", section:"practice", published:true, title:"Workbench", subtitle:"Field of Action's Studio Surface", desc:"The Studio surface of Field of Action. Nine instruments where synthesis, generation, governance, and reflection become actions.", year:"2026", status:"live", tags:["Studio","Method","Systems"], relations:[], hasVisual:true, role:"Designer & Builder", deliverables:["Interface Design","Tool Architecture","Method Design","Front-End Build"], caseStudy:{
     framing:"The Workbench is Field of Action's studio surface.\n\nBuilt around the principle of negative capability, it helps hold a question open long enough for something unexpected to emerge. Nine instruments support the movement from inquiry to generation to reflection.\n\nThe work takes shape before it takes a side.",
     reframe:{
       thesis:"A studio environment emerged from sustained practice.",
