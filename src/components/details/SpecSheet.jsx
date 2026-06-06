@@ -208,6 +208,10 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
             </div>
           </div>
         )}
+        {/* A second atmospheric band, before the how-to */}
+        {item.spec?.usageArt && (
+          <figure className="sp-hero" style={{ backgroundImage: `url("${item.spec.usageArt}")` }} aria-hidden="true" />
+        )}
         {/* How to use it — numbered step tiles */}
         {item.spec?.usageSteps?.length > 0 ? (
           <div className="sp-section dc dc6">
