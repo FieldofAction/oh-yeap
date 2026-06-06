@@ -1148,8 +1148,9 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 
 /* Reversible chain — single horizontal flow, arrows read both directions */
 .sp-chainr-wrap{margin:24px 0}
-.sp-chainr{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:64px 24px;border:1px solid var(--bd);border-radius:16px;background:var(--sf)}
-.sp-chainr-node{display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:-0.005em;color:var(--fg);padding:18px 30px;border:1px solid var(--bd);border-radius:12px;background:var(--bg);min-width:320px}
+.sp-chainr{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:64px 24px;border:1px solid var(--bd);border-radius:16px;background:var(--sf)}
+.sp-chainr-row{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;width:100%}
+.sp-chainr-node{display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:-0.005em;color:var(--fg);padding:18px 28px;border:1px solid var(--bd);border-radius:12px;background:var(--bg);min-width:248px}
 .sp-chainr-arrow{display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:20px;color:var(--ff)}
 .sp-chainr-instrument{text-align:center;font-family:var(--display);font-size:15px;font-weight:600;color:var(--fg);margin-top:16px}
 
@@ -1196,6 +1197,8 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 
 /* One atmospheric hero — a single full-bleed piece of art at the top */
 .sp-hero{position:relative;left:50%;width:100vw;max-width:1500px;transform:translateX(-50%);margin:8px 0 48px;aspect-ratio:16/6;min-height:200px;max-height:380px;background-size:cover;background-position:center;overflow:hidden}
+/* Mute the art toward the page background by 35% so it sits back. Tracks light/dark via --bg. */
+.sp-hero::before{content:"";position:absolute;inset:0;background:var(--bg);opacity:.35;pointer-events:none}
 /* Soft eased fade over the bottom of the art so it dissolves into the page with
    no visible band edge. Multi-stop easing avoids a hard start; fades to --bg so
    it tracks light/dark. */

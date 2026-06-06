@@ -997,7 +997,7 @@ export const SEED = [
       {num:5,label:"Derivation Rules",desc:"Sentences that make decisions traceable.\n\nEvery meaningful decision should be able to name why it exists.\n\nA decision without its sentence becomes ornament."},
       {num:6,label:"Whimsy Allowance",desc:"Sanctioned break in the discipline.\n\nOne allowance keeps the system from becoming brittle. It gives the work a place to breathe without letting exception become style."},
     ],
-    glue:{label:"Reversible Chain",body:"Condition Set becomes portable through the chain. It reads in either direction: condition to decision, and decision back to condition.",chainNodes:["Named Condition","Diagnostic Question","Behavioral Translation","Derivation Rule","Decision"],instrument:"The chain is the instrument."},
+    glue:{label:"Reversible Chain",body:"Condition Set becomes portable through the chain. It reads in either direction: condition to decision, and decision back to condition.",chainNodes:["Named Condition","Diagnostic Question","Behavioral Translation","Derivation Rule","Decision"],chainRows:[1,2,2],instrument:"The chain is the instrument."},
     usageSteps:[
       {num:1,title:"Name the condition",desc:"Start with the sentence the system derives from.\n\nThe condition is load-bearing. Name it before reaching for components, references, visual language, tone, or outputs."},
       {num:2,title:"Write the refusals",desc:"Define what the condition will not hold.\n\nRefusals reveal whether the condition has enough edge to govern decisions."},

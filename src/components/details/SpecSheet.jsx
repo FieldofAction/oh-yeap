@@ -130,12 +130,21 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
               <div className="sp-chainr-wrap">
                 <div className="sp-chainr" role="img" aria-label={`Reversible chain: ${item.spec.glue.chainNodes.join(", ")}; reads in either direction`}>
                   {item.spec.specimen && <span className="sp-chainr-mark" aria-hidden="true" />}
-                  {item.spec.glue.chainNodes.map((n, i) => (
-                    <React.Fragment key={i}>
-                      <div className="sp-chainr-node">{n}</div>
-                      {i < item.spec.glue.chainNodes.length - 1 && <div className="sp-chainr-arrow" aria-hidden="true">&#8645;</div>}
-                    </React.Fragment>
-                  ))}
+                  {(() => {
+                    const nodes = item.spec.glue.chainNodes;
+                    const counts = item.spec.glue.chainRows || [nodes.length];
+                    const rows = []; let idx = 0;
+                    for (const c of counts) { rows.push(nodes.slice(idx, idx + c)); idx += c; }
+                    if (idx < nodes.length) rows.push(nodes.slice(idx));
+                    return rows.map((row, ri) => (
+                      <React.Fragment key={ri}>
+                        <div className="sp-chainr-row">
+                          {row.map((n, ni) => <div key={ni} className="sp-chainr-node">{n}</div>)}
+                        </div>
+                        {ri < rows.length - 1 && <div className="sp-chainr-arrow" aria-hidden="true">&#8645;</div>}
+                      </React.Fragment>
+                    ));
+                  })()}
                 </div>
                 {item.spec.glue.instrument && <div className="sp-chainr-instrument">{item.spec.glue.instrument}</div>}
               </div>
