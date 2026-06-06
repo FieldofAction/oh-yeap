@@ -1143,8 +1143,10 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .sp-decay-to{color:var(--fg);font-weight:500}
 
 /* Premise: stacked prose, with a scaled-up decay line as a lead-in between paragraphs */
-.sp-premise-text{display:flex;flex-direction:column;gap:26px;max-width:760px}
-.sp-premise-lead{font-family:var(--display);font-size:clamp(20px,2.3vw,26px);font-weight:500;line-height:1.4;letter-spacing:-0.01em;color:var(--fg)}
+.sp-premise-text{display:flex;flex-direction:column;gap:24px;max-width:720px}
+/* All three premise parts read at one elevated, cohesive scale */
+.sp-premise-text .sp-usage,
+.sp-premise-text .sp-premise-lead{font-family:var(--display);font-size:clamp(17px,1.7vw,19px);font-weight:400;line-height:1.6;letter-spacing:normal;color:var(--fm);max-width:none}
 
 /* Generic 2-column table — premise cause/effect, use moments, etc. */
 .sp-table{display:flex;flex-direction:column;max-width:520px;border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-top:6px}
