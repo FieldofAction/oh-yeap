@@ -232,6 +232,22 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           </div>
         )}
 
+        {/* In practice — the chain run once on a real subject */}
+        {item.spec?.example?.run?.length > 0 && (
+          <div className="sp-section dc dc6">
+            <div className="sp-section-label">In practice</div>
+            <div className="sp-example-lead">A Condition Set, filled for {item.spec.example.subject}.</div>
+            <ol className="sp-example-run">
+              {item.spec.example.run.map((step, i) => (
+                <li key={i} className={`sp-example-step${step.stage === "Decision" ? " is-decision" : ""}`}>
+                  <div className="sp-example-stage">{step.stage}</div>
+                  <div className="sp-example-text">{step.text}</div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+
         {item.spec?.protects && (
           <div className="sp-section dc dc6">
             <div className="sp-section-label">What it protects</div>

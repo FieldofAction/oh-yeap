@@ -1118,6 +1118,17 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .sp-chain-return{margin-top:14px;padding-top:12px;border-top:1px dashed var(--bd);display:flex;justify-content:center}
 .sp-chain-return-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ff)}
 
+/* In practice — the chain run once, as a left-railed sequence ending on the decision */
+.sp-example-lead{font-family:var(--display);font-size:18px;line-height:1.5;color:var(--fm);margin-bottom:28px}
+.sp-example-run{list-style:none;margin:0;padding:0;max-width:640px;border-left:1px solid var(--bd)}
+.sp-example-step{position:relative;padding:0 0 26px 26px}
+.sp-example-step:last-child{padding-bottom:0}
+.sp-example-step::before{content:"";position:absolute;left:-5px;top:4px;width:9px;height:9px;border-radius:50%;background:var(--bg);border:1px solid var(--ff)}
+.sp-example-stage{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ff);margin-bottom:6px}
+.sp-example-text{font-size:15px;line-height:1.5;color:var(--fg)}
+.sp-example-step.is-decision::before{background:var(--ac1);border-color:var(--ac1)}
+.sp-example-step.is-decision .sp-example-text{font-weight:600}
+
 /* Premise: prose left (stacked paragraphs), cause/effect table right, top-aligned */
 .sp-premise-split{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start}
 .sp-premise-split .sp-table{margin-top:0;max-width:none}

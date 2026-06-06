@@ -1009,6 +1009,17 @@ export const SEED = [
       {num:7,title:"Test the chain",desc:"Run example decisions in both directions.\n\nCondition to decision.\nDecision back to condition.\n\nThe set is ready to hand off when the path holds both ways."},
     ],
     useMoments:{head:["Moment","Function"],rows:[["Before making","Gives the work a posture"],["During critique","Gives the team a test"],["After production","Gives future decisions a path back to origin"]]},
+    example:{
+      subject:"Reddit",
+      namedCondition:"Every community sets its own terms.",
+      run:[
+        {stage:"Named Condition",text:"Every community sets its own terms."},
+        {stage:"Diagnostic Question",text:"Does this let a community feel like itself?"},
+        {stage:"Behavioral Translation",text:"Community theming and flair."},
+        {stage:"Derivation Rule",text:"Give each space its own look, because each sets its own terms."},
+        {stage:"Decision",text:"Let mods set subreddit colors, banners, and flair instead of a uniform skin."},
+      ],
+    },
     openQuestions:[
       "What happens when the named condition is wrong or incomplete?",
       "How many working instances does a Condition Set need before the form should harden?",
