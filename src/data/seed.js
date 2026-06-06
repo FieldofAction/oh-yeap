@@ -2,12 +2,88 @@ export const uid = () => Math.random().toString(36).slice(2, 10);
 
 // Hidden-from-public helper. Two ways an item can be hidden:
 //   1. `hidden: true` flag on the seed entry (per-item revisions thread)
-//   2. `section: "practice"` (Wave-1 launch gate, removed when case studies refine)
+//   2. `section: "practice"` (Wave-1 launch gate) — UNLESS the entry is marked
+//      `published: true`, which clears a single case study for public release.
 // Used both to filter visibility (production) and to drive dev-only "HIDDEN" indicators.
-export const isHidden = (item) => Boolean(item?.hidden) || item?.section === "practice";
+export const isHidden = (item) => Boolean(item?.hidden) || (item?.section === "practice" && !item?.published);
 
 export const SEED = [
-  { id:uid(), section:"practice", title:"Apple Music", subtitle:"Designing for Orientation in a Plural System", desc:"Design systems and product surfaces for the music streaming platform.", year:"2023–", status:"live", tags:["Product","Systems","Music"], relations:[], hasVisual:true, role:"Creative Lead", deliverables:["Product Design","Design Systems","Visual Language","Feature Design"], caseStudy:{
+  { id:uid(), section:"practice", published:true, title:"Workbench", subtitle:"Field of Action's Studio Surface", desc:"The Studio surface of Field of Action. Nine instruments where synthesis, generation, governance, and reflection become actions.", year:"2026", status:"live", tags:["Studio","Method","Systems"], relations:[], hasVisual:true, role:"Designer & Builder", deliverables:["Interface Design","Tool Architecture","Method Design","Front-End Build"], caseStudy:{
+    framing:"The Workbench is Field of Action's studio surface.\n\nBuilt around the principle of negative capability, it helps hold a question open long enough for something unexpected to emerge. Nine instruments support the movement from inquiry to generation to reflection.\n\nThe work takes shape before it takes a side.",
+    reframe:{
+      thesis:"A studio environment emerged from sustained practice.",
+      body:"",
+    },
+    intervention:{
+      system:["A single studio surface organized around nine instruments.","Inquiry, generation, governance, and reflection each occupy their own mode while remaining connected through a shared method."],
+      expression:["A quiet interface built for use.","Minimal structure, plain language, and distinct visual worlds allow attention to remain on the work rather than the tool."],
+      governance:["The rules of the practice become usable instruments.","Laws, emotional registers, and completed runs remain visible throughout the process, allowing inquiry and outcomes to stay in relationship."],
+      method:["The four-fold moves from concept into practice.","Making, craft, governance, and emergence become working surfaces."],
+    },
+    outcomes:{
+      points:["Real work now begins inside the Studio. Later it surfaces as finished outcomes.","Backstage can turn a single idea into a composed exploration across eight agents.","An unexpected benefit: the process became visible, structured, and easy to follow."],
+      closing:"The practice began running.",
+      insight:["Workbench helps with negative capability: the capacity to sit inside not-knowing without reaching immediately for the answer."],
+    },
+    images:{
+      figures:[],
+    },
+    layout:[
+      /* Hero — the material band */
+      { type:"figure", variant:"material", src:"/images/case-studies/Workbench/band-fluted.png", caption:"Method becomes material." },
+
+      { type:"section", label:"Framing" },
+      { type:"body", key:"framing" },
+
+      /* The Workbench surface, shown legibly, above the instrument index */
+      { type:"plate", src:"/images/case-studies/Workbench/workbench-landing.png", caption:"The Workbench: Field of Action's Studio surface, the nine instruments at a glance" },
+
+      /* Catalogue — the nine instruments as a disciplined index */
+      { type:"catalogue", label:"Method as Interface", heading:"Nine Instruments", groups:[
+        { moment:"Synthesis", items:[
+          { name:"Art of Model", line:"Keeps intervention open long enough to find the meaningful move." },
+          { name:"Playbook", line:"Expands interpretation before narrowing toward action." },
+          { name:"Console", line:"Holds competing forces in view at the same time." },
+        ]},
+        { moment:"Generation", items:[
+          { name:"FOA Generator", line:"Creates possibilities before conclusions." },
+          { name:"Backstage", line:"Allows ideas to develop through stages." },
+          { name:"Breakground", line:"Keeps structure movable while the field takes shape." },
+          { name:"Desert", line:"Treats images as material still in formation." },
+        ]},
+        { moment:"Reflection", items:[
+          { name:"Exploration Editor", line:"Preserves inquiry as it unfolds." },
+          { name:"Incandescent Lab", line:"Exhibits the trace of emergence." },
+        ]},
+      ]},
+
+      { type:"reframe" },
+
+      /* Triptych — three architectural spaces (tiles spread apart on scroll) */
+      { type:"triptych", variant:"spread", images:[
+        { src:"/images/case-studies/Workbench/hero-tri-1.png" },
+        { src:"/images/case-studies/Workbench/hero-tri-2-crop.png" },
+        { src:"/images/case-studies/Workbench/hero-tri-3-flip.png" },
+      ], caption:"Practice, given architecture." },
+
+      /* Plate — the conceptual shift, Playbook shown legibly with a fade */
+      { type:"plate", label:"Shift", heading:"From Stated Method to Working Room", src:"/images/case-studies/Workbench/playbook.png", fade:true, caption:"The Playbook, the method's working reference.", body:"The Workbench makes the practice visible. It reveals the field before the conclusion, the constraint before the artifact, and the inquiry before the result.\n\nProcess becomes part of the work." },
+
+      { type:"section", label:"Intervention" },
+      { type:"intervention" },
+
+      /* Steps to the open sky, a breath before the close */
+      { type:"figure", variant:"band", src:"/images/case-studies/Workbench/steps-sky.png", caption:"Emergent open." },
+
+      { type:"section", label:"Outcomes" },
+      { type:"body", text:"Real work now begins inside the Studio and surfaces later as finished outcomes. A single idea can develop across the Backstage pipeline, and the process stays visible the whole way through." },
+      { type:"insight" },
+    ],
+    credits:[
+      { name:"Daniel Dickson", role:"Designer & Builder", studio:"Field of Action" },
+    ],
+  }},
+  { id:uid(), section:"practice", title:"Apple Music", subtitle:"Designing for Orientation in a Plural System", desc:"Design systems and product surfaces for the music streaming platform.", year:"2021–2025", status:"live", tags:["Product","Systems","Music"], relations:[], hasVisual:true, role:"Creative Lead", deliverables:["Product Design","Design Systems","Visual Language","Feature Design"], caseStudy:{
     framing:"As Apple Music scaled, its design system prioritized cohesion across a rapidly expanding ecosystem. Genres, moods, editorial programs, live content, and algorithmic playlists all lived inside a beautifully unified structure. But cohesion began to blur distinction. The system was plural. The experience was flat. When everything looks equally important, nothing feels intentional.\n\nThe tension was subtle but meaningful. Listening modes shared similar visual treatment. Content hierarchy lacked strong intent signals. Users had limited cues about the experience they were selecting. Internal teams defaulted to aesthetic unity over semantic clarity.\n\nThe system optimized for harmony. Orientation was absent.",
     reframe:{
       thesis:"Wayfinding Intelligence",
@@ -72,8 +148,11 @@ export const SEED = [
       { type:"pull-quote", text:"The system began to guide." },
       { type:"insight" },
     ],
+    credits:[
+      { name:"Daniel Dickson", role:"Creative Lead", studio:"Apple" },
+    ],
   }},
-  { id:uid(), section:"practice", title:"Google Cloud", subtitle:"Embodying Progress Within a Framework Brand", desc:"Creative direction and design strategy for cloud infrastructure products.", year:"2021–2023", status:"live", tags:["Leadership","Strategy","Enterprise"], relations:[], hasVisual:true, thumbnail:"/images/case-studies/WIP/Google%20Cloud/Google_Cloud_Hero.png", role:"Design Lead", deliverables:["Creative Direction","Design Systems","Team Leadership","Product Strategy"], caseStudy:{
+  { id:uid(), section:"practice", title:"Google Cloud", subtitle:"Embodying Progress Within a Framework Brand", desc:"Creative direction and design strategy for cloud infrastructure products.", year:"2019–2021", status:"live", tags:["Leadership","Strategy","Enterprise"], relations:[], hasVisual:true, thumbnail:"/images/case-studies/WIP/Google%20Cloud/Google_Cloud_Hero.png", role:"Design Lead", deliverables:["Creative Direction","Design Systems","Team Leadership","Product Strategy"], caseStudy:{
     framing:"Google Cloud operates within one of the most disciplined brand systems in the world. That proximity creates a paradox: it inherits trust and clarity, but risks compressing differentiation. Cloud is architecture, reliability, and scale. But it must also signal ambition. The system was structured. The expression needed motion.\n\nThe design foundation was consistent but under-signaled product ambition. Expression skewed utilitarian. Storytelling signals lagged product evolution. Visual language felt infrastructural rather than progressive.\n\nThe brand could explain. It needed to feel inevitable.",
     reframe:{
       thesis:"Embodied Progress",
@@ -156,8 +235,11 @@ export const SEED = [
       { type:"pull-quote", text:"Cloud began to feel like movement. Structure became its vehicle." },
       { type:"insight" },
     ],
+    credits:[
+      { name:"Daniel Dickson", role:"Design Lead", studio:"Google Cloud" },
+    ],
   }},
-  { id:uid(), section:"practice", title:"Vevo", subtitle:"Designing in Service of the Artist", desc:"Brand identity, product design, and creative direction for the world's largest music video platform.", year:"2016–2021", status:"live", tags:["Brand","Product","Music"], relations:[], hasVisual:true, role:"Creative Director", deliverables:["Brand Identity","Product Design","Creative Direction","Design Systems"], caseStudy:{
+  { id:uid(), section:"practice", title:"Vevo", subtitle:"Designing in Service of the Artist", desc:"Brand identity, product design, and creative direction for the world's largest music video platform.", year:"2015–2019", status:"live", tags:["Brand","Product","Music"], relations:[], hasVisual:true, role:"Creative Director", deliverables:["Brand Identity","Product Design","Creative Direction","Design Systems"], caseStudy:{
     framing:"Vevo emerged in a media environment shaped by loud platform identities. But artists increasingly arrived with their own aesthetic gravity. The platform needed to evolve. Not louder. More disciplined.\n\nThe brand occupied space that belonged to the artist. Brand expression was visually assertive, competing with artist identity. Hierarchy between artist and platform was inconsistent, and over-expression diluted authority.\n\nThe platform was speaking too loudly.",
     reframe:{
       thesis:"Supporting Brand",
@@ -240,8 +322,11 @@ export const SEED = [
       { type:"pull-quote", text:"Restraint became authority." },
       { type:"insight" },
     ],
+    credits:[
+      { name:"Daniel Dickson", role:"Creative Director", studio:"Vevo" },
+    ],
   }},
-  { id:uid(), section:"practice", title:"Tribeca Festival", subtitle:"From Event Institution to Editorial Organism", desc:"Experience design and visual identity for the cultural festival.", year:"2014–2016", status:"archived", tags:["Experience","Identity","Culture"], relations:[], hasVisual:true, role:"Creative Director", deliverables:["Experience Design","Visual Identity","Environmental Graphics","Digital Design"], caseStudy:{
+  { id:uid(), section:"practice", title:"Tribeca Festival", subtitle:"From Event Institution to Editorial Organism", desc:"Experience design and visual identity for the cultural festival.", year:"2011–2015", status:"archived", tags:["Experience","Identity","Culture"], relations:[], hasVisual:true, role:"Creative Director", deliverables:["Experience Design","Visual Identity","Environmental Graphics","Digital Design"], caseStudy:{
     framing:"Tribeca began as a response to a historic moment. It became an established film institution. But institutions can become seasonal. The opportunity was to extend the festival's voice beyond the event itself. Culture does not operate once a year.\n\nThe identity was optimized for a moment, not a presence. Visual identity was anchored to festival activation, with limited editorial continuity outside the event window. Institutional tone overshadowed conversational voice, and application was fragmented across programming and digital.\n\nTribeca could gather attention. It needed to sustain it.",
     reframe:{
       thesis:"Editorial Organism",
@@ -324,6 +409,9 @@ export const SEED = [
       { type:"body", key:"outcomes" },
       { type:"pull-quote", text:"Tribeca became less episodic. More alive." },
       { type:"insight" },
+    ],
+    credits:[
+      { name:"Daniel Dickson", role:"Creative Director", studio:"Tribeca Enterprises" },
     ],
   }},
   { id:uid(), section:"writing", writeType:"memo", memoNum:1, title:"Beyond Productivity", coverImg:"https://substackcdn.com/image/fetch/w_1200,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fa205171e-cfc6-4a70-90ee-06c5245bf627_4501x4501.heic", subtitle:"Art of Emergence", desc:"Identity, emergence, and the collapse of work as meaning.", year:"2025", publishDate:"2025-02-24", status:"live", tags:["Identity","Emergence","Work"], relations:["Way of the Wave","Reshaping Players"], hasVisual:false, readMin:25, substackUrl:"https://adickson.substack.com/p/beyond-productivity", body:[

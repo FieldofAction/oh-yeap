@@ -1,8 +1,65 @@
-import React, { useMemo, useCallback, useRef, useEffect } from "react";
+import React, { useMemo, useCallback, useRef, useEffect, useState } from "react";
 import { VIS } from "../../data/seed";
 import { HiddenStrip } from "../HiddenIndicators";
 import { PatternChipsDetail, AlexanderChipsDetail } from "../PatternLens";
 import VideoEmbed from "../VideoEmbed";
+
+/* Catalogue — collapsible instrument index */
+function CatalogueBlock({ block, observe }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div ref={observe} className="cs-block cs-block--catalogue cs-sr cs-sr--rise">
+      <button type="button" className="cs-catalogue-toggle" aria-expanded={open} onClick={() => setOpen(o => !o)}>
+        <span className="cs-catalogue-toggle-head">
+          {block.label && <span className="cs-block--section-label">{block.label}</span>}
+          {block.heading && <span className="cs-catalogue-heading">{block.heading}</span>}
+        </span>
+        <span className={`cs-catalogue-chev${open ? " is-open" : ""}`} aria-hidden="true" />
+      </button>
+      {open && (
+        <div className="cs-catalogue-groups">
+          {block.groups?.map((g, gi) => (
+            <div key={gi} className="cs-cat-group">
+              <div className="cs-cat-moment">
+                {g.moment}
+                {g.sub && <span className="cs-cat-moment-sub">{g.sub}</span>}
+              </div>
+              <div className="cs-cat-rows">
+                {g.items?.map((it, ii) => (
+                  <div key={ii} className="cs-cat-row">
+                    <span className="cs-cat-name">{it.name}</span>
+                    <span className="cs-cat-line">{it.line}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* Triptych — three cards; with variant:"spread" the outer tiles
+   slide apart on scroll to reveal the middle as an individual tile */
+function TriptychBlock({ block, observe }) {
+  const spread = block.variant === "spread";
+  /* Scroll progress (--spread) is driven by the shared handler in CaseStudyDetail. */
+  const cls = `cs-block cs-block--triptych${spread ? " cs-block--spread" : ""} cs-sr${spread ? "" : " cs-sr--stagger"}`;
+  return (
+    <div ref={observe} className={cls}>
+      {block.images?.map((img, i) => (
+        <div key={i} className="cs-triptych-card" style={img.bg ? { background: img.bg } : {}}>
+          {img.src && <img src={img.src} alt={img.alt || ""} />}
+          {(img.label || img.title) && <div className="cs-triptych-overlay" />}
+          {img.label && <div className="cs-triptych-label">{img.label}</div>}
+          {img.title && <div className="cs-triptych-title">{img.title}</div>}
+        </div>
+      ))}
+      {block.caption && <div className="cs-cap">{block.caption}</div>}
+    </div>
+  );
+}
 
 /* ═══════════════════════════════════════════════════════════
    Scroll-triggered reveal system
@@ -59,12 +116,65 @@ function BlockImg({ src, alt, fg, artVi, index = 0 }) {
   );
 }
 
+/* ── Instrument icon rail — decorative vertical glyph stack ── */
+function IconRail({ items, active = 0 }) {
+  if (!items?.length) return null;
+  return (
+    <div className="cs-icon-rail" aria-hidden="true">
+      {items.map((it, i) => (
+        <div key={i} className={`cs-icon-rail-item${i === active ? " active" : ""}`} title={it.label || ""}>
+          <span>{it.glyph}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patternLens }) {
   const heroVi = useMemo(() => VIS[Math.abs(item.title.charCodeAt(0)) % VIS.length](fg), [item.title, fg]);
   const artVi = useCallback((i) => VIS[(Math.abs(item.title.charCodeAt(0)) + i + 1) % VIS.length](fg), [item.title, fg]);
 
   const overlayRef = useRef(null);
   const observe = useScrollReveal(overlayRef);
+
+  /* Scroll-driven motion — drives --p (0..1 progress through viewport) on
+     marked image blocks for subtle parallax / reveal. Scoped to Workbench. */
+  useEffect(() => {
+    if (item.title !== "Workbench") return;
+    const root = overlayRef.current;
+    if (!root) return;
+    const pEls = Array.from(root.querySelectorAll(".cs-block--material, .cs-block--band, .cs-block--plate, .cs-block--plate-split"));
+    const triEls = Array.from(root.querySelectorAll(".cs-block--triptych.cs-block--spread"));
+    if (!pEls.length && !triEls.length) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const vh = window.innerHeight || 800;
+      // read pass — all layout reads batched first
+      const pRects = pEls.map((el) => el.getBoundingClientRect());
+      const triRects = triEls.map((el) => el.getBoundingClientRect());
+      // write pass — no interleaved reads, so no forced reflow per element
+      for (let i = 0; i < pEls.length; i++) {
+        const r = pRects[i];
+        const p = Math.max(0, Math.min(1, 1 - (r.top + r.height / 2) / vh));
+        pEls[i].style.setProperty("--p", p.toFixed(3));
+      }
+      for (let i = 0; i < triEls.length; i++) {
+        const r = triRects[i];
+        const s = Math.max(0, Math.min(1, (vh - r.top) / (vh * 0.85)));
+        triEls[i].style.setProperty("--spread", s.toFixed(3));
+      }
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
+    update();
+    root.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      root.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [item.title]);
 
   const cs = item.caseStudy;
   if (!cs) return null;
@@ -79,6 +189,36 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
     switch (block.type) {
       /* ── Hero image — full bleed ── */
       case "hero":
+        /* Floating variant: framed card on a gradient stage with an instrument rail */
+        if (block.variant === "float") {
+          return (
+            <div key={key} ref={observe} className="cs-block cs-block--hero-float cs-sr cs-sr--scale">
+              <div className="cs-hero-float-bg" style={block.bgGradient ? { background: block.bgGradient } : undefined} />
+              <div className="cs-hero-float-stage">
+                <div className="cs-hero-float-card">
+                  {block.src ? (
+                    <img src={block.src} alt={block.alt || item.title} />
+                  ) : (
+                    <BlockImg src={null} alt={item.title} fg={fg} artVi={artVi} index={idx} />
+                  )}
+                </div>
+                <IconRail items={block.rail} />
+              </div>
+              {block.caption && <div className="cs-cap cs-cap--light">{block.caption}</div>}
+            </div>
+          );
+        }
+        /* Frame variant: full screenshot shown legibly (contain) in a clean hairline frame */
+        if (block.variant === "frame") {
+          return (
+            <div key={key} ref={observe} className="cs-block cs-block--plate-frame cs-sr cs-sr--scale">
+              <div className="cs-plate-figure">
+                {block.src ? <img src={block.src} alt={block.alt || item.title} /> : <BlockImg src={null} alt={item.title} fg={fg} artVi={artVi} index={idx} />}
+              </div>
+              {block.caption && <div className="cs-cap cs-cap--center">{block.caption}</div>}
+            </div>
+          );
+        }
         return (
           <div key={key} ref={observe} className={`cs-block cs-block--hero${block.variant ? ` cs-block--${block.variant}` : ""} cs-sr cs-sr--scale`}>
             <div className="cs-block-img">
@@ -179,7 +319,13 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         return (
           <div key={key} ref={observe} className="cs-block cs-block--body cs-sr cs-sr--rise">
             <div className="cs-body">
-              {text.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}
+              {text.split("\n\n").map((p, i) => (
+                <p key={i}>
+                  {p.split(/(\*\*[^*]+\*\*)/g).map((seg, j) =>
+                    /^\*\*[^*]+\*\*$/.test(seg) ? <strong key={j}>{seg.slice(2, -2)}</strong> : seg
+                  )}
+                </p>
+              ))}
             </div>
           </div>
         );
@@ -234,6 +380,13 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
                   <div className="cs-intv-num">03</div>
                   <div className="cs-intv-h">Governance</div>
                   <div className="cs-intv-body">{cs.intervention.governance.map((s, i) => <p key={i}>{s}</p>)}</div>
+                </div>
+              )}
+              {cs.intervention.method && (
+                <div className="cs-intv-card">
+                  <div className="cs-intv-num">04</div>
+                  <div className="cs-intv-h">Method, Made Operable</div>
+                  <div className="cs-intv-body">{cs.intervention.method.map((s, i) => <p key={i}>{s}</p>)}</div>
                 </div>
               )}
             </div>
@@ -292,12 +445,19 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
               {block.heading && <h2 className="cs-split-heading">{block.heading}</h2>}
               {block.body && <div className="cs-split-body">{block.body.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>}
             </div>
-            <div className="cs-split-image">
+            <div className={`cs-split-image${block.panel ? " cs-split-image--panel" : ""}`} style={block.panel && block.panelGradient ? { background: block.panelGradient } : undefined}>
               {block.src ? (
-                <img src={block.src} alt={block.alt || ""} />
+                block.panel ? (
+                  <div className="cs-split-card">
+                    <img src={block.src} alt={block.alt || ""} />
+                  </div>
+                ) : (
+                  <img src={block.src} alt={block.alt || ""} />
+                )
               ) : (
                 <div className="cs-split-gradient" />
               )}
+              {block.panel && <IconRail items={block.rail} active={block.railActive ?? 0} />}
             </div>
           </div>
         );
@@ -305,7 +465,8 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       /* ── Device — screenshot in CSS monitor mockup ── */
       case "device":
         return (
-          <div key={key} ref={observe} className="cs-block cs-block--device cs-sr cs-sr--scale">
+          <div key={key} ref={observe} className={`cs-block cs-block--device${block.panel ? " cs-block--device-panel" : ""} cs-sr cs-sr--scale`} style={block.panel && block.bgGradient ? { background: block.bgGradient } : undefined}>
+            {block.panel && <IconRail items={block.rail} active={block.railActive ?? 0} />}
             <div className="cs-device-glow" />
             <div className="cs-device-frame">
               <div className="cs-device-screen">
@@ -346,21 +507,9 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         );
       }
 
-      /* ── Triptych — tall poster-style cards ── */
+      /* ── Triptych — tall poster-style cards (scroll-spread when variant) ── */
       case "triptych":
-        return (
-          <div key={key} ref={observe} className="cs-block cs-block--triptych cs-sr cs-sr--stagger">
-            {block.images?.map((img, i) => (
-              <div key={i} className="cs-triptych-card" style={img.bg ? { background: img.bg } : {}}>
-                {img.src && <img src={img.src} alt={img.alt || ""} />}
-                <div className="cs-triptych-overlay" />
-                {img.label && <div className="cs-triptych-label">{img.label}</div>}
-                {img.title && <div className="cs-triptych-title">{img.title}</div>}
-              </div>
-            ))}
-            {block.caption && <div className="cs-cap">{block.caption}</div>}
-          </div>
-        );
+        return <TriptychBlock key={key} block={block} observe={observe} />;
 
       /* ── Atmosphere — floating UI fragment on product background ── */
       case "atmosphere":
@@ -395,6 +544,141 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
               </div>
             </div>
             {block.caption && <div className="cs-cap" style={{ position: "relative", zIndex: 2, textAlign: "center", color: "rgba(255,255,255,.5)", marginTop: 16 }}>{block.caption}</div>}
+          </div>
+        );
+
+      /* ── Collage — bento moodboard of screenshots on a dark canvas ── */
+      case "collage":
+        return (
+          <div key={key} ref={observe} className="cs-block cs-block--collage cs-sr cs-sr--scale">
+            <div className="cs-collage-grid">
+              {block.images?.map((img, i) => (
+                <div
+                  key={i}
+                  className={`cs-collage-cell${img.brand ? " cs-collage-cell--brand" : ""}`}
+                  style={{ gridColumn: `span ${img.w || 1}`, gridRow: `span ${img.h || 1}` }}
+                >
+                  {img.brand ? (
+                    <div className="cs-collage-brand">
+                      <span className="cs-collage-brand-name">{img.brand}</span>
+                      {img.sub && <span className="cs-collage-brand-sub">{img.sub}</span>}
+                    </div>
+                  ) : (
+                    <img src={img.src} alt={img.alt || ""} loading="lazy" />
+                  )}
+                </div>
+              ))}
+            </div>
+            {block.caption && <div className="cs-cap cs-cap--light cs-cap--center">{block.caption}</div>}
+          </div>
+        );
+
+      /* ── Catalogue — disciplined typographic index of the instruments ── */
+      case "catalogue":
+        return <CatalogueBlock key={key} block={block} observe={observe} />;
+
+      /* ── Plate — one legible figure, optionally paired with prose (split) ── */
+      case "plate": {
+        const figure = (
+          <div className={`cs-plate-figure${block.fade ? " cs-plate-figure--fade" : ""}`}>
+            <img src={block.src} alt={block.alt || ""} loading="lazy" />
+          </div>
+        );
+        if (block.heading || block.body) {
+          return (
+            <div key={key} ref={observe} className={`cs-block cs-block--plate-split${block.align === "right" ? " cs-block--plate-split-rev" : ""} cs-sr cs-sr--rise`}>
+              <div className="cs-plate-text">
+                {block.label && <div className="cs-split-subtitle">{block.label}</div>}
+                {block.heading && <h2 className="cs-split-heading">{block.heading}</h2>}
+                {block.body && <div className="cs-split-body">{block.body.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>}
+              </div>
+              <div>
+                {figure}
+                {block.caption && <div className="cs-cap">{block.caption}</div>}
+              </div>
+            </div>
+          );
+        }
+        return (
+          <div key={key} ref={observe} className="cs-block cs-block--plate cs-sr cs-sr--rise">
+            {figure}
+            {block.caption && <div className="cs-cap cs-cap--center">{block.caption}</div>}
+          </div>
+        );
+      }
+
+      /* ── Plates — a row of legible cropped figures (the moments) ── */
+      case "plates":
+        return (
+          <div key={key} ref={observe} className="cs-block cs-block--plates cs-sr cs-sr--stagger">
+            <div className="cs-plates-row">
+              {block.items?.map((it, i) => (
+                <figure key={i} className="cs-plate-item">
+                  <div className="cs-plate-figure"><img src={it.src} alt={it.alt || ""} loading="lazy" /></div>
+                  <figcaption>
+                    {it.label && <span className="cs-plate-eyebrow">{it.label}</span>}
+                    {it.line && <span className="cs-plate-line">{it.line}</span>}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+            {block.caption && <div className="cs-cap cs-cap--center">{block.caption}</div>}
+          </div>
+        );
+
+      /* ── Diptych — screenshot paired with an architecture image (or its slot) ── */
+      case "diptych": {
+        const scaleTag = block.scale ? block.scale.toUpperCase() : "";
+        const shot = block.screenshot || {};
+        const arch = block.arch || {};
+        const cells = [
+          <figure key="shot" className="cs-dip-cell">
+            <div className="cs-plate-figure"><img src={shot.src} alt={shot.alt || ""} loading="lazy" /></div>
+            {shot.cap && <figcaption>{shot.cap}</figcaption>}
+          </figure>,
+          <figure key="arch" className="cs-dip-cell">
+            {arch.src ? (
+              <div className="cs-plate-figure cs-plate-figure--dark"><img src={arch.src} alt={arch.alt || ""} loading="lazy" /></div>
+            ) : (
+              <div className="cs-arch-slot">
+                <span className="cs-arch-slot-tag">Architecture · {scaleTag || "image"}</span>
+                {arch.prompt && <span className="cs-arch-slot-prompt">{arch.prompt}</span>}
+              </div>
+            )}
+            {arch.cap && <figcaption>{arch.cap}</figcaption>}
+          </figure>,
+        ];
+        return (
+          <div key={key} ref={observe} className="cs-block cs-block--diptych cs-sr cs-sr--rise">
+            {(block.label || scaleTag) && (
+              <div className="cs-dip-head">
+                {block.label && <span className="cs-dip-label">{block.label}</span>}
+                {scaleTag && <span className="cs-dip-scale">{scaleTag}</span>}
+              </div>
+            )}
+            <div className="cs-dip-pair">{block.archFirst ? [cells[1], cells[0]] : cells}</div>
+            {block.caption && <div className="cs-cap cs-cap--center">{block.caption}</div>}
+          </div>
+        );
+      }
+
+      /* ── Four-fold — the method's structure as a drawn diagram ── */
+      case "fourfold":
+        return (
+          <div key={key} ref={observe} className="cs-block cs-block--fourfold cs-sr cs-sr--rise">
+            {block.label && <div className="cs-block--section-label">{block.label}</div>}
+            {block.heading && <h2 className="cs-fourfold-heading">{block.heading}</h2>}
+            <div className="cs-fourfold-row">
+              {block.nodes?.map((n, i) => (
+                <div key={i} className="cs-ff-node">
+                  <span className="cs-ff-glyph">{n.glyph}</span>
+                  <span className="cs-ff-name">{n.name}</span>
+                  <span className="cs-ff-rule" />
+                  <span className="cs-ff-to">{n.to}</span>
+                </div>
+              ))}
+            </div>
+            {block.body && <div className="cs-fourfold-body">{block.body.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>}
           </div>
         );
 
@@ -538,6 +822,21 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
               </>
             )}
           </>
+        )}
+
+        {/* ── Credits ── */}
+        {cs.credits?.length > 0 && (
+          <div ref={observe} className="cs-credits cs-sr cs-sr--rise">
+            <div className="cs-section-label">Credits</div>
+            <div className="cs-credits-grid">
+              {cs.credits.map((c, i) => (
+                <div key={i} className="cs-credit">
+                  <div className="cs-credit-name">{c.name}</div>
+                  <div className="cs-credit-role">{c.role}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         <PatternChipsDetail itemTitle={item.title} active={lens} />

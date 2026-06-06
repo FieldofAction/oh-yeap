@@ -604,7 +604,21 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .cs-block--figure .cs-block-img img{width:100%;height:100%;object-fit:cover}
 .cs-block--figure .cs-block-img svg{width:100%;height:100%}
 .cs-block--figure .cs-block-glow{position:absolute;inset:0;border-radius:10px;background:radial-gradient(ellipse at 50% 50%,rgba(47,91,255,0.04) 0%,transparent 60%);pointer-events:none}
-@media(max-width:768px){.cs-block--figure{width:calc(100% + 40px);margin-left:-20px;padding:16px 16px 12px;border-radius:12px}}
+/* Material band — full-width image, rounded to site standard, captioned */
+.cs-block--figure.cs-block--material{background:none;padding:0;border-radius:0;width:calc(100% + 80px);margin-left:-40px}
+.cs-block--figure.cs-block--material .cs-block-img{aspect-ratio:16/9;border-radius:8px;background:var(--bg);clip-path:inset(0 round 8px)}
+.cs-block--figure.cs-block--material .cs-block-img img{object-fit:cover;object-position:center;transform:scale(1.22) translateY(calc((var(--p,.5) - .5) * 14%));will-change:transform}
+.cs-block--figure.cs-block--material .cs-cap{margin-top:14px}
+/* Unifying grade — warm near-monochrome so the architectural images read as one source */
+.cs-block--figure.cs-block--material .cs-block-img img,
+.cs-block--triptych .cs-triptych-card img,
+.cs-block--figure.cs-block--band .cs-block-img img{filter:saturate(.6) sepia(.06) contrast(.98) brightness(1.02)}
+@media(max-width:768px){.cs-block--figure.cs-block--material{width:calc(100% + 40px);margin-left:-20px;padding:0}}
+/* Flipped band — vertical-middle crop of the procession, flipped, full-bleed */
+.cs-block--figure.cs-block--band{background:none;padding:0;border-radius:0}
+.cs-block--figure.cs-block--band .cs-block-img{aspect-ratio:16/9;border-radius:8px;background:var(--bg);clip-path:inset(0 round 8px)}
+.cs-block--figure.cs-block--band .cs-block-img img{width:100%;height:100%;object-fit:cover;object-position:center;transform:scale(calc(1.02 + (1 - var(--p,1)) * 0.09));will-change:transform}
+@media(max-width:768px){.cs-block--figure{width:calc(100% + 40px);margin-left:-20px;padding:16px 16px 12px;border-radius:12px}.cs-block--figure.cs-block--band{padding:0;border-radius:0}.cs-block--figure.cs-block--band .cs-block-img{aspect-ratio:16/9}}
 
 /* Two-up — inset container with gradient */
 .cs-block--two-up{width:calc(100% + 80px);margin-left:-40px;display:grid;grid-template-columns:1fr 1fr;gap:16px;background:linear-gradient(180deg,var(--sf) 0%,color-mix(in srgb,var(--sf) 60%,var(--bg)) 100%);border-radius:16px;padding:24px 24px 16px}
@@ -642,7 +656,8 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 @media(max-width:768px){.cs-block--hero .cs-cap,.cs-block--figure .cs-cap{padding:0}}
 
 /* Section header — editorial */
-.cs-block--section{grid-column:1/2;margin-bottom:12px;padding-bottom:0;border:none}
+.cs-block--section{grid-column:1/2;margin-top:clamp(44px,6vw,80px);margin-bottom:12px;padding-bottom:0;border:none}
+.cs-block--hero + .cs-block--section{margin-top:0}
 .cs-block--section-label{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ff);margin-bottom:0;line-height:1}
 .cs-block--section-rule{width:32px;height:1px;background:var(--bd);margin-top:12px}
 
@@ -690,8 +705,12 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .cs-block--intervention{grid-column:1/-1;width:calc(100% + 80px);margin-left:-40px;margin-bottom:64px}
 .cs-intervention-grid{display:flex;flex-direction:column;gap:16px}
 @media(max-width:768px){.cs-block--intervention{width:calc(100% + 40px);margin-left:-20px}}
-.cs-intv-card{background:var(--sf);padding:36px 40px;display:grid;grid-template-columns:64px 1fr;gap:0 28px;align-items:start;border-radius:12px}
-.cs-intv-num{font-family:var(--display);font-size:44px;font-weight:600;color:var(--ff);opacity:.18;line-height:1;grid-row:1/3}
+.cs-intv-card{position:relative;background:linear-gradient(180deg,color-mix(in srgb,var(--sf) 55%,var(--bg)) 0%,var(--sf) 100%);border:1px solid var(--bd);box-shadow:0 1px 3px rgba(0,0,0,.03);padding:38px 42px;display:grid;grid-template-columns:72px 1fr;gap:0 28px;align-items:start;border-radius:16px;transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s cubic-bezier(.16,1,.3,1),border-color .4s cubic-bezier(.16,1,.3,1)}
+.cs-intv-card::before{content:"";position:absolute;left:0;top:20px;bottom:20px;width:3px;border-radius:0 3px 3px 0;background:var(--fg);opacity:0;transform:scaleY(.5);transform-origin:center;transition:opacity .4s,transform .45s cubic-bezier(.16,1,.3,1)}
+.cs-intv-card:hover{transform:translateY(-4px);box-shadow:0 22px 55px rgba(0,0,0,.09);border-color:color-mix(in srgb,var(--fg) 12%,transparent)}
+.cs-intv-card:hover::before{opacity:1;transform:scaleY(1)}
+.cs-intv-num{font-family:var(--display);font-size:52px;font-weight:600;color:var(--ff);opacity:.16;line-height:1;grid-row:1/3;transition:opacity .4s,color .4s}
+.cs-intv-card:hover .cs-intv-num{opacity:.28}
 .cs-intv-h{font-size:15px;font-weight:700;letter-spacing:0.04em;color:var(--fg);margin-bottom:8px}
 .cs-intv-body{font-size:14px;font-weight:400;color:color-mix(in srgb,var(--fg) 75%,var(--fm));line-height:1.85}
 .cs-intv-body p{margin-bottom:8px}
@@ -786,7 +805,14 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .cs-block--triptych .cs-triptych-label{position:relative;z-index:2;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:8px}
 .cs-block--triptych .cs-triptych-title{position:relative;z-index:2;font-size:clamp(16px,2.5vw,28px);font-weight:700;line-height:1.1;color:#fff;text-transform:uppercase;letter-spacing:-.01em}
 .cs-block--triptych .cs-cap{grid-column:1/-1;padding:0;text-align:center;margin-top:12px}
-@media(max-width:768px){.cs-block--triptych{width:calc(100% + 40px);margin-left:-20px;grid-template-columns:1fr}.cs-block--triptych .cs-triptych-card{aspect-ratio:16/9}}
+@media(max-width:768px){.cs-block--triptych{width:calc(100% + 40px);margin-left:-20px;grid-template-columns:1fr}.cs-block--triptych .cs-triptych-card{aspect-ratio:16/9}.cs-block--triptych.cs-block--spread .cs-triptych-card:nth-child(1),.cs-block--triptych.cs-block--spread .cs-triptych-card:nth-child(2),.cs-block--triptych.cs-block--spread .cs-triptych-card:nth-child(3){transform:none}}
+/* Spread variant — outer tiles slide apart on scroll, revealing the middle */
+.cs-block--triptych.cs-block--spread{overflow:visible}
+.cs-block--triptych.cs-block--spread .cs-triptych-card{will-change:transform}
+.cs-block--triptych.cs-block--spread .cs-triptych-card:nth-child(1){transform:translateX(calc(38px - var(--spread,0) * 78px))}
+.cs-block--triptych.cs-block--spread .cs-triptych-card:nth-child(2){transform:scale(calc(1 + var(--spread,0) * 0.04));z-index:2}
+.cs-block--triptych.cs-block--spread .cs-triptych-card:nth-child(3){transform:translateX(calc(-38px + var(--spread,0) * 78px))}
+@media(prefers-reduced-motion:reduce){.cs-block--triptych.cs-block--spread .cs-triptych-card{transform:none}}
 
 /* ── Atmosphere — floating UI fragment on rich product background ── */
 .cs-block--atmosphere{width:calc(100% + 80px);margin-left:-40px;min-height:80vh;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;padding:80px 40px;border-radius:0}
@@ -812,6 +838,132 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 
 /* ── Split with background color tint ── */
 .cs-split-text--tinted{background:color-mix(in srgb,var(--ac1) 6%,var(--bg))}
+
+/* ═══════════════════════════════════════════════════════════
+   Showcase treatments — floating hero, gradient panels,
+   instrument rail, bento collage. Scoped to new classes so
+   other case studies are unaffected.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Caption helpers */
+.cs-cap--light{color:rgba(255,255,255,.55)}
+.cs-cap--center{text-align:center}
+
+/* Instrument icon rail — white pill of glyphs, one active */
+.cs-icon-rail{display:flex;flex-direction:column;gap:6px;padding:7px;border-radius:18px;background:rgba(255,255,255,.94);box-shadow:0 24px 60px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.7);flex:0 0 auto}
+.cs-icon-rail-item{width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:14px;line-height:1;color:#73737e}
+.cs-icon-rail-item.active{background:color-mix(in srgb,var(--ac1) 15%,#fff);color:var(--ac1)}
+
+/* Floating hero — framed card on a gradient stage */
+.cs-block--hero-float{position:relative;width:calc(100% + 80px);margin-left:-40px;border-radius:22px;overflow:hidden;padding:clamp(40px,7vw,104px) clamp(24px,5vw,72px);display:flex;flex-direction:column;align-items:center}
+.cs-hero-float-bg{position:absolute;inset:0;z-index:0;background:radial-gradient(120% 120% at 25% 15%,#8a8dd4 0%,#5d61a4 45%,#41436a 100%)}
+.cs-hero-float-bg::after{content:'';position:absolute;inset:0;background:radial-gradient(60% 80% at 80% 90%,rgba(160,162,240,.14) 0%,transparent 60%)}
+.cs-hero-float-stage{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:clamp(14px,2.5vw,28px);width:100%;max-width:900px}
+.cs-hero-float-card{flex:1 1 auto;max-width:740px;border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 50px 110px rgba(0,0,0,.5),0 6px 16px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.12)}
+.cs-hero-float-card img{display:block;width:100%;height:auto}
+.cs-block--hero-float .cs-cap{margin-top:28px}
+@media(max-width:768px){.cs-block--hero-float{width:calc(100% + 40px);margin-left:-20px;padding:40px 18px}.cs-icon-rail-item{width:30px;height:30px}}
+
+/* Gradient split panel — screenshot floats as a card */
+.cs-split-image--panel{display:flex;align-items:center;justify-content:center;gap:clamp(12px,2vw,22px);padding:clamp(28px,4vw,52px) clamp(20px,3vw,40px);min-height:clamp(420px,40vw,560px);overflow:hidden}
+.cs-split-card{height:84%;aspect-ratio:5/6;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 36px 80px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.14)}
+.cs-split-image--panel .cs-split-card img{position:static;display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+@media(max-width:768px){.cs-split-image--panel{min-height:auto;padding:36px 20px}.cs-split-card{height:auto;width:100%;max-width:340px;aspect-ratio:5/6}}
+
+/* Device on a gradient panel */
+.cs-block--device-panel{width:calc(100% + 80px);margin-left:-40px;border-radius:22px;overflow:hidden;padding:clamp(48px,7vw,96px) clamp(24px,5vw,64px) 0;position:relative}
+.cs-block--device-panel .cs-icon-rail{position:absolute;top:50%;right:clamp(18px,4vw,52px);transform:translateY(-50%);z-index:4}
+.cs-block--device-panel .cs-cap{color:rgba(255,255,255,.62)}
+@media(max-width:768px){.cs-block--device-panel{width:calc(100% + 40px);margin-left:-20px;padding:40px 16px 0}.cs-block--device-panel .cs-icon-rail{display:none}}
+
+/* Bento collage — moodboard of the nine instruments on dark canvas */
+.cs-block--collage{width:calc(100% + 80px);margin-left:-40px;background:linear-gradient(180deg,#101019 0%,#0a0a11 100%);border-radius:22px;padding:clamp(28px,4vw,56px)}
+.cs-collage-grid{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:clamp(88px,8.5vw,138px);gap:clamp(8px,1vw,14px);grid-auto-flow:row dense}
+.cs-collage-cell{border-radius:13px;overflow:hidden;position:relative;background:#16161f;box-shadow:0 12px 34px rgba(0,0,0,.34),inset 0 0 0 1px rgba(255,255,255,.04)}
+.cs-collage-cell img{width:100%;height:100%;object-fit:cover;object-position:top}
+.cs-collage-cell--brand{background:linear-gradient(140deg,var(--ac1) 0%,color-mix(in srgb,var(--ac1) 55%,#000) 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:12px}
+.cs-collage-brand-name{color:#fff;font-family:var(--display);font-size:clamp(16px,1.9vw,24px);font-weight:600;letter-spacing:-.01em}
+.cs-collage-brand-sub{color:rgba(255,255,255,.72);font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+.cs-block--collage .cs-cap{margin-top:18px}
+@media(max-width:768px){.cs-block--collage{width:calc(100% + 40px);margin-left:-20px;padding:24px}.cs-collage-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* ═══════════════════════════════════════════════════════════
+   Specimen system — disciplined, monochrome, typographic.
+   Legible plates, a catalogue index, screenshot↔architecture
+   diptychs, and the four-fold diagram.
+   ═══════════════════════════════════════════════════════════ */
+
+/* Legible framed figure (hero frame, plates, diptychs) */
+.cs-block--plate-frame{margin:8px 0}
+.cs-plate-figure{position:relative;border:1px solid var(--bd);border-radius:8px;overflow:hidden;background:var(--sf);box-shadow:0 24px 60px rgba(0,0,0,.07)}
+.cs-plate-figure img{display:block;width:100%;height:auto}
+.cs-plate-figure--fade::after{content:'';position:absolute;left:0;right:0;bottom:0;height:42%;background:linear-gradient(to bottom,transparent,var(--bg));pointer-events:none}
+.cs-plate-figure--dark{background:#0e0e12;border-color:rgba(255,255,255,.08)}
+/* Subtle scroll parallax on UI plates (driven by --p, gated to Workbench) */
+.cs-plate-figure{transform:translateY(calc((.5 - var(--p,.5)) * 16px));will-change:transform}
+
+/* Catalogue — the nine instruments as a collapsible index */
+.cs-block--catalogue{margin:clamp(44px,6vw,80px) 0 8px}
+.cs-catalogue-toggle{width:100%;display:flex;align-items:flex-end;justify-content:space-between;gap:24px;background:none;border:0;padding:18px 0;margin:0;cursor:pointer;text-align:left;border-bottom:1px solid var(--bd);transition:border-color .2s}
+.cs-catalogue-toggle:hover{border-bottom-color:var(--ff)}
+.cs-catalogue-toggle-head{display:flex;flex-direction:column;gap:8px}
+.cs-catalogue-heading{display:block;font-family:var(--display);font-size:clamp(22px,3vw,36px);font-weight:500;line-height:1.1;letter-spacing:-.01em;color:var(--fg);margin:0;max-width:18ch}
+.cs-catalogue-chev{flex:none;width:11px;height:11px;margin-bottom:10px;border-right:2px solid var(--ff);border-bottom:2px solid var(--ff);transform:rotate(45deg);transition:transform .25s ease}
+.cs-catalogue-toggle:hover .cs-catalogue-chev{border-color:var(--fg)}
+.cs-catalogue-chev.is-open{transform:rotate(-135deg);margin-bottom:4px}
+.cs-catalogue-groups{display:flex;flex-direction:column;gap:36px;margin-top:32px}
+.cs-cat-group{display:grid;grid-template-columns:150px 1fr;gap:clamp(16px,4vw,56px);align-items:start}
+.cs-cat-moment{display:flex;flex-direction:column;gap:3px;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ff);padding-top:15px}
+.cs-cat-moment-sub{font-size:10.5px;font-weight:400;letter-spacing:.02em;text-transform:none;color:var(--fm);font-style:italic}
+.cs-cat-rows{display:flex;flex-direction:column}
+.cs-cat-row{display:grid;grid-template-columns:minmax(150px,210px) 1fr;gap:clamp(12px,3vw,40px);padding:16px 0;border-top:1px solid var(--bd);align-items:baseline}
+.cs-catalogue-groups>.cs-cat-group:last-child .cs-cat-row:last-child{border-bottom:1px solid var(--bd)}
+.cs-cat-name{font-size:clamp(15px,1.6vw,19px);font-weight:500;color:var(--fg)}
+.cs-cat-line{font-size:14px;line-height:1.6;color:var(--fm);max-width:52ch}
+@media(max-width:680px){.cs-cat-group{grid-template-columns:1fr;gap:10px}.cs-cat-row{grid-template-columns:1fr;gap:6px}}
+
+/* Plate split — legible figure paired with prose (The Shift) */
+.cs-block--plate-split{display:grid;grid-template-columns:1fr 1fr;gap:clamp(24px,5vw,64px);align-items:center;margin:8px 0}
+.cs-block--plate-split-rev{direction:rtl}
+.cs-block--plate-split-rev>*{direction:ltr}
+.cs-plate-text{display:flex;flex-direction:column;justify-content:center}
+@media(max-width:768px){.cs-block--plate-split{grid-template-columns:1fr;gap:24px}}
+
+/* Plates row (optional contact strip) */
+.cs-block--plates{margin:8px 0}
+.cs-plates-row{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,2vw,24px)}
+.cs-plate-item{margin:0;display:flex;flex-direction:column;gap:12px}
+.cs-plate-item figcaption{display:flex;flex-direction:column;gap:4px}
+.cs-plate-eyebrow{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ff)}
+.cs-plate-line{font-size:13px;line-height:1.5;color:var(--fm)}
+@media(max-width:768px){.cs-plates-row{grid-template-columns:1fr}}
+
+/* Diptych — screenshot ↔ architecture image (or its slot) */
+.cs-block--diptych{margin:12px 0}
+.cs-dip-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;border-bottom:1px solid var(--bd);padding-bottom:10px}
+.cs-dip-label{font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--fg)}
+.cs-dip-scale{font-size:10px;font-weight:600;letter-spacing:.16em;color:var(--ff)}
+.cs-dip-pair{display:grid;grid-template-columns:1fr 1fr;gap:clamp(10px,1.6vw,20px);align-items:stretch}
+.cs-dip-cell{margin:0;display:flex;flex-direction:column;gap:10px}
+.cs-dip-cell .cs-plate-figure{flex:1 1 auto;display:flex}
+.cs-dip-cell .cs-plate-figure img{margin:auto}
+.cs-dip-cell figcaption{font-size:12px;line-height:1.5;color:var(--fm)}
+.cs-arch-slot{flex:1 1 auto;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:28px;border:1px dashed color-mix(in srgb,var(--ff) 50%,transparent);border-radius:8px;background:repeating-linear-gradient(45deg,transparent,transparent 11px,color-mix(in srgb,var(--bd) 26%,transparent) 11px,color-mix(in srgb,var(--bd) 26%,transparent) 12px)}
+.cs-arch-slot-tag{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ff)}
+.cs-arch-slot-prompt{font-size:12.5px;line-height:1.55;color:var(--fm);max-width:36ch;font-style:italic}
+@media(max-width:768px){.cs-dip-pair{grid-template-columns:1fr}}
+
+/* Four-fold — the method as a drawn diagram */
+.cs-block--fourfold{margin:12px 0;padding:clamp(28px,5vw,52px) 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+.cs-fourfold-heading{font-family:var(--display);font-size:clamp(24px,3.4vw,40px);font-weight:500;letter-spacing:-.01em;color:var(--fg);margin:8px 0 36px}
+.cs-fourfold-row{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,2vw,28px);margin-bottom:30px}
+.cs-ff-node{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding-top:16px;border-top:1px solid var(--fg)}
+.cs-ff-glyph{font-size:28px;line-height:1;color:var(--fg);font-weight:300}
+.cs-ff-name{font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--fg)}
+.cs-ff-rule{width:18px;height:1px;background:var(--ff)}
+.cs-ff-to{font-size:13px;line-height:1.5;color:var(--fm)}
+.cs-fourfold-body{font-size:15px;line-height:1.7;color:var(--fm);max-width:600px}
+@media(max-width:680px){.cs-fourfold-row{grid-template-columns:repeat(2,1fr);gap:22px}}
 
 /* Footer — deliverables + tags */
 .cs-footer{border-top:1px solid var(--bd);padding-top:56px;margin-top:48px}
