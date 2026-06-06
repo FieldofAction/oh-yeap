@@ -1168,12 +1168,17 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .sp-specimen .sp-components-num,.sp-specimen .sp-step-num{position:relative;padding-left:11px}
 .sp-specimen .sp-components-num::before,.sp-specimen .sp-step-num::before{content:"";position:absolute;left:0;top:5px;width:5px;height:1px;background:var(--ff)}
 
-/* Atmospheric backing — a felt field bleeding behind the operable structure.
-   A condition arrives out of atmosphere; the table/diagram sits within it. */
-.sp-atmo{position:relative;z-index:0}
-.sp-atmo::before{content:"";position:absolute;inset:-26px -28px;z-index:-1;border-radius:18px;background:linear-gradient(color-mix(in srgb,var(--bg) 66%,transparent),color-mix(in srgb,var(--bg) 82%,transparent)),var(--atmo) center/cover no-repeat}
-.sp-atmo .sp-table{background:transparent}
-.sp-atmo .sp-table-head{background:color-mix(in srgb,var(--bg) 48%,transparent)}
+/* Atmospheric backing — large editorial plates that break out of the column and
+   float behind the content. A condition arrives out of atmosphere. */
+.sp-atmo-host{position:relative;z-index:0}
+.sp-atmo-plate{position:absolute;z-index:-1;top:-90px;bottom:-90px;left:50%;width:100vw;max-width:1600px;transform:translateX(-50%);background-position:center;background-size:cover;background-repeat:no-repeat;opacity:.6;pointer-events:none;-webkit-mask-image:radial-gradient(125% 92% at 50% 50%,#000 30%,transparent 80%);mask-image:radial-gradient(125% 92% at 50% 50%,#000 30%,transparent 80%)}
+.sp-atmo-plate--chain{top:-70px;bottom:-70px;opacity:.7}
+/* Tables float over the field — no fill of their own */
+.sp-atmo-host .sp-table{background:transparent;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.sp-atmo-host .sp-table-head{background:color-mix(in srgb,var(--bg) 42%,transparent)}
+/* Chain panel goes bare when it floats over a plate: drop the box, keep the nodes */
+.sp-chainr--bare{background:none;border:none;padding:34px 12px}
+.sp-chainr--bare::before{display:none}
 
 /* Accent gesture — a quiet accent tick on the emphasized key row */
 .sp-specimen .sp-stabilize-row--key{position:relative}
