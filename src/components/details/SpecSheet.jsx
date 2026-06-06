@@ -39,11 +39,26 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
           </div>
         </div>
 
+        {/* Optional intro lede — plain prose under the head */}
+        {item.spec?.intro && (
+          <div className="sp-section dc dc2">
+            <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.intro}</div>
+          </div>
+        )}
+
         {/* Optional framing block — left-bordered, used to frame the artifact */}
         {item.spec?.framing && (
           <div className="sp-framing dc dc2">
             <div className="sp-framing-label">{item.spec.framing.label}</div>
-            <div className="sp-framing-body">{item.spec.framing.body}</div>
+            <div className="sp-framing-body" style={{ whiteSpace: "pre-line" }}>{item.spec.framing.body}</div>
+          </div>
+        )}
+
+        {/* Optional premise block — prose, sits before the components */}
+        {item.spec?.premise && (
+          <div className="sp-section dc dc3">
+            <div className="sp-section-label">Premise</div>
+            <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.premise}</div>
           </div>
         )}
 
@@ -57,7 +72,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
                   <div className="sp-components-num">{String(c.num ?? i + 1).padStart(2, "0")}</div>
                   <div className="sp-components-body">
                     <div className="sp-components-label">{c.label}</div>
-                    <div className="sp-components-desc">{c.desc}</div>
+                    <div className="sp-components-desc" style={{ whiteSpace: "pre-line" }}>{c.desc}</div>
                   </div>
                 </div>
               ))}
@@ -69,12 +84,12 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         {item.spec?.glue && (
           <div className="sp-framing sp-glue dc dc4">
             <div className="sp-framing-label">{item.spec.glue.label}</div>
-            <div className="sp-framing-body">{item.spec.glue.body}</div>
+            <div className="sp-framing-body" style={{ whiteSpace: "pre-line" }}>{item.spec.glue.body}</div>
             {item.spec.glue.chain && (
               <div className="sp-glue-chain">{item.spec.glue.chain}</div>
             )}
             {item.spec.glue.after && (
-              <div className="sp-framing-body sp-glue-after">{item.spec.glue.after}</div>
+              <div className="sp-framing-body sp-glue-after" style={{ whiteSpace: "pre-line" }}>{item.spec.glue.after}</div>
             )}
           </div>
         )}
@@ -131,7 +146,13 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         {item.spec?.usage && (
           <div className="sp-section dc dc6">
             <div className="sp-section-label">{item.spec.components ? "How to use it" : "Usage"}</div>
-            <div className="sp-usage">{item.spec.usage}</div>
+            <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.usage}</div>
+          </div>
+        )}
+        {item.spec?.protects && (
+          <div className="sp-section dc dc6">
+            <div className="sp-section-label">What it protects</div>
+            <div className="sp-usage" style={{ whiteSpace: "pre-line" }}>{item.spec.protects}</div>
           </div>
         )}
         {item.spec?.openQuestions?.length > 0 && (
