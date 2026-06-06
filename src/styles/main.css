@@ -1084,6 +1084,30 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .sp-components-desc{font-size:14px;font-weight:300;color:var(--fm);line-height:1.65;max-width:620px}
 @media(max-width:768px){.sp-components-item{grid-template-columns:28px 1fr;gap:14px;padding:22px 0}}
 
+/* Components as a canvas grid — 2-col zones with hairline dividers */
+.sp-components--grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--bd);border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.sp-components--grid .sp-components-item,
+.sp-components--grid .sp-components-item:first-child{padding:22px;border-top:none;background:var(--bg)}
+@media(max-width:768px){.sp-components--grid{grid-template-columns:1fr}}
+
+/* Comparison table — layer → what it stabilizes */
+.sp-stabilize{display:flex;flex-direction:column;max-width:520px;border-top:1px solid var(--bd)}
+.sp-stabilize-row{display:grid;grid-template-columns:1fr 24px 1fr;align-items:center;gap:14px;padding:13px 2px;border-bottom:1px solid var(--bd);font-size:14px}
+.sp-stabilize-layer{color:var(--fm)}
+.sp-stabilize-arrow{font-family:var(--mono);font-size:12px;color:var(--ff);text-align:center}
+.sp-stabilize-val{color:var(--fg);font-weight:500}
+.sp-stabilize-row--key{font-weight:600}
+.sp-stabilize-row--key .sp-stabilize-layer,.sp-stabilize-row--key .sp-stabilize-val{color:var(--fg)}
+.sp-stabilize-row--key .sp-stabilize-arrow{color:var(--ac1)}
+
+/* Derivation chain — node-and-arrow flow that reads both directions */
+.sp-chain{margin:18px 0;padding:22px 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+.sp-chain-flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px}
+.sp-chain-node{display:flex;align-items:center;font-family:var(--sans);font-size:12px;font-weight:500;line-height:1.3;color:var(--fg);padding:10px 14px;border:1px solid var(--bd);border-radius:8px;background:var(--sf)}
+.sp-chain-arrow{display:flex;align-items:center;font-family:var(--mono);font-size:14px;color:var(--ff)}
+.sp-chain-return{margin-top:14px;padding-top:12px;border-top:1px dashed var(--bd);display:flex;justify-content:center}
+.sp-chain-return-label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ff)}
+
 /* Open Questions on artifact pages — mirrors sk-oq treatment */
 .sp-oq{margin-bottom:64px;padding-top:40px;border-top:1px solid var(--bd)}
 .sp-oq .sp-section-label{padding-bottom:0;border-bottom:none;margin-bottom:16px}
