@@ -93,7 +93,7 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter, hid
                     <div className="sb-group-h sb-group-h-lc">{item.group}</div>
                     {item.children.map(child => {
                       const childKey = child.filter?.toLowerCase();
-                      const childHidden = import.meta.env.DEV && childKey ? hiddenCounts[childKey] : 0;
+                      const childHidden = childKey ? (hiddenCounts[childKey] || 0) : 0;
                       return (
                         <button
                           key={`${child.key}-${child.label}`}
@@ -126,7 +126,7 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter, hid
                 );
               }
               const sectionKey = item.filter?.toLowerCase();
-              const hiddenInSection = import.meta.env.DEV && sectionKey ? hiddenCounts[sectionKey] : 0;
+              const hiddenInSection = sectionKey ? (hiddenCounts[sectionKey] || 0) : 0;
               return (
                 <button key={`${item.key}-${item.label}`} className={`sb-link${item.filter ? " sb-link-filter" : ""}${isActive(item) ? " on" : ""}${hiddenInSection ? " sb-link-has-hidden" : ""}`} style={{ paddingLeft: 20 }} onClick={() => handleNav(item)} title={hiddenInSection ? `${hiddenInSection} hidden in dev` : undefined}>
                   {item.filter && <span className="sb-link-dot" aria-hidden="true">·</span>}
