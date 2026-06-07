@@ -1159,7 +1159,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .sp-chainr-wrap{margin:24px 0}
 .sp-chainr{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:64px 24px;border:1px solid var(--bd);border-radius:16px;background:var(--sf)}
 .sp-chainr-row{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;width:100%}
-.sp-chainr-node{display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:-0.005em;color:var(--fg);padding:18px 28px;border:1px solid var(--bd);border-radius:12px;background:var(--bg);min-width:248px}
+.sp-chainr-node{display:flex;align-items:center;justify-content:center;text-align:center;font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:-0.005em;color:var(--fg);padding:18px 28px;border:1px solid var(--bd);border-radius:12px;background:linear-gradient(rgba(255,255,255,.07),rgba(255,255,255,.07)),var(--bg);min-width:248px}
 .sp-chainr-arrow{display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:20px;color:var(--ff)}
 /* Decision pill pops as the culmination via elevation, not color: a clean light
    pill, slightly larger, softly lifted off the panel */
@@ -1200,9 +1200,10 @@ a.hero-dash-cell--link:hover .hero-dash-val{
   linear-gradient(var(--fm),var(--fm)) 0 100%/1px 12px no-repeat,
   linear-gradient(var(--fm),var(--fm)) 100% 100%/12px 1px no-repeat,
   linear-gradient(var(--fm),var(--fm)) 100% 100%/1px 12px no-repeat,
+  linear-gradient(rgba(255,255,255,.07),rgba(255,255,255,.07)),
   var(--bg)}
-/* Decision drops the corner-bracket tile for a clean light pill, lifted by its shadow */
-.sp-specimen .sp-chainr-node.is-decision{background:var(--bg);border:1px solid var(--bd)}
+/* Decision drops the corner-bracket tile for a clean lifted pill */
+.sp-specimen .sp-chainr-node.is-decision{background:linear-gradient(rgba(255,255,255,.08),rgba(255,255,255,.08)),var(--bg);border:1px solid var(--bd)}
 .sp-specimen .sp-chainr-arrow{position:relative;z-index:1}
 
 /* Technical index ticks on numbered items */
