@@ -75,7 +75,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         {/* One atmospheric hero \u2014 a single piece of art at the top */}
         {item.spec?.hero && (
           <figure className="sp-hero" aria-hidden="true">
-            <div className="sp-hero-art" style={{ backgroundImage: `url("${item.spec.hero}")`, backgroundSize: "132%", backgroundPosition: "100% 50%" }} />
+            <div className="sp-hero-art" style={{ backgroundImage: `url("${item.spec.hero}")` }} />
           </figure>
         )}
 
@@ -209,7 +209,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         {/* A second atmospheric band, before the how-to */}
         {item.spec?.usageArt && (
           <figure className="sp-hero" aria-hidden="true">
-            <div className="sp-hero-art" style={{ backgroundImage: `url("${item.spec.usageArt}")`, backgroundSize: "132%" }} />
+            <div className="sp-hero-art" style={{ backgroundImage: `url("${item.spec.usageArt}")` }} />
           </figure>
         )}
         {/* In practice — a worked specimen: the chain run once on a real subject */}
