@@ -10,6 +10,9 @@ import HeroGrid from "./HeroGrid";
 /* ── Hero mode: 1 = Threshold Strip, 2 = Signal Bar, 3 = Ambient Dashboard, 4 = Available Light Grid ── */
 const HERO_MODE = 4;
 
+/* Non-featured writing rows shown before "Show all" reveals the rest (mobile only). */
+const MOBILE_WRITING_CAP = 4;
+
 const SECTION_GLOSSES = {
   Writing: "Evolving documents. Memos build in numbered series; Field Notes stand alone.",
   Exploration: "Active experiments. Work still in motion.",
@@ -84,6 +87,7 @@ function HoverPreview({ images, fallbackBg }) {
 
 export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens, patternLens, showGraph, hiddenCounts, isLight }) {
   const isHome = filter === "All" && !relFilter;
+  const [writingExpanded, setWritingExpanded] = useState(false);
 
   return (
     <>
@@ -278,7 +282,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                     </div>
                   )}
                   {rest.length > 0 && (
-                    <div className="ix-wr">
+                    <div className={`ix-wr${writingExpanded ? " is-expanded" : ""}`}>
                       {rest.map((item, i) => {
                         const isMemo = item.writeType === "memo";
                         return (
@@ -295,6 +299,11 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                         );
                       })}
                     </div>
+                  )}
+                  {rest.length > MOBILE_WRITING_CAP && !writingExpanded && (
+                    <button className="ix-wr-more" onClick={() => setWritingExpanded(true)}>
+                      Show all writing ({rest.length})
+                    </button>
                   )}
                 </div>
               );

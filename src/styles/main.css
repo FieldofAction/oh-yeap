@@ -526,8 +526,17 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .ix-wr-pre{font-size:9px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ff)}
 .ix-wr-meta{display:flex;gap:6px;font-size:9px;color:var(--ff);margin-left:auto}
 .ix-wr-title{font-family:var(--display);font-size:16px;font-weight:500;line-height:1.25;letter-spacing:0}
+/* "Show all writing" reveal — mobile only (desktop shows the full grid) */
+.ix-wr-more{display:none}
 @media(max-width:1024px){.ix-wr{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.ix-wr{grid-template-columns:1fr}}
+@media(max-width:600px){
+  .ix-wr{grid-template-columns:1fr}
+  .ix-wr-item{padding:12px 0}
+  .ix-wr-head{margin-bottom:3px}
+  .ix-wr:not(.is-expanded) .ix-wr-item:nth-child(n+5){display:none}
+  .ix-wr-more{display:block;width:100%;margin-top:14px;padding:12px 0;background:none;border:none;border-top:1px solid var(--bd);font-family:var(--display);font-size:13px;font-weight:500;color:var(--fm);letter-spacing:0.02em;cursor:pointer;text-align:left}
+  .ix-wr-more:active{color:var(--fg)}
+}
 
 /* Artifacts & Exploration index — 2-column */
 .ix-art{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}
