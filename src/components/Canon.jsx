@@ -190,7 +190,10 @@ export default function Canon() {
       {/* ── 1. Overview ── */}
       <div ref={el => sectionRefs.current["overview"] = el} id="canon-overview" className="ph-header en d1" style={{ scrollMarginTop: 56 }}>
         <div className="ph-pre">Canon</div>
-        <h1 className="ph-h">Relational Design</h1>
+        <div className="ph-h-row">
+          <h1 className="ph-h">Relational Design</h1>
+          <span className="ph-h-glyph" role="img" aria-label="Relational Design mark" />
+        </div>
         <p className="ph-sub">Field-Centered Framework</p>
       </div>
 
