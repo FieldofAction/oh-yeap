@@ -33,7 +33,7 @@ export default function About({ theme }) {
       <div className="ab-section en d3">
         <div className="ab-sl">About</div>
         <p className="ab-body">
-          Field of Action is an independent creative practice by Alfred (Daniel) Dickson II.
+          Field of Action is a personal research notebook by Alfred (Daniel) Dickson II.
         </p>
         <p className="ab-body">
           It is a place for experiments, models, instruments, and writing around condition-first design, relational systems, and creative authorship. The work is made for its own sake: to study how ideas move through systems, decisions stay connected to origin, and creative practice can become a form of infrastructure.
