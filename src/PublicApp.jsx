@@ -15,6 +15,7 @@ import PatioBeach from "./components/PatioBeach";
 import Superconscious from "./components/Superconscious";
 import HotelNest from "./components/HotelNest";
 import Flowers from "./components/Flowers";
+import Galaxy from "./components/Galaxy";
 import { DualLensToggle, DualLensBar } from "./components/PatternLens";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
@@ -35,13 +36,14 @@ const VIEW_TO_HASH = {
   patterns: "pattern-language",
   hotelnest: "hotel/nest",
   flowers: "bloom",
+  galaxy: "galaxy",
 };
 const HASH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_HASH).map(([view, hash]) => [hash, view])
 );
 const PUBLIC_VIEWS = new Set([
   "public", "patiobeach", "superconscious", "canon", "about",
-  "colophon", "models", "patterns", "hotelnest", "flowers",
+  "colophon", "models", "patterns", "hotelnest", "flowers", "galaxy",
 ]);
 const viewFromHash = () => {
   const hash = typeof window !== "undefined"
@@ -68,7 +70,7 @@ const pushHashForItem = (item) => {
   }
 };
 
-const WORK_VIEWS = new Set(["public", "superconscious", "patiobeach", "flowers"]);
+const WORK_VIEWS = new Set(["public", "superconscious", "patiobeach", "flowers", "galaxy"]);
 const CANON_VIEWS = new Set(["canon"]);
 const INFO_VIEWS = new Set(["about", "colophon"]);
 // Work views honor a visitor-controllable light preference (daylight) over the default dark (threshold).
@@ -295,6 +297,7 @@ export default function PublicApp() {
           {view === "superconscious" && <Superconscious />}
           {view === "hotelnest" && <HotelNest />}
           {view === "flowers" && <Flowers />}
+          {view === "galaxy" && <Galaxy />}
         </main>
 
         <SiteFooter />
