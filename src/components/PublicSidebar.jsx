@@ -21,6 +21,7 @@ const NAV = [
       { key: "patiobeach", label: "Patio Beach" },
       { key: "superconscious", label: "Share Location" },
       { key: "flowers", label: "Bloom" },
+      { key: "galaxy", label: "Galaxy" },
     ]},
   ]},
   { tier: "HOTEL", items: [
