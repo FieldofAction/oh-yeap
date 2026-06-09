@@ -23,7 +23,7 @@ export default function About({ theme }) {
           My practice combines design leadership and generative research to shape the conditions for aligned teams, clear decisions, and coherent creative output. I build frameworks and systems that translate ideas into action.
         </p>
         <p className="ab-body">
-          Current focus: applying Relational Design to collaboration, tooling, and ML-driven design environments.
+          Current focus: applying Relational Design to collaboration, tooling, and creative practice.
         </p>
       </div>
 
