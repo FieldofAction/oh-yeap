@@ -73,7 +73,7 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter, hid
         </button>
         <div className="sb-brand" onClick={() => { navigateTo("public"); setFilter("All"); setMobileOpen(false); window.scrollTo(0, 0); }}>
           <span className="sb-brand-logo" role="img" aria-label="Field of Action" />
-          <span className="sb-brand-tagline">Alfred (Daniel) Dickson II</span>
+          <span className="sb-brand-tagline">Personal research notebook<br />of Alfred (Daniel) Dickson II</span>
         </div>
       </div>
 
