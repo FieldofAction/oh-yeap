@@ -1,6 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="12" fill="#0C0D10"/>
-  <text x="32" y="44" text-anchor="middle"
-        font-family="Inter, system-ui, sans-serif" font-weight="500" font-size="36"
-        fill="#E8EAF0" letter-spacing="-1">F</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1591.9 1591.9">
+  <style>
+    .gm { fill: none; stroke: #0C0D10; stroke-width: 58px; stroke-miterlimit: 10; }
+    @media (prefers-color-scheme: dark) { .gm { stroke: #E8EAF0; } }
+  </style>
+  <rect class="gm" x="13.51" y="13.41" width="1565.85" height="1565.85" rx="55.04" ry="55.04"/>
+  <line class="gm" x1="13.51" y1="397.28" x2="1579.37" y2="397.28"/>
+  <line class="gm" x1="13.51" y1="1184.53" x2="1579.37" y2="1184.53"/>
+  <line class="gm" x1="465.5" y1="13.41" x2="465.5" y2="397.28"/>
+  <line class="gm" x1="796.44" y1="13.41" x2="796.44" y2="781.14"/>
+  <line class="gm" x1="1173.8" y1="397.28" x2="1173.8" y2="779.16"/>
+  <line class="gm" x1="1380.69" y1="13.41" x2="1380.69" y2="397.28"/>
+  <line class="gm" x1="1388.09" y1="779.16" x2="1388.09" y2="1184.53"/>
+  <line class="gm" x1="698.85" y1="779.16" x2="698.85" y2="1184.53"/>
+  <line class="gm" x1="317.91" y1="397.28" x2="317.91" y2="781.14"/>
+  <line class="gm" x1="215.46" y1="1184.53" x2="215.46" y2="1579.27"/>
+  <line class="gm" x1="497.15" y1="1184.53" x2="497.15" y2="1579.27"/>
+  <line class="gm" x1="874.51" y1="1184.53" x2="874.51" y2="1579.27"/>
+  <line class="gm" x1="1205.82" y1="1184.53" x2="1205.82" y2="1579.27"/>
+  <line class="gm" x1="13.51" y1="779.16" x2="1579.37" y2="779.16"/>
 </svg>

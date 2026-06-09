@@ -44,7 +44,7 @@ body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-siz
 .sb-brand:hover{opacity:.5}
 .sb-brand-name{font-size:13px;font-weight:500;letter-spacing:.03em;text-transform:uppercase;color:var(--fg)}
 .sb-brand-logo{display:block;width:120px;aspect-ratio:678.12/103.12;background-color:var(--fg);-webkit-mask:url(/images/foa/foa_logotype.svg) center/contain no-repeat;mask:url(/images/foa/foa_logotype.svg) center/contain no-repeat}
-.sb-brand-tagline{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--ff)}
+.sb-brand-tagline{font-family:var(--sans);font-size:9px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--ff);text-align:center;line-height:1.4}
 @media(max-width:600px){.sb-brand-tagline{font-size:8px;letter-spacing:.06em}}
 .sb-toggle{position:absolute;left:16px;top:50%;transform:translateY(-50%);display:flex;width:40px;height:32px;background:none;border:none;cursor:pointer;flex-direction:column;align-items:flex-start;justify-content:center;gap:5px;padding:0}
 .sb-toggle-bar{display:block;width:28px;height:1.5px;background:var(--fg);border-radius:1px;transition:transform .2s,opacity .2s}
@@ -141,9 +141,9 @@ a.hero-dash-cell--link:hover{background:radial-gradient(at bottom right, color-m
 a.hero-dash-cell--link .hero-dash-val{transition:text-shadow .25s ease}
 a.hero-dash-cell--link:hover .hero-dash-val{
   text-shadow:
-    0 0 10px color-mix(in srgb,var(--fm) 50%,transparent),
-    0 0 4px color-mix(in srgb,var(--fm) 35%,transparent),
-    0 0 1px color-mix(in srgb,var(--fg) 40%,transparent);
+    0 0 8px color-mix(in srgb,var(--fm) 24%,transparent),
+    0 0 3px color-mix(in srgb,var(--fm) 16%,transparent),
+    0 0 1px color-mix(in srgb,var(--fg) 20%,transparent);
 }
 .hero-dash-label{font-size:9px;font-weight:500;letter-spacing:0.06em;color:var(--ff);text-transform:uppercase;font-family:var(--mono);margin-bottom:6px}
 .hero-dash-val{font-size:13px;color:var(--fg);line-height:1.4}
@@ -1927,7 +1927,7 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 .ft-inner{border-top:1px solid var(--bd)}
 .ft-bar{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:400;letter-spacing:.03em;text-transform:uppercase;color:var(--ff);padding:24px 0 96px}
 .ft-left{display:flex;align-items:center;gap:8px}
-.ft-mark{width:24px;height:24px;background-color:var(--ff);-webkit-mask:url(/images/foa/foa_grid_ecology.svg) center/contain no-repeat;mask:url(/images/foa/foa_grid_ecology.svg) center/contain no-repeat;opacity:1;transition:opacity .3s}.ft-mark:hover{opacity:1}
+.ft-mark{width:24px;height:24px;background-color:var(--ff);-webkit-mask:url(/images/foa/foa_grid_ecology_mark.svg) center/contain no-repeat;mask:url(/images/foa/foa_grid_ecology_mark.svg) center/contain no-repeat;opacity:1;transition:opacity .3s}.ft-mark:hover{opacity:1}
 @media(max-width:768px){.ft{padding:0 20px;margin-top:48px}.ft-bar{padding:20px 0 88px}}
 
 /* ── About Page ── */

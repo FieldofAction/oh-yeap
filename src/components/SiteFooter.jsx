@@ -1,6 +1,7 @@
 import React from "react";
 
-/* Maker's mark — FOA grid ecology glyph (public/images/foa/foa_grid_ecology.svg).
+/* Maker's mark — FOA grid ecology glyph, circle-less variant for small sizes
+   (public/images/foa/foa_grid_ecology_mark.svg).
    Rendered as a CSS mask so it inherits the footer color (var(--ff)). */
 function Mark() {
   return <span className="ft-mark" role="img" aria-label="Field of Action mark" />;
