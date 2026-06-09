@@ -141,9 +141,9 @@ a.hero-dash-cell--link:hover{background:radial-gradient(at bottom right, color-m
 a.hero-dash-cell--link .hero-dash-val{transition:text-shadow .25s ease}
 a.hero-dash-cell--link:hover .hero-dash-val{
   text-shadow:
-    0 0 10px color-mix(in srgb,var(--fm) 50%,transparent),
-    0 0 4px color-mix(in srgb,var(--fm) 35%,transparent),
-    0 0 1px color-mix(in srgb,var(--fg) 40%,transparent);
+    0 0 8px color-mix(in srgb,var(--fm) 24%,transparent),
+    0 0 3px color-mix(in srgb,var(--fm) 16%,transparent),
+    0 0 1px color-mix(in srgb,var(--fg) 20%,transparent);
 }
 .hero-dash-label{font-size:9px;font-weight:500;letter-spacing:0.06em;color:var(--ff);text-transform:uppercase;font-family:var(--mono);margin-bottom:6px}
 .hero-dash-val{font-size:13px;color:var(--fg);line-height:1.4}
