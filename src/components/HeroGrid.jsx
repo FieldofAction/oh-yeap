@@ -9,7 +9,7 @@ import HeroConstraintField from "./HeroConstraintField";
 // Cells with `href` light up as navigable on hover; the rest stay quietly declarative.
 const DASH = [
   { label: "Practice", val: "Relational Design", href: "#relational-design" },
-  { label: "Position", val: "Design Leader\nat Apple TV" },
+  { label: "Position", val: "Design Leader" },
   { label: "Attention", val: "Application → Transmission" },
   { label: "Building", val: "Condition Sets" },
   { label: "Writing", val: "Authoring Themes" },
