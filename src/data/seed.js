@@ -21,7 +21,7 @@ export const SEED = [
       method:["The four-fold moves from concept into practice.","Making, craft, governance, and emergence become working surfaces."],
     },
     outcomes:{
-      points:["Real work now begins inside the Studio. Later it surfaces as finished outcomes.","Backstage can turn a single idea into a composed exploration across eight agents.","An unexpected benefit: the process became visible, structured, and easy to follow."],
+      points:["Real work now begins inside the practice. Later it surfaces as finished outcomes.","Backstage can turn a single idea into a composed exploration across eight agents.","An unexpected benefit: the process became visible, structured, and easy to follow."],
       closing:"The practice began running.",
       insight:["Workbench helps with negative capability: the capacity to sit inside not-knowing without reaching immediately for the answer."],
     },
@@ -76,11 +76,11 @@ export const SEED = [
       { type:"figure", variant:"band", src:"/images/case-studies/Workbench/steps-sky.png", caption:"Emergent open." },
 
       { type:"section", label:"Outcomes" },
-      { type:"body", text:"Real work now begins inside the Studio and surfaces later as finished outcomes. A single idea can develop across the Backstage pipeline, and the process stays visible the whole way through." },
+      { type:"body", text:"Real work now begins inside the practice and surfaces later as finished outcomes. A single idea can develop across the Backstage pipeline, and the process stays visible the whole way through." },
       { type:"insight" },
     ],
     credits:[
-      { name:"Daniel Dickson", role:"Designer", studio:"Field of Action" },
+      { name:"Daniel Dickson", role:"Designer" },
     ],
   }},
   { id:uid(), section:"practice", title:"Apple Music", subtitle:"Designing for Orientation in a Plural System", desc:"Design systems and product surfaces for the music streaming platform.", year:"2021–2025", status:"live", tags:["Product","Systems","Music"], relations:[], hasVisual:true, role:"Creative Lead", deliverables:["Product Design","Design Systems","Visual Language","Feature Design"], caseStudy:{
