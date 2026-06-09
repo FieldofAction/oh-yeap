@@ -8,7 +8,7 @@ export const uid = () => Math.random().toString(36).slice(2, 10);
 export const isHidden = (item) => Boolean(item?.hidden) || (item?.section === "practice" && !item?.published);
 
 export const SEED = [
-  { id:uid(), slug:"workbench", section:"practice", published:true, title:"Workbench", subtitle:"Field of Action's Practice Surface", desc:"The Practice surface of Field of Action. Nine instruments where synthesis, generation, governance, and reflection become actions.", year:"2026", status:"live", tags:["Practice","Method","Systems"], relations:[], hasVisual:true, role:"Designer & Builder", deliverables:["Interface Design","Tool Architecture","Method Design","Front-End Build"], caseStudy:{
+  { id:uid(), slug:"workbench", section:"practice", published:true, title:"Workbench", subtitle:"Field of Action's Practice Surface", desc:"The Practice surface of Field of Action. Nine instruments where synthesis, generation, governance, and reflection become actions.", year:"2026", status:"live", tags:["Practice","Method","Systems"], relations:[], hasVisual:true, role:"Designer", deliverables:["Interface Design","Tool Architecture","Method Design","Front-End Build"], caseStudy:{
     framing:"The Workbench is Field of Action's practice surface.\n\nBuilt around the principle of negative capability, it helps hold a question open long enough for something unexpected to emerge. Nine instruments support the movement from inquiry to generation to reflection.\n\nThe work takes shape before it takes a side.",
     reframe:{
       thesis:"An environment emerged from sustained practice.",
@@ -80,7 +80,7 @@ export const SEED = [
       { type:"insight" },
     ],
     credits:[
-      { name:"Daniel Dickson", role:"Designer & Builder", studio:"Field of Action" },
+      { name:"Daniel Dickson", role:"Designer", studio:"Field of Action" },
     ],
   }},
   { id:uid(), section:"practice", title:"Apple Music", subtitle:"Designing for Orientation in a Plural System", desc:"Design systems and product surfaces for the music streaming platform.", year:"2021–2025", status:"live", tags:["Product","Systems","Music"], relations:[], hasVisual:true, role:"Creative Lead", deliverables:["Product Design","Design Systems","Visual Language","Feature Design"], caseStudy:{
