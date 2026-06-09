@@ -9,13 +9,13 @@ export const isHidden = (item) => Boolean(item?.hidden) || (item?.section === "p
 
 export const SEED = [
   { id:uid(), slug:"workbench", section:"practice", published:true, title:"Workbench", subtitle:"Field of Action's Practice Surface", desc:"The Practice surface of Field of Action. Nine instruments where synthesis, generation, governance, and reflection become actions.", year:"2026", status:"live", tags:["Practice","Method","Systems"], relations:[], hasVisual:true, role:"Designer & Builder", deliverables:["Interface Design","Tool Architecture","Method Design","Front-End Build"], caseStudy:{
-    framing:"The Workbench is Field of Action's studio surface.\n\nBuilt around the principle of negative capability, it helps hold a question open long enough for something unexpected to emerge. Nine instruments support the movement from inquiry to generation to reflection.\n\nThe work takes shape before it takes a side.",
+    framing:"The Workbench is Field of Action's practice surface.\n\nBuilt around the principle of negative capability, it helps hold a question open long enough for something unexpected to emerge. Nine instruments support the movement from inquiry to generation to reflection.\n\nThe work takes shape before it takes a side.",
     reframe:{
-      thesis:"A studio environment emerged from sustained practice.",
+      thesis:"An environment emerged from sustained practice.",
       body:"",
     },
     intervention:{
-      system:["A single studio surface organized around nine instruments.","Inquiry, generation, governance, and reflection each occupy their own mode while remaining connected through a shared method."],
+      system:["A single practice surface organized around nine instruments.","Inquiry, generation, governance, and reflection each occupy their own mode while remaining connected through a shared method."],
       expression:["A quiet interface built for use.","Minimal structure, plain language, and distinct visual worlds allow attention to remain on the work rather than the tool."],
       governance:["The rules of the practice become usable instruments.","Laws, emotional registers, and completed runs remain visible throughout the process, allowing inquiry and outcomes to stay in relationship."],
       method:["The four-fold moves from concept into practice.","Making, craft, governance, and emergence become working surfaces."],
@@ -36,7 +36,7 @@ export const SEED = [
       { type:"body", key:"framing" },
 
       /* The Workbench surface, shown legibly, above the instrument index */
-      { type:"plate", src:"/images/case-studies/Workbench/workbench-landing.png", caption:"The Workbench: Field of Action's Studio surface, the nine instruments at a glance" },
+      { type:"plate", src:"/images/case-studies/Workbench/workbench-landing.png", caption:"The Workbench: Field of Action's practice surface, the nine instruments at a glance" },
 
       /* Catalogue — the nine instruments as a disciplined index */
       { type:"catalogue", label:"Method as Interface", heading:"Nine Instruments", groups:[
