@@ -23,7 +23,7 @@ export default function About({ theme }) {
           My practice combines design leadership and generative research to shape the conditions for aligned teams, clear decisions, and coherent creative output. I build frameworks and systems that translate ideas into action.
         </p>
         <p className="ab-body">
-          Current focus: applying Relational Design to collaboration, tooling, and ML-driven design environments.
+          Current focus: applying Relational Design to collaboration, tooling, and creative practice.
         </p>
       </div>
 
@@ -37,7 +37,7 @@ export default function About({ theme }) {
           Brand and design systems affecting product surfaces and meaning at Apple Music. Cloud infrastructure identity at Google. Brand-building at Vevo during its formative era. Experience design and visual identity for the Tribeca Festival.
         </p>
         <p className="ab-body">
-          Based in Los Angeles, CA, working as Field of Action.
+          Based in Los Angeles, CA. Field of Action is a personal project, made for its own sake.
         </p>
       </div>
 
@@ -45,7 +45,7 @@ export default function About({ theme }) {
       <div className="ab-section en d4">
         <div className="ab-sl">Practice</div>
         <p className="ab-body">
-          Field of Action engages where a real system exists, a real constraint is present, and responsibility is held.
+          Field of Action is where I work through real systems, real constraints, and the responsibility that comes with them.
         </p>
         <p className="ab-body">
           The practice evolves through three frameworks. The Art of Model began as a tool for designing meaningful intervention, then deepened into a system for generative authorship, and is now becoming an operating system for generative identity. Each version represents a shift: from acting on a system, to authoring within one, to becoming infrastructure.
@@ -64,7 +64,7 @@ export default function About({ theme }) {
       <div className="ab-section en d5">
         <div className="ab-sl">Infrastructure</div>
         <p className="ab-body" style={{ cursor: "pointer" }} onClick={() => setShowAgents(p => !p)}>
-          The practice runs on an eleven-agent architecture organized in three rings. An operational cycle for production and interpretation. A practice layer for creative vitality. A governance layer for structural authority. Each agent holds a distinct orientation on the same input.
+          The practice runs on an eleven-agent architecture organized in three rings. An operational cycle for production and interpretation. A practice layer for creative vitality. A governance layer for coherence. Each agent holds a distinct orientation on the same input.
         </p>
         {showAgents && (
           <div className="ab-agents" style={{ animation: "en .4s ease" }}>
@@ -81,11 +81,6 @@ export default function About({ theme }) {
             ))}
           </div>
         )}
-      </div>
-
-      {/* CTA — "Begin a conversation" link hidden until there's a dedicated destination. */}
-      <div className="cta">
-        <p className="cta-p">Field of Action engages where a real system exists, a real constraint is present, and responsibility is held.</p>
       </div>
     </div>
   );
