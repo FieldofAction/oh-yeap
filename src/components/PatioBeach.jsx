@@ -685,7 +685,7 @@ export default function PatioBeach() {
           {/* Name */}
           <NarrativeSection label="Name">
             <p className="pb-narr-body">The work began on my personal Instagram. By late 2017 it had taken over a feed meant for other things, so I gave it its own account: @transhny, trash + NY. A working title. Descriptive, almost a hashtag.</p>
-            <p className="pb-narr-body">That name held for about six months. By April 2018 I understood the project differently than I had when I named it, and I renamed the account @patiobeach. It wasn't a rebrand. It was an admission that the project was not about garbage.</p>
+            <p className="pb-narr-body">That name held for about six months. By April 2018 I understood the project differently than I had when I named it, and I renamed the account @patiobeach. It was an admission that the project was not about garbage.</p>
             <p className="pb-narr-body">A patio is the threshold between a home and what's outside it. A beach is the threshold between solid ground and what moves underneath everything. Both are places of rest and observation, defined by what they're next to. Patio Beach names the zone where private life meets the unconscious and leaves evidence on the ground between them.</p>
             <p className="pb-narr-body">The curb, it turns out, is a tideline. Things wash up there. Sanitation arrives like the tide and carries them away.</p>
           </NarrativeSection>
