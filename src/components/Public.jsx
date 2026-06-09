@@ -88,6 +88,7 @@ function HoverPreview({ images, fallbackBg }) {
 export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens, patternLens, showGraph, hiddenCounts, isLight }) {
   const isHome = filter === "All" && !relFilter;
   const [writingExpanded, setWritingExpanded] = useState(false);
+  const writingMoreRef = useRef(null);
 
   return (
     <>
@@ -300,9 +301,17 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                       })}
                     </div>
                   )}
-                  {rest.length > MOBILE_WRITING_CAP && !writingExpanded && (
-                    <button className="ix-wr-more" onClick={() => setWritingExpanded(true)}>
-                      Show all writing ({rest.length})
+                  {rest.length > MOBILE_WRITING_CAP && (
+                    <button
+                      ref={writingMoreRef}
+                      className="ix-wr-more"
+                      onClick={() => {
+                        const collapsing = writingExpanded;
+                        setWritingExpanded(v => !v);
+                        if (collapsing) requestAnimationFrame(() => writingMoreRef.current?.scrollIntoView({ block: "center", behavior: "smooth" }));
+                      }}
+                    >
+                      {writingExpanded ? "Show less" : `Show all writing (${rest.length})`}
                     </button>
                   )}
                 </div>

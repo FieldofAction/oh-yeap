@@ -534,6 +534,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
   .ix-wr-item{padding:12px 0}
   .ix-wr-head{margin-bottom:3px}
   .ix-wr:not(.is-expanded) .ix-wr-item:nth-child(n+5){display:none}
+  .ix-wr:not(.is-expanded) .ix-wr-item:nth-child(4){border-bottom:none}
   .ix-wr-more{display:block;width:100%;margin-top:14px;padding:12px 0;background:none;border:none;border-top:1px solid var(--bd);font-family:var(--display);font-size:13px;font-weight:500;color:var(--fm);letter-spacing:0.02em;cursor:pointer;text-align:left}
   .ix-wr-more:active{color:var(--fg)}
 }
