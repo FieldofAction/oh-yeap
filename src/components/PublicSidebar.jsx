@@ -29,8 +29,8 @@ const NAV = [
   { tier: "CANON", items: [
     { key: "canon", label: "Relational Design" },
   ]},
-  { tier: "STUDIO", external: true, items: [
-    { href: STUDIO_URL, label: "Studio", studio: true },
+  { tier: "WORKSHOP", external: true, items: [
+    { href: STUDIO_URL, label: "Workshop", studio: true },
   ]},
   { tier: "INFO", items: [
     { key: "about", label: "About" },
@@ -83,7 +83,7 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter, hid
             <div className="sb-tier-h">
               {group.tier}
               {group.external && (
-                <span className="sb-lock" aria-label="Studio is private">●</span>
+                <span className="sb-lock" aria-label="Workshop is private">●</span>
               )}
             </div>
             {group.items.map((item) => {
