@@ -23,3 +23,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Accidental/local artifacts (keep out of the repo)
+.claude/worktrees/
+.vercel/
+wireframes/
+DESIGN_INFRASTRUCTURE.md
+public/images/resume/
