@@ -108,13 +108,49 @@ export default function Resume(){
 
   useEffect(() => () => { if(saveTimer.current) clearTimeout(saveTimer.current); }, []);
 
+  // Print isolation: clone just the résumé doc to <body> and hide the rest with
+  // display:none, so the print/PDF contains only the two pages (no blank pages,
+  // no shift). Cloning avoids disturbing React's managed DOM.
+  useEffect(() => {
+    const before = () => {
+      const doc = document.querySelector(".rz-doc");
+      if(!doc) return;
+      const existing = document.getElementById("rz-print-clone");
+      if(existing) existing.remove();
+      const clone = doc.cloneNode(true);
+      clone.id = "rz-print-clone";
+      document.body.appendChild(clone);
+      document.body.classList.add("rz-printing");
+    };
+    const after = () => {
+      const c = document.getElementById("rz-print-clone");
+      if(c) c.remove();
+      document.body.classList.remove("rz-printing");
+    };
+    window.addEventListener("beforeprint", before);
+    window.addEventListener("afterprint", after);
+    return () => {
+      window.removeEventListener("beforeprint", before);
+      window.removeEventListener("afterprint", after);
+      after();
+    };
+  }, []);
+
   const d = data.current;
+
+  // Split experience into two columns that read top-to-bottom (column-major),
+  // keeping each entry's original index for edit callbacks.
+  const _exp = d.experience.map((e, i) => ({ e, i }));
+  const _mid = Math.ceil(_exp.length / 2);
+  const expCols = [_exp.slice(0, _mid), _exp.slice(_mid)];
 
   const RunningHead = ({ center }) => (
     <div className="rz-head">
       <Editable tag="span" html={d.headLeft} onChange={edit(v => d.headLeft = v)} />
-      <span className="rz-head-c">{center}</span>
-      <Editable tag="span" className="rz-head-r" html={d.location} onChange={edit(v => d.location = v)} />
+      <div className="rz-head-main">
+        <span className="rz-head-c">{center}</span>
+        <Editable tag="span" className="rz-head-r" html={d.location} onChange={edit(v => d.location = v)} />
+      </div>
     </div>
   );
 
@@ -177,13 +213,17 @@ export default function Resume(){
             </div>
             <div className="rz-col-main">
               <div className="rz-seclabel">Selected Experience</div>
-              <div className="rz-exp-grid">
-                {d.experience.map((e, i) => (
-                  <div className="rz-exp" key={e._id}>
-                    <button className="rz-del" title="Remove role" onClick={() => removeRole(e._id)}>×</button>
-                    <Editable className="rz-exp-org" html={e.org} onChange={edit(v => d.experience[i].org = v)} />
-                    <Editable className="rz-exp-meta" html={e.meta} onChange={edit(v => d.experience[i].meta = v)} />
-                    <Editable className="rz-exp-body" html={e.body} onChange={edit(v => d.experience[i].body = v)} />
+              <div className="rz-exp-cols">
+                {expCols.map((col, ci) => (
+                  <div className="rz-exp-col" key={ci}>
+                    {col.map(({ e, i }) => (
+                      <div className="rz-exp" key={e._id}>
+                        <button className="rz-del" title="Remove role" onClick={() => removeRole(e._id)}>×</button>
+                        <Editable className="rz-exp-org" html={e.org} onChange={edit(v => d.experience[i].org = v)} />
+                        <Editable className="rz-exp-meta" html={e.meta} onChange={edit(v => d.experience[i].meta = v)} />
+                        <Editable className="rz-exp-body" html={e.body} onChange={edit(v => d.experience[i].body = v)} />
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
@@ -224,9 +264,10 @@ export default function Resume(){
         .rz-doc{display:flex;flex-direction:column;align-items:center;gap:26px;padding:22px 16px 90px}
 
         .rz-page{position:relative;width:8.5in;min-height:11in;background:#fff;color:#16181d;box-shadow:0 10px 50px rgba(0,0,0,.45);padding:0.72in 0.78in;overflow:hidden}
-        .rz-head{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;font-size:9px;letter-spacing:.03em;color:#8a8d94;line-height:1.4;margin-bottom:0.55in}
-        .rz-head-c{text-align:center}
-        .rz-head-r{text-align:right}
+        .rz-head{display:grid;grid-template-columns:1.9in 1fr;gap:0 0.42in;font-size:9px;letter-spacing:.03em;color:#8a8d94;line-height:1.4;margin-bottom:0.55in}
+        .rz-head-main{display:grid;grid-template-columns:1fr 1fr;gap:0 26px}
+        .rz-head-c{text-align:left}
+        .rz-head-r{text-align:left}
         .rz-body{display:grid;grid-template-columns:1.9in 1fr;gap:0.42in}
         .rz-name{font-size:38px;font-weight:700;line-height:1.02;letter-spacing:-.025em;color:#16181d;margin:0}
         .rz-seclabel{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#9a9da4;margin-bottom:9px}
@@ -238,7 +279,8 @@ export default function Resume(){
         .rz-para{font-size:13.5px;line-height:1.5;color:#23262c}
         .rz-para strong{font-weight:700;color:#16181d}
 
-        .rz-exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px 28px}
+        .rz-exp-cols{display:grid;grid-template-columns:1fr 1fr;gap:0 28px;align-items:start}
+        .rz-exp-col{display:flex;flex-direction:column;gap:24px}
         .rz-exp{position:relative}
         .rz-exp-org{font-weight:700;font-size:13px;line-height:1.26;color:#16181d}
         .rz-exp-meta{font-weight:700;font-size:13px;line-height:1.26;color:#16181d;margin-bottom:8px}
@@ -247,6 +289,13 @@ export default function Resume(){
         .rz-foot-body{font-size:13px;line-height:1.5;color:#23262c}
         .rz-foot-strong{font-size:13.5px;font-weight:700;line-height:1.4;color:#16181d}
         .rz-edu{margin-bottom:16px}
+
+        /* Typography refinement — tighter rag, whole words, no stranded widows */
+        .rz-page{widows:3;orphans:3}
+        .rz-perspective,.rz-philo-body,.rz-para,.rz-exp-org,.rz-exp-body,.rz-foot-body,.rz-foot-strong,.rz-edu{
+          text-wrap:pretty;-webkit-hyphens:none;hyphens:none;
+        }
+        .rz-name{text-wrap:balance}
 
         /* editing affordances (screen only) */
         .rz-app [contenteditable]{border-radius:3px;transition:background .12s,box-shadow .12s;outline:none}
@@ -260,21 +309,24 @@ export default function Resume(){
         @media screen and (max-width: 900px){
           .rz-page{width:100%;min-height:0;padding:28px 24px}
           .rz-body{grid-template-columns:1fr;gap:24px}
-          .rz-philo,.rz-exp-grid,.rz-foot-grid{grid-template-columns:1fr}
+          .rz-philo,.rz-foot-grid{grid-template-columns:1fr}
+          .rz-exp-cols{grid-template-columns:1fr;gap:24px 0}
           .rz-name{font-size:30px}
         }
+
+        /* print clone lives at <body> level; hidden on screen */
+        #rz-print-clone{display:none}
 
         @media print {
           @page { size: letter; margin: 0; }
           html, body { background:#fff !important; }
-          body * { visibility: hidden !important; }
-          .rz-doc, .rz-doc * { visibility: visible !important; }
-          .rz-doc { position: absolute; left: 0; top: 0; width: 100%; padding: 0; gap: 0; display: block; }
-          .rz-toolbar, .rz-hint, .rz-add, .rz-del { display: none !important; }
-          .rz-app { position: static; overflow: visible; background:#fff; }
-          .rz-page { width: 8.5in; min-height: 11in; box-shadow: none; margin: 0; page-break-after: always; break-after: page; }
-          .rz-page:last-child { page-break-after: auto; break-after: auto; }
-          .rz-app [contenteditable]:hover, .rz-app [contenteditable]:focus { background: none; box-shadow: none; }
+          /* hide the entire app; show only the cloned résumé doc */
+          body.rz-printing > *:not(#rz-print-clone) { display: none !important; }
+          #rz-print-clone { display: block; }
+          #rz-print-clone .rz-add, #rz-print-clone .rz-del { display: none !important; }
+          #rz-print-clone .rz-page { width: 8.5in; min-height: 11in; box-shadow: none; margin: 0; page-break-after: always; break-after: page; }
+          #rz-print-clone .rz-page:last-child { page-break-after: auto; break-after: auto; }
+          #rz-print-clone [contenteditable] { outline: none !important; background: none !important; box-shadow: none !important; }
         }
       `}</style>
     </div>
