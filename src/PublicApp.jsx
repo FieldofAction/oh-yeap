@@ -16,6 +16,7 @@ import Superconscious from "./components/Superconscious";
 import HotelNest from "./components/HotelNest";
 import Flowers from "./components/Flowers";
 import Galaxy from "./components/Galaxy";
+import Resume from "./components/Resume";
 import { DualLensToggle, DualLensBar } from "./components/PatternLens";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
@@ -37,13 +38,14 @@ const VIEW_TO_HASH = {
   hotelnest: "hotel/nest",
   flowers: "bloom",
   galaxy: "galaxy",
+  resume: "resume",
 };
 const HASH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_HASH).map(([view, hash]) => [hash, view])
 );
 const PUBLIC_VIEWS = new Set([
   "public", "patiobeach", "superconscious", "canon", "about",
-  "colophon", "models", "patterns", "hotelnest", "flowers", "galaxy",
+  "colophon", "models", "patterns", "hotelnest", "flowers", "galaxy", "resume",
 ]);
 const viewFromHash = () => {
   const hash = typeof window !== "undefined"
@@ -298,6 +300,7 @@ export default function PublicApp() {
           {view === "hotelnest" && <HotelNest />}
           {view === "flowers" && <Flowers />}
           {view === "galaxy" && <Galaxy />}
+          {view === "resume" && <Resume />}
         </main>
 
         <SiteFooter />
