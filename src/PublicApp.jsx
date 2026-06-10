@@ -16,6 +16,7 @@ import Superconscious from "./components/Superconscious";
 import HotelNest from "./components/HotelNest";
 import Flowers from "./components/Flowers";
 import Galaxy from "./components/Galaxy";
+import Resume from "./components/Resume";
 import { DualLensToggle, DualLensBar } from "./components/PatternLens";
 import WritingDetail from "./components/details/WritingDetail";
 import CaseStudyDetail from "./components/details/CaseStudy";
@@ -37,13 +38,14 @@ const VIEW_TO_HASH = {
   hotelnest: "hotel/nest",
   flowers: "bloom",
   galaxy: "galaxy",
+  resume: "resume",
 };
 const HASH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_HASH).map(([view, hash]) => [hash, view])
 );
 const PUBLIC_VIEWS = new Set([
   "public", "patiobeach", "superconscious", "canon", "about",
-  "colophon", "models", "patterns", "hotelnest", "flowers", "galaxy",
+  "colophon", "models", "patterns", "hotelnest", "flowers", "galaxy", "resume",
 ]);
 const viewFromHash = () => {
   const hash = typeof window !== "undefined"
@@ -245,28 +247,20 @@ export default function PublicApp() {
   // Hidden-from-public items (Wave-1 practice + per-item `hidden: true`) are excluded from production builds.
   // Dev (`npm run dev`) shows everything so unfinished pages can be previewed locally; visual indicators
   // distinguish hidden material — see HIDDEN-ITEMS.md.
-  //
-  // Browser preview escape hatch: append `?preview` to any URL to reveal hidden/unfinished
-  // work on the live site (same as dev). Not secret — anyone who appends it can see drafts.
-  const revealHidden = useMemo(() => {
-    if (import.meta.env.DEV) return true;
-    if (typeof window === "undefined") return false;
-    return new URLSearchParams(window.location.search).has("preview");
-  }, []);
   const publicContent = useMemo(
-    () => SEED.filter(c => revealHidden || !isHidden(c)),
-    [revealHidden]
+    () => SEED.filter(c => import.meta.env.DEV || !isHidden(c)),
+    []
   );
 
-  // Per-section counts of hidden items, used to drive the nav + section-header indicators
-  // wherever hidden material is revealed (dev or ?preview). Empty otherwise (no indicators).
+  // Per-section counts of hidden items, used to drive dev-only nav + section-header indicators.
+  // Empty object in production (no indicators rendered).
   const hiddenCounts = useMemo(() => {
-    if (!revealHidden) return {};
+    if (!import.meta.env.DEV) return {};
     return SEED.reduce((acc, c) => {
       if (isHidden(c)) acc[c.section] = (acc[c.section] || 0) + 1;
       return acc;
     }, {});
-  }, [revealHidden]);
+  }, []);
 
   const filtered = useMemo(() => {
     let items = publicContent.filter(c => c.status !== "draft");
@@ -306,6 +300,7 @@ export default function PublicApp() {
           {view === "hotelnest" && <HotelNest />}
           {view === "flowers" && <Flowers />}
           {view === "galaxy" && <Galaxy />}
+          {view === "resume" && <Resume />}
         </main>
 
         <SiteFooter />
