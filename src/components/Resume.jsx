@@ -324,7 +324,7 @@ export default function Resume(){
           body.rz-printing > *:not(#rz-print-clone) { display: none !important; }
           #rz-print-clone { display: block; padding: 0 !important; margin: 0 !important; gap: 0 !important; width: auto !important; align-items: initial !important; }
           #rz-print-clone .rz-add, #rz-print-clone .rz-del { display: none !important; }
-          #rz-print-clone .rz-page { width: 8.5in; height: 11in; overflow: hidden; box-shadow: none; margin: 0; page-break-after: always; break-after: page; }
+          #rz-print-clone .rz-page { width: 8.5in; min-height: 0; box-shadow: none; margin: 0; page-break-after: always; break-after: page; break-inside: avoid; }
           #rz-print-clone .rz-page:last-child { page-break-after: auto; break-after: auto; }
           #rz-print-clone [contenteditable] { outline: none !important; background: none !important; box-shadow: none !important; }
         }
