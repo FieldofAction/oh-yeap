@@ -263,32 +263,32 @@ export default function Resume(){
         .rz-hint{color:#9a9da4;font-size:11.5px;text-align:center;padding:14px 16px 0;letter-spacing:.01em}
         .rz-doc{display:flex;flex-direction:column;align-items:center;gap:26px;padding:22px 16px 90px}
 
-        .rz-page{position:relative;width:8.5in;min-height:11in;background:#fff;color:#16181d;box-shadow:0 10px 50px rgba(0,0,0,.45);padding:0.72in 0.78in;overflow:hidden}
-        .rz-head{display:grid;grid-template-columns:1.9in 1fr;gap:0 0.42in;font-size:9px;letter-spacing:.03em;color:#8a8d94;line-height:1.4;margin-bottom:0.55in}
+        .rz-page{position:relative;width:8.5in;min-height:11in;background:#fff;color:#16181d;box-shadow:0 10px 50px rgba(0,0,0,.45);padding:0.6in 0.72in;overflow:hidden}
+        .rz-head{display:grid;grid-template-columns:1.9in 1fr;gap:0 0.42in;font-size:9px;letter-spacing:.03em;color:#8a8d94;line-height:1.4;margin-bottom:0.36in}
         .rz-head-main{display:grid;grid-template-columns:1fr 1fr;gap:0 26px}
         .rz-head-c{text-align:left}
         .rz-head-r{text-align:left}
         .rz-body{display:grid;grid-template-columns:1.9in 1fr;gap:0.42in}
         .rz-name{font-size:38px;font-weight:700;line-height:1.02;letter-spacing:-.025em;color:#16181d;margin:0}
-        .rz-seclabel{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#9a9da4;margin-bottom:9px}
+        .rz-seclabel{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#9a9da4;margin-bottom:7px}
         .rz-perspective{font-size:20px;font-weight:600;line-height:1.34;letter-spacing:-.01em;color:#16181d;margin-bottom:34px}
         .rz-philo{display:grid;grid-template-columns:1fr 1fr;gap:20px 26px;margin-bottom:26px}
         .rz-philo-title{font-weight:700;font-size:12.5px;line-height:1.3;margin-bottom:4px;color:#16181d}
         .rz-philo-body{font-size:12px;line-height:1.46;color:#42454c}
-        .rz-rule{height:1px;background:#dcdee2;margin:22px 0}
+        .rz-rule{height:1px;background:#dcdee2;margin:10px 0}
         .rz-para{font-size:13.5px;line-height:1.5;color:#23262c}
         .rz-para strong{font-weight:700;color:#16181d}
 
         .rz-exp-cols{display:grid;grid-template-columns:1fr 1fr;gap:0 28px;align-items:start}
-        .rz-exp-col{display:flex;flex-direction:column;gap:24px}
+        .rz-exp-col{display:flex;flex-direction:column;gap:16px}
         .rz-exp{position:relative}
-        .rz-exp-org{font-weight:700;font-size:13px;line-height:1.26;color:#16181d}
-        .rz-exp-meta{font-weight:700;font-size:13px;line-height:1.26;color:#16181d;margin-bottom:8px}
-        .rz-exp-body{font-size:11px;line-height:1.5;color:#42454c}
+        .rz-exp-org{font-weight:700;font-size:12.5px;line-height:1.25;color:#16181d}
+        .rz-exp-meta{font-weight:700;font-size:12.5px;line-height:1.25;color:#16181d;margin-bottom:5px}
+        .rz-exp-body{font-size:10.5px;line-height:1.4;color:#42454c}
         .rz-foot-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.42in}
-        .rz-foot-body{font-size:13px;line-height:1.5;color:#23262c}
-        .rz-foot-strong{font-size:13.5px;font-weight:700;line-height:1.4;color:#16181d}
-        .rz-edu{margin-bottom:16px}
+        .rz-foot-body{font-size:12px;line-height:1.4;color:#23262c}
+        .rz-foot-strong{font-size:12.5px;font-weight:700;line-height:1.35;color:#16181d}
+        .rz-edu{margin-bottom:10px}
 
         /* Typography refinement — tighter rag, whole words, no stranded widows */
         .rz-page{widows:3;orphans:3}
@@ -324,7 +324,7 @@ export default function Resume(){
           body.rz-printing > *:not(#rz-print-clone) { display: none !important; }
           #rz-print-clone { display: block; }
           #rz-print-clone .rz-add, #rz-print-clone .rz-del { display: none !important; }
-          #rz-print-clone .rz-page { width: 8.5in; min-height: 11in; box-shadow: none; margin: 0; page-break-after: always; break-after: page; }
+          #rz-print-clone .rz-page { width: 8.5in; height: 11in; overflow: hidden; box-shadow: none; margin: 0; page-break-after: always; break-after: page; }
           #rz-print-clone .rz-page:last-child { page-break-after: auto; break-after: auto; }
           #rz-print-clone [contenteditable] { outline: none !important; background: none !important; box-shadow: none !important; }
         }
