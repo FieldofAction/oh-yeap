@@ -4,11 +4,11 @@
 <meta charset="utf-8" />
 <style>
   * { box-sizing:border-box; margin:0; padding:0 }
-  html, body { width:1200px; height:630px; overflow:hidden; background:#fff }
-  .card { position:relative; width:1200px; height:630px; overflow:hidden }
+  html, body { width:100%; height:100%; overflow:hidden; background:#000 }
+  .card { position:fixed; inset:0; overflow:hidden }
   .card-video { position:absolute; inset:0; width:100%; height:100%; object-fit:cover }
   /* vector layout (logotype, name, role) exported from og_card.svg, images stripped */
-  .card-layout { position:absolute; inset:0; width:1200px; height:630px; display:block }
+  .card-layout { position:absolute; inset:0; width:100%; height:100%; object-fit:contain; display:block }
 </style>
 </head>
 <body>

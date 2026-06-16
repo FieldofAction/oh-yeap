@@ -1,6 +1,6 @@
 # Field of Action — Card Spec
 
-*Source of truth: `public/og-card.html`, rendered to `public/og-image.png` via `scripts/render-og.mjs`.*
+*Source of truth: `public/og-card-motion.html`, rendered to `public/og-image.png` via `scripts/render-og.mjs`.*
 
 ## Canvas
 
@@ -54,7 +54,7 @@ Identity block internal spacing: **30 px** between mark, rule, and name.
 - **Name:** Alfred (Daniel) Dickson II. *Designer, Writer*
 - **Role:** **Design infrastructure** across research, design, and production. Conditions, models, and standards that hold the whole body of work coherent. The apparatus it runs on.
 - **URL:** fieldofaction.org
-- **Image:** documentary-flat scaffolding coupler (`public/images/foa/card-structure.png`)
+- **Image:** documentary-flat scaffolding motion (`public/images/foa/card-motion.mp4`) under the vector layout (`public/images/foa/og_card_layout.svg`)
 
 ## Print translation (if you want a physical card)
 
