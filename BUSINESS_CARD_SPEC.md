@@ -1,67 +1,61 @@
 # Field of Action — Card Spec
 
-*Source of truth: `public/og-card-motion.html`, rendered to `public/og-image.png` via `scripts/render-og.mjs`.*
+*Source of truth: `public/og-card-motion.html` (animated) and `public/images/foa/og_card_layout.svg` (the vector layout), rendered to `public/og-image.png` via `scripts/render-og.mjs`.*
 
 ## Canvas
 
 - **Design size:** 1200 × 630 px (Open Graph ratio, 1.905 : 1)
-- **Export:** 2× device scale → **2400 × 1260 px** PNG
-- **Background:** `#0C0D10`
-- **Orientation:** landscape, two columns (text left, image right)
+- **Export:** 2× device scale → **2400 × 1260 px**
+- **Orientation:** landscape, a single centered column over a full-bleed background
 
-## Grid / layout
+## Background
 
-- **Text column (left):** fills remaining width = **770 px**
-  - Padding: **64 top · 56 right · 72 left · 56 bottom**
-  - Usable text width: **642 px**
-  - Vertical structure: three stacked blocks, distributed top-to-bottom (space-between) — brand / identity / footer
-- **Image panel (right):** **430 px** wide, full **630 px** height
-  - Divider: **1 px** left border, `#1C1E24`
-  - Image fills the panel (cover, centered)
-  - Backstop fill behind image: `#E8EAF0`
-- **Corner ticks:** 14 × 14 px, 1 px stroke `#565A62`, inset **40 px** from the card edge. Currently top-left and bottom-left only.
+- Full-bleed documentary scaffolding, bright and near-white, flat even light.
+- **Motion:** `public/images/foa/card-motion.mp4` (1920 × 1080, 10s loop), object-fit cover.
+- **Static (OG / share):** a fixed frame of the same footage, `public/og-image.png`.
 
-## Color (Threshold theme)
+## Layout
 
-| Token | Hex | Use |
-|-------|-----|-----|
-| Background | `#0C0D10` | card field |
-| Foreground | `#E8EAF0` | name, URL, logotype, emphasis |
-| Muted | `#868B94` | brand label, role body, role suffix |
-| Faint | `#565A62` | corner ticks, metadata |
-| Border | `#1C1E24` | column divider |
-| Accent | `#2F5BFF` | rule under logotype (90% opacity) |
+A centered vertical stack. Every element is centered on the canvas midline (x ≈ 600). Measured from `og_card_layout.svg` at 1200 × 630:
+
+| Element | Size | Position (y) | Notes |
+|---------|------|--------------|-------|
+| Logotype | ~76 px tall, ~764 px wide | 270–346 | FOA wordmark, upper-middle |
+| Name | ~22 px (caps) | 388–419 | "Alfred (Daniel) Dickson II", uppercase, tracked |
+| Role | ~13 px, two lines | 513–560 | uppercase, tracked, ends with a period |
+
+The logotype sits in the upper-middle; the role line rests ~70 px above the bottom edge.
+
+## Color
+
+- **Type:** `#231f20` (near-black), a single ink, sitting over the bright background.
+- No accent rule and no brand label or URL on the face.
 
 ## Type
 
-Two families. **Inter** (300/400/500/600/700) and **Space Mono** (400/700).
-
-| Element | Font | Size | Weight | Tracking | Color | Notes |
-|---------|------|------|--------|----------|-------|-------|
-| Brand label | Inter | 15 px | 500 | +0.08em | `#868B94` | uppercase, top-left |
-| Logotype mark | vector | 52 px tall | — | — | `#E8EAF0` | FOA wordmark, width auto (~521 px) |
-| Accent rule | — | 72 × 1 px | — | — | `#2F5BFF` @ 90% | sits under the mark |
-| Name | Inter | 22 px | 500 | +0.01em | `#E8EAF0` | role suffix in 400 / `#868B94` |
-| Role body | Inter | 15 px | 400 | — | `#868B94` | line-height 1.5, max-width 520 px; lead phrase in 500 / `#E8EAF0` |
-| URL | Space Mono | 14 px | 400 | +0.02em | `#E8EAF0` | bottom-right of text column |
-
-Identity block internal spacing: **30 px** between mark, rule, and name.
+- The current asset has all type outlined to vector paths, so the font is not embedded as live text. Visually it reads as a clean geometric sans, uppercase for the name and role with generous tracking; the logotype is the FOA custom wordmark.
+- For a live-text rebuild, the site type system is **Inter** (display and body) and **Space Mono** (mono and metadata).
 
 ## Content (current)
 
-- **Brand:** Field of Action
-- **Mark:** FOA logotype (vector asset: `public/images/foa/foa_logotype.svg`; inline in card with viewBox `29 21 631 63`)
-- **Name:** Alfred (Daniel) Dickson II. *Designer, Writer*
-- **Role:** **Design infrastructure** across research, design, and production. Conditions, models, and standards that hold the whole body of work coherent. The apparatus it runs on.
-- **URL:** fieldofaction.org
-- **Image:** documentary-flat scaffolding motion (`public/images/foa/card-motion.mp4`) under the vector layout (`public/images/foa/og_card_layout.svg`)
+- **Logotype:** Field of Action wordmark
+- **Name:** Alfred (Daniel) Dickson II
+- **Role:** DESIGN INFRASTRUCTURE ACROSS RESEARCH, DESIGN, AND PRODUCTION. CONDITIONS, MODELS, AND STANDARDS.
+
+## Assets
+
+- `public/og-card-motion.html` — composite: video background under the vector layout
+- `public/images/foa/og_card_layout.svg` — vector layout, transparent, 44 KB (embedded rasters stripped)
+- `public/images/foa/card-motion.mp4` — background video
+- `public/og-image.png` — static still, the share / OG image
+- `public/images/foa/card-share.mp4` — the layout burned onto the video, for messaging
 
 ## Print translation (if you want a physical card)
 
-The digital card is 1.905 : 1. A US business card is **3.5 × 2 in** (1.75 : 1), so the layout reflows rather than scales 1:1.
+The card is 1.905 : 1. A US business card is **3.5 × 2 in** (1.75 : 1), so the layout reflows rather than scaling 1:1.
 
 - **Trim:** 3.5 × 2 in → 1050 × 600 px at 300 dpi
 - **Bleed:** +0.125 in all sides → 3.75 × 2.25 in → 1125 × 675 px
-- **Safe margin:** keep text 0.125–0.2 in inside trim
-- Restate type in points for print; hold the same ratios (brand small-caps, logotype dominant, mono URL).
-- Two-sided option: image panel becomes the back, identity on the front.
+- **Safe margin:** keep type 0.125–0.2 in inside trim
+- Restate type in points for print; hold the centered stack and the single near-black ink over a bright structural image.
+- Two-sided option: the structural image as the back, the centered identity stack on the front.
