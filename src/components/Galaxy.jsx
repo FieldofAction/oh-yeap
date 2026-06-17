@@ -541,7 +541,7 @@ export default function Galaxy(){
         .gx-app{display:grid;grid-template-columns:1fr 340px;height:calc(100vh - 72px);width:100%;background:var(--bg);color:var(--fg);font-family:var(--mono);font-size:13px;overflow:hidden;animation:en .4s ease both}
         .gx-stage{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#000}
         .gx-aperture{position:relative;aspect-ratio:1/1;width:min(82vh,86%);max-width:880px}
-        .gx-canvas{width:100%;height:100%;display:block;border-radius:2px;cursor:grab}
+        .gx-canvas{width:100%;height:100%;display:block;border-radius:2px;cursor:grab;touch-action:none}
         .gx-canvas:active{cursor:grabbing}
         .gx-reg{position:absolute;width:16px;height:16px;pointer-events:none;opacity:.5}
         .gx-reg::before,.gx-reg::after{content:"";position:absolute;background:var(--ff)}
@@ -605,9 +605,18 @@ export default function Galaxy(){
         .gx-hint{font-size:9.5px;color:var(--ff);line-height:1.6;margin-top:8px}
         .gx-vidstatus{font-size:10px;letter-spacing:.08em;color:var(--ff);text-align:center;min-height:13px}
         @media(max-width:820px){
-          .gx-app{grid-template-columns:1fr;height:auto}
-          .gx-stage{height:70vh}
-          .gx-console{border-left:none;border-top:1px solid var(--bd)}
+          .gx-app{grid-template-columns:1fr;height:auto;overflow:visible}
+          /* Pin the galaxy below the fixed topbar (72px) so it stays visible
+             while the controls scroll beneath it — adjust a slider, watch it change. */
+          .gx-stage{position:sticky;top:72px;z-index:5;height:46vh;min-height:300px;background:#000;border-bottom:1px solid var(--bd)}
+          .gx-aperture{width:min(40vh,80vw)}
+          .gx-console{border-left:none}
+          /* Bigger touch targets for the sliders. */
+          .gx-range{height:22px;background:transparent}
+          .gx-range::-webkit-slider-runnable-track{height:2px;background:var(--bd)}
+          .gx-range::-moz-range-track{height:2px;background:var(--bd)}
+          .gx-range::-webkit-slider-thumb{margin-top:-7px;width:16px;height:16px}
+          .gx-range::-moz-range-thumb{width:16px;height:16px}
         }
       `}</style>
     </div>
