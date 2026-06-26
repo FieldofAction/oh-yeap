@@ -224,9 +224,6 @@ export default function HotelNest() {
 
           <ImageSlot label="Detail · interior label" aspect="3 / 2" path="/images/nest/tote-detail-label.jpg" />
           <Caption />
-
-          <ImageSlot label="In-situ · carried" aspect="4 / 5" path="/images/nest/tote-insitu.jpg" />
-          <Caption />
         </div>
 
         <div className="hn-product-block">
