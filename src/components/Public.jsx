@@ -232,7 +232,12 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
             {/* Practice — index rows with hover artwork */}
             {(showAll || filter === "Practice" || relFilter) && practice.length > 0 && (
               <div className={`content-section${showAll ? " reveal" : ""}`}>
-                {showAll && <div className="content-section-h">Selected Work<HiddenCountSuffix section="practice" hiddenCounts={hiddenCounts} /></div>}
+                {showAll && (
+                  <div className="content-section-head">
+                    <span className="cs-eyebrow">Practice</span>
+                    <div className="content-section-h">Selected Work<HiddenCountSuffix section="practice" hiddenCounts={hiddenCounts} /></div>
+                  </div>
+                )}
                 <div className="ix">
                   {practice.map((item, i) => (
                     <div key={item.id} className={`ix-row${showAll ? " en" : ""}${import.meta.env.DEV && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.05+i*0.06}s`} : undefined}>
@@ -262,7 +267,12 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
               const rest = allWriting.filter(i => !i.featured);
               return (
                 <div className={`content-section${showAll ? " reveal" : ""}`}>
-                  {showAll && <div className="content-section-h">Writing<HiddenCountSuffix section="writing" hiddenCounts={hiddenCounts} /></div>}
+                  {showAll && (
+                    <div className="content-section-head">
+                      <span className="cs-eyebrow">Field Notes · Memos</span>
+                      <div className="content-section-h">Writing<HiddenCountSuffix section="writing" hiddenCounts={hiddenCounts} /></div>
+                    </div>
+                  )}
                   {showAll && <div className="content-section-gloss">{SECTION_GLOSSES.Writing}</div>}
                   {featured.length > 0 && (
                     <div className="ix-wr-feat">
@@ -322,7 +332,12 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 only surfaces in dev or via relation navigation, not on the public All view. */}
             {((import.meta.env.DEV && (showAll || filter === "Exploration")) || relFilter) && exploration.length > 0 && (
               <div className={`content-section${showAll ? " reveal" : ""}`}>
-                {showAll && <div className="content-section-h">Exploration<HiddenCountSuffix section="exploration" hiddenCounts={hiddenCounts} /></div>}
+                {showAll && (
+                  <div className="content-section-head">
+                    <span className="cs-eyebrow">Experiments</span>
+                    <div className="content-section-h">Exploration<HiddenCountSuffix section="exploration" hiddenCounts={hiddenCounts} /></div>
+                  </div>
+                )}
                 {showAll && <div className="content-section-gloss">{SECTION_GLOSSES.Exploration}</div>}
                 <div className="ix-art">
                   {exploration.map((item, i) => (
@@ -349,7 +364,12 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
             {/* Artifacts — 2-col index */}
             {(showAll || filter === "Artifacts" || relFilter) && artifacts.length > 0 && (
               <div className={`content-section${showAll ? " reveal" : ""}`}>
-                {showAll && <div className="content-section-h">Artifacts<HiddenCountSuffix section="artifacts" hiddenCounts={hiddenCounts} /></div>}
+                {showAll && (
+                  <div className="content-section-head">
+                    <span className="cs-eyebrow">Specs · Models · Frameworks</span>
+                    <div className="content-section-h">Artifacts<HiddenCountSuffix section="artifacts" hiddenCounts={hiddenCounts} /></div>
+                  </div>
+                )}
                 {showAll && <div className="content-section-gloss">{SECTION_GLOSSES.Artifacts}</div>}
                 <div className="ix-art">
                   {artifacts.map((item, i) => (
