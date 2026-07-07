@@ -1,4 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "if [ \"$BUILD_TARGET\" = \"studio\" ]; then npm run build:studio; else npm run build; fi"
+  "buildCommand": "if [ \"$BUILD_TARGET\" = \"studio\" ]; then npm run build:studio; else npm run build; fi",
+  "rewrites": [
+    { "source": "/world-cup-atlas", "destination": "/world-cup-atlas.html" }
+  ]
 }

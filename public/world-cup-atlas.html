@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>World Cup Atlas · How Cultures Pursue Independence Through Movement</title>
+<meta name="description" content="An interactive exhibition catalogue of the 2026 World Cup: 48 nations, their movement languages, constitutions, and lineages. Cultural Infrastructure, Case Study 001.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Libre+Franklin:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5F0E4;
+    --paper-2:#EFE9DA;
+    --ink:#141414;
+    --ink-60:rgba(20,20,20,.6);
+    --ink-40:rgba(20,20,20,.4);
+    --rule:rgba(20,20,20,.22);
+    --rule-strong:rgba(20,20,20,.55);
+    --signal:#E63311;       /* active / alive */
+    --lh-caption:1.45;      /* two-line captions, declarations, taglines */
+    --lh-text:1.55;         /* annotations, supports, data rows */
+    --lh-body:1.75;         /* running paragraphs */
+    --accent:#141414;       /* current country */
+    --maxw:760px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{background:var(--paper);color:var(--ink);}
+  html{-webkit-text-size-adjust:100%;}
+  body{font-family:'IBM Plex Mono',monospace;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+  .anton{font-family:'Anton',sans-serif;font-weight:400;}
+  .grotesk{font-family:'Libre Franklin',sans-serif;}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px;}
+
+  /* ---------- header ---------- */
+  header{border-bottom:1px solid var(--rule-strong);}
+  .head-top{display:flex;align-items:center;gap:14px;padding:22px 0 0;}
+  .globe{flex:0 0 auto;width:38px;height:38px;}
+  .globe svg{width:100%;height:100%;stroke:var(--ink);fill:none;stroke-width:1.4;}
+  .eyebrow{font-size:12px;letter-spacing:.06em;line-height:var(--lh-text);font-weight:500;}
+  .masthead{margin-top:14px;font-size:clamp(64px,19vw,150px);line-height:.88;
+    letter-spacing:.01em;text-transform:uppercase;}
+  .working-copy b{color:var(--ink);font-weight:500;}
+  .asof{margin:16px 0 0;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-60);}
+  .asof .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--signal);margin-right:8px;vertical-align:0;}
+
+  /* forces legend */
+  .legend{display:flex;flex-wrap:wrap;gap:18px 26px;padding:16px 0 18px;margin-top:16px;
+    border-top:1px solid var(--rule);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;}
+  .legend .li{display:flex;align-items:center;gap:8px;color:var(--ink);}
+  .legend svg{width:19px;height:19px;overflow:visible;}
+  .legend small{display:block;color:var(--ink-40);letter-spacing:.08em;text-transform:none;margin-top:2px;}
+
+  /* ---------- paper grain ---------- */
+  body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:999;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size:240px 240px;opacity:.045;mix-blend-mode:multiply;}
+
+  /* ---------- topbar ---------- */
+  .topbar{position:sticky;top:0;z-index:20;background:var(--paper);}
+  .brandrow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0 11px;border-bottom:1px solid var(--rule);}
+  .brand{display:flex;align-items:center;gap:10px;}
+  .brand svg{width:20px;height:20px;stroke:var(--ink);fill:none;stroke-width:1.6;flex:0 0 auto;}
+  .wordmark{font-family:'Libre Franklin',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;}
+  .statuschip{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-60);white-space:nowrap;}
+  .statuschip .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--signal);margin-right:7px;vertical-align:1px;}
+  .nav-inner{display:flex;gap:22px;overflow-x:auto;scrollbar-width:none;padding:12px 0 0;}
+  .nav-inner::-webkit-scrollbar{display:none;}
+  .nl{flex:0 0 auto;background:none;border:none;cursor:pointer;color:var(--ink-60);
+    font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;
+    letter-spacing:.08em;-webkit-tap-highlight-color:transparent;padding:2px 0 12px;
+    transition:color .18s;}
+  .nl:hover{color:var(--ink);}
+  .nl.active{color:var(--signal);}
+  .nl:focus-visible{outline:2px solid var(--signal);outline-offset:3px;}
+
+  /* ---------- view head hierarchy ---------- */
+  .view-head{margin:24px 0 22px;padding-bottom:14px;border-bottom:clamp(6px,1.5vw,9px) solid var(--ink);}
+  .view-head h2{font-size:clamp(30px,8vw,46px);line-height:1;text-transform:uppercase;letter-spacing:.01em;}
+  .view-head .vsub{margin-top:9px;font-size:11.5px;letter-spacing:.04em;color:var(--ink-60);line-height:var(--lh-caption);}
+
+  /* ---------- constitution pager ---------- */
+  .pager{display:flex;gap:8px;align-items:stretch;margin:18px 0 4px;}
+  .pgbtn{flex:0 0 auto;background:none;border:1px solid var(--rule-strong);border-radius:999px;cursor:pointer;
+    padding:10px 13px;font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;
+    letter-spacing:.05em;text-transform:uppercase;color:var(--ink);-webkit-tap-highlight-color:transparent;}
+  .pgbtn:focus-visible{outline:2px solid var(--signal);outline-offset:2px;}
+  .pgsel{flex:1;min-width:0;color:var(--ink);border:1px solid var(--rule-strong);border-radius:999px;
+    padding:10px 46px 10px 18px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;
+    appearance:none;-webkit-appearance:none;
+    background:var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 5.5 L8 10.5 L13 5.5' fill='none' stroke='%23141414' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 18px center;
+    background-size:17px;}
+  .pgbtn{font-size:19px;line-height:1;font-weight:700;padding:8px 15px;}
+  .pgbtn svg,.snav svg{display:inline-block;vertical-align:middle;}
+  .pgbtn.pill{display:inline-flex;align-items:center;gap:8px;}
+  .back svg{vertical-align:-3px;margin-right:2px;}
+  .pager:not(.bottom) .pgbtn{width:46px;height:46px;padding:0;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;}
+  .pager.bottom{margin:34px 0 0;justify-content:space-between;}
+
+  /* ---------- landing hero (Declarations only) ---------- */
+  .hero{padding:22px 0 26px;border-bottom:2px solid var(--ink);margin-bottom:2px;position:relative;}
+  .hero .masthead{font-size:clamp(56px,16vw,120px);position:relative;z-index:1;}
+  .hero .head-top{position:relative;z-index:1;}
+  .hero{overflow:hidden;}
+  .hero-body{position:relative;z-index:1;}
+  .hero-sun{position:absolute;--bs:clamp(150px,42vw,330px);
+    width:var(--bs);aspect-ratio:1;right:2px;bottom:calc(var(--bs)*-0.15);z-index:0;}
+  .hero-sun svg{width:100%;height:100%;display:block;animation:hbspin 52s linear infinite;}
+  .hero-sun .hb-p{transition:fill 1.1s ease;}
+  @keyframes hbspin{to{transform:rotate(360deg);}}
+  @media (prefers-reduced-motion: reduce){.hero-sun svg{animation:none;}}
+
+  /* ---------- views ---------- */
+  main{padding:26px 0 70px;}
+  .view{animation:rise .45s ease both;}
+  @keyframes rise{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+  .section-title{font-size:11.5px;letter-spacing:.08em;font-weight:600;color:var(--ink-60);margin-bottom:18px;}
+
+  /* declaration cards */
+  .cards{display:grid;grid-template-columns:1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);}
+  @media(min-width:460px){.cards{grid-template-columns:1fr 1fr;}}
+  .card{background:var(--paper);padding:18px 16px 20px;text-align:left;border:none;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;transition:background .2s;}
+  .card:hover{background:var(--paper-2);}
+  .card:focus-visible{outline:2px solid var(--signal);outline-offset:-2px;}
+  .card .num{font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--ink);}
+  .card .cname{margin-top:2px;font-family:'Libre Franklin',sans-serif;font-weight:700;
+    font-size:21px;letter-spacing:.01em;color:var(--ink);}
+  .card .decl{margin-top:6px;font-size:10.5px;font-weight:600;letter-spacing:.12em;
+    text-transform:uppercase;line-height:var(--lh-caption);}
+  .card .glyph{margin-top:14px;width:100%;max-width:190px;}
+  .card .cstatus{margin-top:12px;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-40);}
+  .card .cstatus.alive{color:var(--signal);}
+
+  /* ---------- atlas strip ---------- */
+  .atlas-strip{display:grid;grid-template-columns:34px 46px 1fr 46px;gap:10px;align-items:center;
+    border-bottom:1px solid var(--rule-strong);padding:4px 0 16px;}
+  .strip-rail{writing-mode:vertical-rl;transform:rotate(180deg);align-self:stretch;
+    display:flex;align-items:center;justify-content:center;
+    font-size:10.5px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;
+    border-left:1px solid var(--rule);}
+  .strip-scroll{display:flex;gap:1px;overflow-x:auto;scroll-snap-type:x mandatory;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;background:var(--rule);
+    border-left:1px solid var(--rule);border-right:1px solid var(--rule);}
+  .strip-scroll::-webkit-scrollbar{display:none;}
+  .scard{flex:0 0 168px;scroll-snap-align:start;background:var(--paper);border:none;
+    cursor:pointer;text-align:left;padding:12px 14px 16px;-webkit-tap-highlight-color:transparent;
+    transition:background .2s;}
+  .scard:hover{background:var(--paper-2);}
+  .scard:focus-visible{outline:2px solid var(--signal);outline-offset:-2px;}
+  .scard .snum{font-size:10px;font-weight:600;letter-spacing:.1em;color:var(--ink-60);}
+  .scard .sname{margin-top:2px;font-family:'Libre Franklin',sans-serif;font-weight:700;
+    font-size:14.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .scard .sflag{margin-top:10px;}
+  .snav{width:46px;height:46px;border:1px solid var(--rule-strong);border-radius:50%;
+    background:none;cursor:pointer;font-size:19px;font-weight:700;line-height:1;
+    display:flex;align-items:center;justify-content:center;color:var(--ink);
+    font-family:'IBM Plex Mono',monospace;-webkit-tap-highlight-color:transparent;}
+  .snav:focus-visible{outline:2px solid var(--signal);outline-offset:2px;}
+  .strip-foot{display:grid;grid-template-columns:1fr;gap:14px;align-items:center;
+    padding:14px 0 4px;font-size:11px;font-weight:500;letter-spacing:.04em;
+    color:var(--ink-60);line-height:var(--lh-caption);}
+  @media(min-width:640px){.strip-foot{grid-template-columns:1fr auto 1fr;}
+    .strip-foot .sf-r{text-align:right;}}
+  .mini-legend{display:flex;gap:18px;align-items:center;}
+  .mini-legend .li{display:flex;gap:7px;align-items:center;color:var(--ink);}
+  .mini-legend svg{width:16px;height:16px;overflow:visible;}
+
+  /* ---------- mobile ---------- */
+  @media(max-width:560px){
+    .atlas-strip{grid-template-columns:1fr;padding:12px 0;}
+    .strip-rail,.snav{display:none;}
+    .crow{grid-template-columns:86px 1fr;gap:14px;}
+    .crow .ck .cn{font-size:32px;}
+    .lin-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .lin-wrap svg{min-width:560px;}
+  }
+  @media(pointer:coarse){
+    .pgsel,.compose select{font-size:16px;padding-top:12px;padding-bottom:12px;}
+  }
+
+  /* atlas index */
+  .conf-block{margin-bottom:30px;}
+  .conf-title{font-size:11px;letter-spacing:.08em;font-weight:600;
+    color:var(--ink-40);border-bottom:1px solid var(--rule-strong);padding-bottom:8px;margin-bottom:2px;}
+  .arow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;width:100%;
+    background:none;border:none;border-bottom:1px solid var(--rule);padding:12px 0;cursor:pointer;
+    font-family:'IBM Plex Mono',monospace;text-align:left;-webkit-tap-highlight-color:transparent;}
+  .arow .an{font-family:'Libre Franklin',sans-serif;font-weight:700;font-size:15px;
+    color:var(--ink);flex:0 0 auto;}
+  .arow .ad{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-60);
+    flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .arow .as{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-40);flex:0 0 auto;}
+  .arow .as.alive{color:var(--signal);}
+  .arow:focus-visible{outline:2px solid var(--signal);outline-offset:-2px;}
+
+  /* country / match detail */
+  .backbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;}
+  .back{background:none;border:none;cursor:pointer;font-family:'IBM Plex Mono',monospace;
+    font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-60);
+    -webkit-tap-highlight-color:transparent;}
+  .pageno{font-size:11px;font-weight:600;letter-spacing:.1em;}
+  .pageno i{font-style:normal;color:var(--signal);}
+  .status-tag{display:inline-block;padding:5px 10px;border:1px solid var(--rule-strong);
+    font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-60);}
+  .status-tag.alive{border-color:var(--signal);color:var(--signal);}
+  .c-name{margin-top:14px;font-size:clamp(52px,15vw,110px);line-height:.92;padding-bottom:.11em;text-transform:uppercase;letter-spacing:.01em;}
+  .c-decl{margin-top:12px;font-size:13px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;line-height:var(--lh-caption);color:var(--accent);}
+  .c-glyph{margin-top:26px;max-width:300px;}
+  .const-head{display:grid;grid-template-columns:1fr;gap:6px 30px;align-items:start;margin-top:2px;}
+  .name-row{display:flex;align-items:center;gap:18px;}
+  .flag-plate{display:inline-block;flex:0 0 auto;line-height:0;border:1.75px solid var(--ink);}
+  .const-head .c-glyph{margin-top:20px;max-width:320px;}
+  @media(min-width:600px){
+    .const-head{grid-template-columns:1.15fr .85fr;align-items:end;}
+    .const-head .c-glyph{margin:0 0 9px;justify-self:end;width:100%;transform:translateY(10%);}
+  }
+  .c-glyph svg{width:100%;height:auto;display:block;}
+
+  .dsec{margin-top:40px;border-top:1px solid var(--rule-strong);padding-top:16px;}
+  .dsec-title{font-size:11.5px;letter-spacing:.08em;font-weight:600;margin-bottom:16px;}
+
+  .mrow{display:grid;grid-template-columns:30px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule);}
+  .mrow svg{width:24px;height:24px;overflow:visible;margin-top:1px;}
+  .mrow .mn{font-family:'Libre Franklin',sans-serif;font-weight:700;font-size:14px;letter-spacing:.02em;}
+  .mrow .md{font-size:11px;color:var(--ink-60);margin-top:3px;line-height:var(--lh-text);}
+  .mdiag{margin:12px 0 6px;}
+
+  .force{display:grid;grid-template-columns:26px 92px 1fr;gap:10px;align-items:center;padding:9px 0;}
+  .force svg{width:19px;height:19px;overflow:visible;}
+  .force .fl{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;}
+  .force .track{position:relative;height:1px;background:var(--rule-strong);}
+  .force .track::before,.force .track::after{content:'';position:absolute;top:-4px;width:1px;height:9px;background:var(--rule-strong);}
+  .force .track::before{left:0;}.force .track::after{right:0;}
+  .fdot{position:absolute;top:50%;width:10px;height:10px;border-radius:50%;transform:translate(-50%,-50%);background:var(--accent);}
+  .fdot.hollow{background:var(--paper);border:2px solid var(--accent);width:11px;height:11px;}
+
+  .xrow{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--rule);font-size:12px;line-height:var(--lh-text);}
+  .xrow .xk{font-size:9.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-40);padding-top:3px;}
+  .xrow:last-child{border-bottom:none;}
+  .crow:last-child{border-bottom:none;}
+  .mrow:last-child{border-bottom:none;}
+
+
+  /* motion study field */
+  .field-note{font-size:11px;line-height:var(--lh-text);color:var(--ink-60);margin-bottom:14px;max-width:52ch;}
+  .field-frame{position:relative;}
+  canvas#field{display:block;width:100%;height:56vh;min-height:360px;max-height:560px;touch-action:none;cursor:crosshair;}
+
+  /* matches */
+  .round-title{font-size:11px;letter-spacing:.08em;font-weight:600;
+    color:var(--ink-40);margin:30px 0 10px;border-bottom:1px solid var(--rule-strong);padding-bottom:8px;}
+  .mcard{width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--rule);
+    padding:14px 0;cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:'IBM Plex Mono',monospace;}
+  .mcard:focus-visible{outline:2px solid var(--signal);outline-offset:-2px;}
+  .mcard .mline{display:flex;justify-content:space-between;gap:10px;align-items:baseline;
+    font-family:'Libre Franklin',sans-serif;font-weight:700;font-size:17px;color:var(--ink);}
+  .mcard .msc{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px;white-space:nowrap;}
+  .mcard .mcol{margin-top:5px;font-size:11px;font-weight:500;letter-spacing:.04em;color:var(--ink-60);}
+  .mcard .mnote{margin-top:4px;font-size:10px;letter-spacing:.08em;color:var(--ink-40);}
+  .mcard.tbd{cursor:default;}
+  .mcard.tbd .mline{color:var(--ink-40);}
+  .probbar{margin-top:9px;height:4px;display:flex;background:var(--rule);}
+  .probbar span{height:100%;display:block;}
+
+  .vs-a,.vs-b{font-size:clamp(46px,13vw,104px);line-height:.95;text-transform:uppercase;
+    letter-spacing:.01em;display:flex;align-items:center;gap:16px;}
+  .vs-b{justify-content:flex-end;text-align:right;}
+  .vs-mid{display:flex;align-items:center;gap:14px;margin:10px 0;}
+  .vs-mid .vr{flex:1;height:1px;background:var(--rule-strong);}
+  .vs-mid .vv{width:30px;height:30px;border:1.5px solid var(--ink);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;flex:0 0 auto;
+    font-family:'Libre Franklin',sans-serif;font-weight:700;font-size:13px;}
+  .vs-mid .vf{font-size:11px;color:var(--ink-60);letter-spacing:.04em;white-space:nowrap;}
+  @media(max-width:520px){.vs-mid .vf{display:none;}}
+  .vs-flag svg{display:block;}
+  .face{display:grid;grid-template-columns:1fr;gap:20px;margin-top:28px;}
+  @media(min-width:560px){.face{grid-template-columns:1fr 1px 1fr;gap:26px;}
+    .face .face-rule{background:var(--rule-strong);}
+    .face .fb.r{text-align:right;}
+    .face .fb.r .f-fam{justify-content:flex-end;}}
+  .face .f-fam{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-40);}
+  .face .f-decl{margin-top:8px;font-family:'Libre Franklin',sans-serif;font-weight:600;
+    font-size:clamp(16px,4.4vw,20px);line-height:1.35;}
+  .face .f-mot{margin-top:9px;font-size:11.5px;line-height:var(--lh-text);color:var(--ink-60);}
+  .duel-collide{margin-top:12px;font-size:12px;font-weight:500;letter-spacing:.04em;color:var(--ink-60);line-height:var(--lh-caption);}
+  .duel-score{margin-top:8px;font-size:11.5px;letter-spacing:.08em;color:var(--ink);}
+
+  .duel-team{background:var(--paper);padding:16px;}
+
+  .compose{margin-top:36px;border:1px dashed var(--rule-strong);padding:16px;}
+  .mkt-row{display:grid;grid-template-columns:104px 1fr 54px;gap:12px;align-items:center;padding:8px 0;}
+  .mkt-n{font-family:'Libre Franklin',sans-serif;font-weight:600;font-size:13px;}
+  .mkt-bar{height:6px;background:var(--rule);position:relative;display:block;}
+  .mkt-bar i{position:absolute;left:0;top:0;bottom:0;display:block;}
+  .mkt-p{font-size:11.5px;font-weight:600;text-align:right;}
+  .mkt-att{margin-top:12px;font-size:10px;color:var(--ink-40);letter-spacing:.04em;}
+  .mkt-att a{color:var(--ink-60);}
+  .tempo{border:1px solid var(--rule-strong);border-radius:999px;background:none;cursor:pointer;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;
+    padding:6px 13px;color:var(--ink);-webkit-tap-highlight-color:transparent;flex:0 0 auto;}
+  .tempo:focus-visible{outline:2px solid var(--signal);outline-offset:2px;}
+  .compose-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+  .compose select{flex:1;min-width:130px;background:var(--paper);color:var(--ink);
+    border:1px solid var(--rule-strong);border-radius:12px;padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:12px;}
+  .compose button{background:var(--ink);color:var(--paper);border:none;border-radius:999px;padding:10px 20px;cursor:pointer;
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;}
+
+  /* lineage + about */
+  .lin-wrap{background:var(--paper-2);padding:18px 16px 10px;}
+  .about p{font-size:13px;line-height:var(--lh-body);color:var(--ink-60);max-width:52ch;margin-bottom:20px;}
+  .about p b{color:var(--ink);font-weight:500;}
+  .about .big{font-family:'Libre Franklin',sans-serif;font-weight:700;font-size:clamp(20px,5.5vw,28px);
+    line-height:1.35;color:var(--ink);text-transform:none;max-width:24ch;margin-bottom:26px;}
+
+  /* constitution spread */
+  .const-eyebrow{display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:1px solid var(--rule-strong);padding-bottom:8px;
+    font-size:11px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;}
+  .name-row{display:flex;align-items:center;gap:16px;margin-top:16px;flex-wrap:wrap;}
+  .flagchip svg{display:block;}
+  .crow{display:grid;grid-template-columns:108px 1fr;gap:18px;padding:22px 0;border-bottom:1px solid var(--rule);}
+  .crow .ck{font-size:9.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);
+    border-right:1px solid var(--rule);padding-right:14px;}
+  .crow .ck .cn{display:block;font-family:'Anton',sans-serif;font-weight:400;font-size:42px;line-height:.95;
+    color:rgba(20,20,20,.12);letter-spacing:.02em;margin-bottom:6px;}
+  .crow .ck svg{width:26px;height:26px;overflow:visible;margin-top:10px;display:block;}
+  .crow .cmain{font-family:'Libre Franklin',sans-serif;font-weight:600;font-size:clamp(17px,4.6vw,21px);
+    line-height:1.35;color:var(--accent);}
+  .crow .csup{margin-top:9px;font-size:11.5px;line-height:var(--lh-text);color:var(--ink-60);}
+  .chain-mini{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px;}
+  .chain-mini .mnode{border:1px solid var(--rule-strong);padding:5px 10px;font-size:10.5px;
+    letter-spacing:.1em;text-transform:uppercase;}
+  .chain-mini .marr{color:var(--ink-40);font-size:12px;}
+  .fc-row{padding:13px 0;}
+  .fc-top{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+  .fc-top svg{width:19px;height:19px;overflow:visible;flex:0 0 auto;}
+  .fc-l{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;}
+  .fc-w{font-size:11px;color:var(--ink-60);line-height:var(--lh-text);}
+  .fc-track{margin:15px 2px 6px 29px;position:relative;height:1px;background:var(--rule-strong);}
+  .fc-track::before,.fc-track::after{content:'';position:absolute;top:-4px;width:1px;height:9px;background:var(--rule-strong);}
+  .fc-track::before{left:0;}.fc-track::after{right:0;}
+  .glyph-panel{margin-top:8px;}
+  .g-art{margin:22px auto 0;max-width:560px;}
+  .g-art svg{width:100%;height:auto;display:block;}
+  .notes-row{display:grid;grid-template-columns:1fr auto auto;gap:20px;align-items:center;}
+  .vdiv{width:1px;height:48px;background:var(--rule-strong);}
+  .nglobe svg{width:34px;height:34px;stroke:var(--ink);fill:none;stroke-width:1.4;}
+  .glyph-panel .c-glyph{max-width:340px;margin-top:20px;}
+  .notes{margin-top:22px;border-top:1px solid var(--rule-strong);padding-top:14px;}
+  .notes .nt{font-size:11.5px;font-weight:600;letter-spacing:.08em;margin-bottom:10px;}
+  .notes p{font-size:11.5px;line-height:var(--lh-body);color:var(--ink-60);max-width:52ch;}
+  .notes p b{color:var(--ink);font-weight:500;}
+  footer{border-top:2px solid var(--ink);padding:26px 0 60px;font-size:10.5px;
+    letter-spacing:.1em;line-height:var(--lh-caption);color:var(--ink-60);text-transform:uppercase;}
+
+  @media (prefers-reduced-motion: reduce){.view{animation:none;}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <div class="brandrow">
+    <div class="brand">
+      <svg viewBox="0 0 34 34"><circle cx="17" cy="17" r="14"/><ellipse cx="17" cy="17" rx="6.5" ry="14"/><line x1="3" y1="17" x2="31" y2="17"/><line x1="5" y1="10" x2="29" y2="10"/><line x1="5" y1="24" x2="29" y2="24"/></svg>
+      <span class="wordmark">World Cup Atlas</span>
+    </div>
+    <div class="statuschip"><span class="dot"></span>Round of 16 · Live</div>
+  </div>
+  <div class="nav-inner" id="nav"></div>
+</div></div>
+
+<main><div class="wrap"><div id="view" class="view"></div></div></main>
+
+<footer><div class="wrap">
+  A neutral field makes independence a strategy.<br>
+  <span style="color:var(--ink-40)">World Cup Atlas · Cultural Infrastructure · Case Study 001</span><br>
+  <span style="color:var(--ink-40)">A <a href="https://fieldofaction.org" target="_blank" rel="noopener" style="color:var(--ink-60)">Field of Action</a> study</span>
+</div></footer>
+
+<!-- persistent motion-study node, mounted into detail views -->
+<div id="fieldWrap" style="display:none">
+  <div class="field-frame">
+    <canvas id="field" aria-label="Motion study"></canvas>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   WORLD CUP ATLAS v3 — exhibition catalogue.
+   A neutral field makes independence a strategy.
+===================================================================== */
+
+/* ---------- families ------------------------------------------------ */
+const FAM_LABEL={esp:'Geometric Control',bra:'Improvisational Rhythm',jpn:'Collective Anticipation',
+  arg:'Emotional Pressure',mar:'Patterned Discipline',mex:'Public Rhythm',
+  eng:'Industrial Intensity',fra:'Explosive Elegance',ger:'Mechanical Order',ned:'Systems in Motion'};
+const FAM_TRAIL={esp:{fade:.03,w:1.6,dash:null},bra:{fade:.012,w:1.9,dash:null},
+  jpn:{fade:.02,w:1.4,dash:[2,7]},arg:{fade:.045,w:2.1,dash:null},
+  mar:{fade:.025,w:1.6,dash:null},mex:{fade:.03,w:1.9,dash:null},
+  eng:{fade:.04,w:2,dash:null},fra:{fade:.028,w:1.8,dash:null},
+  ger:{fade:.035,w:1.4,dash:[8,4]},ned:{fade:.025,w:1.6,dash:null}};
+const MANEUVERS={
+  bra:[['Unexpected Dribble','Disrupt the pattern. Create the opening.','squig'],
+       ['Elastic Feint','Show one future, choose another.','arc'],
+       ['Creative Overload','Too many options. Break their model.','loop']],
+  jpn:[['Third Man Release','Move together. Unlock the pass.','arc'],
+       ['The Anticipated Run','Arrive before the ball asks.','dash'],
+       ['Interval Keeping','Protect the space between.','space']],
+  esp:[['The Triangle','Always two ways out.','tri'],
+       ['Positional Rotation','The grid holds. The pieces slide.','loop'],
+       ['The Patient Switch','Move them until the door opens.','vec']],
+  arg:[['The Press Trap','Invite the pass. Close the world.','press'],
+       ['The Held Tempo','Wait. Wait. Now.','space'],
+       ['The Dagger','One line through everything.','vec']],
+  mar:[['The Low Block','Give nothing. Mean it.','press'],
+       ['The Pattern Shift','The wall moves as one.','dash'],
+       ['The Counter Break','Patience becomes speed.','vec']],
+  mex:[['The One-Two','Question, answer, gone.','arc'],
+       ['The Crowd Wave','The stands pass through the team.','squig'],
+       ['The Overlap','Arrive in rhythm, in numbers.','dash']],
+  eng:[['The Second Ball','The contest after the contest.','press'],
+       ['The Vertical Wave','Forward, together, again.','vec'],
+       ['The Big Switch','Change the side, change the question.','arc']],
+  fra:[['Calm Circulation','The calm is deliberate.','space'],
+       ['The Explosion','Everything, at once.','vec'],
+       ['The Transition Run','From stillness to goal in four seconds.','dash']],
+  ger:[['The Repeatable Pattern','If it worked, it works.','loop'],
+       ['The Locked Line','Distance held to the meter.','tri'],
+       ['The Timed Press','Punctual aggression.','press']],
+  ned:[['The Position Swap','Anyone, anywhere, the system holds.','loop'],
+       ['The Rotation','The shape breathes.','arc'],
+       ['The Extra Man','Arithmetic as art.','tri']],
+};
+
+/* ---------- the 48 ---------------------------------------------------
+   [id,name,confed,fam,tempo,declaration,motion,analogy,
+    scales[rhythm,pressure,improv,heat,width],status,palette]          */
+const STATUS_LABEL={QF:'Quarter-finals',R16:'Round of 16 · in play',
+  OUT16:'Out · Round of 16',OUT32:'Out · Round of 32',OUTG:'Out · group stage',OUT:'Out'};
+const T=[
+['bra','Brazil','CONMEBOL','bra',1,'invention','Objects drift, curve, accelerate unexpectedly. Nothing repeats exactly.','Jazz improvisation',[.85,.55,.95,.85,.7],'OUT16',['#009739','#FEDD00','#012169']],
+['jpn','Japan','AFC','jpn',1,'coordination','Everything anticipates. Nothing collides. Movement feels inevitable.','Precision craft',[.6,.62,.2,.3,.55],'OUT',['#BC002D','#141414']],
+['esp','Spain','UEFA','esp',1,'control','Everything moves together. One grid. Pieces slide. Nothing surprises.','Grid systems',[.4,.7,.28,.45,.75],'QF',['#AA151B','#F1BF00']],
+['arg','Argentina','CONMEBOL','arg',1,'will','Constant tension. Micro-adjustments. Energy never fully settles.','Narrative design',[.7,.9,.6,.95,.5],'R16',['#75AADB','#F6B40E','#141414']],
+['mar','Morocco','CAF','mar',1,'collective belief','The block breathes as one. The pattern holds, then breaks forward without warning.','Architecture & collective pattern',[.5,.35,.25,.7,.2],'QF',['#C1272D','#006233']],
+['ger','Germany','UEFA','ger',1,'precision','Mechanical timing. Repeatable cadence. Everything locks.','Engineering',[.55,.7,.2,.35,.6],'OUT',['#141414','#DD0000','#FFCC00']],
+['fra','France','UEFA','fra',1,'expression','Explosive dynamic range: calm, explosion, calm, explosion.','Fashion & performance',[.6,.6,.55,.6,.65],'QF',['#0055A4','#EF4135']],
+['mex','Mexico','CONCACAF','mex',1,'pride','Everything moves to a beat. Waves pass through the team like a crowd.','Festival & public culture',[.8,.75,.65,.9,.6],'OUT16',['#006341','#CE1126','#F6B40E']],
+['aut','Austria','UEFA','eng',1.05,'focus','The whole team hunts. Rest is preparation for the next sprint.','Laboratory pressing',[.75,.9,.3,.6,.5],'OUT32',['#EF3340','#141414']],
+['bel','Belgium','UEFA','fra',.95,'unity','Calm circulation until a single player decides everything.','Surrealism',[.55,.5,.6,.5,.6],'QF',['#141414','#FDDA24','#EF3340']],
+['bih','Bosnia & Herzegovina','UEFA','mar',1,'defiance','The block absorbs. Belief does the rest.','Stone bridges',[.45,.4,.35,.75,.3],'OUT32',['#002F6C','#FECB00']],
+['cro','Croatia','UEFA','esp',.72,'perseverance','The midfield slows the world down until the game agrees.','Chess & composure',[.35,.5,.4,.5,.55],'OUT32',['#FF0000','#171796']],
+['cze','Czechia','UEFA','eng',.95,'intelligence','Straight lines, second balls, no ornament.','Industrial functionalism',[.6,.65,.3,.5,.5],'OUT',['#11457E','#D7141A']],
+['eng','England','UEFA','eng',1.1,'tradition','High-tempo waves. The ball goes forward and the team goes with it.','Industrial energy',[.8,.85,.4,.7,.7],'QF',['#CF081F','#141414']],
+['ned','Netherlands','UEFA','ned',1,'adaptation','Systems morph. Objects exchange places. Nodes reorganize.','Systems design',[.6,.6,.35,.4,.8],'OUT',['#FF7A1A','#AE1C28','#21468B']],
+['nor','Norway','UEFA','eng',1,'nature','Long calm, then a straight line to goal at full speed.','Brutal minimalism',[.65,.55,.3,.45,.45],'QF',['#BA0C2F','#00205B']],
+['por','Portugal','UEFA','esp',.85,'ambition','Elegant buildup. The touch is the idea.','Craft & ornament',[.55,.6,.5,.55,.65],'OUT16',['#046A38','#DA291C','#FFE900']],
+['sco','Scotland','UEFA','eng',1.05,'insistence','Tempo as identity. The crowd plays too.','Punk energy',[.7,.8,.35,.8,.45],'OUT',['#005EB8','#141414']],
+['swe','Sweden','UEFA','ger',.9,'simplicity','Two banks, clean lines, patience as a plan.','Flat-pack modularity',[.45,.5,.25,.35,.45],'OUT32',['#006AA7','#FECC02']],
+['sui','Switzerland','UEFA','ger',1,'balance','Everything arrives on time. The watch runs.','Horology',[.5,.55,.25,.3,.5],'R16',['#DA291C','#141414']],
+['tur','Türkiye','UEFA','arg',.95,'faith','The temperature rises until the game bends.','Anatolian drama',[.65,.8,.55,.95,.5],'OUT',['#E30A17','#141414']],
+['col','Colombia','CONMEBOL','bra',.8,'touch','The ball is treated kindly. Then it dances.','Magical realism',[.6,.5,.8,.75,.6],'R16',['#FCD116','#003893','#CE1126']],
+['ecu','Ecuador','CONMEBOL','eng',1,'passion','Relentless legs. The tempo never descends.','Andean endurance',[.75,.7,.4,.6,.5],'OUT32',['#FFDD00','#034EA2','#ED1C24']],
+['par','Paraguay','CONMEBOL','mar',1,'heart','Garra: the block that refuses.','Fortification',[.4,.45,.3,.8,.25],'OUT16',['#D52B1E','#0038A8']],
+['uru','Uruguay','CONMEBOL','arg',.9,'resilience','More will than space. Every duel is personal.','The gaucho ethic',[.55,.85,.45,.9,.4],'OUTG',['#0038A8','#FFD700']],
+['can','Canada','CONCACAF','eng',1,'togetherness','Speed in transition. A country discovering its stride.','New infrastructure',[.7,.65,.4,.55,.55],'OUT16',['#FF0000','#141414']],
+['usa','United States','CONCACAF','eng',1.05,'opportunity','Press, win, run. Fluency arriving at full sprint.','Transition design',[.75,.8,.45,.65,.6],'OUT16',['#B31942','#0A3161']],
+['cuw','Curaçao','CONCACAF','bra',.9,'joy','The smallest nation, the loosest wrists.','Carnival miniature',[.7,.5,.8,.85,.55],'OUT',['#002B7F','#F9E814']],
+['hai','Haiti','CONCACAF','bra',1,'urgency','Improvised, urgent, alive.','Street mural',[.7,.6,.75,.85,.5],'OUT',['#00209F','#D21034']],
+['pan','Panama','CONCACAF','mar',1,'position','Compact and patient. Everything passes through on its terms.','Canal logic',[.5,.5,.35,.7,.3],'OUT',['#DA121A','#072357']],
+['alg','Algeria','CAF','mar',1.1,'resilience','Patience, then daggers through the desert.','Casbah geometry',[.55,.5,.45,.7,.35],'OUT32',['#006233','#D21034']],
+['cpv','Cape Verde','CAF','bra',.95,'the crossing','Island rhythm. Ten diasporas, one groove.','Morna',[.7,.5,.75,.8,.5],'OUT32',['#003893','#CF2027','#F7D116']],
+['cod','DR Congo','CAF','mex',1,'power','The beat is heavy and the shoulders are heavier.','Rumba congolaise',[.7,.65,.6,.8,.55],'OUT32',['#007FFF','#F7D618','#CE1021']],
+['civ',"Côte d'Ivoire",'CAF','fra',1,'resolve','Elegant violence in the duels. Silk after.','Bronze & wax print',[.65,.7,.55,.7,.6],'OUT',['#FF8200','#009A44']],
+['egy','Egypt','CAF','mar',.95,'history','Seventy quiet minutes. Then Cairo erupts.','Monumental patience',[.45,.4,.35,.75,.3],'R16',['#C8102E','#141414','#C09300']],
+['gha','Ghana','CAF','mex',.95,'legacy','Waves of muscle through the middle of the pitch.','Kente & highlife',[.65,.75,.5,.75,.55],'OUT32',['#CE1126','#FCD116','#006B3F']],
+['sen','Senegal','CAF','fra',1.05,'purpose','Long limbs, long strides, sudden geometry.','Sabar drumming',[.7,.7,.5,.7,.6],'OUT32',['#00853F','#FDEF42','#E31B23']],
+['rsa','South Africa','CAF','bra',.85,'style','The showboat is the point. Style is respect.','Township jazz',[.6,.45,.85,.8,.6],'OUT32',['#007749','#FFB81C','#E03C31']],
+['tun','Tunisia','CAF','mar',.95,'determination','The block of Carthage. Order first.','Mosaic',[.45,.45,.3,.65,.3],'OUT',['#E70013','#141414']],
+['aus','Australia','AFC','eng',1,'spirit','Every ball is a fair fight and they intend to win it.','Outback pragmatism',[.65,.75,.35,.6,.55],'OUT32',['#00843D','#FFCD00']],
+['irn','Iran','AFC','mar',.95,'persistence','Deep lines, held nerves, sudden release.','Persian miniature',[.45,.4,.3,.7,.3],'OUT',['#239F40','#DA0000']],
+['irq','Iraq','AFC','mar',1.05,'endurance','Carried by an emotion bigger than the game.','Epic poetry',[.55,.55,.4,.85,.4],'OUT',['#CE1126','#007A3D','#141414']],
+['jor','Jordan','AFC','mar',1,'the first page','A debutant writing carefully, then bravely.','Desert modernism',[.5,.5,.35,.7,.35],'OUT',['#CE1126','#007A3D','#141414']],
+['kor','Korea Republic','AFC','eng',1.15,'harmony','Tempo as a moral position.','Neon tempo',[.85,.85,.4,.7,.5],'OUT',['#CD2E3A','#0047A0','#141414']],
+['qat','Qatar','AFC','esp',.8,'foresight','Possession learned by design, played by heart.','The planned city',[.5,.55,.35,.5,.55],'OUT',['#8A1538','#141414']],
+['ksa','Saudi Arabia','AFC','arg',.95,'vision','The high line as an act of faith.','Falconry',[.65,.8,.5,.8,.5],'OUT',['#165B33','#141414']],
+['uzb','Uzbekistan','AFC','jpn',.9,'detail','New to the stage, exact in the detail.','Silk Road geometry',[.55,.55,.3,.45,.5],'OUT',['#0099B5','#1EB53A','#CE1126']],
+['nzl','New Zealand','OFC','eng',.85,'commitment','Direct, unpretentious, all effort visible.','The long white cloud',[.55,.6,.3,.45,.5],'OUT',['#00247D','#CC142B']],
+];
+const TEAMS={};
+function lum(hex){const n=parseInt(hex.slice(1),16);
+  return (.299*(n>>16&255)+.587*(n>>8&255)+.114*(n&255))/255;}
+T.forEach(r=>{
+  const pal=r[10];
+  const accent=pal.find(c=>lum(c)<.7)||'#141414';
+  TEAMS[r[0]]={id:r[0],name:r[1],conf:r[2],fam:r[3],tempo:r[4],decl:r[5],motion:r[6],
+    analogy:r[7],scales:r[8],status:r[9],palette:pal,accent};
+});
+
+/* card order: the eight declarations first, then the field alphabetically */
+const ORDER=['bra','jpn','esp','arg','mar','ger','fra','mex',
+  ...Object.keys(TEAMS).filter(id=>!['bra','jpn','esp','arg','mar','ger','fra','mex'].includes(id))
+    .sort((a,b)=>TEAMS[a].name.localeCompare(TEAMS[b].name))];
+
+/* specimen deep data */
+const SPEC={
+  bra:{material:'Grass / Sunlight / Woven fabric / Skin',sound:'Percussion / Crowd / Street'},
+  jpn:{material:'Paper / Ceramic / Glass / Joinery / Air',sound:'Coordinated silence / Drums / Anticipation'},
+  esp:{material:'Plaster / Stone / Ceramic / Light',sound:'Metronome / Murmur / Sudden roar'},
+  arg:{material:'Film grain / Smoke / Leather / Theater / Street',sound:'Drums / Chant / Held breath'},
+  mar:{material:'Tile / Earth / Pattern / Shadow',sound:'Drums / Ululation / A stadium that believes'},
+  mex:{material:'Paint / Paper / Fabric / Sun / Public walls',sound:'Brass / Chants / The wave'},
+};
+const LINEAGES={
+  bra:['Pelé','Zico','Ronaldo','Ronaldinho','Neymar'],
+  jpn:['Kamamoto','Nakata','Honda','Kagawa','Mitoma'],
+  esp:['Cruyff','Guardiola','Xavi','Iniesta','Pedri'],
+  arg:['Di Stéfano','Kempes','Maradona','Riquelme','Messi'],
+  mar:['Timoumi','Hadji','Ziyech','Hakimi','En-Nesyri'],
+  mex:['H. Sánchez','Blanco','Márquez','Chicharito','Lozano'],
+  ger:['Beckenbauer','Rummenigge','Matthäus','Lahm','Musiala'],
+  fra:['Kopa','Platini','Zidane','Henry','Mbappé'],
+};
+
+
+/* lineage as a pass through time: career spans, eras, the handoff */
+const LIN_SPANS={
+  bra:[['Pelé',1956,1977],['Zico',1971,1989],['Ronaldo',1993,2011],['Ronaldinho',1998,2015],['Neymar',2009,2026]],
+  jpn:[['Kamamoto',1964,1977],['Nakata',1995,2006],['Honda',2005,2019],['Kagawa',2006,2019],['Mitoma',2020,2026]],
+  esp:[['Cruyff',1964,1996],['Guardiola',1990,2012],['Xavi',1998,2015],['Iniesta',2002,2018],['Pedri',2020,2026]],
+  arg:[['Di Stéfano',1945,1966],['Kempes',1970,1986],['Maradona',1976,1997],['Riquelme',1996,2014],['Messi',2004,2026]],
+  mar:[['Timoumi',1976,1989],['Hadji',1992,2010],['Ziyech',2012,2026],['Hakimi',2016,2026],['En-Nesyri',2015,2026]],
+  mex:[['H. Sánchez',1976,1997],['Blanco',1992,2015],['Márquez',1996,2018],['Chicharito',2006,2024],['Lozano',2014,2026]],
+  ger:[['Beckenbauer',1964,1983],['Rummenigge',1974,1989],['Matthäus',1979,2000],['Lahm',2001,2017],['Musiala',2020,2026]],
+  fra:[['Kopa',1949,1967],['Platini',1972,1987],['Zidane',1989,2006],['Henry',1994,2014],['Mbappé',2015,2026]],
+};
+function lineageSVG(tm,famId,idSuffix){
+  const spans=LIN_SPANS[famId];
+  if(!spans)return '';
+  const Y0=1945,Y1=2032,W=720,padL=14,padR=30;
+  const laneH=46,top=30,H=top+spans.length*laneH+26;
+  const X=y=>padL+(y-Y0)/(Y1-Y0)*(W-padL-padR);
+  const mid=`lin${famId}${idSuffix||''}`;
+  let s='';
+  for(let yr=1950;yr<=2030;yr+=10){
+    s+=`<line x1="${X(yr).toFixed(1)}" y1="${top-16}" x2="${X(yr).toFixed(1)}" y2="${H-22}" stroke="rgba(20,20,20,.08)" stroke-width="1"/>`;
+    s+=`<text x="${X(yr).toFixed(1)}" y="${H-6}" font-family="IBM Plex Mono,monospace" font-size="8.5" letter-spacing="1" fill="rgba(20,20,20,.35)" text-anchor="middle">${yr}</text>`;
+  }
+  spans.forEach((sp,i)=>{
+    const[name,a,b]=sp;
+    const y=top+i*laneH+14;                       /* bar top */
+    const yc=y+3;                                  /* bar center */
+    const last=i===spans.length-1;
+    s+=`<text x="${X(a).toFixed(1)}" y="${y-8}" font-family="IBM Plex Mono,monospace" font-size="11" font-weight="600" fill="#141414">${name}<tspan dx="9" font-weight="400" font-size="8.5" fill="rgba(20,20,20,.42)">${a}–${String(b).slice(2)}</tspan></text>`;
+    s+=`<rect x="${X(a).toFixed(1)}" y="${y}" width="${(X(b)-X(a)).toFixed(1)}" height="6" rx="3" fill="${last?tm.accent:'rgba(20,20,20,.82)'}"/>`;
+    if(last){
+      s+=`<circle cx="${(X(b)+14).toFixed(1)}" cy="${yc}" r="6.5" fill="none" stroke="${tm.accent}" stroke-width="2"/>`;
+    }
+  });
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${tm.name} lineage timeline" style="width:100%;height:auto;display:block">${s}</svg>`;
+}
+
+
+/* ---------- maneuver diagrams: the moves, moving ------------------------
+   O is us. X is them. The accent ball executes the move. */
+const MVH={
+  dot:(x,y)=>`<circle cx="${x}" cy="${y}" r="4" fill="#141414"/>`,
+  opp:(x,y)=>`<circle cx="${x}" cy="${y}" r="8.5" fill="#F5F0E4"/><path d="M${x-3.6},${y-3.6} L${x+3.6},${y+3.6} M${x-3.6},${y+3.6} L${x+3.6},${y-3.6}" stroke="rgba(20,20,20,.42)" stroke-width="1.25" stroke-linecap="round"/>`,
+  tr:(d)=>`<path d="${d}" fill="none" stroke="rgba(20,20,20,.32)" stroke-width="1.2" stroke-dasharray="1.5 4.5" stroke-linecap="round"/>`,
+  anim(){return !(typeof reduceMotion!=='undefined'&&reduceMotion);},
+  motion(dur,o){
+    /* every loop rests, then performs */
+    o=o||{};
+    let kt=o.kt, kp=o.kp;
+    if(!kt){kt='0;0.14;1';kp='0;0;1';}
+    return ` keyTimes="${kt}" keyPoints="${kp}" calcMode="linear" dur="${dur}s" repeatCount="indefinite" begin="${o.begin||0}s"`;},
+  ball(d,dur,ac,o){
+    if(!this.anim())return '';
+    return `<circle r="4.2" fill="${ac}" stroke="#F5F0E4" stroke-width="1.2"><animateMotion${this.motion(dur,o)} path="${d}"/></circle>`;},
+  run(d,dur,o){
+    if(!this.anim())return '';
+    return `<circle r="4" fill="#141414" stroke="#F5F0E4" stroke-width="1"><animateMotion${this.motion(dur,o)} path="${d}"/></circle>`;},
+  gt(inner,values,dur,o){o=o||{};
+    if(!this.anim())return `<g>${inner}</g>`;
+    return `<g>${inner}<animateTransform attributeName="transform" type="${o.type||'translate'}" values="${values}" dur="${dur}s" repeatCount="indefinite" begin="${o.begin||0}s"${o.discrete?' calcMode="discrete"':''}/></g>`;},
+};
+const MOVES={
+bra:[
+ ac=>{const d='M18,62 q18,-30 36,-4 q14,22 34,-6 q18,-26 44,-8 L172,40';
+   return MVH.tr(d)+MVH.opp(105,42)+MVH.opp(140,26)+MVH.ball(d,3.2,ac);},
+ ac=>{const real='M18,45 L78,45 C98,45 103,35 109,26 C115,18 128,15 172,14';
+   const sold='M78,45 C106,45 136,52 168,64';
+   return MVH.tr(sold)+MVH.tr(real)+MVH.opp(112,45)+MVH.ball(real,2.8,ac,{kt:'0;0.8;1',kp:'0;1;1'});},
+ ac=>{const d='M16,45 C64,26 106,62 176,40';
+   return MVH.tr(d)+MVH.tr('M28,16 L150,40')+MVH.tr('M28,74 L150,52')
+    +MVH.opp(122,34)+MVH.opp(132,56)
+    +MVH.run('M28,16 L150,40',2.6)+MVH.run('M28,74 L150,52',2.6)+MVH.ball(d,2.6,ac);}],
+jpn:[
+ ac=>{const d='M28,62 L98,72 L162,36';
+   return MVH.dot(28,62)+MVH.dot(98,72)+MVH.tr('M92,18 L162,36')+MVH.tr(d)
+    +MVH.run('M92,18 L162,36',2.6,{kt:'0;0.6;1',kp:'0;1;1'})+MVH.ball(d,2.6,ac);},
+ ac=>{return MVH.dot(26,46)+MVH.tr('M104,18 L128,46')+MVH.tr('M26,46 L128,46')
+    +MVH.run('M104,18 L128,46',2.4,{kt:'0;0.45;1',kp:'0;1;1'})
+    +MVH.ball('M26,46 L128,46',2.4,ac,{begin:.5,kt:'0;0.5;1',kp:'0;1;1'});},
+ ac=>{const dots=[40,80,120,160].map(x=>MVH.dot(x,45)).join('');
+   const ticks=[60,100,140].map(x=>`<line x1="${x}" y1="40" x2="${x}" y2="50" stroke="rgba(20,20,20,.25)" stroke-width="1"/>`).join('');
+   return ticks+MVH.gt(dots,'0 0;18 0;0 0;-18 0;0 0',5.5);}],
+esp:[
+ ac=>{const d='M44,70 L122,70 L84,24 L44,70';
+   return MVH.dot(44,70)+MVH.dot(122,70)+MVH.dot(84,24)+MVH.tr('M44,70 L122,70 L84,24 Z')+MVH.ball(d,3.6,ac);},
+ ac=>{const dots=MVH.dot(70,50)+MVH.dot(130,50)+MVH.dot(100,20);
+   return `<circle cx="100" cy="40" r="3.6" fill="${ac}"/>`+MVH.gt(dots,'0 100 40;360 100 40',9,{type:'rotate'});},
+ ac=>{const d='M36,64 L66,36 L36,64 L66,36 Q112,-2 168,50';
+   return MVH.dot(36,64)+MVH.dot(66,36)+MVH.dot(168,50)
+    +MVH.tr('M66,36 Q112,-2 168,50')
+    +MVH.gt(MVH.opp(118,40)+MVH.opp(126,58),'0 0;-26 0;-26 0;0 0',4.8)
+    +MVH.ball(d,4.8,ac);}],
+arg:[
+ ac=>{return `<circle cx="128" cy="46" r="3.6" fill="${ac}"/>`
+    +MVH.tr('M52,14 L118,38')+MVH.tr('M52,78 L120,56')
+    +MVH.run('M52,14 L118,38',2,{kt:'0;0.55;1',kp:'0;1;1'})
+    +MVH.run('M52,78 L120,56',2,{kt:'0;0.55;1',kp:'0;1;1'});},
+ ac=>{const d='M56,48 L59,44 L53,46 L58,51 L56,48 L176,18';
+   return MVH.tr('M56,48 L176,18')+MVH.opp(120,36)+MVH.ball(d,3.4,ac,{kt:'0;0.6;0.85;1',kp:'0;0.3;1;1'});},
+ ac=>{const d='M28,80 L178,14';
+   return MVH.tr(d)+MVH.opp(100,52)+MVH.opp(132,36)+MVH.ball(d,2.6,ac,{kt:'0;0.18;1',kp:'0;1;1'});}],
+mar:[
+ ac=>{const dots=[40,70,100,130,160].map(x=>MVH.dot(x,62)).join('');
+   return MVH.gt(MVH.opp(70,20)+MVH.opp(120,24),'0 0;-12 0;0 0;12 0;0 0',6)
+    +MVH.gt(dots,'0 0;14 0;0 0;-14 0;0 0',6);},
+ ac=>{const r1=[45,75,105,135,165].map(x=>MVH.dot(x,52)).join('');
+   const r2=[60,90,120,150].map(x=>MVH.dot(x,72)).join('');
+   return MVH.gt(r1,'0 0;16 0;0 0;-16 0;0 0',5)+MVH.gt(r2,'0 0;16 0;0 0;-16 0;0 0',5,{begin:.35});},
+ ac=>{const d='M44,64 L178,14';
+   const dots=[44,78,112,146].map(x=>MVH.dot(x,64)).join('');
+   return dots+MVH.tr(d)+MVH.ball(d,3.6,ac,{kt:'0;0.55;0.78;1',kp:'0;0;1;1'})
+    +MVH.run('M60,78 L160,34',3.6,{kt:'0;0.58;0.82;1',kp:'0;0;1;1'});}],
+mex:[
+ ac=>{const d='M40,62 L112,38 L150,62';
+   return MVH.tr(d)+MVH.tr('M40,62 L150,62')+MVH.opp(96,54)+MVH.dot(112,38)
+    +MVH.run('M40,62 L150,62',2.6)+MVH.ball(d,2.6,ac);},
+ ac=>[36,68,100,132,164].map((x,i)=>MVH.gt(MVH.dot(x,58),'0 0;0 -18;0 0',1.9,{begin:i*.22})).join(''),
+ ac=>{const rd='M28,80 Q104,96 152,30';
+   return MVH.dot(72,48)+MVH.tr(rd)+MVH.tr('M72,48 L152,30')
+    +MVH.run(rd,3,{kt:'0;0.6;1',kp:'0;1;1'})
+    +MVH.ball('M72,48 L152,30',3,ac,{kt:'0;0.62;0.88;1',kp:'0;0;1;1'});}],
+eng:[
+ ac=>{const d='M24,18 L96,42 L82,68 L164,58';
+   return MVH.tr(d)+MVH.tr('M40,80 L82,68')+MVH.opp(96,42)
+    +MVH.run('M40,80 L82,68',2.8,{kt:'0;0.5;1',kp:'0;1;1'})+MVH.ball(d,2.8,ac);},
+ ac=>{const dots=[56,100,144].map(x=>MVH.dot(x,66)).join('');
+   const trs=[56,100,144].map(x=>MVH.tr(`M${x},70 L${x},26`)).join('');
+   return trs+MVH.gt(dots,'0 0;0 -36;0 -36;0 0',3.2);},
+ ac=>{const d='M30,70 Q100,-8 172,52';
+   return MVH.dot(30,70)+MVH.dot(172,52)+MVH.tr(d)+MVH.ball(d,2.8,ac,{kt:'0;0.7;1',kp:'0;1;1'});}],
+fra:[
+ ac=>{const d='M40,64 L140,64 L90,26 L40,64';
+   return MVH.dot(40,64)+MVH.dot(140,64)+MVH.dot(90,26)+MVH.tr('M40,64 L140,64 L90,26 Z')+MVH.ball(d,7,ac);},
+ ac=>{const o={kt:'0;0.62;0.86;1',kp:'0;0;1;1'};
+   return MVH.tr('M56,46 L182,20')+MVH.tr('M50,54 L176,74')
+    +MVH.run('M56,46 L182,20',3.2,o)+MVH.run('M50,54 L176,74',3.2,o)
+    +MVH.ball('M52,50 L184,46',3.2,ac,o);},
+ ac=>{const d='M26,74 L176,20';
+   return MVH.tr(d)+MVH.tr('M48,84 L188,38')+MVH.run('M48,84 L188,38',2.6)+MVH.ball(d,2.6,ac);}],
+ger:[
+ ac=>{const d='M40,62 L104,62 L104,26 L168,26';
+   return MVH.dot(40,62)+MVH.dot(104,62)+MVH.dot(104,26)+MVH.dot(168,26)+MVH.tr(d)+MVH.ball(d,3.2,ac);},
+ ac=>{const dots=[44,86,128,170].map(x=>MVH.dot(x,48)).join('');
+   const ticks=[65,107,149].map(x=>`<line x1="${x}" y1="43" x2="${x}" y2="53" stroke="rgba(20,20,20,.3)" stroke-width="1"/>`).join('');
+   return ticks+MVH.gt(dots,'0 0;0 -12;0 0;0 12;0 0',5);},
+ ac=>{return MVH.opp(156,46)
+    +MVH.gt(MVH.dot(40,34),'0 0;22 0;44 0;66 0;0 0',2.8,{discrete:true})
+    +MVH.gt(MVH.dot(40,60),'0 0;22 0;44 0;66 0;0 0',2.8,{discrete:true,begin:.2});}],
+ned:[
+ ac=>{return MVH.tr('M60,58 Q100,14 140,34 Q100,78 60,58')
+    +MVH.run('M60,58 Q100,14 140,34 Q100,78 60,58',4)
+    +MVH.run('M140,34 Q100,78 60,58 Q100,14 140,34',4)
+    +`<circle cx="100" cy="46" r="3.6" fill="${ac}"/>`;},
+ ac=>{const dots=MVH.dot(64,45)+MVH.dot(136,45)+MVH.dot(100,16)+MVH.dot(100,74);
+   return `<circle cx="100" cy="45" r="3.6" fill="${ac}"/>`+MVH.gt(dots,'0 100 45;360 100 45',9,{type:'rotate'});},
+ ac=>{const d='M44,62 L100,30 L150,62 L100,72 L44,62';
+   return MVH.dot(44,62)+MVH.dot(100,30)+MVH.dot(150,62)
+    +MVH.tr('M8,84 L100,72')+MVH.run('M8,84 L100,72',4.4,{kt:'0;0.4;1',kp:'0;1;1'})
+    +MVH.ball(d,4.4,ac,{begin:.4});}],
+};
+function maneuverSVG(tm,i,idSuffix){
+  const fam=MOVES[tm.fam];
+  if(!fam||!fam[i])return '';
+  return `<svg viewBox="0 0 200 90" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width:100%;max-width:440px;height:auto;display:block">${fam[i](tm.accent)}</svg>`;
+}
+
+/* ---------- matches -------------------------------------------------- */
+const MATCHES=[
+  {round:'Round of 16 · In play',items:[
+    {a:'arg',b:'egy',prob:[72.4,18.3,9.3],note:'July 7 · 9:00 AM PT'},
+    {a:'sui',b:'col',prob:[27,30.6,42.4],note:'July 7 · 1:00 PM PT'},
+  ]},
+  {round:'Quarter-finals',items:[
+    {a:'fra',b:'mar',prob:[60.4,23.6,16],note:'July 9 · a rematch of the 2022 semi-final'},
+    {a:'esp',b:'bel',prob:[58.9,23.9,17.2],note:'July 10'},
+    {a:'nor',b:'eng',prob:[23.8,25.7,50.5],note:'July 11'},
+    {tbd:'Winner ARG–EGY  v  Winner SUI–COL',note:'July 11'},
+  ]},
+  {round:'Round of 16 · Played',items:[
+    {a:'mar',b:'can',sa:3,sb:0,note:'July 4'},
+    {a:'fra',b:'par',sa:1,sb:0,note:'July 4'},
+    {a:'nor',b:'bra',sa:2,sb:1,note:'July 5 · Brazil eliminated'},
+    {a:'eng',b:'mex',sa:3,sb:2,note:'July 5'},
+    {a:'por',b:'esp',sa:0,sb:1,note:'July 6'},
+    {a:'usa',b:'bel',sa:1,sb:4,note:'July 6'},
+  ]},
+  {round:'Round of 32 · Selected results',items:[
+    {a:'esp',b:'aut',sa:3,sb:0,note:'July 2'},
+    {a:'por',b:'cro',sa:2,sb:1,note:'July 2'},
+    {a:'sui',b:'alg',sa:2,sb:0,note:'July 2'},
+    {a:'usa',b:'bih',sa:2,sb:0,note:''},
+    {a:'can',b:'rsa',sa:1,sb:0,note:'Eustáquio in stoppage time'},
+    {a:'egy',b:'aus',sa:1,sb:1,note:'July 3 · Egypt advance on penalties'},
+    {a:'arg',b:'cpv',sa:3,sb:2,note:'July 3 · a debutant pushes the champions'},
+    {a:'col',b:'gha',sa:1,sb:0,note:'July 3'},
+  ]},
+];
+
+
+/* ---------- the market: Polymarket World Cup winner ------------------- */
+const POLY={
+  asOf:'July 6, 2026', live:false,
+  url:'https://polymarket.com/event/world-cup-winner',
+  rows:[['fra',35.4],['arg',16.8],['esp',12.4],['eng',10.0],['por',7.0]],
+};
+function marketHTML(){
+  const label=POLY.live?'live':'as of '+POLY.asOf;
+  return `<div class="dsec"><div class="dsec-title">The market · to win the tournament</div>
+    <div id="polyRows">${POLY.rows.map(([id,p])=>{
+      const tm=TEAMS[id]; if(!tm)return '';
+      return `<div class="mkt-row">
+        <span class="mkt-n">${tm.name}</span>
+        <span class="mkt-bar"><i style="width:${Math.min(p,100)}%;background:${tm.accent}"></i></span>
+        <span class="mkt-p">${p.toFixed(1)}%</span>
+      </div>`;}).join('')}</div>
+    <div class="mkt-att">Polymarket · World Cup Winner · <span id="polyLabel">${label}</span> · <a href="${POLY.url}" target="_blank" rel="noopener">view market ↗</a></div>
+  </div>`;
+}
+
+/* per-fixture markets: fifwc-{iso3}-{iso3}-{date} */
+const FIX_MKT={
+  'por-esp':{slug:'fifwc-prt-esp-2026-07-06',snap:[25.1,28.3,52.7]},
+  'usa-bel':{slug:'fifwc-usa-bel-2026-07-06'},
+  'arg-egy':{slug:'fifwc-arg-egy-2026-07-07'},
+  'sui-col':{slug:'fifwc-che-col-2026-07-07'},
+  'fra-mar':{slug:'fifwc-fra-mar-2026-07-09'},
+  'esp-bel':{slug:'fifwc-esp-bel-2026-07-10'},
+  'nor-eng':{slug:'fifwc-nor-eng-2026-07-11'},
+};
+function fixRows(a,b,p,live){
+  const row=(name,pct,color)=>`<div class="mkt-row">
+    <span class="mkt-n">${name}</span>
+    <span class="mkt-bar"><i style="width:${Math.min(pct,100)}%;background:${color}"></i></span>
+    <span class="mkt-p">${pct.toFixed(1)}%</span></div>`;
+  return row(a.name,p[0],a.accent)+row('Draw',p[1],'rgba(20,20,20,.38)')+row(b.name,p[2],b.accent);
+}
+function marketFixture(a,b,fx){
+  const label=fx.live?'live':'as of July 6, 2026';
+  return `<div class="dsec"><div class="dsec-title">The market · this fixture</div>
+    <div id="fixRows">${fixRows(a,b,fx.snap,fx.live)}</div>
+    <div class="mkt-att">Polymarket · Match winner, regulation · <span id="fixLabel">${label}</span> · <a href="https://polymarket.com/sports/world-cup/${fx.slug}" target="_blank" rel="noopener">view market ↗</a></div>
+  </div>`;
+}
+async function refreshFixture(a,b,fx){
+  try{
+    const r=await fetch('https://gamma-api.polymarket.com/events?slug='+fx.slug);
+    if(!r.ok)return;
+    const ev=(await r.json())[0];
+    if(!ev||!ev.markets)return;
+    const alias={'United States':['USA','United States','US'],'Switzerland':['Switzerland'],'South Korea':['South Korea','Korea Republic']};
+    const want=n=>[n,...(alias[n]||[])].map(s=>s.toLowerCase());
+    const find=names=>{
+      for(const mk of ev.markets){
+        const g=(mk.groupItemTitle||'').toLowerCase();
+        if(names.includes(g)){
+          try{return parseFloat(JSON.parse(mk.outcomePrices)[0])*100;}catch(e){}
+        }
+      }
+    };
+    const pa=find(want(a.name)),pd=find(['draw']),pb=find(want(b.name));
+    if(pa!==undefined&&pb!==undefined){
+      fx.snap=[pa,pd!==undefined?pd:Math.max(0,100-pa-pb),pb];fx.live=true;
+      const el=document.getElementById('fixRows');
+      if(el)el.innerHTML=fixRows(a,b,fx.snap,true);
+      const lb=document.getElementById('fixLabel');
+      if(lb)lb.textContent='live';
+    }
+  }catch(e){/* snapshot or fallback stands */}
+}
+
+function marketPair(a,b){
+  const map=Object.fromEntries(POLY.rows);
+  const pa=map[a.id],pb=map[b.id];
+  if(pa===undefined&&pb===undefined)return '';
+  const row=(tm,p)=>`<div class="mkt-row">
+      <span class="mkt-n">${tm.name}</span>
+      <span class="mkt-bar"><i style="width:${p||0.6}%;background:${tm.accent}"></i></span>
+      <span class="mkt-p">${p!==undefined?p.toFixed(1)+'%':'<1%'}</span>
+    </div>`;
+  return `<div class="dsec"><div class="dsec-title">The market · to win the tournament</div>
+    ${row(a,pa)}${row(b,pb)}
+    <div class="mkt-att">Polymarket · World Cup Winner · ${POLY.live?'live':'as of '+POLY.asOf} · <a href="${POLY.url}" target="_blank" rel="noopener">view market ↗</a></div>
+  </div>`;
+}
+async function refreshPoly(){
+  try{
+    const r=await fetch('https://gamma-api.polymarket.com/events?slug=world-cup-winner');
+    if(!r.ok)return;
+    const ev=(await r.json())[0];
+    if(!ev||!ev.markets)return;
+    const byName={};
+    for(const tm of Object.values(TEAMS))byName[tm.name.toLowerCase()]=tm.id;
+    const rows=[];
+    for(const mk of ev.markets){
+      const name=(mk.groupItemTitle||'').toLowerCase();
+      const id=byName[name];
+      if(!id)continue;
+      let price;
+      try{price=parseFloat(JSON.parse(mk.outcomePrices)[0])*100;}catch(e){continue;}
+      if(price>0.5)rows.push([id,price]);
+    }
+    if(rows.length>=3){
+      rows.sort((x,y)=>y[1]-x[1]);
+      POLY.rows=rows.slice(0,5);POLY.live=true;
+      const el=document.getElementById('polyRows');
+      if(el){el.outerHTML=marketHTML().match(/<div id="polyRows">[\s\S]*?<\/div>/)[0];
+        const lb=document.getElementById('polyLabel');if(lb)lb.textContent='live';}
+    }
+  }catch(e){/* snapshot stands */}
+}
+
+/* ---------- notation icon set (inline SVG) --------------------------- */
+function icon(kind,color){
+  /* Lucide (ISC) glyphs at their real path data; 2px round strokes */
+  const c=color||'#141414';
+  const S=`fill="none" stroke="${c}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"`;
+  switch(kind){
+    case 'space':return `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" ${S}/></svg>`;
+    case 'press':return `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="${c}"/></svg>`;
+    /* lucide arrow-right */
+    case 'vec':return `<svg viewBox="0 0 24 24"><path d="M5 12h14" ${S}/><path d="m12 5 7 7-7 7" ${S}/></svg>`;
+    case 'dash':return `<svg viewBox="0 0 24 24"><path d="M5 12h13" ${S} stroke-dasharray="2.5 3.5"/><path d="m12 5 7 7-7 7" ${S}/></svg>`;
+    /* lucide corner-up-right */
+    case 'arc':return `<svg viewBox="0 0 24 24"><polyline points="15 14 20 9 15 4" ${S}/><path d="M4 20v-7a4 4 0 0 1 4-4h12" ${S}/></svg>`;
+    /* lucide activity */
+    case 'squig':return `<svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" ${S}/></svg>`;
+    /* lucide rotate-cw */
+    case 'loop':return `<svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" ${S}/><path d="M21 3v5h-5" ${S}/></svg>`;
+    /* lucide triangle */
+    case 'tri':return `<svg viewBox="0 0 24 24"><path d="M13.73 4a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 20h16a2 2 0 0 0 1.73-3z" ${S}/></svg>`;
+    case 'sq':return `<svg viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="${c}"/></svg>`;
+  }
+  return '';
+}
+const FORCES=[['SPACE','space',4,'Room to act.'],['PRESSURE','press',1,'Force applied.'],
+  ['MOMENTUM','vec',0,'Direction of flow.'],['RELEASE','dash',2,'Let go. Exploit.']];
+
+/* ---------- glyph system v2 --------------------------------------------
+   Family = grammar: shape vocabulary + notation type.
+   Seed = instance: layout variant, quantized positions, mirroring,
+   element counts, notation route, palette rotation.
+   No two nations resolve to the same composition. */
+function rng(id){let s=0;for(const ch of id)s=(s*33+ch.charCodeAt(0))>>>0;
+  s^=0x9E3779B9;
+  return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+function glyphSVG(tm,idSuffix){
+  /* The frame of independence: one shared rectangle, packed with
+     interlocking line-art shapes, strokes in the nation's colors. */
+  const R=rng(tm.id);
+  const uid=`g${tm.id}${idSuffix||''}`;
+  /* proportional system: SW is the module, phi the section */
+  const SW=1.75, FR=SW;
+  const IPHI=0.618, GAP=1-IPHI;      /* 0.382 */
+  /* usable stroke colors: palette entries dark enough for paper */
+  const lum=c=>{const n=parseInt(c.slice(1),16);
+    return (0.299*(n>>16&255)+0.587*(n>>8&255)+0.114*(n&255))/255;};
+  let cols=tm.palette.filter(c=>lum(c)<0.78);
+  if(!cols.length)cols=['#141414'];
+  /* weighted by flag prominence: dominant color leads */
+  const weights=cols.map((_,i)=>[3,2,1.2][i]||1);
+  const wsum=weights.reduce((a,b)=>a+b,0);
+  const colAt=()=>{let r=R()*wsum;
+    for(let i=0;i<cols.length;i++){r-=weights[i];if(r<=0)return cols[i];}
+    return cols[0];};
+
+  /* seeded partition of the frame into 6–8 cells */
+  const FI=+(SW*3.5).toFixed(2);   /* frame inset: 3.5 lines */
+  const F={x:FI,y:FI,w:100-2*FI,h:100-2*FI};
+  let cells=[{...F}];
+  const target=6+Math.floor(R()*3);
+  let guard=0;
+  while(cells.length<target&&guard++<40){
+    cells.sort((a,b)=>b.w*b.h-a.w*a.h);
+    const c=cells.shift();
+    const ratio=GAP+R()*(IPHI-GAP);   /* cut in the golden window */
+    const vert=(c.w>c.h)?true:(c.h>c.w)?false:R()<.5;
+    if(vert){
+      const w1=c.w*ratio;
+      cells.push({x:c.x,y:c.y,w:w1,h:c.h},{x:c.x+w1,y:c.y,w:c.w-w1,h:c.h});
+    }else{
+      const h1=c.h*ratio;
+      cells.push({x:c.x,y:c.y,w:c.w,h:h1},{x:c.x,y:c.y+h1,w:c.w,h:c.h-h1});
+    }
+  }
+
+  /* shape vocabulary — every shape closes; every region is drawn matter */
+  const f1=v=>v.toFixed(1);
+  const prim={
+    circle(c,col){const r=Math.min(c.w,c.h)/2;
+      return `<circle cx="${f1(c.x+c.w/2)}" cy="${f1(c.y+c.h/2)}" r="${f1(r)}" stroke="${col}"/>`;},
+    ring(c,col){const cx=c.x+c.w/2,cy=c.y+c.h/2,r=Math.min(c.w,c.h)/2;
+      return `<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(r)}" stroke="${col}"/>
+        <circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(r*GAP)}" stroke="${col}"/>`;},
+    dot(c,col){const cx=c.x+c.w/2,cy=c.y+c.h/2,r=Math.min(c.w,c.h)/2;
+      return `<circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(r)}" stroke="${col}"/>
+        <circle cx="${f1(cx)}" cy="${f1(cy)}" r="${f1(SW*1.4)}" stroke="${col}"/>`;},
+    hex(c,col){const b=Math.min(c.w,c.h)/3;
+      const pts=[[c.x+b,c.y],[c.x+c.w-b,c.y],[c.x+c.w,c.y+c.h/2],
+                 [c.x+c.w-b,c.y+c.h],[c.x+b,c.y+c.h],[c.x,c.y+c.h/2]];
+      const d=pts.map((p,i)=>(i?'L':'M')+f1(p[0])+','+f1(p[1])).join('');
+      return `<path d="${d}Z" stroke="${col}"/>`;},
+    ellipse(c,col){return `<ellipse cx="${f1(c.x+c.w/2)}" cy="${f1(c.y+c.h/2)}" rx="${f1(c.w/2)}" ry="${f1(c.h/2)}" stroke="${col}"/>`;},
+    slab(c,col){const r=Math.min(c.w,c.h)/4;
+      return `<rect x="${f1(c.x)}" y="${f1(c.y)}" width="${f1(c.w)}" height="${f1(c.h)}" rx="${f1(r)}" stroke="${col}"/>`;},
+    rect(c,col){return `<rect x="${f1(c.x)}" y="${f1(c.y)}" width="${f1(c.w)}" height="${f1(c.h)}" stroke="${col}"/>`;},
+  };
+  const cornerDots=(c,col,top)=>{
+    const r=Math.min(c.w,c.h)/7;
+    if(r<SW*1.75)return '';
+    const y=top?c.y+r:c.y+c.h-r;
+    return `<circle cx="${f1(c.x+r)}" cy="${f1(y)}" r="${f1(r)}" stroke="${col}"/>
+      <circle cx="${f1(c.x+c.w-r)}" cy="${f1(y)}" r="${f1(r)}" stroke="${col}"/>`;
+  };
+  const V={
+    circle:(c,col)=>squareFit(c,col,prim.circle),
+    ring:(c,col)=>squareFit(c,col,prim.ring),
+    dot:(c,col)=>squareFit(c,col,prim.dot),
+    hex:(c,col)=>squareFit(c,col,prim.hex),
+    ellipse:prim.ellipse,
+    slab:prim.slab,
+    rect:prim.rect,
+    arch(c,col){const r=Math.min(c.w/2,c.h*.75);
+      return `<path d="M${f1(c.x)},${f1(c.y+c.h)} L${f1(c.x)},${f1(c.y+r)} A${f1(c.w/2)} ${f1(r)} 0 0 1 ${f1(c.x+c.w)},${f1(c.y+r)} L${f1(c.x+c.w)},${f1(c.y+c.h)} Z" stroke="${col}"/>`
+        +(r<c.h*.75?'':cornerDots(c,colAt(),true));},
+    u(c,col){const r=Math.min(c.w/2,c.h*.625);
+      return `<path d="M${f1(c.x)},${f1(c.y)} L${f1(c.x)},${f1(c.y+c.h-r)} A${f1(c.w/2)} ${f1(r)} 0 0 0 ${f1(c.x+c.w)},${f1(c.y+c.h-r)} L${f1(c.x+c.w)},${f1(c.y)} Z" stroke="${col}"/>`;},
+    tri(c,col){
+      return `<path d="M${f1(c.x+c.w/2)},${f1(c.y)} L${f1(c.x+c.w)},${f1(c.y+c.h)} L${f1(c.x)},${f1(c.y+c.h)} Z" stroke="${col}"/>`
+        +cornerDots(c,colAt(),true);},
+    diag(c,col){const k=GAP+R()*(IPHI-GAP);
+      const xm=c.x+c.w*k;
+      /* the cut renders both sides: quad and its complement share the seam */
+      return `<path d="M${f1(c.x)},${f1(c.y)} L${f1(c.x+c.w)},${f1(c.y)} L${f1(xm)},${f1(c.y+c.h)} L${f1(c.x)},${f1(c.y+c.h)} Z" stroke="${col}"/>
+        <path d="M${f1(c.x+c.w)},${f1(c.y)} L${f1(c.x+c.w)},${f1(c.y+c.h)} L${f1(xm)},${f1(c.y+c.h)} Z" stroke="${colAt()}"/>`;},
+  };
+  /* round shapes claim a square; the leftover band becomes its own piece */
+  function squareFit(c,col,draw){
+    const s=Math.min(c.w,c.h);
+    if(Math.max(c.w,c.h)/s<1.25)return draw(c,col);
+    const horiz=c.w>c.h;
+    const atStart=horiz?R()<.5:R()<.22;   /* vertical bands: claim the bottom */
+    const sq=horiz
+      ?{x:atStart?c.x:c.x+c.w-s,y:c.y,w:s,h:s}
+      :{x:c.x,y:atStart?c.y:c.y+c.h-s,w:s,h:s};
+    const band=horiz
+      ?{x:atStart?c.x+s:c.x,y:c.y,w:c.w-s,h:c.h}
+      :{x:c.x,y:atStart?c.y+s:c.y,w:c.w,h:c.h-s};
+    const bmin=Math.min(band.w,band.h);
+    let companion='';
+    if(bmin>=SW*3.5){
+      const kind=bmin>=SW*8?(R()<.5?'slab':'ellipse'):'rect';
+      companion=prim[kind](band,colAt());
+    }
+    return draw(sq,col)+companion;
+  }
+  const VOCAB={
+    bra:['arch','ellipse','circle','ring','u'],
+    jpn:['circle','dot','arch','ring','rect'],
+    esp:['circle','rect','ring','slab','dot'],
+    arg:['tri','diag','circle','rect','ring'],
+    mar:['arch','hex','slab','u','circle'],
+    mex:['circle','tri','slab','ring','arch'],
+    eng:['rect','slab','tri','circle','u'],
+    fra:['tri','arch','circle','ellipse','ring'],
+    ger:['rect','ring','slab','circle','diag'],
+    ned:['circle','diag','rect','ring','hex'],
+  };
+  const vocab=VOCAB[tm.fam]||VOCAB.esp;
+
+  let shapes='';
+  const DENS={dot:3,ring:2.8,hex:2.2,circle:2,tri:2.1,diag:2.6,arch:2.3,u:2,slab:1.6,ellipse:1.6,rect:1.2};
+  let best=null;
+  for(let cand=0;cand<7;cand++){
+    const kinds=cells.map(()=>vocab[Math.floor(R()*vocab.length)]);
+    let m=0,mx=0,my=0;
+    cells.forEach((c,i)=>{const w=DENS[kinds[i]]*Math.sqrt(c.w*c.h);
+      m+=w;mx+=w*(c.x+c.w/2);my+=w*(c.y+c.h/2);});
+    const score=Math.abs(mx/m-50)+Math.max(0,50-my/m)*0.7;
+    if(!best||score<best.score)best={kinds,score};
+  }
+  cells.forEach((c,i)=>{shapes+=V[best.kinds[i]](c,colAt());});
+
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img"
+    aria-label="${tm.name} constitution glyph" id="${uid}">
+    <g fill="none" stroke-width="${SW}" stroke-linejoin="round" stroke-linecap="round">${shapes}</g>
+    <rect x="${F.x}" y="${F.y}" width="${F.w}" height="${F.h}" fill="none" stroke="#141414" stroke-width="${FR}"/>
+  </svg>`;
+}
+function star5(cx,cy,r,fill,rot){
+  rot=(rot===undefined?-90:rot)*Math.PI/180;
+  let d='';
+  for(let i=0;i<10;i++){
+    const rr=i%2?r*.42:r, a=rot+i*Math.PI/5;
+    d+=(i?'L':'M')+(cx+rr*Math.cos(a)).toFixed(1)+','+(cy+rr*Math.sin(a)).toFixed(1);
+  }
+  return `<path d="${d}Z" fill="${fill}"/>`;
+}
+function bandsH(cols,hs){let y=0,s='';cols.forEach((c,i)=>{const h=hs?hs[i]:100/cols.length;
+  s+=`<rect x="0" y="${y}" width="150" height="${h}" fill="${c}"/>`;y+=h;});return s;}
+function bandsV(cols,ws){let x=0,s='';cols.forEach((c,i)=>{const w=ws?ws[i]:150/cols.length;
+  s+=`<rect x="${x}" y="0" width="${w}" height="100" fill="${c}"/>`;x+=w;});return s;}
+function crescent(cx,cy,r,fill,bg,dx){return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill}"/><circle cx="${cx+(dx||r*.38)}" cy="${cy}" r="${r*.8}" fill="${bg}"/>`;}
+const CONST={
+bra:{rows:[
+ ['Belief','Freedom is discovered.','We find our own way. We create new paths where none expected to exist.'],
+ ['Constitution','{N} discovers space.','The longer path is the chosen path. Obstacles become opportunities.'],
+ ['Method','Invention is our independence.','We transform problems into possibilities. Improvisation reveals hidden freedom.'],
+ ['Movement','Improvisation in motion.','Enter → Curve → Pause → Explode → Release'],
+ ['Geometry','Curves dominate. Nothing is perfectly aligned.','Forms overlap. Angles vary. Symmetry is avoided. Space is active.'],
+ ['Field behavior','Create possibilities where none appear to exist.','We play with pressure. We change direction. We let go to go further.']],
+ forces:{SPACE:'Room to act. Potential. Possibility.',PRESSURE:'Force that shapes. Constraints. Catalyst.',MOMENTUM:'Direction. Flow. Forward motion.',RELEASE:'Let go. Break through. Create freedom.'},
+ notes:['identity is expressed through rhythm, contrast, and transformation. Energy flows. Nothing stops for long. Each movement creates a new possibility.','Independence is lived.']},
+jpn:{rows:[
+ ['Belief','Freedom is earned through harmony.','We belong to one another. Together, we create balance that sets us free.'],
+ ['Constitution','Every action supports another.','We anticipate. We respect the whole. We move in harmony.'],
+ ['Method','Coordination is our independence.','Precision creates flow. Alignment creates possibility. Restraint creates strength.'],
+ ['Movement','Anticipate. Align. Flow. Release.','Read → Prepare → Support → Execute → Harmonize'],
+ ['Geometry','Everything aligns. Space is respected.','Clean lines. Clear relationships. Nothing interrupts the whole.'],
+ ['Field behavior','Control the space so others can move freely.','Discipline creates freedom. Structure creates flow. Team creates self.']],
+ forces:{SPACE:'Room to breathe. Respect. Awareness.',PRESSURE:'Discipline. Focus. Responsibility.',MOMENTUM:'Intention. Flow. Unbroken.',RELEASE:'Completion. Letting go. Harmony.'},
+ notes:['identity is expressed through harmony, precision, and respect. We move as one to create balance that liberates.','Independence is unity in motion.']},
+esp:{rows:[
+ ['Belief','Freedom is order made fluent.','We hold the ball, we hold the game. Control is authorship.'],
+ ['Constitution','{N} arranges the game.','Triangles everywhere. Always two ways out.'],
+ ['Method','Control is our independence.','Position before possession. Possession before speed. The grid does the running.'],
+ ['Movement','Circulate. Shift. Open. Enter.','Receive → Angle → Pass → Move → Repeat'],
+ ['Geometry','Triangles tile the field. The grid holds.','Equal distances. Constant options. Nothing isolated.'],
+ ['Field behavior','Move the opponent until the door opens.','Patience is pressure. The pass is the argument.']],
+ forces:{SPACE:'Made by the pass. Angles. Options.',PRESSURE:'Steady. Cumulative. Patient.',MOMENTUM:'Circulation. Tempo held. Tempo chosen.',RELEASE:'The opening. The final pass. Earned.'},
+ notes:['identity is expressed through order, patience, and authorship. The game is arranged.','Independence is control.']},
+arg:{rows:[
+ ['Belief','Freedom is taken.','Nothing is owed. Everything is contested. Desire is a tactic.'],
+ ['Constitution','{N} makes the moment.','Every duel is personal. Every second is negotiable.'],
+ ['Method','Will is our independence.','Tension held until it becomes a weapon. Emotion, disciplined.'],
+ ['Movement','Press. Hold. Hold. Strike.','Provoke → Compress → Wait → Dagger → Roar'],
+ ['Geometry','Compression and the vertical line.','Tight distances. Sudden depth. The straightest path, at last.'],
+ ['Field behavior','Raise the temperature until the game bends.','We play the opponent, the referee, the crowd, the story.']],
+ forces:{SPACE:'Contested. Won. Personal.',PRESSURE:'Constant. Emotional. A weapon.',MOMENTUM:'Held back. Then total.',RELEASE:'The dagger. One line. Everything.'},
+ notes:['identity is expressed through tension, desire, and drama. The match is a story and we write the ending.','Independence is seized.']},
+mar:{rows:[
+ ['Belief','Freedom is held together.','The block is a promise. Belief is a structure you can stand on.'],
+ ['Constitution','{N} owns the walls.','Pattern absorbs pressure. Order outlasts talent.'],
+ ['Method','Collective belief is our independence.','Every position supports another. The wall breathes as one.'],
+ ['Movement','Hold. Shift. Absorb. Break.','Set → Shift → Absorb → Win → Counter'],
+ ['Geometry','The block. The tessellation. The counter-line.','Compact distances. Repeating pattern. One sudden vertical.'],
+ ['Field behavior','Concede nothing. Then break at full speed.','Patience becomes speed. Discipline becomes joy.']],
+ forces:{SPACE:'Denied. Guarded. Then seized.',PRESSURE:'Absorbed. Shared. Redistributed.',MOMENTUM:'Stored. Collective. Sudden.',RELEASE:'The break. Together. Believed.'},
+ notes:['identity is expressed through pattern, patience, and shared conviction. The wall holds because everyone holds it.','Independence is collective.']},
+mex:{rows:[
+ ['Belief','Freedom is felt in rhythm.','The crowd and the team share one pulse. Emotion is public.'],
+ ['Constitution','{N} plays in waves.','The stadium passes through the team.'],
+ ['Method','Rhythm is our independence.','The one-two. The overlap. The beat that carries the ball.'],
+ ['Movement','Pulse. Combine. Overlap. Arrive.','Beat → One-two → Wave → Overlap → Finish'],
+ ['Geometry','Waves and pulses.','Layered runs. Repeating rhythm. Movement in chorus.'],
+ ['Field behavior','Turn the game into a festival it must join.','Energy is shared.']],
+ forces:{SPACE:'Opened by rhythm. Shared.',PRESSURE:'Loud. Rising. Communal.',MOMENTUM:'The wave. Carried. Passed on.',RELEASE:'The arrival. On the beat.'},
+ notes:['identity is expressed through pulse, color, and public emotion. The team plays what the crowd feels.','Independence is celebrated.']},
+eng:{rows:[
+ ['Belief','Freedom is won by work.','Intensity is honesty. Every contest is an obligation.'],
+ ['Constitution','{N} drives the game.','Forward, together, again.'],
+ ['Method','Intensity is our independence.','The second ball. The vertical wave. The big switch.'],
+ ['Movement','Press. Win. Go. Go again.','Contest → Win → Forward → Support → Repeat'],
+ ['Geometry','Vertical lines and full width.','Direct routes. Honest angles. The whole pitch used.'],
+ ['Field behavior','Make the game faster than the opponent can think.','Tempo is the argument. Effort is visible.']],
+ forces:{SPACE:'Attacked. Stretched. Earned.',PRESSURE:'Relentless. Physical. Fair.',MOMENTUM:'Forward. Waves. Unbroken.',RELEASE:'The runner. The cross. Now.'},
+ notes:['identity is expressed through effort, tempo, and directness. Everything is contested.','Independence is worked for.']},
+fra:{rows:[
+ ['Belief','Freedom is the range of the possible.','Calm and explosion belong to the same sentence.'],
+ ['Constitution','{N} waits for the opening it deserves.','Stillness is a disguise.'],
+ ['Method','Possibility is our independence.','Individual brilliance inside collective calm.'],
+ ['Movement','Circulate. Wait. Explode. Vanish.','Calm → Read → Ignite → Break → Finish'],
+ ['Geometry','Still masses and sudden vectors.','Long calm shapes. One line that leaves.'],
+ ['Field behavior','Let the game settle into calm.','Then strike all at once.']],
+ forces:{SPACE:'Held in reserve. Then taken whole.',PRESSURE:'Latent. Coiled. Chosen.',MOMENTUM:'From zero to total.',RELEASE:'The explosion. Four seconds. Goal.'},
+ notes:['identity is expressed through range, elegance, and detonation. The calm prepares the burst.','Independence is decisive.']},
+ger:{rows:[
+ ['Belief','Freedom is a system that works.','Repeatability is a form of trust.'],
+ ['Constitution','{N} executes the plan.','If it worked, it works.'],
+ ['Method','Precision is our independence.','Distances held to the meter. Timing held to the second.'],
+ ['Movement','Lock. Time. Execute. Reset.','Set → Trigger → Execute → Confirm → Reset'],
+ ['Geometry','Locked lines and measured intervals.','Aligned units. Counted steps. The crosshair.'],
+ ['Field behavior','Remove chance from the game.','Punctual aggression. Order as identity.']],
+ forces:{SPACE:'Measured. Allocated. Exact.',PRESSURE:'Timed. Mechanical. Repeatable.',MOMENTUM:'Cadence. Locked. Reliable.',RELEASE:'On schedule. As designed.'},
+ notes:['identity is expressed through engineering, cadence, and repeatability. Nothing is left to luck.','Independence is built.']},
+ned:{rows:[
+ ['Belief','Freedom is the system in motion.','Anyone can be anywhere; the shape survives everyone.'],
+ ['Constitution','{N} defends relationships.','The player moves; the structure remains.'],
+ ['Method','The system is our independence.','Total exchange. The extra man. Arithmetic as art.'],
+ ['Movement','Rotate. Swap. Reform. Advance.','Occupy → Exchange → Reform → Overload → Advance'],
+ ['Geometry','Modules that trade places.','Pinwheel rotations. Preserved distances. Fluid identity.'],
+ ['Field behavior','Reorganize faster than the opponent can read.','The shape breathes. The idea holds.']],
+ forces:{SPACE:'Redistributed. Continuous. Systemic.',PRESSURE:'Positional. Rotating. Shared.',MOMENTUM:'Through the structure. Not the runner.',RELEASE:'The extra man. Found again.'},
+ notes:['identity is expressed through structure, exchange, and clarity. The system is the star.','Independence is the design.']},
+};
+
+function flagInner(id){
+  const K='#141414';
+  switch(id){
+  case 'aut':return bandsH(['#EF3340','#FFFFFF','#EF3340']);
+  case 'bel':return bandsV([K,'#FDDA24','#EF3340']);
+  case 'bih':return `<rect width="150" height="100" fill="#002F6C"/><path d="M52,0 L122,0 L122,100 Z" fill="#FECB00"/>${[0,1,2,3,4].map(i=>`<circle cx="${44+i*17}" cy="${6+i*20}" r="4" fill="#FFFFFF"/>`).join('')}`;
+  case 'cro':{let s=bandsH(['#FF0000','#FFFFFF','#171796']);
+    for(let r=0;r<3;r++)for(let c=0;c<4;c++)s+=`<rect x="${55+c*10}" y="${20+r*10}" width="10" height="10" fill="${(r+c)%2?'#FFFFFF':'#FF0000'}"/>`;
+    return s;}
+  case 'cze':return `<rect width="150" height="50" fill="#FFFFFF"/><rect y="50" width="150" height="50" fill="#D7141A"/><path d="M0,0 L75,50 L0,100 Z" fill="#11457E"/>`;
+  case 'eng':return `<rect width="150" height="100" fill="#FFFFFF"/><rect x="63" width="24" height="100" fill="#CF081F"/><rect y="38" width="150" height="24" fill="#CF081F"/>`;
+  case 'fra':return bandsV(['#0055A4','#FFFFFF','#EF4135']);
+  case 'ger':return bandsH([K,'#DD0000','#FFCC00']);
+  case 'ned':return bandsH(['#AE1C28','#FFFFFF','#21468B']);
+  case 'nor':return `<rect width="150" height="100" fill="#BA0C2F"/><rect x="42" width="24" height="100" fill="#FFFFFF"/><rect y="38" width="150" height="24" fill="#FFFFFF"/><rect x="48" width="12" height="100" fill="#00205B"/><rect y="44" width="150" height="12" fill="#00205B"/>`;
+  case 'por':return `<rect width="60" height="100" fill="#046A38"/><rect x="60" width="90" height="100" fill="#DA291C"/><circle cx="60" cy="50" r="18" fill="#FFE900"/><circle cx="60" cy="50" r="18" fill="none" stroke="${K}" stroke-width="2"/>`;
+  case 'sco':return `<rect width="150" height="100" fill="#005EB8"/><path d="M0,0 L14,0 L150,88 L150,100 L136,100 L0,12 Z" fill="#FFFFFF"/><path d="M150,0 L150,12 L14,100 L0,100 L0,88 L136,0 Z" fill="#FFFFFF"/>`;
+  case 'esp':return bandsH(['#AA151B','#F1BF00','#AA151B'],[25,50,25]);
+  case 'swe':return `<rect width="150" height="100" fill="#006AA7"/><rect x="45" width="18" height="100" fill="#FECC02"/><rect y="41" width="150" height="18" fill="#FECC02"/>`;
+  case 'sui':return `<rect width="150" height="100" fill="#DA291C"/><rect x="65" y="20" width="20" height="60" fill="#FFFFFF"/><rect x="45" y="40" width="60" height="20" fill="#FFFFFF"/>`;
+  case 'tur':return `<rect width="150" height="100" fill="#E30A17"/>${crescent(58,50,24,'#FFFFFF','#E30A17',10)}${star5(96,50,10,'#FFFFFF',90)}`;
+  case 'arg':return bandsH(['#75AADB','#FFFFFF','#75AADB'])+`<circle cx="75" cy="50" r="11" fill="#F6B40E"/>`;
+  case 'bra':return `<rect width="150" height="100" fill="#009739"/><path d="M75,10 L138,50 L75,90 L12,50 Z" fill="#FEDD00"/><circle cx="75" cy="50" r="17" fill="#012169"/>`;
+  case 'col':return bandsH(['#FCD116','#003893','#CE1126'],[50,25,25]);
+  case 'ecu':return bandsH(['#FFDD00','#034EA2','#ED1C24'],[50,25,25])+`<circle cx="75" cy="45" r="9" fill="${K}"/>`;
+  case 'par':return bandsH(['#D52B1E','#FFFFFF','#0038A8'])+`<circle cx="75" cy="50" r="9" fill="none" stroke="#B8860B" stroke-width="2.5"/><circle cx="75" cy="50" r="3" fill="#2E7D32"/>`;
+  case 'uru':{let s=`<rect width="150" height="100" fill="#FFFFFF"/>`;
+    for(let i=0;i<4;i++)s+=`<rect x="${i<2?55:0}" y="${11+i*22}" width="${i<2?95:150}" height="11" fill="#0038A8"/>`;
+    return s+`<circle cx="27" cy="25" r="13" fill="#FFD700"/>`;}
+  case 'can':return `<rect width="150" height="100" fill="#FFFFFF"/><rect width="38" height="100" fill="#FF0000"/><rect x="112" width="38" height="100" fill="#FF0000"/><path d="M75,22 L80,36 L92,32 L86,46 L98,52 L79,58 L81,78 L75,70 L69,78 L71,58 L52,52 L64,46 L58,32 L70,36 Z" fill="#FF0000"/>`;
+  case 'mex':return bandsV(['#006341','#FFFFFF','#CE1126'])+`<circle cx="75" cy="50" r="8" fill="${K}"/>`;
+  case 'usa':{let s='';
+    for(let i=0;i<13;i++)s+=`<rect y="${i*7.7}" width="150" height="7.7" fill="${i%2?'#FFFFFF':'#B31942'}"/>`;
+    s+=`<rect width="62" height="54" fill="#0A3161"/>`;
+    for(let r=0;r<3;r++)for(let c=0;c<4;c++)s+=`<circle cx="${9+c*15}" cy="${10+r*17}" r="2.6" fill="#FFFFFF"/>`;
+    return s;}
+  case 'cuw':return `<rect width="150" height="100" fill="#002B7F"/><rect y="62" width="150" height="13" fill="#F9E814"/>${star5(28,25,10,'#FFFFFF')}${star5(46,40,7,'#FFFFFF')}`;
+  case 'hai':return `<rect width="150" height="50" fill="#00209F"/><rect y="50" width="150" height="50" fill="#D21034"/><rect x="55" y="35" width="40" height="30" fill="#FFFFFF"/><circle cx="75" cy="50" r="5" fill="#2E7D32"/>`;
+  case 'pan':return `<rect width="75" height="50" fill="#FFFFFF"/><rect x="75" width="75" height="50" fill="#DA121A"/><rect y="50" width="75" height="50" fill="#072357"/><rect x="75" y="50" width="75" height="50" fill="#FFFFFF"/>${star5(37,25,10,'#072357')}${star5(112,75,10,'#DA121A')}`;
+  case 'alg':return `<rect width="75" height="100" fill="#006233"/><rect x="75" width="75" height="100" fill="#FFFFFF"/>${crescent(72,50,22,'#D21034',id==='alg'?'#nope':'#FFFFFF',9)}${star5(88,50,8,'#D21034',90)}`.replace('#nope','#FFFFFF');
+  case 'cpv':{let s=`<rect width="150" height="100" fill="#003893"/><rect y="58" width="150" height="7" fill="#FFFFFF"/><rect y="65" width="150" height="8" fill="#CF2027"/><rect y="73" width="150" height="7" fill="#FFFFFF"/>`;
+    for(let i=0;i<10;i++){const a=i*Math.PI/5;s+=`<circle cx="${(55+17*Math.cos(a)).toFixed(1)}" cy="${(66+17*Math.sin(a)).toFixed(1)}" r="2.6" fill="#F7D116"/>`;}
+    return s;}
+  case 'cod':return `<rect width="150" height="100" fill="#007FFF"/><path d="M0,100 L0,78 L128,0 L150,0 L150,22 L22,100 Z" fill="#F7D618"/><path d="M0,96 L0,82 L134,0 L148,0 L14,100 Z" fill="#CE1021" transform="translate(4,0)"/>${star5(22,20,12,'#F7D618')}`;
+  case 'civ':return bandsV(['#FF8200','#FFFFFF','#009A44']);
+  case 'egy':return bandsH(['#CE1126','#FFFFFF',K])+`<circle cx="75" cy="50" r="8" fill="#C09300"/>`;
+  case 'gha':return bandsH(['#CE1126','#FCD116','#006B3F'])+star5(75,50,12,K);
+  case 'mar':{let d='';
+    for(let i=0;i<5;i++){const a=-Math.PI/2+i*4*Math.PI/5;
+      d+=(i?'L':'M')+(75+20*Math.cos(a)).toFixed(1)+','+(50+20*Math.sin(a)).toFixed(1);}
+    return `<rect width="150" height="100" fill="#C1272D"/><path d="${d}Z" fill="none" stroke="#006233" stroke-width="3.5"/>`;}
+  case 'sen':return bandsV(['#00853F','#FDEF42','#E31B23'])+star5(75,50,11,'#00853F');
+  case 'rsa':return `<rect width="150" height="100" fill="#FFFFFF"/><rect x="45" width="105" height="40" fill="#E03C31"/><rect x="45" y="60" width="105" height="40" fill="#001489"/><path d="M0,8 L58,50 L0,92 Z" fill="#FFFFFF"/><rect y="40" x="35" width="115" height="20" fill="#007749"/><path d="M0,14 L52,50 L0,86 Z" fill="#007749"/><path d="M0,30 L30,50 L0,70 Z" fill="#FFB81C"/><path d="M0,40 L16,50 L0,60 Z" fill="${K}"/>`;
+  case 'tun':return `<rect width="150" height="100" fill="#E70013"/><circle cx="75" cy="50" r="24" fill="#FFFFFF"/>${crescent(74,50,17,'#E70013','#FFFFFF',7)}${star5(82,50,7,'#E70013',90)}`;
+  case 'aus':return `<rect width="150" height="100" fill="#00247D"/><path d="M0,0 L8,0 L75,44 L75,50 L67,50 L0,6 Z" fill="#FFFFFF"/><path d="M75,0 L75,6 L8,50 L0,50 L0,44 L67,0 Z" fill="#FFFFFF"/><rect x="32" width="10" height="50" fill="#FFFFFF"/><rect y="20" width="75" height="10" fill="#FFFFFF"/><rect x="34.5" width="5" height="50" fill="#CF081F"/><rect y="22.5" width="75" height="5" fill="#CF081F"/>${star5(37,76,10,'#FFFFFF')}${star5(112,20,6,'#FFFFFF')}${star5(96,46,6,'#FFFFFF')}${star5(130,46,6,'#FFFFFF')}${star5(112,78,6,'#FFFFFF')}`;
+  case 'irn':return bandsH(['#239F40','#FFFFFF','#DA0000'])+`<circle cx="75" cy="50" r="7" fill="#DA0000"/><rect x="73.5" y="38" width="3" height="7" fill="#DA0000"/>`;
+  case 'irq':return bandsH(['#CE1126','#FFFFFF',K])+`<path d="M52,50 q6,-8 12,0 q6,8 12,0 q6,-8 12,0 q6,8 12,0" fill="none" stroke="#007A3D" stroke-width="3"/>`;
+  case 'jpn':return `<rect width="150" height="100" fill="#FFFFFF"/><circle cx="75" cy="50" r="22" fill="#BC002D"/>`;
+  case 'jor':return bandsH([K,'#FFFFFF','#007A3D'])+`<path d="M0,0 L60,50 L0,100 Z" fill="#CE1126"/><circle cx="20" cy="50" r="4.5" fill="#FFFFFF"/>`;
+  case 'kor':{let s=`<rect width="150" height="100" fill="#FFFFFF"/><circle cx="75" cy="50" r="20" fill="#CD2E3A"/><path d="M55,50 A20,20 0 0 0 95,50 Z" fill="#0047A0"/><circle cx="65" cy="46" r="10" fill="#CD2E3A"/><circle cx="85" cy="54" r="10" fill="#0047A0"/>`;
+    const g=[[22,18,-34],[128,18,34],[22,82,34],[128,82,-34]];
+    for(const[gx,gy,ga]of g)for(let i=0;i<3;i++)
+      s+=`<rect x="${gx-11}" y="${gy-7+i*6}" width="22" height="3.4" fill="${K}" transform="rotate(${ga} ${gx} ${gy})"/>`;
+    return s;}
+  case 'qat':{let d='M45,0 ';for(let i=0;i<9;i++){d+=`L59,${(i+0.5)*100/9} L45,${(i+1)*100/9} `;}
+    return `<rect width="150" height="100" fill="#8A1538"/><path d="${d}L0,100 L0,0 Z" fill="#FFFFFF"/>`;}
+  case 'ksa':return `<rect width="150" height="100" fill="#165B33"/><path d="M35,38 q9,-9 18,0 q9,9 18,0 q9,-9 18,0 q9,9 18,0" fill="none" stroke="#FFFFFF" stroke-width="4"/><rect x="35" y="62" width="80" height="4.5" fill="#FFFFFF"/><rect x="108" y="58" width="5" height="12" fill="#FFFFFF"/>`;
+  case 'uzb':return `<rect width="150" height="30" fill="#0099B5"/><rect y="30" width="150" height="4" fill="#CE1126"/><rect y="34" width="150" height="30" fill="#FFFFFF"/><rect y="64" width="150" height="4" fill="#CE1126"/><rect y="68" width="150" height="32" fill="#1EB53A"/>${crescent(23,15,10,'#FFFFFF','#0099B5',5)}<circle cx="46" cy="10" r="2" fill="#FFFFFF"/><circle cx="55" cy="10" r="2" fill="#FFFFFF"/><circle cx="64" cy="10" r="2" fill="#FFFFFF"/>`;
+  case 'nzl':return `<rect width="150" height="100" fill="#00247D"/><path d="M0,0 L8,0 L75,44 L75,50 L67,50 L0,6 Z" fill="#FFFFFF"/><path d="M75,0 L75,6 L8,50 L0,50 L0,44 L67,0 Z" fill="#FFFFFF"/><rect x="32" width="10" height="50" fill="#FFFFFF"/><rect y="20" width="75" height="10" fill="#FFFFFF"/><rect x="34.5" width="5" height="50" fill="#CF081F"/><rect y="22.5" width="75" height="5" fill="#CF081F"/>${star5(112,22,7,'#CC142B')}${star5(97,46,7,'#CC142B')}${star5(127,46,7,'#CC142B')}${star5(112,76,7,'#CC142B')}`;
+  case 'aut2':return '';
+  default:return `<rect width="150" height="100" fill="#DDD"/>`;
+  }
+}
+function flagSVG(id,x,y,w,h){
+  return `<svg x="${x}" y="${y}" width="${w}" height="${h}" viewBox="0 0 150 100" preserveAspectRatio="none">${flagInner(id)}</svg><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="rgba(20,20,20,.4)" stroke-width="1"/>`;
+}
+
+/* ---------- index tile: the flag, annotated -------------------------------
+   Flag = the nation. Notation = its movement grammar, seeded per nation.  */
+const ART={};
+function glyphArt(tm,idSuffix){
+  if(ART[tm.id])return `<img src="${ART[tm.id]}" alt="${tm.name} glyph" style="width:100%;height:auto;display:block;mix-blend-mode:multiply"/>`;
+  return glyphSVG(tm,idSuffix);
+}
+
+/* ---------- engine (paper edition) ------------------------------------ */
+const HOMES={
+  bra:[[.5,.92],[.15,.72],[.38,.78],[.62,.78],[.85,.72],[.35,.55],[.65,.55],[.2,.35],[.5,.42],[.8,.35],[.5,.18]],
+  jpn:[[.5,.92],[.22,.74],[.5,.76],[.78,.74],[.3,.58],[.7,.58],[.5,.5],[.22,.38],[.78,.38],[.38,.22],[.62,.22]],
+  esp:[[.5,.92],[.2,.75],[.4,.78],[.6,.78],[.8,.75],[.3,.58],[.5,.62],[.7,.58],[.3,.4],[.5,.34],[.7,.4]],
+  arg:[[.5,.92],[.2,.74],[.4,.78],[.6,.78],[.8,.74],[.5,.6],[.3,.52],[.7,.52],[.5,.38],[.35,.24],[.65,.24]],
+  mar:[[.5,.94],[.22,.82],[.4,.84],[.6,.84],[.78,.82],[.18,.68],[.36,.7],[.5,.72],[.64,.7],[.82,.68],[.5,.5]],
+  mex:[[.5,.92],[.2,.75],[.4,.79],[.6,.79],[.8,.75],[.3,.6],[.5,.63],[.7,.6],[.25,.42],[.5,.38],[.75,.42]],
+  eng:[[.5,.92],[.15,.72],[.38,.78],[.62,.78],[.85,.72],[.4,.58],[.6,.58],[.15,.38],[.85,.38],[.42,.28],[.58,.28]],
+  fra:[[.5,.92],[.2,.74],[.4,.78],[.6,.78],[.8,.74],[.35,.58],[.65,.58],[.5,.48],[.2,.3],[.8,.3],[.5,.22]],
+  ger:[[.5,.92],[.2,.76],[.4,.79],[.6,.79],[.8,.76],[.3,.6],[.5,.6],[.7,.6],[.3,.4],[.5,.38],[.7,.4]],
+  ned:[[.5,.92],[.2,.74],[.4,.78],[.6,.78],[.8,.74],[.3,.56],[.5,.6],[.7,.56],[.25,.36],[.5,.3],[.75,.36]],
+};
+const canvas=document.getElementById('field');
+const ctx=canvas.getContext('2d');
+const trail=document.createElement('canvas');
+const tctx=trail.getContext('2d');
+const reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W=0,H=0,DPR=1,lastTime=0,squads=[],fieldSpeed=1,simT=0;
+let fieldEvent=null;
+function fireEvent(sq,label,t){
+  if(fieldEvent&&t<fieldEvent.until)return;
+  fieldEvent={label,color:sq.team.accent,born:t,until:t+2.6};
+}
+let pointer={active:false,x:.5,y:.5,vx:0,vy:0,px:.5,py:.5};
+
+const lerp=(a,b,t)=>a+(b-a)*t;
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+const easeInOut=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+const easeOut=t=>1-Math.pow(1-t,3);
+const px=n=>n*W,py=n=>n*H;
+
+function resize(){
+  DPR=Math.min(window.devicePixelRatio||1,2);
+  const r=canvas.getBoundingClientRect();
+  if(r.width===0)return;
+  W=r.width;H=r.height;
+  canvas.width=W*DPR;canvas.height=H*DPR;
+  trail.width=W*DPR;trail.height=H*DPR;
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  tctx.setTransform(DPR,0,0,DPR,0,0);
+  clearTrail();
+}
+function clearTrail(){tctx.save();tctx.setTransform(1,0,0,1,0,0);
+  tctx.clearRect(0,0,trail.width,trail.height);tctx.restore();}
+
+function makeSquad(team,flip){
+  const homes=HOMES[team.fam];
+  return{team,flip,
+    players:homes.map((h,i)=>({hx:h[0],hy:h[1],x:h[0],y:h[1],tx:h[0],ty:h[1],
+      p1:Math.random()*Math.PI*2,p2:Math.random()*Math.PI*2,
+      s1:.5+Math.random()*.8,s2:.5+Math.random()*.8,i})),
+    ball:{x:homes[10][0],y:homes[10][1],px:homes[10][0],py:homes[10][1]},
+    pass:null,holder:10,clock:0,lastBeat:-1,cycle:Math.random()*3,evn:0};
+}
+function setSolo(id){squads=[makeSquad(TEAMS[id],false)];clearTrail();fieldEvent=null;}
+function setDuel(a,b){squads=[makeSquad(TEAMS[a],false),makeSquad(TEAMS[b],true)];clearTrail();fieldEvent=null;}
+
+function sqNearest(sq,f,n){const p=sq.players[f];
+  return sq.players.map((q,i)=>({i,d:dist(p,q)})).filter(o=>o.i!==f&&o.i!==0)
+    .sort((a,b)=>a.d-b.d).slice(0,n).map(o=>o.i);}
+function sqStartPass(sq,toIdx,dur,curved,amt){
+  const to=sq.players[toIdx],from={x:sq.ball.x,y:sq.ball.y};
+  let ctrl=null;
+  if(curved){const mx=(from.x+to.tx)/2,my=(from.y+to.ty)/2;
+    const dx=to.tx-from.x,dy=to.ty-from.y;
+    const a=(amt||.25)*(Math.random()<.5?1:-1);
+    ctrl={x:mx-dy*a,y:my+dx*a};}
+  sq.pass={from,toIndex:toIdx,ctrl,t:0,dur};
+}
+function sqStepPass(sq,dt,ease){
+  if(!sq.pass)return;
+  sq.pass.t+=dt/sq.pass.dur;
+  const rec=sq.players[sq.pass.toIndex];
+  const e=(ease||easeInOut)(Math.min(sq.pass.t,1));
+  if(sq.pass.ctrl){
+    const a=lerp(sq.pass.from.x,sq.pass.ctrl.x,e),b=lerp(sq.pass.ctrl.x,rec.x,e);
+    const a2=lerp(sq.pass.from.y,sq.pass.ctrl.y,e),b2=lerp(sq.pass.ctrl.y,rec.y,e);
+    sq.ball.x=lerp(a,b,e);sq.ball.y=lerp(a2,b2,e);
+  }else{sq.ball.x=lerp(sq.pass.from.x,rec.x,e);sq.ball.y=lerp(sq.pass.from.y,rec.y,e);}
+  if(sq.pass.t>=1){sq.holder=sq.pass.toIndex;sq.pass=null;}
+}
+const holdBall=sq=>{sq.ball.x=sq.players[sq.holder].x;sq.ball.y=sq.players[sq.holder].y;};
+function squadPointer(sq){
+  if(!pointer.active)return{active:false};
+  return sq.flip?{active:true,x:pointer.x,y:1-pointer.y,vx:pointer.vx,vy:-pointer.vy}
+               :{active:true,x:pointer.x,y:pointer.y,vx:pointer.vx,vy:pointer.vy};
+}
+function settle(p,dt,stiff){p.x=lerp(p.x,p.tx,1-Math.pow(stiff,dt));p.y=lerp(p.y,p.ty,1-Math.pow(stiff,dt));}
+
+const GRAMMARS={
+  esp(sq,dt,t,P){
+    const m=sq.team.tempo;
+    const ox=Math.sin(t*.25*m)*.06,oy=Math.cos(t*.18*m)*.04,rot=Math.sin(t*.12*m)*.08;
+    for(const p of sq.players){
+      const cx=p.hx-.5,cy=p.hy-.63;
+      p.tx=.5+(cx*Math.cos(rot)-cy*Math.sin(rot))+ox+(P.active?(P.x-.5)*.22:0);
+      p.ty=.63+(cx*Math.sin(rot)+cy*Math.cos(rot))+oy+(P.active?(P.y-.63)*.22:0);
+      settle(p,dt,.001);
+    }
+    if(P.active){sq.ball.x=P.x;sq.ball.y=P.y;sq.pass=null;return;}
+    if(!sq.pass){sq.clock+=dt;
+      if(sq.clock>1.15/m){sq.clock=0;
+        const o=sqNearest(sq,sq.holder,3);
+        sqStartPass(sq,o[Math.floor(Math.random()*o.length)],.55/m,false);
+        if(++sq.evn%5===0)fireEvent(sq,'The Triangle',t);
+      }else holdBall(sq);}
+    sqStepPass(sq,dt);
+  },
+  bra(sq,dt,t,P){
+    for(const p of sq.players){
+      const w=.09;
+      p.tx=p.hx+Math.sin(t*p.s1+p.p1)*w+Math.sin(t*.7*p.s2+p.p2)*w*.6;
+      p.ty=p.hy+Math.cos(t*p.s2+p.p2)*w+Math.cos(t*.6*p.s1+p.p1)*w*.6;
+      if(P.active){const a=t*1.4+p.i*.571;
+        p.tx=P.x+Math.cos(a)*(.14+.02*p.i);p.ty=P.y+Math.sin(a)*(.11+.016*p.i);}
+      settle(p,dt,.02);
+    }
+    if(P.active){sq.ball.x=P.x;sq.ball.y=P.y;sq.pass=null;return;}
+    if(!sq.pass){sq.clock+=dt;
+      if(sq.clock>.3+Math.random()*.2){sq.clock=0;
+        const o=sqNearest(sq,sq.holder,5);
+        sqStartPass(sq,o[Math.floor(Math.random()*o.length)],.5+Math.random()*.7,true,.2+Math.random()*.3);
+      }else holdBall(sq);
+    }else if(Math.random()<dt*.9&&sq.pass.t<.45){
+      const o=sqNearest(sq,sq.pass.toIndex,4);
+      sq.pass.from={x:sq.ball.x,y:sq.ball.y};
+      sq.pass.toIndex=o[Math.floor(Math.random()*o.length)];
+      sq.pass.t=0;sq.pass.dur=.45+Math.random()*.4;
+      fireEvent(sq,'Elastic Feint',t);
+    }
+    sqStepPass(sq,dt,easeOut);
+  },
+  jpn(sq,dt,t,P){
+    const m=sq.team.tempo;
+    for(const p of sq.players){
+      if(sq.pass&&p.i===sq.pass.toIndex){}
+      else if(P.active){p.tx=p.hx+(P.x+P.vx*.35-.5)*.3;p.ty=p.hy+(P.y+P.vy*.35-.55)*.3;}
+      else{p.tx=p.hx+Math.sin(t*.4+p.p1)*.02;p.ty=p.hy+Math.cos(t*.35+p.p2)*.02;}
+      for(const q of sq.players){if(q===p)continue;
+        const d=dist(p,q);
+        if(d<.09&&d>0){p.tx+=(p.x-q.x)/d*.012;p.ty+=(p.y-q.y)/d*.012;}}
+      settle(p,dt,.008);
+    }
+    if(P.active){sq.ball.x=P.x;sq.ball.y=P.y;sq.pass=null;return;}
+    if(!sq.pass){sq.clock+=dt;
+      if(sq.clock>.95/m){sq.clock=0;
+        const o=sqNearest(sq,sq.holder,4);
+        const toI=o[Math.floor(Math.random()*o.length)];
+        const rec=sq.players[toI];
+        rec.tx=rec.hx+(Math.random()-.5)*.1;rec.ty=rec.hy+(Math.random()-.5)*.08;
+        sqStartPass(sq,toI,.7/m,false);
+        if(++sq.evn%4===0)fireEvent(sq,'The Anticipated Run',t);
+      }else holdBall(sq);}
+    sqStepPass(sq,dt);
+  },
+  arg(sq,dt,t,P){
+    const m=sq.team.tempo;
+    for(const p of sq.players){
+      const j=.012;
+      p.tx=p.hx+Math.sin(t*6*p.s1+p.p1)*j+Math.sin(t*11*p.s2+p.p2)*j*.6;
+      p.ty=p.hy+Math.cos(t*7*p.s2+p.p2)*j+Math.cos(t*13*p.s1+p.p1)*j*.6;
+      const tgt=P.active?P:sq.ball;
+      const d=dist(p,tgt);
+      if(d<.4&&p.i!==sq.holder){const pull=P.active?.5:.22;
+        p.tx+=(tgt.x-p.x)*pull*(1-d/.4);p.ty+=(tgt.y-p.y)*pull*(1-d/.4);}
+      settle(p,dt,.004);
+    }
+    if(P.active){sq.ball.x=P.x;sq.ball.y=P.y;sq.pass=null;return;}
+    if(!sq.pass){sq.clock+=dt;
+      sq.ball.x=sq.players[sq.holder].x+Math.sin(t*9)*.006;
+      sq.ball.y=sq.players[sq.holder].y+Math.cos(t*8)*.006;
+      if(sq.clock>(1.5+(sq.players[sq.holder].p1%1))/m){sq.clock=0;
+        const o=sq.players.map((q,i)=>({i,s:sq.players[sq.holder].y-q.y-dist(sq.players[sq.holder],q)*.3}))
+          .filter(x=>x.i!==sq.holder&&x.i!==0).sort((a,b)=>b.s-a.s);
+        sqStartPass(sq,o[0].i,.28/m,false);
+        fireEvent(sq,'The Dagger',t);}}
+    sqStepPass(sq,dt,easeOut);
+  },
+  mar(sq,dt,t,P){
+    const phase=sq.clock;sq.clock+=dt;
+    const countering=(phase%8)>6.4;
+    if(countering&&!sq._c){sq._c=1;fireEvent(sq,'The Counter Break',t);}
+    if(!countering)sq._c=0;
+    const shift=P.active?(P.x-.5)*.3:Math.sin(t*.5)*.08;
+    for(const p of sq.players){
+      if(countering&&(p.i===10||p.i===8||p.i===6)){
+        const k=(phase%8-6.4)/1.6;
+        p.tx=lerp(p.hx,p.i===10?.5:(p.i===8?.28:.72),easeOut(Math.min(k*1.4,1)));
+        p.ty=lerp(p.hy,p.i===10?.12:.2,easeOut(Math.min(k*1.4,1)));
+      }else{
+        p.tx=p.hx+shift*(1-(1-p.hy)*.5);
+        p.ty=p.hy+Math.sin(t*.8+p.hx*6)*.008+(P.active?(P.y-.72)*.1:0);
+      }
+      settle(p,dt,.006);
+    }
+    if(P.active){sq.ball.x=P.x;sq.ball.y=P.y;sq.pass=null;return;}
+    if(countering){
+      if(!sq.pass||sq.pass.toIndex!==10)sqStartPass(sq,10,.5,false);
+      sqStepPass(sq,dt,easeOut);
+    }else{
+      if(!sq.pass){
+        if((phase%1.6)<dt){const o=sqNearest(sq,sq.holder,2);sqStartPass(sq,o[0],.6,false);}
+        else holdBall(sq);}
+      sqStepPass(sq,dt);
+    }
+  },
+  mex(sq,dt,t,P){
+    const bpm=112*sq.team.tempo,beat=t*bpm/60;
+    for(const p of sq.players){
+      const bounce=Math.max(0,Math.sin(beat*Math.PI-p.hx*4))*.035;
+      p.tx=p.hx+Math.sin(beat*Math.PI*.5+p.p1)*.015;
+      p.ty=p.hy-bounce;
+      if(P.active){p.tx=p.hx+(P.x-.5)*.25;
+        p.ty=p.hy-Math.max(0,Math.sin(beat*Math.PI-dist(p,P)*8))*.05+(P.y-.6)*.15;}
+      settle(p,dt,.004);
+    }
+    if(P.active){sq.ball.x=P.x;sq.ball.y=P.y;sq.pass=null;return;}
+    if(!sq.pass){
+      const b=Math.floor(beat);
+      if(b!==sq.lastBeat&&b%2===0){sq.lastBeat=b;
+        const o=sqNearest(sq,sq.holder,3);
+        sqStartPass(sq,o[Math.floor(Math.random()*o.length)],.45,true,.12);
+        if(++sq.evn%4===0)fireEvent(sq,'The One-Two',t);
+      }else holdBall(sq);}
+    sqStepPass(sq,dt);
+  },
+  eng(sq,dt,t,P){
+    const m=sq.team.tempo;
+    const push=Math.max(-.08,Math.min(.14,(.55-sq.ball.y)*.3));
+    for(const p of sq.players){
+      p.tx=p.hx+Math.sin(t*2*p.s1+p.p1)*.012;
+      p.ty=p.hy-push*(1-p.hy*.4);
+      const tgt=P.active?P:sq.ball;
+      const d=dist(p,tgt);
+      if(d<.32&&p.i!==sq.holder){const pull=P.active?.42:.16;
+        p.tx+=(tgt.x-p.x)*pull*(1-d/.32);p.ty+=(tgt.y-p.y)*pull*(1-d/.32);}
+      settle(p,dt,.005);
+    }
+    if(P.active){sq.ball.x=P.x;sq.ball.y=P.y;sq.pass=null;return;}
+    if(!sq.pass){sq.clock+=dt;
+      if(sq.clock>.55/m){sq.clock=0;
+        const h=sq.players[sq.holder];
+        const big=Math.random()<.18;
+        let pick;
+        if(big){pick=sq.players.map((q,i)=>({i,s:Math.abs(q.x-h.x)}))
+          .filter(x=>x.i!==sq.holder&&x.i!==0).sort((a,b)=>b.s-a.s)[0].i;
+          fireEvent(sq,'The Big Switch',t);}
+        else{pick=sq.players.map((q,i)=>({i,s:(h.y-q.y)*1.2-dist(h,q)*.6+Math.random()*.3}))
+          .filter(x=>x.i!==sq.holder&&x.i!==0).sort((a,b)=>b.s-a.s)[0].i;}
+        sqStartPass(sq,pick,(big?.5:.3)/m,false);
+      }else holdBall(sq);}
+    sqStepPass(sq,dt,easeOut);
+  },
+  fra(sq,dt,t,P){
+    sq.cycle+=dt;
+    const ph=sq.cycle%6,exploding=ph>4.2;
+    if(exploding&&!sq._ex){sq._ex=1;fireEvent(sq,'The Explosion',t);}
+    if(!exploding&&sq._ex){sq._ex=0;fireEvent(sq,'Calm Circulation',t);}
+    for(const p of sq.players){
+      if(exploding&&(p.i===9||p.i===10||p.i===8)){
+        const k=(ph-4.2)/1.8;
+        p.tx=lerp(p.hx,p.i===10?.5:(p.i===9?.78:.22),easeOut(Math.min(k*1.6,1)));
+        p.ty=lerp(p.hy,.14,easeOut(Math.min(k*1.6,1)));
+      }else{
+        p.tx=p.hx+Math.sin(t*.5*p.s1+p.p1)*.03;
+        p.ty=p.hy+Math.cos(t*.4*p.s2+p.p2)*.025;
+        if(P.active){p.tx+=(P.x-p.x)*.2;p.ty+=(P.y-p.y)*.2;}
+      }
+      settle(p,dt,exploding?.002:.01);
+    }
+    if(P.active){sq.ball.x=P.x;sq.ball.y=P.y;sq.pass=null;return;}
+    if(!sq.pass){sq.clock+=dt;
+      if(sq.clock>(exploding?.25:1.2)){sq.clock=0;
+        if(exploding){
+          const o=sq.players.map((q,i)=>({i,s:-q.y+Math.random()*.2}))
+            .filter(x=>x.i!==sq.holder&&x.i!==0).sort((a,b)=>b.s-a.s)[0].i;
+          sqStartPass(sq,o,.25,false);
+        }else{
+          const o=sqNearest(sq,sq.holder,3);
+          sqStartPass(sq,o[Math.floor(Math.random()*o.length)],.7,true,.15);
+        }
+      }else holdBall(sq);}
+    sqStepPass(sq,dt,exploding?easeOut:easeInOut);
+  },
+  ger(sq,dt,t,P){
+    const m=sq.team.tempo;
+    const step=Math.round(Math.sin(t*.5)*3)/3*.05;
+    for(const p of sq.players){
+      p.tx=p.hx+step+(P.active?Math.round((P.x-.5)*4)/4*.3:0);
+      p.ty=p.hy+(P.active?Math.round((P.y-.6)*4)/4*.2:0);
+      settle(p,dt,.0005);
+    }
+    if(P.active){sq.ball.x=P.x;sq.ball.y=P.y;sq.pass=null;return;}
+    if(!sq.pass){sq.clock+=dt;
+      if(sq.clock>1/m){sq.clock=0;
+        const o=sqNearest(sq,sq.holder,3);
+        sq.lastBeat=(sq.lastBeat+1)%o.length;
+        sqStartPass(sq,o[sq.lastBeat],.5/m,false);
+        if(++sq.evn%5===0)fireEvent(sq,'The Repeatable Pattern',t);
+      }else holdBall(sq);}
+    sqStepPass(sq,dt,easeInOut);
+  },
+  ned(sq,dt,t,P){
+    sq.cycle+=dt;
+    if(sq.cycle>(P.active?1.6:3.5)){sq.cycle=0;
+      const a=1+Math.floor(Math.random()*10);
+      let b=1+Math.floor(Math.random()*10);
+      if(b===a)b=(b%10)+1;
+      const pa=sq.players[a],pb=sq.players[b];
+      const hx=pa.hx,hy=pa.hy;pa.hx=pb.hx;pa.hy=pb.hy;pb.hx=hx;pb.hy=hy;
+      fireEvent(sq,'The Position Swap',t);}
+    for(const p of sq.players){
+      p.tx=p.hx+Math.sin(t*.6+p.p1)*.02+(P.active?(P.x-.5)*.25:0);
+      p.ty=p.hy+Math.cos(t*.5+p.p2)*.02+(P.active?(P.y-.55)*.25:0);
+      settle(p,dt,.008);
+    }
+    if(P.active){sq.ball.x=P.x;sq.ball.y=P.y;sq.pass=null;return;}
+    if(!sq.pass){sq.clock+=dt;
+      if(sq.clock>.8){sq.clock=0;
+        const o=sqNearest(sq,sq.holder,3);
+        sqStartPass(sq,o[Math.floor(Math.random()*o.length)],.55,false);
+      }else holdBall(sq);}
+    sqStepPass(sq,dt);
+  },
+};
+
+/* paper render */
+function drawPitch(){
+  ctx.fillStyle='#F5F0E4';
+  ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='rgba(20,20,20,.5)';ctx.lineWidth=2.5;
+  const m=Math.min(W,H)*.05;
+  ctx.strokeRect(m,m,W-2*m,H-2*m);
+  ctx.beginPath();ctx.moveTo(m,H/2);ctx.lineTo(W-m,H/2);ctx.stroke();
+  ctx.beginPath();ctx.arc(W/2,H/2,Math.min(W,H)*.12,0,Math.PI*2);ctx.stroke();
+  const bw=W*.44,bh=H*.14;
+  ctx.strokeRect(W/2-bw/2,m,bw,bh);
+  ctx.strokeRect(W/2-bw/2,H-m-bh,bw,bh);
+}
+const ry=(sq,y)=>sq.flip?1-y:y;
+function render(t){
+  drawPitch();
+  ctx.drawImage(trail,0,0,W,H);
+  const duel=squads.length>1;
+  for(const sq of squads){
+    if(sq.team.fam==='jpn'&&sq.pass){
+      const rec=sq.players[sq.pass.toIndex];
+      ctx.save();ctx.strokeStyle=sq.team.accent;ctx.globalAlpha=.4;
+      ctx.setLineDash([2,6]);ctx.lineWidth=1;
+      ctx.beginPath();
+      ctx.moveTo(px(sq.ball.x),py(ry(sq,sq.ball.y)));
+      ctx.lineTo(px(rec.x),py(ry(sq,rec.y)));
+      ctx.stroke();ctx.restore();
+    }
+    for(const p of sq.players){
+      const X=px(p.x),Y=py(ry(sq,p.y));
+      if(p.i===sq.holder&&!pointer.active){
+        /* holder = open circle: space about to be used */
+        ctx.beginPath();ctx.arc(X,Y,6,0,Math.PI*2);
+        ctx.strokeStyle=sq.team.accent;ctx.lineWidth=2;ctx.stroke();
+      }else{
+        ctx.beginPath();ctx.arc(X,Y,4.6,0,Math.PI*2);
+        ctx.fillStyle=duel?sq.team.accent:'#141414';
+        ctx.globalAlpha=duel?.85:.9;ctx.fill();ctx.globalAlpha=1;
+      }
+    }
+    ctx.beginPath();
+    ctx.arc(px(sq.ball.x),py(ry(sq,sq.ball.y)),3.6,0,Math.PI*2);
+    ctx.fillStyle=sq.team.accent;ctx.fill();
+  }
+  if(fieldEvent&&t!==undefined&&t<fieldEvent.until){
+    const e=fieldEvent;
+    const a=Math.min(1,(t-e.born)/.3)*Math.min(1,(e.until-t)/.5);
+    const m=Math.min(W,H)*.05;
+    ctx.save();ctx.globalAlpha=a;
+    ctx.beginPath();ctx.arc(m+12,m+17,3.4,0,Math.PI*2);
+    ctx.fillStyle=e.color;ctx.fill();
+    ctx.font='600 11px "IBM Plex Mono",monospace';
+    ctx.fillStyle='#141414';
+    ctx.fillText(e.label,m+23,m+21);
+    ctx.restore();
+  }
+}
+function writeTrails(){
+  const fade=Math.max(...squads.map(s=>FAM_TRAIL[s.team.fam].fade));
+  tctx.save();tctx.globalAlpha=fade;
+  tctx.globalCompositeOperation='destination-out';
+  tctx.fillStyle='#000';tctx.fillRect(0,0,W,H);tctx.restore();
+  for(const sq of squads){
+    const st=FAM_TRAIL[sq.team.fam];
+    tctx.strokeStyle=sq.team.accent;
+    tctx.globalAlpha=.75;tctx.lineWidth=st.w;tctx.lineCap='round';
+    if(st.dash)tctx.setLineDash(st.dash);else tctx.setLineDash([]);
+    tctx.beginPath();
+    tctx.moveTo(px(sq.ball.px),py(ry(sq,sq.ball.py)));
+    tctx.lineTo(px(sq.ball.x),py(ry(sq,sq.ball.y)));
+    tctx.stroke();
+  }
+  tctx.globalAlpha=1;
+}
+function frame(now){
+  const t=now/1000,dt=Math.min(t-lastTime,.05)*fieldSpeed;lastTime=t;
+  simT+=dt;
+  if(W>0&&squads.length){
+    for(const sq of squads){
+      sq.ball.px=sq.ball.x;sq.ball.py=sq.ball.y;
+      GRAMMARS[sq.team.fam](sq,dt,simT,squadPointer(sq));
+    }
+    writeTrails();render(simT);
+  }
+  requestAnimationFrame(frame);
+}
+function toNorm(e){const r=canvas.getBoundingClientRect();
+  return{x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height};}
+canvas.addEventListener('pointerdown',e=>{
+  const n=toNorm(e);
+  pointer.active=true;pointer.x=n.x;pointer.y=n.y;pointer.px=n.x;pointer.py=n.y;
+  canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove',e=>{
+  if(!pointer.active)return;
+  const n=toNorm(e);
+  pointer.vx=(n.x-pointer.px)*60;pointer.vy=(n.y-pointer.py)*60;
+  pointer.px=pointer.x;pointer.py=pointer.y;
+  pointer.x=Math.max(0,Math.min(1,n.x));pointer.y=Math.max(0,Math.min(1,n.y));
+});
+const release=()=>{pointer.active=false;for(const sq of squads){sq.holder=10;sq.clock=0;}};
+canvas.addEventListener('pointerup',release);
+canvas.addEventListener('pointercancel',release);
+
+/* ---------- UI --------------------------------------------------------- */
+const legendHTML='<div class="legend">'+FORCES.map(([n,k,,d])=>
+  `<div class="li">${icon(k)}<span>${n}<small>${d}</small></span></div>`).join('')+'</div>';
+function heroBall(pal){
+  const P=(cx,cy,r,rot)=>{let d='';for(let i=0;i<5;i++){const a=rot+i*2*Math.PI/5;
+    d+=(i?'L':'M')+(cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1);}return d+'Z';};
+  const fills=[pal[0],pal[1%pal.length],pal[2%pal.length],pal[0],pal[1%pal.length],pal[2%pal.length]];
+  let pents=`<path class="hb-p" fill="${fills[0]}" d="${P(100,100,34,-Math.PI/2)}"/>`;
+  let seams='';
+  for(let i=0;i<5;i++){
+    const a=-Math.PI/2+i*2*Math.PI/5;
+    const ex=100+Math.cos(a)*82, ey=100+Math.sin(a)*82;
+    pents+=`<path class="hb-p" fill="${fills[i+1]}" d="${P(ex,ey,30,a+Math.PI)}"/>`;
+    seams+=`<line x1="${(100+34*Math.cos(a)).toFixed(1)}" y1="${(100+34*Math.sin(a)).toFixed(1)}" x2="${(100+52*Math.cos(a)).toFixed(1)}" y2="${(100+52*Math.sin(a)).toFixed(1)}"/>`;
+  }
+  return `<svg viewBox="0 0 200 200" aria-label="A ball wearing the nations">
+    <defs><clipPath id="hbclip"><circle cx="100" cy="100" r="94"/></clipPath>
+    <radialGradient id="hbshade" cx="38%" cy="32%" r="82%">
+      <stop offset="55%" stop-color="#141414" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#141414" stop-opacity=".16"/>
+    </radialGradient></defs>
+    <circle cx="100" cy="100" r="94" fill="var(--paper)"/>
+    <g clip-path="url(#hbclip)" stroke="#141414" stroke-width="2">${seams}${pents}</g>
+    <circle cx="100" cy="100" r="94" fill="url(#hbshade)"/>
+    <circle cx="100" cy="100" r="94" fill="none" stroke="#141414" stroke-width="2.5"/>
+  </svg>`;
+}
+let hbI=0;
+if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+  setInterval(()=>{
+    const ps=document.querySelectorAll('.hb-p');
+    if(!ps.length)return;
+    hbI=(hbI+1)%ORDER.length;
+    const pal=TEAMS[ORDER[hbI]].palette;
+    ps.forEach((p,i)=>p.setAttribute('fill',pal[i%pal.length]));
+  },2800);
+}
+const HERO=`<div class="hero">
+  <div class="head-top">
+    <div class="globe"><svg viewBox="0 0 34 34"><circle cx="17" cy="17" r="14"/><ellipse cx="17" cy="17" rx="6.5" ry="14"/><line x1="3" y1="17" x2="31" y2="17"/><line x1="5" y1="10" x2="29" y2="10"/><line x1="5" y1="24" x2="29" y2="24"/></svg></div>
+    <div class="eyebrow">How Cultures Pursue<br>Independence Through Movement</div>
+  </div>
+  <div class="hero-sun">${heroBall(TEAMS.bra.palette)}</div>
+  <div class="hero-body">
+    <h1 class="masthead anton">World<br>Cup<br>Atlas</h1>
+  </div>
+</div>`;
+function chev(dir,size){
+  const d=dir==='l'?'m15 18-6-6 6-6':'m9 18 6-6-6-6';
+  return `<svg viewBox="0 0 24 24" width="${size||22}" height="${size||22}" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${d}"/></svg>`;
+}
+function viewHead(t,s){return `<div class="view-head"><h2 class="anton">${t}</h2>${s?`<div class="vsub">${s}</div>`:''}</div>`;}
+
+const VIEWS=['Declarations','Atlas','Matches','Play','About'];
+const navEl=document.getElementById('nav');
+navEl.innerHTML=VIEWS.map((v,i)=>`<button class="nl${i===0?' active':''}" data-v="${v}">${v}</button>`).join('');
+navEl.querySelectorAll('.nl').forEach(b=>b.addEventListener('click',()=>go(b.dataset.v)));
+
+const viewEl=document.getElementById('view');
+const fieldWrap=document.getElementById('fieldWrap');
+function mountField(slot){
+  fieldWrap.style.display='block';
+  slot.appendChild(fieldWrap);
+  requestAnimationFrame(()=>{resize();});
+}
+function unmountField(){fieldWrap.style.display='none';document.body.appendChild(fieldWrap);squads=[];}
+function rerise(){viewEl.classList.remove('view');void viewEl.offsetWidth;viewEl.classList.add('view');
+  window.scrollTo({top:0,behavior:'smooth'});}
+function setNav(v){navEl.querySelectorAll('.nl').forEach(b=>b.classList.toggle('active',b.dataset.v.toUpperCase()===v.toUpperCase()));}
+
+function alive(tm){return tm.status==='QF'||tm.status==='R16';}
+function forcesCombined(tm,C){
+  return FORCES.map(([n,k,idx])=>`
+    <div class="fc-row">
+      <div class="fc-top">${icon(k)}<span class="fc-l">${n}</span><span class="fc-w">${C.forces[n]}</span></div>
+      <div class="track fc-track"><div class="fdot" style="left:${tm.scales[idx]*100}%;background:${tm.accent}"></div></div>
+    </div>`).join('');
+}
+function forcesHTML(teams){
+  return FORCES.map(([n,k,idx])=>`
+    <div class="force">${icon(k)}<div class="fl">${n}</div>
+      <div class="track">${teams.map((tm,j)=>
+        `<div class="fdot${j>0?' hollow':''}" style="left:${tm.scales[idx]*100}%;${j===0?`background:${tm.accent}`:`border-color:${tm.accent}`}"></div>`).join('')}
+      </div></div>`).join('');
+}
+
+/* DECLARATIONS */
+function viewDeclarations(){
+  setNav('DECLARATIONS');unmountField();setHash('#declarations');
+  const miniLegend='<div class="mini-legend">'+FORCES.map(([n,k])=>
+    `<div class="li">${icon(k)}<span>${n}</span></div>`).join('')+'</div>';
+  viewEl.innerHTML=HERO+viewHead('Declarations','48 Nations · One Goal')+`
+    <div class="atlas-strip">
+      <div class="strip-rail">The Atlas</div>
+      <button class="snav" id="stPrev" aria-label="Scroll back">${chev('l')}</button>
+      <div class="strip-scroll" id="strip">${ORDER.map((id,i)=>{
+        const tm=TEAMS[id];
+        return `<button class="scard" data-id="${id}">
+          <div class="snum">${String(i+1).padStart(2,'0')}</div>
+          <div class="sname">${tm.name}</div>
+          <div class="sflag"><svg viewBox="0 0 100 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${tm.name} flag">${flagSVG(tm.id,1,1,98,62)}</svg></div>
+        </button>`;}).join('')}
+      </div>
+      <button class="snav" id="stNext" aria-label="Scroll forward">${chev('r')}</button>
+    </div>
+    <div class="strip-foot">
+      <div>A neutral field makes<br>independence a strategy.</div>
+      ${miniLegend}
+      <div class="sf-r">Movement is<br>the language.</div>
+    </div>`;
+  viewEl.querySelectorAll('.scard').forEach(c=>c.addEventListener('click',()=>viewCountry(c.dataset.id)));
+  const strip=document.getElementById('strip');
+  const page=()=>strip.clientWidth*0.9;
+  document.getElementById('stPrev').addEventListener('click',()=>strip.scrollBy({left:-page(),behavior:'smooth'}));
+  document.getElementById('stNext').addEventListener('click',()=>strip.scrollBy({left:page(),behavior:'smooth'}));
+  rerise();
+}
+
+/* COUNTRY — the constitution spread */
+const CROW_ICONS=['space','press','press','vec','sq','dash'];
+function tempoBtn(){
+  return `<button class="tempo" aria-label="Toggle motion tempo">Tempo ${fieldSpeed===1?'1×':'½×'}</button>`;
+}
+function bindTempo(){
+  viewEl.querySelectorAll('.tempo').forEach(b=>b.addEventListener('click',()=>{
+    fieldSpeed=fieldSpeed===1?0.5:1;
+    viewEl.querySelectorAll('.tempo').forEach(x=>x.textContent=`Tempo ${fieldSpeed===1?'1×':'½×'}`);
+  }));
+}
+function fitName(el,room){
+  el.style.fontSize='120px';
+  el.style.whiteSpace='nowrap';
+  const fs=Math.max(34,Math.min(120*room/el.scrollWidth,120));
+  el.style.fontSize=fs.toFixed(1)+'px';
+}
+function viewCountry(id){
+  setNav('DECLARATIONS');setHash('#c/'+id);
+  const tm=TEAMS[id];
+  document.documentElement.style.setProperty('--accent',tm.accent);
+  const idx=ORDER.indexOf(id),nn=String(idx+1).padStart(3,'0');
+  const prevId=ORDER[(idx-1+ORDER.length)%ORDER.length];
+  const nextId=ORDER[(idx+1)%ORDER.length];
+  const C=CONST[tm.fam];
+  const spec=SPEC[id],lin=LINEAGES[id];
+  const tpl=s=>s.split('{N}').join(tm.name);
+  const selOpts=ORDER.map((oid,i)=>
+    `<option value="${oid}"${oid===id?' selected':''}>${String(i+1).padStart(2,'0')} · ${TEAMS[oid].name}</option>`).join('');
+  const rowsHTML=C.rows.map((row,i)=>{
+    const iconColor=(i===4)?'#141414':(i===2?(tm.palette[1%tm.palette.length]):tm.accent);
+    const support=(i===3)
+      ?`<div class="chain-mini">${row[2].split(' → ').map(t=>`<span class="mnode">${t}</span>`).join('<span class="marr">→</span>')}</div>`
+      :`<div class="csup">${tpl(row[2])}</div>`;
+    return `<div class="crow">
+      <div class="ck"><span class="cn">${String(i+1).padStart(2,'0')}</span>${row[0]}${icon(CROW_ICONS[i],iconColor)}</div>
+      <div><div class="cmain">${tpl(row[1])}</div>${support}</div>
+    </div>`;}).join('');
+  viewEl.innerHTML=`
+    <div class="backbar">
+      <button class="back" id="back">${chev('l',14)} Declarations</button>
+      <div class="pageno"><i>${String(idx+1).padStart(2,'0')}</i> / 48</div>
+    </div>
+    <div class="pager">
+      <button class="pgbtn" id="pgPrev" aria-label="Previous nation">${chev('l')}</button>
+      <select class="pgsel" id="pgSel" aria-label="Jump to nation">${selOpts}</select>
+      <button class="pgbtn" id="pgNext" aria-label="Next nation">${chev('r')}</button>
+    </div>
+    <div class="const-eyebrow" style="margin-top:16px"><span>Constitution ${nn}</span><span class="status-tag${alive(tm)?' alive':''}" style="border:none;padding:0">${STATUS_LABEL[tm.status]}</span></div>
+    <div class="const-head">
+      <div class="head-left">
+        <div class="name-row">
+          <h2 class="c-name anton" style="margin-top:0">${tm.name}</h2>
+          <span class="flag-plate" id="flagPlate"><svg viewBox="0 0 72 48" style="width:100%;height:100%;display:block">${flagSVG(tm.id,1,1,70,46)}</svg></span>
+        </div>
+        <div class="c-decl">Independence through ${tm.decl}.</div>
+      </div>
+      <div class="c-glyph head-glyph" id="headGlyph">${glyphArt(tm,'d')}</div>
+    </div>
+
+    <div class="dsec"><div class="dsec-title" style="display:flex;justify-content:space-between;align-items:center"><span>Motion study</span>${tempoBtn()}</div>
+      <div class="field-note">${tm.motion}</div>
+      <div class="motion-slot"></div>
+    </div>
+
+    <div class="dsec"><div class="dsec-title">The constitution</div>${rowsHTML}</div>
+
+    <div class="dsec"><div class="dsec-title">Signature maneuvers</div>
+      ${MANEUVERS[tm.fam].map(([n,d,k],mi)=>`
+        <div class="mrow">${icon(k,tm.accent)}<div><div class="mn">${n}</div><div class="md">${d}</div>
+        <div class="mdiag">${maneuverSVG(tm,mi,'m')}</div></div></div>`).join('')}
+    </div>
+
+    <div class="dsec"><div class="dsec-title">Strategic forces · in this language</div>
+      ${forcesCombined(tm,C)}
+    </div>
+
+    ${ART[tm.id]?`<div class="dsec glyph-panel">
+      <div class="const-eyebrow"><span>Glyph ${nn}</span><span>${tm.name}</span></div>
+      <div class="g-art">${glyphArt(tm,'p')}</div>
+    </div>`:''}
+    <div class="dsec">
+      <div class="dsec-title">Notes</div>
+      <div class="notes" style="margin-top:0;border-top:none;padding-top:0">
+        <div class="notes-row">
+          <p>${tm.name} ${C.notes[0]}<br><b>${C.notes[1]}</b></p>
+          <div class="vdiv"></div>
+          <div class="nglobe"><svg viewBox="0 0 34 34"><circle cx="17" cy="17" r="14"/><ellipse cx="17" cy="17" rx="6.5" ry="14"/><line x1="3" y1="17" x2="31" y2="17"/><line x1="5" y1="10" x2="29" y2="10"/><line x1="5" y1="24" x2="29" y2="24"/></svg></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dsec"><div class="dsec-title">Expressions beyond football</div>
+      <div class="xrow"><div class="xk">Design analogy</div><div>${tm.analogy}</div></div>
+      ${spec?`<div class="xrow"><div class="xk">Material</div><div>${spec.material}</div></div>
+      <div class="xrow"><div class="xk">Sound</div><div>${spec.sound}</div></div>`:''}
+      <div class="xrow"><div class="xk">Language family</div><div>${FAM_LABEL[tm.fam]}</div></div>
+    </div>
+
+    ${lin?`<div class="dsec"><div class="dsec-title">Lineage</div>
+      <div class="lin-wrap">${lineageSVG(tm,id,'c')}</div>
+    </div>`:''}
+
+    <div class="pager bottom">
+      <button class="pgbtn pill" id="pgPrev2">${chev('l',15)} ${TEAMS[prevId].name}</button>
+      <button class="pgbtn pill" id="pgNext2">${TEAMS[nextId].name} ${chev('r',15)}</button>
+    </div>`;
+  document.getElementById('back').addEventListener('click',viewDeclarations);
+  document.getElementById('pgPrev').addEventListener('click',()=>viewCountry(prevId));
+  document.getElementById('pgNext').addEventListener('click',()=>viewCountry(nextId));
+  document.getElementById('pgPrev2').addEventListener('click',()=>viewCountry(prevId));
+  document.getElementById('pgNext2').addEventListener('click',()=>viewCountry(nextId));
+  document.getElementById('pgSel').addEventListener('change',e=>viewCountry(e.target.value));
+  const nm=viewEl.querySelector('.c-name'),nrow=viewEl.querySelector('.name-row');
+  const flagEl=document.getElementById('flagPlate'),glyphEl=document.getElementById('headGlyph');
+  const leftEl=viewEl.querySelector('.head-left');
+  const fit=()=>{
+    fitName(nm,nrow.clientWidth-8);                       /* pass 1: measure */
+    const fs=parseFloat(nm.style.fontSize)||80;
+    const fh=Math.max(22,fs*0.30);                        /* flag: 0.30 of the name */
+    flagEl.style.height=fh.toFixed(1)+'px';
+    flagEl.style.width=(fh*1.5).toFixed(1)+'px';
+    fitName(nm,nrow.clientWidth-fh*1.5-26);               /* pass 2: room minus flag */
+    const fs2=parseFloat(nm.style.fontSize)||fs;
+    const fh2=Math.max(22,fs2*0.30);
+    flagEl.style.height=fh2.toFixed(1)+'px';
+    flagEl.style.width=(fh2*1.5).toFixed(1)+'px';
+    const h=leftEl.offsetHeight;                          /* glyph: as tall as the words */
+    if(h)glyphEl.style.width=Math.max(150,Math.min(h*1.06,320)).toFixed(0)+'px';
+  };
+  requestAnimationFrame(fit);
+  if(window.__fitR)window.removeEventListener('resize',window.__fitR);
+  window.__fitR=fit;
+  window.addEventListener('resize',fit,{passive:true});
+  bindTempo();
+  mountField(viewEl.querySelector('.motion-slot'));
+  setSolo(id);
+  rerise();
+}
+
+/* ATLAS */
+function viewAtlas(){
+  setNav('ATLAS');unmountField();setHash('#atlas');
+  const confs=['UEFA','CONMEBOL','CONCACAF','CAF','AFC','OFC'];
+  viewEl.innerHTML=viewHead('Atlas Index','By confederation · tournament state as of July 6, 2026')+
+    confs.map(cf=>{
+      const teams=Object.values(TEAMS).filter(t=>t.conf===cf).sort((a,b)=>a.name.localeCompare(b.name));
+      return `<div class="conf-block"><div class="conf-title">${cf} · ${teams.length}</div>`+
+        teams.map(tm=>`<button class="arow" data-id="${tm.id}">
+          <span class="an">${tm.name}</span>
+          <span class="ad" style="color:${tm.accent}">${tm.decl}</span>
+          <span class="as${alive(tm)?' alive':''}">${STATUS_LABEL[tm.status]}</span>
+        </button>`).join('')+'</div>';
+    }).join('');
+  viewEl.querySelectorAll('.arow').forEach(b=>b.addEventListener('click',()=>viewCountry(b.dataset.id)));
+  rerise();
+}
+
+/* MATCHES */
+function collide(a,b){return `${FAM_LABEL[a.fam]}  v  ${FAM_LABEL[b.fam]}`;}
+function viewMatches(){
+  setNav('MATCHES');unmountField();setHash('#matches');
+  let html=viewHead('Matches','Every fixture is a collision of two languages · Round of 16 in progress · results through July 6, 2026');
+  for(const g of MATCHES){
+    html+=`<div class="round-title">${g.round}</div>`;
+    for(const m of g.items){
+      if(m.tbd){html+=`<div class="mcard tbd"><div class="mline"><span>${m.tbd}</span></div>
+        <div class="mnote">${m.note}</div></div>`;continue;}
+      const a=TEAMS[m.a],b=TEAMS[m.b];
+      const score=('sa' in m)?`${m.sa}–${m.sb}`:'v';
+      const prob=m.prob?`<div class="probbar">
+        <span style="width:${m.prob[0]}%;background:${a.accent}"></span>
+        <span style="width:${m.prob[1]}%;background:rgba(20,20,20,.2)"></span>
+        <span style="width:${m.prob[2]}%;background:${b.accent}"></span></div>`:'';
+      html+=`<button class="mcard" data-a="${m.a}" data-b="${m.b}">
+        <div class="mline"><span>${a.name} <span style="color:var(--ink-40)">${score}</span> ${b.name}</span>
+          <span class="msc">${('sa' in m)?'FT':''}</span></div>
+        <div class="mcol">${collide(a,b)}</div>
+        ${m.note?`<div class="mnote">${m.note}</div>`:''}${prob}
+      </button>`;
+    }
+  }
+  viewEl.innerHTML=html;
+  viewEl.querySelectorAll('.mcard[data-a]').forEach(c=>c.addEventListener('click',()=>{
+    viewMatch(findMatch(c.dataset.a,c.dataset.b));}));
+  rerise();
+}
+
+/* PLAY — the composer and the market */
+function viewPlay(){
+  setNav('PLAY');unmountField();setHash('#play');
+  const opts=Object.values(TEAMS).sort((x,y)=>x.name.localeCompare(y.name))
+    .map(tm=>`<option value="${tm.id}">${tm.name}</option>`).join('');
+  viewEl.innerHTML=viewHead('Play','Compose collisions · Follow the money')+`
+    <div class="compose" style="margin-top:8px"><div class="section-title" style="margin:0">Compose a collision</div>
+    <div class="compose-row"><select id="selA" aria-label="First nation">${opts}</select><select id="selB" aria-label="Second nation">${opts}</select>
+    <button id="goDuel">Kick off</button></div></div>`
+    +marketHTML();
+  const paintSel=sel=>{
+    const tm=TEAMS[sel.value];
+    sel.style.borderColor=tm.accent;
+    sel.style.backgroundImage=`radial-gradient(circle, ${tm.accent} 0 5.5px, transparent 6px)`;
+    sel.style.backgroundRepeat='no-repeat';
+    sel.style.backgroundPosition='14px center';
+    sel.style.backgroundSize='12px 12px';
+    sel.style.paddingLeft='34px';
+  };
+  ['selA','selB'].forEach(id=>{
+    const sel=document.getElementById(id);
+    sel.addEventListener('change',()=>paintSel(sel));
+  });
+  refreshPoly();
+  document.getElementById('selA').value='bra';
+  document.getElementById('selB').value='jpn';
+  paintSel(document.getElementById('selA'));
+  paintSel(document.getElementById('selB'));
+  document.getElementById('goDuel').addEventListener('click',()=>{
+    const a=document.getElementById('selA').value,b=document.getElementById('selB').value;
+    if(a!==b)viewMatch({a,b,note:'A composed collision'});});
+  rerise();
+}
+function findMatch(a,b){for(const g of MATCHES)for(const m of g.items)if(m.a===a&&m.b===b)return m;return{a,b};}
+
+function viewMatch(m){
+  setNav('MATCHES');setHash('#m/'+m.a+'-'+m.b);
+  const a=TEAMS[m.a],b=TEAMS[m.b];
+  document.documentElement.style.setProperty('--accent',a.accent);
+  const score=('sa' in m)
+    ?`FINAL · ${a.name.toUpperCase()} ${m.sa} — ${m.sb} ${b.name.toUpperCase()}${m.note?' · '+m.note:''}`
+    :(m.prob?`WIN PROBABILITY · ${a.name.toUpperCase()} ${m.prob[0]}% / DRAW ${m.prob[1]}% / ${b.name.toUpperCase()} ${m.prob[2]}%${m.note?' · '+m.note:''}`:(m.note||''));
+  viewEl.innerHTML=`
+    <div class="backbar"><button class="back" id="back">${chev('l',14)} Matches</button></div>
+    <div class="section-title">A choreography of approaches to independence</div>
+    <div class="vs-a anton" style="color:${a.accent}">${a.name}
+      <span class="vs-flag"><svg width="46" height="31" viewBox="0 0 46 31">${flagSVG(a.id,1,1,44,29)}</svg></span>
+    </div>
+    <div class="vs-mid">
+      <span class="vr"></span><span class="vv">v</span>
+      <span class="vf">${collide(a,b)}</span>
+      <span class="vr"></span>
+    </div>
+    <div class="vs-b anton" style="color:${b.accent}">
+      <span class="vs-flag"><svg width="46" height="31" viewBox="0 0 46 31">${flagSVG(b.id,1,1,44,29)}</svg></span>
+      ${b.name}
+    </div>
+    <div class="duel-score" style="margin-top:16px">${score}</div>
+    <div class="dsec"><div class="dsec-title" style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span>Motion study · two grammars, one page</span>${tempoBtn()}</div>
+      <div class="motion-slot"></div></div>
+    <div class="dsec" style="border-top:none;padding-top:0"><div class="face" style="margin-top:6px">
+      <div class="fb">
+        <div class="f-fam">${FAM_LABEL[a.fam]}</div>
+        <div class="f-decl" style="color:${a.accent}">Independence through ${a.decl}.</div>
+        <div class="f-mot">${a.motion}</div>
+      </div>
+      <div class="face-rule"></div>
+      <div class="fb r">
+        <div class="f-fam">${FAM_LABEL[b.fam]}</div>
+        <div class="f-decl" style="color:${b.accent}">Independence through ${b.decl}.</div>
+        <div class="f-mot">${b.motion}</div>
+      </div>
+    </div></div>
+    <div class="dsec"><div class="dsec-title">Strategic forces · filled ${a.name} / hollow ${b.name}</div>
+      ${forcesHTML([a,b])}</div>
+    ${('sa' in m)?'':(()=>{const fx=FIX_MKT[m.a+'-'+m.b]||FIX_MKT[m.b+'-'+m.a];
+      return fx&&fx.snap?marketFixture(a,b,fx):marketPair(a,b);})()}`;
+  document.getElementById('back').addEventListener('click',viewMatches);
+  bindTempo();
+  {const fx=FIX_MKT[m.a+'-'+m.b]||FIX_MKT[m.b+'-'+m.a];
+   if(fx&&!('sa' in m))refreshFixture(a,b,fx);}
+  mountField(viewEl.querySelector('.motion-slot'));
+  setDuel(m.a,m.b);
+  rerise();
+}
+
+/* LINEAGE */
+function viewAbout(){
+  setNav('ABOUT');unmountField();setHash('#about');
+  viewEl.innerHTML=viewHead('About','Cultural Infrastructure · Case Study 001')+`
+    <div class="about">
+      <div class="dsec-title" style="margin-bottom:14px">Origin</div>
+      <p class="grotesk big">I started this while watching the tournament. I kept noticing choreography.</p>
+      <p>Every country expressed the same game differently, and I wanted to locate why teams feel the way they do. The answer kept pointing to the same place. Each country has its own lineage to independence, and its own memory of what independence cost.</p>
+      <p>That memory becomes building blocks. It shapes culture, then institutions, then infrastructure, and eventually it shows up in how eleven people move together on a field. The project grew past its first idea. The essence stayed the same. <b>Football is where I first saw it. The Olympics would show it too.</b></p>
+    </div>
+    <div class="dsec"><div class="dsec-title">The lens</div></div>
+    <div class="about">
+      <p>I have been studying choreography. Pina Bausch, Bob Fosse, Alvin Ailey, Martha Graham, Merce Cunningham, and John Cage beside him. They taught me to read intention in movement, and to find the system inside a sequence. <b>I bring that eye to the field.</b></p>
+    </div>
+    <div class="dsec"><div class="dsec-title">The study</div></div>
+    <div class="about">
+      <p class="grotesk big">The World Cup is a gathering of independent nations, each expressing a distinct philosophy for how freedom, agency, and identity are pursued within the same constraints.</p>
+      <p>Every team plays the same field, the same dimensions, the same rules, and the same objective. Yet every nation develops a <b>different declaration</b>.</p>
+      <p>These are national philosophies expressed through football. The viewer should <b>feel</b> a country's movement language before understanding it intellectually.</p>
+      <p>The primary visual unit is <b>shape under pressure</b>. The primary conceptual unit is <b>the maneuver</b>. Whimsy comes through movement.</p>
+      <p>Football is the laboratory. The larger project is an atlas of how cultures create identity, agency, and coordinated action within shared constraints. <b>World Cup Atlas is the first case study in a broader investigation of Cultural Infrastructure.</b></p>
+    </div>`+`<div class="dsec"><div class="dsec-title">Imprint</div></div>
+    <div class="about">
+      <p>World Cup Atlas is Cultural Infrastructure, Case Study 001. It is produced by <a href="https://fieldofaction.org" target="_blank" rel="noopener" style="color:var(--ink);font-weight:600">Field of Action</a>, a practice that designs creative infrastructure for the purposes of navigating complexity.</p>
+    </div>
+    <div class="dsec"><div class="dsec-title">Reading the notation</div>${legendHTML}</div>`;
+  rerise();
+}
+
+function go(v){
+  ({DECLARATIONS:viewDeclarations,ATLAS:viewAtlas,MATCHES:viewMatches,
+    PLAY:viewPlay,ABOUT:viewAbout})[v.toUpperCase()]();
+}
+
+/* ---------- boot -------------------------------------------------------- */
+window.addEventListener('resize',resize);
+
+/* deep links: #declarations #atlas #matches #play #about #c/{id} #m/{a}-{b} */
+let routingLock=false;
+function setHash(h){if(!routingLock&&location.hash!==h)location.hash=h;}
+function route(){
+  routingLock=true;
+  const h=location.hash.slice(1);
+  try{
+    if(h.startsWith('c/')){
+      const id=h.slice(2);
+      if(TEAMS[id]){viewCountry(id);return;}
+    }
+    if(h.startsWith('m/')){
+      const [a,b]=h.slice(2).split('-');
+      if(TEAMS[a]&&TEAMS[b]&&a!==b){
+        viewMatch(findMatch(a,b)||{a,b,note:'A composed collision'});return;}
+    }
+    const map={declarations:viewDeclarations,atlas:viewAtlas,matches:viewMatches,
+      play:viewPlay,about:viewAbout};
+    (map[h]||viewDeclarations)();
+  }finally{routingLock=false;}
+}
+window.addEventListener('hashchange',route);
+route();
+
+/* ---------- remote data: atlas-data.json beside this file overrides the
+   embedded snapshot. Shape (all keys optional):
+   { "asof":"July 8, 2026", "chip":"Quarter-finals · Live",
+     "statuses":{"arg":"QF","egy":"OUT16"},
+     "matches":[ ...same shape as MATCHES... ],
+     "poly":{"asOf":"July 8, 2026","rows":[["fra",38.1],["esp",15.2]]} }
+   Publish the artifact once; update by writing this JSON next to it.     */
+async function loadRemoteData(){
+  try{
+    const r=await fetch('atlas-data.json',{cache:'no-store'});
+    if(!r.ok)return;
+    const d=await r.json();
+    if(d.statuses)for(const [id,st] of Object.entries(d.statuses)){
+      if(TEAMS[id])TEAMS[id].status=st;}
+    if(Array.isArray(d.matches)&&d.matches.length){
+      MATCHES.length=0;for(const g of d.matches)MATCHES.push(g);}
+    if(d.poly&&Array.isArray(d.poly.rows)){
+      POLY.rows=d.poly.rows;POLY.asOf=d.poly.asOf||POLY.asOf;}
+    if(d.chip){const c=document.querySelector('.statuschip');
+      if(c)c.innerHTML='<span class="dot"></span>'+d.chip;}
+    if(d.asof)window.__asof=d.asof;
+    route();   /* re-render current view with fresh data */
+  }catch(e){/* embedded snapshot stands */}
+}
+loadRemoteData();
+
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

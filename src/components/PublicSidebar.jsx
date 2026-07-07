@@ -22,6 +22,8 @@ const NAV = [
       { key: "superconscious", label: "Share Location" },
       { key: "flowers", label: "Bloom" },
       { key: "galaxy", label: "Galaxy" },
+      // Standalone static page (public/world-cup-atlas.html) — a full-page load, not a React view.
+      { href: "/world-cup-atlas", label: "World Cup Atlas" },
     ]},
   ]},
   { tier: "HOTEL", items: [
@@ -94,6 +96,21 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter, hid
                   <div key={item.group} className="sb-group">
                     <div className="sb-group-h sb-group-h-lc">{item.group}</div>
                     {item.children.map(child => {
+                      // Same-origin static pages (e.g. the World Cup Atlas) load full-page via an anchor,
+                      // so middle-click / open-in-new-tab work and no SPA view key is needed.
+                      if (child.href) {
+                        return (
+                          <a
+                            key={child.label}
+                            href={child.href}
+                            className="sb-link"
+                            style={{ paddingLeft: 20 }}
+                            onClick={() => setMobileOpen(false)}
+                          >
+                            {child.label}
+                          </a>
+                        );
+                      }
                       const childKey = child.filter?.toLowerCase();
                       const childHidden = childKey ? (hiddenCounts[childKey] || 0) : 0;
                       return (
