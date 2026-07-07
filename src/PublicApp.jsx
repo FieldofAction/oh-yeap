@@ -284,7 +284,7 @@ export default function PublicApp() {
     setFilter(f);
   }, []);
   return (
-    <div style={cv(theme)} className="app-layout">
+    <div style={cv(theme)} className={`app-layout${isLight ? " theme-daylight" : ""}`}>
       <PublicSidebar view={view} navigateTo={navigateTo} filter={filter} setFilter={handleFilter} hiddenCounts={hiddenCounts} />
       <div className="app-content">
         <DualLensBar modelActive={lens} patternActive={patternLens} onToggleModel={toggleLens} onTogglePattern={togglePatternLens} onOpenModels={() => navigateTo("models")} onOpenPatterns={() => navigateTo("patterns")} />
