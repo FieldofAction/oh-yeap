@@ -23,6 +23,21 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       {
+        // Dev-only mirror of the vercel.json rewrite: serve the standalone
+        // World Cup Atlas page at the clean URL /world-cup-atlas. Without this,
+        // vite's SPA fallback would render the React home page instead.
+        name: 'atlas-clean-url',
+        configureServer(server) {
+          server.middlewares.use((req, res, next) => {
+            const path = (req.url || '').split('?')[0]
+            if (path === '/world-cup-atlas' || path === '/world-cup-atlas/') {
+              req.url = '/world-cup-atlas.html'
+            }
+            next()
+          })
+        },
+      },
+      {
         name: 'api-generate',
         configureServer(server) {
           server.middlewares.use('/api/generate', async (req, res) => {
