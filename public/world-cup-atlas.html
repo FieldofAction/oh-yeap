@@ -238,6 +238,8 @@
     .const-head .c-glyph{margin:0 0 9px;justify-self:end;width:100%;transform:translateY(10%);}
   }
   .c-glyph svg{width:100%;height:auto;display:block;}
+  /* glyph lines held to the site rule scale (1px hairline / 2px structural) at any display size */
+  .gly *{vector-effect:non-scaling-stroke;}
 
   .dsec{margin-top:40px;border-top:1px solid var(--rule-strong);padding-top:16px;}
   .dsec-title{font-size:10.5px;letter-spacing:.09em;font-weight:600;text-transform:uppercase;color:var(--ink-40);margin-bottom:13px;}
@@ -945,7 +947,8 @@ function glyphSVG(tm,idSuffix){
   const R=rng(tm.id);
   const uid=`g${tm.id}${idSuffix||''}`;
   /* proportional system: SW is the module, phi the section */
-  const SW=1.75, FR=SW;
+  const SW=1.75;              /* geometric module: spacing, insets, min shape sizes */
+  const LINE=1.5, FRAME=2;    /* rendered weights, non-scaling → held to the site rule scale (1px hairline / 2px structural) */
   const IPHI=0.618, GAP=1-IPHI;      /* 0.382 */
   /* usable stroke colors: palette entries dark enough for paper */
   const lum=c=>{const n=parseInt(c.slice(1),16);
@@ -1085,10 +1088,10 @@ function glyphSVG(tm,idSuffix){
   }
   cells.forEach((c,i)=>{shapes+=V[best.kinds[i]](c,colAt());});
 
-  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img"
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" class="gly"
     aria-label="${tm.name} constitution glyph" id="${uid}">
-    <g fill="none" stroke-width="${SW}" stroke-linejoin="round" stroke-linecap="round">${shapes}</g>
-    <rect x="${F.x}" y="${F.y}" width="${F.w}" height="${F.h}" fill="none" stroke="#141414" stroke-width="${FR}"/>
+    <g fill="none" stroke-width="${LINE}" stroke-linejoin="round" stroke-linecap="round">${shapes}</g>
+    <rect x="${F.x}" y="${F.y}" width="${F.w}" height="${F.h}" fill="none" stroke="#141414" stroke-width="${FRAME}"/>
   </svg>`;
 }
 function star5(cx,cy,r,fill,rot){
