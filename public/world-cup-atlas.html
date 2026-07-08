@@ -1090,7 +1090,7 @@ function glyphSVG(tm,idSuffix){
      leaves a visible channel. Grow the curved ones a hair (clamped to the frame)
      so neighbours overlap slightly. Straight shapes keep their clean shared edges. */
   const CURVED=new Set(['circle','ring','dot','ellipse','arch','u']);
-  const KISS=0.7;
+  const KISS=1.15;
   const kiss=c=>{const x=Math.max(F.x,c.x-KISS),y=Math.max(F.y,c.y-KISS),
     r=Math.min(F.x+F.w,c.x+c.w+KISS),b=Math.min(F.y+F.h,c.y+c.h+KISS);
     return {x,y,w:r-x,h:b-y};};
