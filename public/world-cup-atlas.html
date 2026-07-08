@@ -1674,11 +1674,18 @@ function render(t){
     const a=Math.min(1,(t-e.born)/.3)*Math.min(1,(e.until-t)/.5);
     const m=Math.min(W,H)*.05;
     ctx.save();ctx.globalAlpha=a;
-    ctx.beginPath();ctx.arc(m+12,m+17,3.4,0,Math.PI*2);
-    ctx.fillStyle=e.color;ctx.fill();
     ctx.font='600 11px "IBM Plex Mono",monospace';
+    const tw=ctx.measureText(e.label).width;
+    /* paper chip so the label stays legible over the pitch lines */
+    const bx=m+4,by=m+6,bw=tw+28,bh=22,br=5;
+    ctx.beginPath();
+    if(ctx.roundRect)ctx.roundRect(bx,by,bw,bh,br);else ctx.rect(bx,by,bw,bh);
+    ctx.fillStyle='#F5F0E4';ctx.fill();
+    ctx.lineWidth=1;ctx.strokeStyle='rgba(20,20,20,.22)';ctx.stroke();
+    ctx.beginPath();ctx.arc(m+14,m+17,3.4,0,Math.PI*2);
+    ctx.fillStyle=e.color;ctx.fill();
     ctx.fillStyle='#141414';
-    ctx.fillText(e.label,m+23,m+21);
+    ctx.fillText(e.label,m+24,m+21);
     ctx.restore();
   }
 }
