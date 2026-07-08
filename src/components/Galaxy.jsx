@@ -55,6 +55,16 @@ const MOTION_SLIDERS = [
   { c:"bgDrift", min:-2, max:2, step:1, fmt:"int", unit:"×", name:"Field drift" },
   { c:"dur", min:2, max:16, step:1, fmt:"int", unit:" s", name:"Loop length" },
 ];
+// Flat lookup so any slider can resolve its own range for the fill % (the
+// "ignited" bright portion of the star-field track).
+const CTRL = Object.fromEntries(
+  [...GROUPS.flatMap(g => g.controls), ...MOTION_SLIDERS].map(c => [c.c, c])
+);
+function fillPct(key, p){
+  const c = CTRL[key]; if(!c) return 0;
+  const v = Math.max(0, Math.min(1, (p[key] - c.min) / (c.max - c.min)));
+  return (v * 100).toFixed(2) + '%';
+}
 
 // ---------- Generation ----------
 function generate(p){
@@ -212,7 +222,14 @@ export default function Galaxy(){
 
   const valRefs = useRef({});
   const sliderRefs = useRef({});
+  const fillRefs = useRef({});
   const seedRef = useRef(null);
+
+  // Sync a slider's bright "ignited" fill to its current value.
+  const setFill = (key) => {
+    const el = fillRefs.current[key];
+    if(el) el.style.width = fillPct(key, P.current);
+  };
   const taTLRef = useRef(null);
   const taBRRef = useRef(null);
 
@@ -246,6 +263,7 @@ export default function Galaxy(){
       const s=sliderRefs.current.spin, v=valRefs.current.spin;
       if(s) s.value=P.current.spin;
       if(v) v.textContent=Math.round(P.current.spin)+'°';
+      setFill('spin');
     }
 
     let motionRAF=null, lastT=0;
@@ -275,6 +293,7 @@ export default function Galaxy(){
       const ts=sliderRefs.current.tilt, tv=valRefs.current.tilt;
       if(ts) ts.value=P.current.tilt;
       if(tv) tv.textContent=Math.round(P.current.tilt)+'°';
+      setFill('tilt');
       scheduleDraw();
     };
     const onUp = ()=>{ dragging=false; };
@@ -303,6 +322,7 @@ export default function Galaxy(){
   const onSlide = (c, val, fk, unit="") => {
     P.current[c] = val;
     if(valRefs.current[c]) valRefs.current[c].textContent = (FMT[fk] ? FMT[fk](val) : val) + unit;
+    setFill(c);
     if(GEN_KEYS.has(c)) needGenRef.current = true;
     if(c === 'motion') startMotionRef.current && startMotionRef.current();
     scheduleDrawRef.current && scheduleDrawRef.current();
@@ -314,13 +334,17 @@ export default function Galaxy(){
         <span className="gx-cname">{cfg.name}</span>
         <span className="gx-cval" ref={el=>{ valRefs.current[cfg.c]=el; }}>{fmtVal(cfg.c, cfg.fmt, cfg.unit)}</span>
       </div>
-      <input
-        className="gx-range" type="range"
-        min={cfg.min} max={cfg.max} step={cfg.step}
-        defaultValue={P.current[cfg.c]}
-        ref={el=>{ sliderRefs.current[cfg.c]=el; }}
-        onChange={e=>onSlide(cfg.c, +e.target.value, cfg.fmt, cfg.unit)}
-      />
+      <div className="gx-slot">
+        <div className="gx-field" aria-hidden="true" />
+        <div className="gx-fill" aria-hidden="true" ref={el=>{ fillRefs.current[cfg.c]=el; }} style={{width:fillPct(cfg.c, P.current)}} />
+        <input
+          className="gx-range" type="range"
+          min={cfg.min} max={cfg.max} step={cfg.step}
+          defaultValue={P.current[cfg.c]}
+          ref={el=>{ sliderRefs.current[cfg.c]=el; }}
+          onChange={e=>onSlide(cfg.c, +e.target.value, cfg.fmt, cfg.unit)}
+        />
+      </div>
     </div>
   );
 
@@ -422,6 +446,7 @@ export default function Galaxy(){
       setVidStatus('● REC '+Math.round(frame/total*100)+'%');
       if(sliderRefs.current.spin) sliderRefs.current.spin.value=p.spin;
       if(valRefs.current.spin) valRefs.current.spin.textContent=Math.round(p.spin)+'°';
+      setFill('spin');
       frame++;
       setTimeout(pump, 1000/fps);
     }
@@ -564,44 +589,76 @@ export default function Galaxy(){
         .gx-ctrl{margin-bottom:14px}
         .gx-ctop{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
         .gx-cname{font-size:11.5px;color:var(--fm);letter-spacing:.02em}
-        .gx-cval{font-size:11.5px;color:var(--ac1);font-variant-numeric:tabular-nums}
-        .gx-range{-webkit-appearance:none;appearance:none;width:100%;height:2px;background:var(--bd);outline:none;cursor:pointer}
-        .gx-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:11px;height:11px;border-radius:50%;background:var(--fg);border:2px solid var(--bg);box-shadow:0 0 0 1px var(--ac1);transition:transform .1s}
-        .gx-range::-webkit-slider-thumb:hover{transform:scale(1.25)}
-        .gx-range::-moz-range-thumb{width:11px;height:11px;border-radius:50%;background:var(--fg);border:2px solid var(--bg);box-shadow:0 0 0 1px var(--ac1)}
+        .gx-cval{font-size:11.5px;color:var(--fg);font-variant-numeric:tabular-nums}
+        /* ── Star-field slider ─────────────────────────────────────────
+           The track is a strip of the same scattered stars as the galaxy.
+           A .gx-fill layer, clipped to the slider's value, "ignites" the
+           left of the field with a blue wash; the thumb is a glowing star.
+           ── */
+        .gx-slot{position:relative;height:22px;display:flex;align-items:center}
+        .gx-field,.gx-fill{position:absolute;top:0;bottom:0;left:0;border-radius:11px;pointer-events:none}
+        /* Dim star field lives only on the unfilled (right) side. */
+        .gx-field{right:0;color:var(--fg);opacity:.5;background-repeat:no-repeat;
+          background-image:
+            radial-gradient(circle at 30% 40%, currentColor 0 .95px, transparent 1.6px),
+            radial-gradient(circle at 68% 66%, currentColor 0 .8px, transparent 1.5px),
+            radial-gradient(circle at 50% 22%, currentColor 0 .65px, transparent 1.3px);
+          background-size:11px 100%,17px 100%,7px 100%;
+          box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--fg) 8%,transparent)}
+        /* Filled side is a clean glowing bar — no particulates, and opaque so
+           it fully covers the field's dots beneath it. */
+        .gx-fill{width:50%;
+          background:color-mix(in srgb,#fff 14%,var(--sf));
+          box-shadow:inset 0 0 10px color-mix(in srgb,#fff 22%,transparent),
+                     inset 0 0 0 1px color-mix(in srgb,#fff 20%,transparent)}
+        .gx-range{-webkit-appearance:none;appearance:none;position:absolute;inset:0;width:100%;height:100%;margin:0;background:transparent;outline:none;cursor:grab}
+        .gx-range:active{cursor:grabbing}
+        .gx-range::-webkit-slider-runnable-track{height:100%;background:transparent}
+        .gx-range::-moz-range-track{height:100%;background:transparent}
+        .gx-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:15px;height:15px;border-radius:50%;
+          background:radial-gradient(circle at 48% 42%, #fff 0 30%, #e8eaf0 52%, #9498a0 100%);
+          box-shadow:0 0 0 1px color-mix(in srgb,#fff 18%,transparent),0 0 3px rgba(255,255,255,.9),0 0 11px 1px rgba(255,255,255,.4);
+          transition:transform .1s}
+        .gx-range::-webkit-slider-thumb{margin-top:3.5px}
+        .gx-range::-webkit-slider-thumb:hover{transform:scale(1.2)}
+        .gx-range::-moz-range-thumb{width:15px;height:15px;border:none;border-radius:50%;
+          background:radial-gradient(circle at 48% 42%, #fff 0 30%, #e8eaf0 52%, #9498a0 100%);
+          box-shadow:0 0 3px rgba(255,255,255,.9),0 0 11px 1px rgba(255,255,255,.4)}
+        .gx-range::-moz-range-thumb:hover{transform:scale(1.2)}
         .gx-seed-row{display:flex;gap:8px;align-items:center}
         .gx-seed{flex:1;background:var(--cbg);border:1px solid var(--bd);color:var(--fg);font-family:inherit;font-size:12px;padding:8px 10px;border-radius:3px;letter-spacing:.05em}
-        .gx-seed:focus{outline:none;border-color:var(--ac1)}
+        .gx-seed:focus{outline:none;border-color:var(--fg)}
         .gx-swatches{display:flex;gap:14px}
         .gx-swatch{display:flex;flex-direction:column;gap:5px;align-items:center}
         .gx-swatch label{font-size:9px;letter-spacing:.1em;color:var(--ff);text-transform:uppercase}
         .gx-color{-webkit-appearance:none;appearance:none;width:38px;height:26px;border:1px solid var(--bd);border-radius:3px;background:none;cursor:pointer;padding:0}
         .gx-color::-webkit-color-swatch-wrapper{padding:2px}
         .gx-color::-webkit-color-swatch{border:none;border-radius:2px}
-        .gx-btn{font-family:inherit;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg);background:var(--cbg);border:1px solid var(--bd);padding:9px 12px;border-radius:3px;cursor:pointer;transition:all .14s;white-space:nowrap}
-        .gx-btn:hover{border-color:var(--ac1);color:var(--ac1);background:var(--ch)}
+        .gx-btn{font-family:inherit;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--fg);background:var(--cbg);border:1px solid var(--bd);padding:9px 14px;border-radius:999px;cursor:pointer;transition:all .14s;white-space:nowrap}
+        .gx-btn:hover{border-color:var(--fg);color:var(--fg);background:var(--ch);box-shadow:0 0 12px color-mix(in srgb,#fff 16%,transparent)}
         .gx-btn:active{transform:translateY(1px)}
         .gx-foot{padding:16px 22px;border-top:1px solid var(--bd);display:grid;gap:8px}
         .gx-foot-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-        .gx-btn-primary{background:var(--ac1);color:#fff;border-color:var(--ac1);font-weight:500}
-        .gx-btn-primary:hover{background:var(--ac1);color:#fff;filter:brightness(1.12)}
+        .gx-btn-primary{background:var(--fg);color:var(--bg);border-color:var(--fg);font-weight:500;box-shadow:0 0 16px color-mix(in srgb,#fff 28%,transparent)}
+        .gx-btn-primary:hover{background:var(--fg);color:var(--bg);filter:brightness(1.06);box-shadow:0 0 22px color-mix(in srgb,#fff 40%,transparent)}
         .gx-res-row{display:flex;gap:6px;align-items:center}
         .gx-lab{font-size:10px;letter-spacing:.1em;color:var(--ff);text-transform:uppercase}
-        .gx-seg{display:flex;border:1px solid var(--bd);border-radius:3px;overflow:hidden}
-        .gx-seg button{font-family:inherit;font-size:10.5px;color:var(--fm);background:none;border:none;padding:6px 10px;cursor:pointer;border-right:1px solid var(--bd)}
+        .gx-seg{display:flex;border:1px solid var(--bd);border-radius:999px;overflow:hidden}
+        .gx-seg button{font-family:inherit;font-size:10.5px;color:var(--fm);background:none;border:none;padding:6px 12px;cursor:pointer;border-right:1px solid var(--bd);transition:color .14s,background .14s}
         .gx-seg button:last-child{border-right:none}
-        .gx-seg button.on{background:var(--ac1);color:#fff}
+        .gx-seg button:hover{color:var(--fg)}
+        .gx-seg button.on{background:var(--fg);color:var(--bg);box-shadow:inset 0 0 12px color-mix(in srgb,#000 14%,transparent)}
         .gx-ta{width:100%;background:var(--cbg);border:1px solid var(--bd);color:var(--fg);font-family:inherit;font-size:11px;line-height:1.5;padding:8px 9px;border-radius:3px;resize:vertical;min-height:46px;letter-spacing:.04em}
-        .gx-ta:focus{outline:none;border-color:var(--ac1)}
+        .gx-ta:focus{outline:none;border-color:var(--fg)}
         .gx-ta-lab{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--ff);margin-bottom:5px}
         .gx-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;margin-bottom:12px}
         .gx-tog-name{font-size:11.5px;color:var(--fm)}
         .gx-tog-sw{width:38px;height:20px;border-radius:11px;background:var(--cbg);border:1px solid var(--bd);position:relative;transition:all .16s}
         .gx-tog-sw::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--ff);transition:all .16s}
-        .gx-toggle.on .gx-tog-sw{background:var(--ac1);border-color:var(--ac1)}
-        .gx-toggle.on .gx-tog-sw::after{left:19px;background:#fff}
+        .gx-toggle.on .gx-tog-sw{background:var(--ch);border-color:var(--fg);box-shadow:0 0 10px color-mix(in srgb,#fff 32%,transparent)}
+        .gx-toggle.on .gx-tog-sw::after{left:19px;background:radial-gradient(circle at 46% 40%, #fff 0 42%, #c8ccd4 100%);box-shadow:0 0 5px rgba(255,255,255,.9)}
         .gx-reset{font-size:10px;letter-spacing:.08em;color:var(--ff);background:none;border:none;cursor:pointer;padding:4px 0;text-decoration:underline;font-family:inherit}
-        .gx-reset:hover{color:var(--ac1)}
+        .gx-reset:hover{color:var(--fg)}
         .gx-hint{font-size:9.5px;color:var(--ff);line-height:1.6;margin-top:8px}
         .gx-vidstatus{font-size:10px;letter-spacing:.08em;color:var(--ff);text-align:center;min-height:13px}
         @media(max-width:820px){
@@ -611,12 +668,11 @@ export default function Galaxy(){
           .gx-stage{position:sticky;top:72px;z-index:5;height:46vh;min-height:300px;background:#000;border-bottom:1px solid var(--bd)}
           .gx-aperture{width:min(40vh,80vw)}
           .gx-console{border-left:none}
-          /* Bigger touch targets for the sliders. */
-          .gx-range{height:22px;background:transparent}
-          .gx-range::-webkit-slider-runnable-track{height:2px;background:var(--bd)}
-          .gx-range::-moz-range-track{height:2px;background:var(--bd)}
-          .gx-range::-webkit-slider-thumb{margin-top:-7px;width:16px;height:16px}
-          .gx-range::-moz-range-thumb{width:16px;height:16px}
+          /* Taller star-field + bigger orb for touch. */
+          .gx-slot{height:28px}
+          .gx-field,.gx-fill{border-radius:14px}
+          .gx-range::-webkit-slider-thumb{margin-top:5px;width:18px;height:18px}
+          .gx-range::-moz-range-thumb{width:18px;height:18px}
         }
       `}</style>
     </div>
