@@ -132,7 +132,7 @@
   main{padding:26px 0 70px;}
   .view{animation:rise .45s ease both;}
   @keyframes rise{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
-  .section-title{font-size:11.5px;letter-spacing:.08em;font-weight:600;color:var(--ink-60);margin-bottom:18px;}
+  .section-title{font-size:10.5px;letter-spacing:.09em;font-weight:600;text-transform:uppercase;color:var(--ink-40);margin-bottom:16px;}
 
   /* declaration cards */
   .cards{display:grid;grid-template-columns:1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);}
@@ -203,7 +203,7 @@
 
   /* atlas index */
   .conf-block{margin-bottom:30px;}
-  .conf-title{font-size:11px;letter-spacing:.08em;font-weight:600;
+  .conf-title{font-size:10.5px;letter-spacing:.09em;font-weight:600;text-transform:uppercase;
     color:var(--ink-40);border-bottom:1px solid var(--rule-strong);padding-bottom:8px;margin-bottom:2px;}
   .arow{display:flex;justify-content:space-between;align-items:baseline;gap:12px;width:100%;
     background:none;border:none;border-bottom:1px solid var(--rule);padding:12px 0;cursor:pointer;
@@ -240,7 +240,7 @@
   .c-glyph svg{width:100%;height:auto;display:block;}
 
   .dsec{margin-top:40px;border-top:1px solid var(--rule-strong);padding-top:16px;}
-  .dsec-title{font-size:11.5px;letter-spacing:.08em;font-weight:600;margin-bottom:16px;}
+  .dsec-title{font-size:10.5px;letter-spacing:.09em;font-weight:600;text-transform:uppercase;color:var(--ink-40);margin-bottom:13px;}
 
   .mrow{display:grid;grid-template-columns:30px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule);}
   .mrow svg{width:24px;height:24px;overflow:visible;margin-top:1px;}
@@ -270,8 +270,8 @@
   canvas#field{display:block;width:100%;height:56vh;min-height:360px;max-height:560px;touch-action:none;cursor:crosshair;}
 
   /* matches */
-  .round-title{font-size:11px;letter-spacing:.08em;font-weight:600;
-    color:var(--ink-40);margin:30px 0 10px;border-bottom:1px solid var(--rule-strong);padding-bottom:8px;}
+  .round-title{font-size:10.5px;letter-spacing:.09em;font-weight:600;text-transform:uppercase;
+    color:var(--ink-40);margin:34px 0 10px;border-bottom:1px solid var(--rule-strong);padding-bottom:8px;}
   .mcard{width:100%;text-align:left;background:none;border:none;border-bottom:1px solid var(--rule);
     padding:14px 0;cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:'IBM Plex Mono',monospace;}
   .mcard:focus-visible{outline:2px solid var(--signal);outline-offset:-2px;}
@@ -349,7 +349,7 @@
   .crow .ck svg{width:26px;height:26px;overflow:visible;margin-top:10px;display:block;}
   .crow .cmain{font-family:'Libre Franklin',sans-serif;font-weight:600;font-size:clamp(17px,4.6vw,21px);
     line-height:1.35;color:var(--accent);}
-  .crow .csup{margin-top:9px;font-size:11.5px;line-height:var(--lh-text);color:var(--ink-60);}
+  .crow .csup{margin-top:6px;font-size:11.5px;line-height:var(--lh-text);color:var(--ink-60);}
   .chain-mini{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px;}
   .chain-mini .mnode{border:1px solid var(--rule-strong);padding:5px 10px;font-size:10.5px;
     letter-spacing:.09em;text-transform:uppercase;}
@@ -390,7 +390,7 @@
       <svg class="brand-globe" viewBox="0 0 34 34"><circle cx="17" cy="17" r="14"/><ellipse cx="17" cy="17" rx="6.5" ry="14"/><line x1="3" y1="17" x2="31" y2="17"/><line x1="5" y1="10" x2="29" y2="10"/><line x1="5" y1="24" x2="29" y2="24"/></svg>
       <span class="wordmark">World Cup Atlas</span>
     </div>
-    <div class="statuschip"><span class="dot"></span>Round of 16 · Live</div>
+    <div class="statuschip"><span class="dot"></span>Quarter-finals · July 9</div>
   </div>
   <div class="nav-inner" id="nav"></div>
 </div></div>
@@ -398,7 +398,7 @@
 <main><div class="wrap"><div id="view" class="view"></div></div></main>
 
 <footer><div class="wrap">
-  A neutral field makes independence a strategy.<br>
+  On a neutral field, independence is a strategy.<br>
   <span style="color:var(--ink-40)">World Cup Atlas · Cultural Infrastructure · Case Study 001</span><br>
   <span style="color:var(--ink-40)">A <a href="https://fieldofaction.org" target="_blank" rel="noopener" style="color:var(--ink-60)">Field of Action</a> study</span>
 </div></footer>
@@ -413,7 +413,7 @@
 <script>
 /* =====================================================================
    WORLD CUP ATLAS v3 — exhibition catalogue.
-   A neutral field makes independence a strategy.
+   On a neutral field, independence is a strategy.
 ===================================================================== */
 
 /* ---------- families ------------------------------------------------ */
@@ -467,7 +467,7 @@ const T=[
 ['bra','Brazil','CONMEBOL','bra',1,'invention','Objects drift, curve, accelerate unexpectedly. Nothing repeats exactly.','Jazz improvisation',[.85,.55,.95,.85,.7],'OUT16',['#009739','#FEDD00','#012169']],
 ['jpn','Japan','AFC','jpn',1,'coordination','Everything anticipates. Nothing collides. Movement feels inevitable.','Precision craft',[.6,.62,.2,.3,.55],'OUT',['#BC002D','#141414']],
 ['esp','Spain','UEFA','esp',1,'control','Everything moves together. One grid. Pieces slide. Nothing surprises.','Grid systems',[.4,.7,.28,.45,.75],'QF',['#AA151B','#F1BF00']],
-['arg','Argentina','CONMEBOL','arg',1,'will','Constant tension. Micro-adjustments. Energy never fully settles.','Narrative design',[.7,.9,.6,.95,.5],'R16',['#75AADB','#F6B40E','#141414']],
+['arg','Argentina','CONMEBOL','arg',1,'will','Constant tension. Micro-adjustments. Energy never fully settles.','Narrative design',[.7,.9,.6,.95,.5],'QF',['#75AADB','#F6B40E','#141414']],
 ['mar','Morocco','CAF','mar',1,'collective belief','The block breathes as one. The pattern holds, then breaks forward without warning.','Architecture & collective pattern',[.5,.35,.25,.7,.2],'QF',['#C1272D','#006233']],
 ['ger','Germany','UEFA','ger',1,'precision','Mechanical timing. Repeatable cadence. Everything locks.','Engineering',[.55,.7,.2,.35,.6],'OUT',['#141414','#DD0000','#FFCC00']],
 ['fra','France','UEFA','fra',1,'expression','Explosive dynamic range: calm, explosion, calm, explosion.','Fashion & performance',[.6,.6,.55,.6,.65],'QF',['#0055A4','#EF4135']],
@@ -483,9 +483,9 @@ const T=[
 ['por','Portugal','UEFA','esp',.85,'ambition','Elegant buildup. The touch is the idea.','Craft & ornament',[.55,.6,.5,.55,.65],'OUT16',['#046A38','#DA291C','#FFE900']],
 ['sco','Scotland','UEFA','eng',1.05,'insistence','Tempo as identity. The crowd plays too.','Punk energy',[.7,.8,.35,.8,.45],'OUT',['#005EB8','#141414']],
 ['swe','Sweden','UEFA','ger',.9,'simplicity','Two banks, clean lines, patience as a plan.','Flat-pack modularity',[.45,.5,.25,.35,.45],'OUT32',['#006AA7','#FECC02']],
-['sui','Switzerland','UEFA','ger',1,'balance','Everything arrives on time. The watch runs.','Horology',[.5,.55,.25,.3,.5],'R16',['#DA291C','#141414']],
+['sui','Switzerland','UEFA','ger',1,'balance','Everything arrives on time. The watch runs.','Horology',[.5,.55,.25,.3,.5],'QF',['#DA291C','#141414']],
 ['tur','Türkiye','UEFA','arg',.95,'faith','The temperature rises until the game bends.','Anatolian drama',[.65,.8,.55,.95,.5],'OUT',['#E30A17','#141414']],
-['col','Colombia','CONMEBOL','bra',.8,'touch','The ball is treated kindly. Then it dances.','Magical realism',[.6,.5,.8,.75,.6],'R16',['#FCD116','#003893','#CE1126']],
+['col','Colombia','CONMEBOL','bra',.8,'touch','The ball is treated kindly. Then it dances.','Magical realism',[.6,.5,.8,.75,.6],'OUT16',['#FCD116','#003893','#CE1126']],
 ['ecu','Ecuador','CONMEBOL','eng',1,'passion','Relentless legs. The tempo never descends.','Andean endurance',[.75,.7,.4,.6,.5],'OUT32',['#FFDD00','#034EA2','#ED1C24']],
 ['par','Paraguay','CONMEBOL','mar',1,'heart','Garra: the block that refuses.','Fortification',[.4,.45,.3,.8,.25],'OUT16',['#D52B1E','#0038A8']],
 ['uru','Uruguay','CONMEBOL','arg',.9,'resilience','More will than space. Every duel is personal.','The gaucho ethic',[.55,.85,.45,.9,.4],'OUTG',['#0038A8','#FFD700']],
@@ -498,7 +498,7 @@ const T=[
 ['cpv','Cape Verde','CAF','bra',.95,'the crossing','Island rhythm. Ten diasporas, one groove.','Morna',[.7,.5,.75,.8,.5],'OUT32',['#003893','#CF2027','#F7D116']],
 ['cod','DR Congo','CAF','mex',1,'power','The beat is heavy and the shoulders are heavier.','Rumba congolaise',[.7,.65,.6,.8,.55],'OUT32',['#007FFF','#F7D618','#CE1021']],
 ['civ',"Côte d'Ivoire",'CAF','fra',1,'resolve','Elegant violence in the duels. Silk after.','Bronze & wax print',[.65,.7,.55,.7,.6],'OUT',['#FF8200','#009A44']],
-['egy','Egypt','CAF','mar',.95,'history','Seventy quiet minutes. Then Cairo erupts.','Monumental patience',[.45,.4,.35,.75,.3],'R16',['#C8102E','#141414','#C09300']],
+['egy','Egypt','CAF','mar',.95,'history','Seventy quiet minutes. Then Cairo erupts.','Monumental patience',[.45,.4,.35,.75,.3],'OUT16',['#C8102E','#141414','#C09300']],
 ['gha','Ghana','CAF','mex',.95,'legacy','Waves of muscle through the middle of the pitch.','Kente & highlife',[.65,.75,.5,.75,.55],'OUT32',['#CE1126','#FCD116','#006B3F']],
 ['sen','Senegal','CAF','fra',1.05,'purpose','Long limbs, long strides, sudden geometry.','Sabar drumming',[.7,.7,.5,.7,.6],'OUT32',['#00853F','#FDEF42','#E31B23']],
 ['rsa','South Africa','CAF','bra',.85,'style','The showboat is the point. Style is respect.','Township jazz',[.6,.45,.85,.8,.6],'OUT32',['#007749','#FFB81C','#E03C31']],
@@ -762,17 +762,15 @@ function setAura(teams){
 
 /* ---------- matches -------------------------------------------------- */
 const MATCHES=[
-  {round:'Round of 16 · In play',items:[
-    {a:'arg',b:'egy',prob:[72.4,18.3,9.3],note:'July 7 · 9:00 AM PT'},
-    {a:'sui',b:'col',prob:[27,30.6,42.4],note:'July 7 · 1:00 PM PT'},
-  ]},
   {round:'Quarter-finals',items:[
     {a:'fra',b:'mar',prob:[60.4,23.6,16],note:'July 9 · a rematch of the 2022 semi-final'},
     {a:'esp',b:'bel',prob:[58.9,23.9,17.2],note:'July 10'},
     {a:'nor',b:'eng',prob:[23.8,25.7,50.5],note:'July 11'},
-    {tbd:'Winner ARG–EGY  v  Winner SUI–COL',note:'July 11'},
+    {a:'arg',b:'sui',prob:[60.5,24.5,15],note:'July 11'},
   ]},
   {round:'Round of 16 · Played',items:[
+    {a:'arg',b:'egy',sa:2,sb:0,note:'July 7'},
+    {a:'sui',b:'col',sa:1,sb:1,note:'July 7 · Switzerland advance on penalties'},
     {a:'mar',b:'can',sa:3,sb:0,note:'July 4'},
     {a:'fra',b:'par',sa:1,sb:0,note:'July 4'},
     {a:'nor',b:'bra',sa:2,sb:1,note:'July 5 · Brazil eliminated'},
@@ -795,7 +793,7 @@ const MATCHES=[
 
 /* ---------- the market: Polymarket World Cup winner ------------------- */
 const POLY={
-  asOf:'July 6, 2026', live:false,
+  asOf:'July 8, 2026', live:false,
   url:'https://polymarket.com/event/world-cup-winner',
   rows:[['fra',35.4],['arg',16.8],['esp',12.4],['eng',10.0],['por',7.0]],
 };
@@ -822,6 +820,7 @@ const FIX_MKT={
   'fra-mar':{slug:'fifwc-fra-mar-2026-07-09'},
   'esp-bel':{slug:'fifwc-esp-bel-2026-07-10'},
   'nor-eng':{slug:'fifwc-nor-eng-2026-07-11'},
+  'arg-sui':{slug:'fifwc-arg-che-2026-07-11'},
 };
 function fixRows(a,b,p,live){
   const row=(name,pct,color)=>`<div class="mkt-row">
@@ -831,7 +830,7 @@ function fixRows(a,b,p,live){
   return row(a.name,p[0],a.accent)+row('Draw',p[1],'rgba(20,20,20,.38)')+row(b.name,p[2],b.accent);
 }
 function marketFixture(a,b,fx){
-  const label=fx.live?'live':'as of July 6, 2026';
+  const label=fx.live?'live':'as of July 8, 2026';
   return `<div class="dsec"><div class="dsec-title">The market · this fixture</div>
     <div id="fixRows">${fixRows(a,b,fx.snap,fx.live)}</div>
     <div class="mkt-att">Polymarket · Match winner, regulation · <span id="fixLabel">${label}</span> · <a href="https://polymarket.com/sports/world-cup/${fx.slug}" target="_blank" rel="noopener">view market ↗</a></div>
@@ -1832,9 +1831,9 @@ function viewDeclarations(){
       <button class="snav" id="stNext" aria-label="Scroll forward">${chev('r')}</button>
     </div>
     <div class="strip-foot">
-      <div>A neutral field makes<br>independence a strategy.</div>
+      <div>On a neutral field,<br>independence is a strategy.</div>
       ${miniLegend}
-      <div class="sf-r">Movement is<br>the language.</div>
+      <div class="sf-r">Movement carries<br>language.</div>
     </div>`;
   viewEl.querySelectorAll('.scard').forEach(c=>c.addEventListener('click',()=>viewCountry(c.dataset.id)));
   const strip=document.getElementById('strip');
@@ -1989,7 +1988,7 @@ function viewCountry(id){
 function viewAtlas(){
   setNav('ATLAS');unmountField();setAura(null);setHash('#atlas');
   const confs=['UEFA','CONMEBOL','CONCACAF','CAF','AFC','OFC'];
-  viewEl.innerHTML=viewHead('Atlas Index','By confederation · tournament state as of July 6, 2026')+
+  viewEl.innerHTML=viewHead('Atlas Index','By confederation · tournament state as of July 8, 2026')+
     confs.map(cf=>{
       const teams=Object.values(TEAMS).filter(t=>t.conf===cf).sort((a,b)=>a.name.localeCompare(b.name));
       return `<div class="conf-block"><div class="conf-title">${cf} · ${teams.length}</div>`+
@@ -2007,7 +2006,7 @@ function viewAtlas(){
 function collide(a,b){return `${FAM_LABEL[a.fam]}  v  ${FAM_LABEL[b.fam]}`;}
 function viewMatches(){
   setNav('MATCHES');unmountField();setAura(null);setHash('#matches');
-  let html=viewHead('Matches','Every fixture is a collision of two languages · Round of 16 in progress · results through July 6, 2026');
+  let html=viewHead('Matches','Every fixture is a collision of two languages · results through July 8, 2026');
   for(const g of MATCHES){
     html+=`<div class="round-title">${g.round}</div>`;
     for(const m of g.items){
