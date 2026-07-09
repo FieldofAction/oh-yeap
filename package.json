@@ -8,7 +8,9 @@
     "build": "vite build",
     "build:studio": "BUILD_TARGET=studio vite build && mv dist/studio.html dist/index.html",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "atlas:validate": "node scripts/atlas-data.validate.mjs",
+    "atlas:matchday": "node scripts/atlas-matchday.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
