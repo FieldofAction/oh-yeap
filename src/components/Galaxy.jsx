@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 /* ──────────────────────────────────────────────────────────────
    Galaxy Instrument — generative spiral-galaxy plotter.
@@ -65,6 +66,13 @@ function fillPct(key, p){
   const v = Math.max(0, Math.min(1, (p[key] - c.min) / (c.max - c.min)));
   return (v * 100).toFixed(2) + '%';
 }
+
+// ---------- About / works cited ----------
+const ABOUT = "A generative plotter. It scatters stars along a logarithmic spiral, raises a bright core, a soft haze, and a dust belt, then projects the whole field with adjustable tilt and spin. Every value is seeded, so a given seed always redraws the same galaxy.";
+const LINEAGE = "The model began as a matplotlib study by Lee Vaughan. Its spiral read as the field itself: a universe, and the Field of Action inside it. I rebuilt the math to run live in the browser. Its first prints, as it happens, became totes for Soul Mega, each carrying a secret vinyl.";
+const SOURCES = [
+  { title: "Create 3-D Galactic Art with Matplotlib", author: "Lee Vaughan, Towards Data Science", url: "https://towardsdatascience.com/create-3-d-galactic-art-with-matplotlib-a7534148a319/" },
+];
 
 // ---------- Generation ----------
 function generate(p){
@@ -220,6 +228,7 @@ export default function Galaxy(){
   const scheduleDrawRef = useRef(null);
   const startMotionRef = useRef(null);
 
+  const rootRef = useRef(null);
   const valRefs = useRef({});
   const sliderRefs = useRef({});
   const fillRefs = useRef({});
@@ -234,6 +243,7 @@ export default function Galaxy(){
   const taBRRef = useRef(null);
 
   const [showText, setShowText] = useState(true);
+  const [showAbout, setShowAbout] = useState(false);
   const [pngRes, setPngRes] = useState(2);
   const [vFps, setVFps] = useState(30);
   const [vSize, setVSize] = useState(1080);
@@ -315,6 +325,14 @@ export default function Galaxy(){
       if(motionRAF) cancelAnimationFrame(motionRAF);
     };
   }, []);
+
+  // Close the About overlay on Escape.
+  useEffect(() => {
+    if(!showAbout) return;
+    const onKey = e => { if(e.key === 'Escape') setShowAbout(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showAbout]);
 
   // ---------- control handlers ----------
   const fmtVal = (c, fk, unit="") => (FMT[fk] ? FMT[fk](P.current[c]) : P.current[c]) + unit;
@@ -468,7 +486,7 @@ export default function Galaxy(){
   };
 
   return (
-    <div className="gx-app">
+    <div className="gx-app" ref={rootRef}>
       <div className="gx-stage">
         <div className="gx-aperture">
           <span className="gx-reg tl" /><span className="gx-reg tr" />
@@ -479,8 +497,11 @@ export default function Galaxy(){
 
       <div className="gx-console">
         <div className="gx-head">
-          <div className="gx-title">Galaxy Instrument</div>
-          <div className="gx-sub">Generative · Field of Action</div>
+          <div className="gx-head-txt">
+            <div className="gx-title">Galaxy Instrument</div>
+            <div className="gx-sub">Generative · Field of Action</div>
+          </div>
+          <button className="gx-info" onClick={()=>setShowAbout(true)} aria-label="About this instrument and works cited" title="About & sources">i</button>
         </div>
 
         <div className="gx-body">
@@ -562,6 +583,36 @@ export default function Galaxy(){
         </div>
       </div>
 
+      {showAbout && createPortal(
+        <div className="gx-about" role="dialog" aria-modal="true" aria-label="About the Galaxy Instrument" onClick={()=>setShowAbout(false)}>
+          <div className="gx-about-card" onClick={e=>e.stopPropagation()}>
+            <button className="gx-about-x" onClick={()=>setShowAbout(false)} aria-label="Close">×</button>
+            <div className="gx-about-eyebrow">About</div>
+            <div className="gx-about-title">Galaxy Instrument</div>
+            <p className="gx-about-body">{ABOUT}</p>
+            <p className="gx-about-body gx-about-lineage">{LINEAGE}</p>
+            <div className="gx-about-eyebrow gx-about-eyebrow--sep">Works cited</div>
+            <ul className="gx-about-src">
+              {SOURCES.map((s,i)=>(
+                <li className="gx-about-item" key={i}>
+                  <span className="gx-about-arrow">→</span>
+                  <span className="gx-about-cite">
+                    {s.url
+                      ? <a className="gx-about-link" href={s.url} target="_blank" rel="noopener noreferrer">{s.title}</a>
+                      : <span className="gx-about-name">{s.title}</span>}
+                    {s.author && <span className="gx-about-meta">{s.author}</span>}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>,
+        // Portal above .gx-app (whose entrance-animation transform would trap
+        // position:fixed) but inside the themed subtree, so the overlay stays
+        // viewport-centred and keeps the --sf/--fg theme variables.
+        (rootRef.current && rootRef.current.parentElement) || document.body
+      )}
+
       <style>{`
         .gx-app{display:grid;grid-template-columns:1fr 340px;height:calc(100vh - 72px);width:100%;background:var(--bg);color:var(--fg);font-family:var(--mono);font-size:13px;overflow:hidden;animation:en .4s ease both}
         .gx-stage{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#000}
@@ -577,7 +628,26 @@ export default function Galaxy(){
         .gx-reg.bl{bottom:-22px;left:-22px;transform:scaleY(-1)}
         .gx-reg.br{bottom:-22px;right:-22px;transform:scale(-1,-1)}
         .gx-console{background:var(--sf);border-left:1px solid var(--bd);display:flex;flex-direction:column;overflow:hidden}
-        .gx-head{padding:22px 22px 16px;border-bottom:1px solid var(--bd)}
+        .gx-head{padding:22px 22px 16px;border-bottom:1px solid var(--bd);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+        .gx-info{flex:none;width:24px;height:24px;margin-top:2px;border-radius:50%;border:1px solid var(--bd);background:var(--cbg);color:var(--fm);font-family:var(--display);font-style:italic;font-size:12px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color .14s,color .14s,box-shadow .14s}
+        .gx-info:hover{border-color:var(--fg);color:var(--fg);box-shadow:0 0 12px color-mix(in srgb,#fff 16%,transparent)}
+        .gx-about{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:24px;background:color-mix(in srgb,#000 62%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);animation:en .2s ease}
+        .gx-about-card{position:relative;width:100%;max-width:520px;max-height:82vh;overflow-y:auto;background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:34px 34px 30px;box-shadow:0 30px 90px rgba(0,0,0,.55)}
+        .gx-about-x{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--ff);font-size:22px;line-height:1;cursor:pointer;padding:2px 6px;font-family:var(--sans);transition:color .14s}
+        .gx-about-x:hover{color:var(--fg)}
+        .gx-about-eyebrow{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ff)}
+        .gx-about-eyebrow--sep{margin-top:26px;padding-top:22px;border-top:1px solid var(--bd)}
+        .gx-about-title{font-family:var(--display);font-size:22px;font-weight:500;letter-spacing:-.01em;color:var(--fg);margin:9px 0 14px}
+        .gx-about-body{font-size:13px;line-height:1.7;color:var(--fm);margin:0}
+        .gx-about-lineage{margin-top:14px}
+        .gx-about-src{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:13px}
+        .gx-about-item{display:flex;gap:10px;font-size:12.5px;line-height:1.5}
+        .gx-about-arrow{color:var(--ff);flex:none}
+        .gx-about-cite{display:flex;flex-direction:column}
+        .gx-about-name,.gx-about-link{color:var(--fg);text-decoration:none}
+        .gx-about-link{border-bottom:1px solid var(--bd);transition:border-color .14s;align-self:flex-start}
+        .gx-about-link:hover{border-color:var(--fg)}
+        .gx-about-meta{color:var(--fm);margin-top:3px;font-size:11.5px}
         .gx-title{font-family:var(--display);font-size:22px;font-weight:500;letter-spacing:-.01em;line-height:1.05;color:var(--fg)}
         .gx-sub{margin-top:7px;font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ff)}
         .gx-body{flex:1;overflow-y:auto;padding:8px 22px 18px}
