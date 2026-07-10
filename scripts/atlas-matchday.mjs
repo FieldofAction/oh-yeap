@@ -27,17 +27,16 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 // ---- authored state --------------------------------------------------------
 const STATE = {
-  asof: 'July 8, 2026',
-  chip: 'Quarter-finals · July 9',
+  asof: 'July 10, 2026',
+  chip: 'Quarter-finals · July 11',
 
-  // Overrides vs the embedded page baseline (which is current through July 8).
-  // Empty today; on matchday, flip losers to 'OUT' and advancers as needed.
-  statuses: {},
+  // Overrides vs the embedded page baseline. QF losers → 'OUT'.
+  statuses: { mar: 'OUT', bel: 'OUT' },
 
   matches: [
     { round: 'Quarter-finals', items: [
-      { a: 'fra', b: 'mar', prob: [60.4, 23.6, 16], note: 'July 9 · a rematch of the 2022 semi-final' },
-      { a: 'esp', b: 'bel', prob: [58.9, 23.9, 17.2], note: 'July 10' },
+      { a: 'fra', b: 'mar', sa: 2, sb: 1, note: 'July 9 · a rematch of the 2022 semi-final' },
+      { a: 'esp', b: 'bel', sa: 2, sb: 0, note: 'July 10' },
       { a: 'nor', b: 'eng', prob: [23.8, 25.7, 50.5], note: 'July 11' },
       { a: 'arg', b: 'sui', prob: [60.5, 24.5, 15], note: 'July 11' },
     ]},
@@ -63,7 +62,7 @@ const STATE = {
     ]},
   ],
 
-  poly: { asOf: 'July 8, 2026', rows: [['fra', 35.4], ['arg', 16.8], ['esp', 12.4], ['eng', 10.0], ['por', 7.0]] },
+  poly: { asOf: 'July 10, 2026', rows: [['fra', 38.6], ['arg', 17.8], ['esp', 17.3], ['eng', 16.0], ['nor', 5.9]] },
 };
 
 // ---- write + gate ----------------------------------------------------------

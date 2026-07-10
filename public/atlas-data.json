@@ -1,7 +1,10 @@
 {
-  "asof": "July 8, 2026",
-  "chip": "Quarter-finals · July 9",
-  "statuses": {},
+  "asof": "July 10, 2026",
+  "chip": "Quarter-finals · July 11",
+  "statuses": {
+    "mar": "OUT",
+    "bel": "OUT"
+  },
   "matches": [
     {
       "round": "Quarter-finals",
@@ -9,21 +12,15 @@
         {
           "a": "fra",
           "b": "mar",
-          "prob": [
-            60.4,
-            23.6,
-            16
-          ],
+          "sa": 2,
+          "sb": 1,
           "note": "July 9 · a rematch of the 2022 semi-final"
         },
         {
           "a": "esp",
           "b": "bel",
-          "prob": [
-            58.9,
-            23.9,
-            17.2
-          ],
+          "sa": 2,
+          "sb": 0,
           "note": "July 10"
         },
         {
@@ -172,27 +169,27 @@
     }
   ],
   "poly": {
-    "asOf": "July 8, 2026",
+    "asOf": "July 10, 2026",
     "rows": [
       [
         "fra",
-        35.4
+        38.6
       ],
       [
         "arg",
-        16.8
+        17.8
       ],
       [
         "esp",
-        12.4
+        17.3
       ],
       [
         "eng",
-        10
+        16
       ],
       [
-        "por",
-        7
+        "nor",
+        5.9
       ]
     ]
   }
