@@ -326,6 +326,7 @@
   .tempo:focus-visible{outline:2px solid var(--signal);outline-offset:2px;}
   .compose-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
   .compose select{flex:1;min-width:130px;background:var(--paper);color:var(--ink);
+    appearance:none;-webkit-appearance:none;
     border:1px solid var(--rule-strong);border-radius:12px;padding:10px 14px;font-family:'IBM Plex Mono',monospace;font-size:12px;}
   .compose button{background:var(--ink);color:var(--paper);border:none;border-radius:999px;padding:10px 20px;cursor:pointer;
     font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;}
@@ -799,16 +800,19 @@ const POLY={
   url:'https://polymarket.com/event/world-cup-winner',
   rows:[['fra',35.4],['arg',16.8],['esp',12.4],['eng',10.0],['por',7.0]],
 };
-function marketHTML(){
-  const label=POLY.live?'live':'as of '+POLY.asOf;
-  return `<div class="dsec"><div class="dsec-title">The market · to win the tournament</div>
-    <div id="polyRows">${POLY.rows.map(([id,p])=>{
-      const tm=TEAMS[id]; if(!tm)return '';
-      return `<div class="mkt-row">
+function polyRowsHTML(){
+  return POLY.rows.map(([id,p])=>{
+    const tm=TEAMS[id]; if(!tm)return '';
+    return `<div class="mkt-row">
         <span class="mkt-n">${tm.name}</span>
         <span class="mkt-bar"><i style="width:${Math.min(p,100)}%;background:${tm.accent}"></i></span>
         <span class="mkt-p">${p.toFixed(1)}%</span>
-      </div>`;}).join('')}</div>
+      </div>`;}).join('');
+}
+function marketHTML(){
+  const label=POLY.live?'live':'as of '+POLY.asOf;
+  return `<div class="dsec"><div class="dsec-title">The market · to win the tournament</div>
+    <div id="polyRows">${polyRowsHTML()}</div>
     <div class="mkt-att">Polymarket · World Cup Winner · <span id="polyLabel">${label}</span> · <a href="${POLY.url}" target="_blank" rel="noopener">view market ↗</a></div>
   </div>`;
 }
@@ -900,7 +904,7 @@ async function refreshPoly(){
       rows.sort((x,y)=>y[1]-x[1]);
       POLY.rows=rows.slice(0,5);POLY.live=true;
       const el=document.getElementById('polyRows');
-      if(el){el.outerHTML=marketHTML().match(/<div id="polyRows">[\s\S]*?<\/div>/)[0];
+      if(el){el.innerHTML=polyRowsHTML();
         const lb=document.getElementById('polyLabel');if(lb)lb.textContent='live';}
     }
   }catch(e){/* snapshot stands */}
@@ -2054,14 +2058,17 @@ function viewPlay(){
     <div class="compose-row"><select id="selA" aria-label="First nation">${opts}</select><select id="selB" aria-label="Second nation">${opts}</select>
     <button id="goDuel">Kick off</button></div></div>`
     +marketHTML();
+  const CHEV="url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 5.5 L8 10.5 L13 5.5' fill='none' stroke='%23141414' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")";
   const paintSel=sel=>{
     const tm=TEAMS[sel.value];
     sel.style.borderColor=tm.accent;
-    sel.style.backgroundImage=`radial-gradient(circle, ${tm.accent} 0 5.5px, transparent 6px)`;
-    sel.style.backgroundRepeat='no-repeat';
-    sel.style.backgroundPosition='14px center';
-    sel.style.backgroundSize='12px 12px';
+    /* team dot (left) + chevron (right); appearance:none means we own the arrow */
+    sel.style.backgroundImage=`radial-gradient(circle, ${tm.accent} 0 5.5px, transparent 6px), ${CHEV}`;
+    sel.style.backgroundRepeat='no-repeat, no-repeat';
+    sel.style.backgroundPosition='14px center, right 14px center';
+    sel.style.backgroundSize='12px 12px, 16px';
     sel.style.paddingLeft='34px';
+    sel.style.paddingRight='40px';
   };
   ['selA','selB'].forEach(id=>{
     const sel=document.getElementById(id);
