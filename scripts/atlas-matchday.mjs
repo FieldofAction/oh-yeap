@@ -27,18 +27,22 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 // ---- authored state --------------------------------------------------------
 const STATE = {
-  asof: 'July 10, 2026',
-  chip: 'Quarter-finals · July 11',
+  asof: 'July 12, 2026',
+  chip: 'Semi-finals · July 15',
 
-  // Overrides vs the embedded page baseline. QF losers → 'OUT'.
-  statuses: { mar: 'OUT', bel: 'OUT' },
+  // Overrides vs the embedded page baseline. Semifinalists → 'SF', losers → 'OUT'.
+  statuses: { fra: 'SF', esp: 'SF', eng: 'SF', arg: 'SF', mar: 'OUT', bel: 'OUT', nor: 'OUT', sui: 'OUT' },
 
   matches: [
-    { round: 'Quarter-finals', items: [
+    { round: 'Semi-finals', items: [
+      { a: 'fra', b: 'esp', prob: [46, 28, 26], note: 'July 15' },
+      { a: 'eng', b: 'arg', prob: [35, 26, 39], note: 'July 16 · a rivalry with history' },
+    ]},
+    { round: 'Quarter-finals · Played', items: [
       { a: 'fra', b: 'mar', sa: 2, sb: 1, note: 'July 9 · a rematch of the 2022 semi-final' },
       { a: 'esp', b: 'bel', sa: 2, sb: 0, note: 'July 10' },
-      { a: 'nor', b: 'eng', prob: [23.8, 25.7, 50.5], note: 'July 11' },
-      { a: 'arg', b: 'sui', prob: [60.5, 24.5, 15], note: 'July 11' },
+      { a: 'nor', b: 'eng', sa: 1, sb: 2, note: 'July 11' },
+      { a: 'arg', b: 'sui', sa: 2, sb: 0, note: 'July 11' },
     ]},
     { round: 'Round of 16 · Played', items: [
       { a: 'arg', b: 'egy', sa: 3, sb: 2, note: 'July 7' },
@@ -62,7 +66,7 @@ const STATE = {
     ]},
   ],
 
-  poly: { asOf: 'July 10, 2026', rows: [['fra', 38.6], ['arg', 17.8], ['esp', 17.3], ['eng', 16.0], ['nor', 5.9]] },
+  poly: { asOf: 'July 12, 2026', rows: [['fra', 42.0], ['arg', 24.0], ['esp', 20.0], ['eng', 14.0]] },
 };
 
 // ---- write + gate ----------------------------------------------------------

@@ -1,13 +1,44 @@
 {
-  "asof": "July 10, 2026",
-  "chip": "Quarter-finals · July 11",
+  "asof": "July 12, 2026",
+  "chip": "Semi-finals · July 15",
   "statuses": {
+    "fra": "SF",
+    "esp": "SF",
+    "eng": "SF",
+    "arg": "SF",
     "mar": "OUT",
-    "bel": "OUT"
+    "bel": "OUT",
+    "nor": "OUT",
+    "sui": "OUT"
   },
   "matches": [
     {
-      "round": "Quarter-finals",
+      "round": "Semi-finals",
+      "items": [
+        {
+          "a": "fra",
+          "b": "esp",
+          "prob": [
+            46,
+            28,
+            26
+          ],
+          "note": "July 15"
+        },
+        {
+          "a": "eng",
+          "b": "arg",
+          "prob": [
+            35,
+            26,
+            39
+          ],
+          "note": "July 16 · a rivalry with history"
+        }
+      ]
+    },
+    {
+      "round": "Quarter-finals · Played",
       "items": [
         {
           "a": "fra",
@@ -26,21 +57,15 @@
         {
           "a": "nor",
           "b": "eng",
-          "prob": [
-            23.8,
-            25.7,
-            50.5
-          ],
+          "sa": 1,
+          "sb": 2,
           "note": "July 11"
         },
         {
           "a": "arg",
           "b": "sui",
-          "prob": [
-            60.5,
-            24.5,
-            15
-          ],
+          "sa": 2,
+          "sb": 0,
           "note": "July 11"
         }
       ]
@@ -169,27 +194,23 @@
     }
   ],
   "poly": {
-    "asOf": "July 10, 2026",
+    "asOf": "July 12, 2026",
     "rows": [
       [
         "fra",
-        38.6
+        42
       ],
       [
         "arg",
-        17.8
+        24
       ],
       [
         "esp",
-        17.3
+        20
       ],
       [
         "eng",
-        16
-      ],
-      [
-        "nor",
-        5.9
+        14
       ]
     ]
   }
