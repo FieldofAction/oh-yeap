@@ -286,6 +286,41 @@
   .mcard.tbd .mline{color:var(--ink-40);}
   .probbar{margin-top:9px;height:4px;display:flex;background:var(--rule);}
   .probbar span{height:100%;display:block;}
+  .round-title.round-lead{color:var(--signal);}
+
+  /* road to the final: the field narrowing, 4 → 2 → 1 */
+  .road{border:1px solid var(--rule-strong);background:var(--paper-2);padding:20px 18px 18px;margin:2px 0 6px;}
+  .road-rail{display:flex;align-items:center;gap:10px;}
+  .road-stage{display:flex;align-items:center;gap:8px;flex:0 0 auto;}
+  .road-stage-l{font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-40);}
+  .road-stage.on .road-stage-l{color:var(--ink);}
+  .road-stage-n{font-size:9.5px;font-weight:600;letter-spacing:.06em;color:var(--ink-40);}
+  .road-dot{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--rule-strong);background:var(--paper);flex:0 0 auto;}
+  .road-stage.on .road-dot{background:var(--signal);border-color:var(--signal);}
+  .road-stage.champ .road-dot{border-radius:1px;transform:rotate(45deg);}
+  .road-edge{flex:1;min-width:22px;height:1px;background:var(--rule-strong);}
+  .road-four{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:16px;padding-top:15px;border-top:1px solid var(--rule);}
+  .road-team{display:inline-flex;align-items:center;gap:8px;background:none;border:none;cursor:pointer;padding:0;
+    font-family:'Libre Franklin',sans-serif;font-weight:700;font-size:14px;color:var(--ink);-webkit-tap-highlight-color:transparent;transition:color .18s;}
+  .road-team:hover{color:var(--signal);}
+  .road-team:focus-visible{outline:2px solid var(--signal);outline-offset:2px;}
+  .road-flag svg{display:block;width:24px;height:16px;border:1px solid var(--rule-strong);}
+
+  /* elevated semi-final fixtures: the collision of surviving sovereignties */
+  .sfcard{width:100%;display:block;text-align:left;background:var(--paper-2);border:1px solid var(--rule-strong);
+    padding:20px 18px;margin-bottom:10px;cursor:pointer;font-family:'IBM Plex Mono',monospace;-webkit-tap-highlight-color:transparent;}
+  .sfcard:focus-visible{outline:2px solid var(--signal);outline-offset:-2px;}
+  .sf-vs{display:flex;align-items:baseline;gap:14px;font-family:'Anton',sans-serif;
+    font-size:clamp(24px,5.6vw,38px);line-height:1;text-transform:uppercase;letter-spacing:.01em;}
+  .sf-team{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;}
+  .sf-team.r{text-align:right;}
+  .sf-x{flex:0 0 auto;font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:600;color:var(--ink-40);}
+  .sf-decls{display:flex;justify-content:space-between;gap:16px;margin-top:12px;
+    font-family:'Libre Franklin',sans-serif;font-weight:600;font-size:12.5px;line-height:var(--lh-caption);color:var(--ink);}
+  .sf-decls .r{text-align:right;}
+  .sf-collide{margin-top:11px;font-size:11px;font-weight:500;letter-spacing:.04em;color:var(--ink-60);}
+  .probbar.sf-prob{margin-top:13px;height:5px;}
+  .sf-note{margin-top:9px;}
 
   .vs-a,.vs-b{font-size:clamp(46px,13vw,104px);line-height:.95;text-transform:uppercase;
     letter-spacing:.01em;display:flex;align-items:center;gap:16px;}
@@ -464,7 +499,7 @@ const MANEUVERS={
 /* ---------- the 48 ---------------------------------------------------
    [id,name,confed,fam,tempo,declaration,motion,analogy,
     scales[rhythm,pressure,improv,heat,width],status,palette]          */
-const STATUS_LABEL={QF:'Quarter-finals',R16:'Round of 16 · in play',
+const STATUS_LABEL={QF:'Quarter-finals',R16:'Round of 16 · in play',SF:'Semi-finals',F:'Final',W:'Champions',
   OUT16:'Out · Round of 16',OUT32:'Out · Round of 32',OUTG:'Out · group stage',OUT:'Out'};
 const T=[
 ['bra','Brazil','CONMEBOL','bra',1,'invention','Objects drift, curve, accelerate unexpectedly. Nothing repeats exactly.','Jazz improvisation',[.85,.55,.95,.85,.7],'OUT16',['#009739','#FEDD00','#012169']],
@@ -1810,7 +1845,7 @@ function rerise(){viewEl.classList.remove('view');void viewEl.offsetWidth;viewEl
   window.scrollTo({top:0,behavior:'smooth'});}
 function setNav(v){navEl.querySelectorAll('.nl').forEach(b=>b.classList.toggle('active',b.dataset.v.toUpperCase()===v.toUpperCase()));}
 
-function alive(tm){return tm.status==='QF'||tm.status==='R16';}
+function alive(tm){return tm.status==='QF'||tm.status==='R16'||tm.status==='SF'||tm.status==='F'||tm.status==='W';}
 function forcesCombined(tm,C){
   return FORCES.map(([n,k,idx])=>`
     <div class="fc-row">
@@ -2020,15 +2055,48 @@ function viewAtlas(){
 
 /* MATCHES */
 function collide(a,b){return `${FAM_LABEL[a.fam]}  v  ${FAM_LABEL[b.fam]}`;}
+/* the road narrowing: 4 surviving nations → final → champion */
+function roadSpine(sf){
+  const four=sf.items.flatMap(m=>[m.a,m.b]).filter(id=>TEAMS[id]);
+  const stage=(l,n,cls)=>`<div class="road-stage${cls?' '+cls:''}"><span class="road-dot"></span><span class="road-stage-l">${l}</span><span class="road-stage-n">${n}</span></div>`;
+  const teams=four.map(id=>{const tm=TEAMS[id];
+    return `<button class="road-team" data-id="${id}"><span class="road-flag"><svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${flagSVG(id,1,1,28,18)}</svg></span>${tm.name}</button>`;}).join('');
+  return `<div class="road">
+    <div class="road-rail">${stage('Semi-finals',4,'on')}<span class="road-edge"></span>${stage('Final',2)}<span class="road-edge"></span>${stage('Champion',1,'champ')}</div>
+    <div class="road-four">${teams}</div>
+  </div>`;
+}
+/* elevated semi-final fixture: two surviving declarations, foregrounded */
+function sfCard(m,a,b){
+  const played=('sa' in m);
+  const prob=m.prob?`<div class="probbar sf-prob">
+    <span style="width:${m.prob[0]}%;background:${a.accent}"></span>
+    <span style="width:${m.prob[1]}%;background:rgba(20,20,20,.2)"></span>
+    <span style="width:${m.prob[2]}%;background:${b.accent}"></span></div>`:'';
+  return `<button class="sfcard" data-a="${m.a}" data-b="${m.b}">
+    <div class="sf-vs"><span class="sf-team" style="color:${a.accent}">${a.name}</span>
+      <span class="sf-x">${played?`${m.sa}–${m.sb}`:'v'}</span>
+      <span class="sf-team r" style="color:${b.accent}">${b.name}</span></div>
+    <div class="sf-decls"><span>Independence through ${a.decl}.</span><span class="r">Independence through ${b.decl}.</span></div>
+    <div class="sf-collide">${collide(a,b)}</div>
+    ${prob}${m.note?`<div class="mnote sf-note">${m.note}</div>`:''}
+  </button>`;
+}
 function viewMatches(){
   setNav('MATCHES');unmountField();setAura(null);setHash('#matches');
-  let html=viewHead('Matches','Every fixture is a collision of two languages · results through July 8, 2026');
+  const sf=MATCHES.find(g=>/^Semi-finals/i.test(g.round));
+  const lede=sf?'Four ways to independence remain. One writes the story.'
+    :'Every fixture is a collision of two languages · results through July 12, 2026';
+  let html=viewHead('Matches',lede);
+  if(sf)html+=roadSpine(sf);
   for(const g of MATCHES){
-    html+=`<div class="round-title">${g.round}</div>`;
+    const isSF=/^Semi-finals/i.test(g.round);
+    html+=`<div class="round-title${isSF?' round-lead':''}">${g.round}</div>`;
     for(const m of g.items){
       if(m.tbd){html+=`<div class="mcard tbd"><div class="mline"><span>${m.tbd}</span></div>
         <div class="mnote">${m.note}</div></div>`;continue;}
       const a=TEAMS[m.a],b=TEAMS[m.b];
+      if(isSF){html+=sfCard(m,a,b);continue;}
       const score=('sa' in m)?`${m.sa}–${m.sb}`:'v';
       const prob=m.prob?`<div class="probbar">
         <span style="width:${m.prob[0]}%;background:${a.accent}"></span>
@@ -2043,8 +2111,9 @@ function viewMatches(){
     }
   }
   viewEl.innerHTML=html;
-  viewEl.querySelectorAll('.mcard[data-a]').forEach(c=>c.addEventListener('click',()=>{
+  viewEl.querySelectorAll('.mcard[data-a],.sfcard[data-a]').forEach(c=>c.addEventListener('click',()=>{
     viewMatch(findMatch(c.dataset.a,c.dataset.b));}));
+  viewEl.querySelectorAll('.road-team[data-id]').forEach(c=>c.addEventListener('click',()=>viewCountry(c.dataset.id)));
   rerise();
 }
 
