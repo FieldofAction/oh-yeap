@@ -42,7 +42,7 @@ const STATE = {
       { a: 'fra', b: 'mar', sa: 2, sb: 1, note: 'July 9 · a rematch of the 2022 semi-final' },
       { a: 'esp', b: 'bel', sa: 2, sb: 0, note: 'July 10' },
       { a: 'nor', b: 'eng', sa: 1, sb: 2, note: 'July 11' },
-      { a: 'arg', b: 'sui', sa: 2, sb: 0, note: 'July 11' },
+      { a: 'arg', b: 'sui', sa: 3, sb: 1, note: 'July 11' },
     ]},
     { round: 'Round of 16 · Played', items: [
       { a: 'arg', b: 'egy', sa: 3, sb: 2, note: 'July 7' },
