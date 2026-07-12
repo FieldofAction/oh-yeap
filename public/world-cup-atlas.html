@@ -1837,7 +1837,7 @@ function chev(dir,size){
 }
 function viewHead(t,s){return `<div class="view-head"><h2 class="anton">${t}</h2>${s?`<div class="vsub">${s}</div>`:''}</div>`;}
 
-const VIEWS=['Declarations','Atlas','Matches','Play','About'];
+const VIEWS=['Declarations','Matches','Atlas','Play','About'];
 const navEl=document.getElementById('nav');
 navEl.innerHTML=VIEWS.map((v,i)=>`<button class="nl${i===0?' active':''}" data-v="${v}">${v}</button>`).join('');
 navEl.querySelectorAll('.nl').forEach(b=>b.addEventListener('click',()=>go(b.dataset.v)));
