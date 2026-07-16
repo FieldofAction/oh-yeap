@@ -42,7 +42,7 @@ const STATE = {
       { a: 'fra', b: 'eng', prob: [45, 26, 29], note: 'July 18' },
     ]},
     { round: 'Semi-finals · Played', items: [
-      { a: 'fra', b: 'esp', sa: 0, sb: 1, note: 'July 15 · Spain hold the ball and the game' },
+      { a: 'fra', b: 'esp', sa: 0, sb: 2, note: 'July 15 · Spain hold the ball and the game' },
       { a: 'eng', b: 'arg', sa: 1, sb: 2, note: 'July 16 · a rivalry with history' },
     ]},
     { round: 'Quarter-finals · Played', items: [
