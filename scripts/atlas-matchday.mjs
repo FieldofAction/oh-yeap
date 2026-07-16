@@ -27,16 +27,23 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 // ---- authored state --------------------------------------------------------
 const STATE = {
-  asof: 'July 12, 2026',
-  chip: 'Semi-finals · July 15',
+  asof: 'July 15, 2026',
+  chip: 'The Final · July 19',
 
   // Overrides vs the embedded page baseline. Semifinalists → 'SF', losers → 'OUT'.
-  statuses: { fra: 'SF', esp: 'SF', eng: 'SF', arg: 'SF', mar: 'OUT', bel: 'OUT', nor: 'OUT', sui: 'OUT' },
+  // esp/arg contest the final; fra/eng reached the semis and play for third.
+  statuses: { esp: 'F', arg: 'F', fra: 'SF', eng: 'SF', mar: 'OUT', bel: 'OUT', nor: 'OUT', sui: 'OUT' },
 
   matches: [
-    { round: 'Semi-finals', items: [
-      { a: 'fra', b: 'esp', prob: [46, 28, 26], note: 'July 15' },
-      { a: 'eng', b: 'arg', prob: [35, 26, 39], note: 'July 16 · a rivalry with history' },
+    { round: 'Final', items: [
+      { a: 'esp', b: 'arg', prob: [37, 27, 36], note: 'July 19' },
+    ]},
+    { round: 'Third place', items: [
+      { a: 'fra', b: 'eng', prob: [45, 26, 29], note: 'July 18' },
+    ]},
+    { round: 'Semi-finals · Played', items: [
+      { a: 'fra', b: 'esp', sa: 0, sb: 1, note: 'July 15 · Spain hold the ball and the game' },
+      { a: 'eng', b: 'arg', sa: 1, sb: 2, note: 'July 16 · a rivalry with history' },
     ]},
     { round: 'Quarter-finals · Played', items: [
       { a: 'fra', b: 'mar', sa: 2, sb: 1, note: 'July 9 · a rematch of the 2022 semi-final' },
@@ -66,7 +73,8 @@ const STATE = {
     ]},
   ],
 
-  poly: { asOf: 'July 12, 2026', rows: [['fra', 42.0], ['arg', 24.0], ['esp', 20.0], ['eng', 14.0]] },
+  // only the two finalists can win it now; the live fetch refines these.
+  poly: { asOf: 'July 15, 2026', rows: [['esp', 51.0], ['arg', 49.0]] },
 };
 
 // ---- write + gate ----------------------------------------------------------
