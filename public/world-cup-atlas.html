@@ -299,7 +299,10 @@
     font-size:clamp(14px,3.4vw,18px);line-height:1.5;color:var(--ink);max-width:42ch;}
   .rh-four{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);
     border:1px solid var(--rule);margin-top:30px;}
-  @media(min-width:660px){.rh-four{grid-template-columns:repeat(4,1fr);}}
+  @media(min-width:660px){.rh-four{grid-template-columns:repeat(4,1fr);}
+    .rh-four.rh-two{grid-template-columns:1fr 1fr;}}
+  .rh-four.rh-two{grid-template-columns:1fr 1fr;}
+  .rh-final .rh-name{font-size:clamp(26px,6vw,40px);}
   .rh-nation{background:var(--paper-2);border:none;text-align:left;cursor:pointer;
     padding:16px 14px 18px;display:flex;flex-direction:column;gap:10px;
     -webkit-tap-highlight-color:transparent;transition:background .2s;}
@@ -944,7 +947,7 @@ async function refreshPoly(){
       try{price=parseFloat(JSON.parse(mk.outcomePrices)[0])*100;}catch(e){continue;}
       if(price>0.5)rows.push([id,price]);
     }
-    if(rows.length>=3){
+    if(rows.length>=2){
       rows.sort((x,y)=>y[1]-x[1]);
       POLY.rows=rows.slice(0,5);POLY.live=true;
       const el=document.getElementById('polyRows');
@@ -2065,20 +2068,23 @@ function viewAtlas(){
 /* MATCHES */
 function collide(a,b){return `${FAM_LABEL[a.fam]}  v  ${FAM_LABEL[b.fam]}`;}
 /* the road to the final, as a hero: four ways to be free, one story */
-function roadHero(sf){
-  const four=sf.items.flatMap(m=>[m.a,m.b]).filter(id=>TEAMS[id]);
-  const cards=four.map(id=>{const tm=TEAMS[id];
+function roadHero(g){
+  const teams=g.items.flatMap(m=>[m.a,m.b]).filter(id=>TEAMS[id]);
+  const n=teams.length;
+  const WORD={2:'Two',4:'Four'}[n]||String(n);
+  const isFinal=/^Final$/i.test(g.round);
+  const cards=teams.map(id=>{const tm=TEAMS[id];
     return `<button class="rh-nation" data-id="${id}">
       <span class="rh-flag"><svg viewBox="0 0 46 31" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${flagSVG(id,1,1,44,29)}</svg></span>
       <span class="rh-name anton" style="color:${tm.accent}">${tm.name}</span>
       <span class="rh-decl">Independence through ${tm.decl}.</span>
     </button>`;}).join('');
-  return `<section class="road-hero">
-    <div class="rh-eyebrow"><span>The road to the final</span><span>Semi-finals · Four remain</span></div>
-    <h2 class="rh-head anton">Four expressions of freedom.<br>One writes the story.</h2>
-    <p class="rh-lede">Four nations remain, each a different expression of sovereignty and ways cultures carry on. One will write the story that will ripple through the world.</p>
-    <div class="rh-four">${cards}</div>
-    <div class="rh-path"><span class="rh-node on">The Four</span><span class="rh-line"></span><span class="rh-node">The Final</span><span class="rh-line"></span><span class="rh-node champ">The Champion</span></div>
+  return `<section class="road-hero${isFinal?' rh-final':''}">
+    <div class="rh-eyebrow"><span>The road to the final</span><span>${g.round} · ${WORD} remain</span></div>
+    <h2 class="rh-head anton">${WORD} expressions of freedom.<br>One writes the story.</h2>
+    <p class="rh-lede">${WORD} nations remain, each a different expression of sovereignty and ways cultures carry on. One will write the story that will ripple through the world.</p>
+    <div class="rh-four${n===2?' rh-two':''}">${cards}</div>
+    <div class="rh-path"><span class="rh-node${isFinal?'':' on'}">The Four</span><span class="rh-line"></span><span class="rh-node${isFinal?' on':''}">The Final</span><span class="rh-line"></span><span class="rh-node champ">The Champion</span></div>
   </section>`;
 }
 /* elevated semi-final fixture: two surviving declarations, foregrounded */
@@ -2099,12 +2105,12 @@ function sfCard(m,a,b){
 }
 function viewMatches(){
   setNav('MATCHES');unmountField();setAura(null);setHash('#matches');
-  const sf=MATCHES.find(g=>/^Semi-finals/i.test(g.round));
-  const lede=sf?'':'Every fixture is a collision of two languages · results through July 12, 2026';
+  const hero=MATCHES.find(g=>/^Final$/i.test(g.round))||MATCHES.find(g=>/^Semi-finals$/i.test(g.round));
+  const lede=hero?'':'Every fixture is a collision of two languages · results through July 15, 2026';
   let html=viewHead('Matches',lede);
-  if(sf)html+=roadHero(sf);
+  if(hero)html+=roadHero(hero);
   for(const g of MATCHES){
-    const isSF=/^Semi-finals/i.test(g.round);
+    const isSF=/^(Final|Third place|Semi-finals)$/i.test(g.round);
     html+=`<div class="round-title${isSF?' round-lead':''}">${g.round}</div>`;
     for(const m of g.items){
       if(m.tbd){html+=`<div class="mcard tbd"><div class="mline"><span>${m.tbd}</span></div>
