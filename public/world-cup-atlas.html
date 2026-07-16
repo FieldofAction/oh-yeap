@@ -303,6 +303,19 @@
     .rh-four.rh-two{grid-template-columns:1fr 1fr;}}
   .rh-four.rh-two{grid-template-columns:1fr 1fr;}
   .rh-final .rh-name{font-size:clamp(26px,6vw,40px);}
+  /* sub-hero: the third-place match, clearly secondary to the final */
+  .rh-sub{margin-top:30px;padding-top:22px;border-top:1px solid var(--rule);}
+  .rh-sub-head{display:flex;justify-content:space-between;gap:12px;font-size:10.5px;font-weight:600;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--ink-40);margin-bottom:16px;}
+  .rh-sub-two{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .rh-sub-nation{background:none;border:none;padding:0;text-align:left;cursor:pointer;
+    display:flex;flex-direction:column;gap:8px;-webkit-tap-highlight-color:transparent;}
+  .rh-sub-nation:focus-visible{outline:2px solid var(--signal);outline-offset:3px;}
+  .rh-sub-flag svg{display:block;width:30px;height:20px;border:1px solid var(--rule-strong);}
+  .rh-sub-name{font-family:'Libre Franklin',sans-serif;font-weight:700;font-size:16px;
+    letter-spacing:.01em;color:var(--ink);transition:color .18s;}
+  .rh-sub-nation:hover .rh-sub-name{color:var(--signal);}
+  .rh-sub-decl{font-family:'IBM Plex Mono',monospace;font-size:10.5px;line-height:1.45;color:var(--ink-60);}
   .rh-nation{background:var(--paper-2);border:none;text-align:left;cursor:pointer;
     padding:16px 14px 18px;display:flex;flex-direction:column;gap:10px;
     -webkit-tap-highlight-color:transparent;transition:background .2s;}
@@ -2068,11 +2081,24 @@ function viewAtlas(){
 /* MATCHES */
 function collide(a,b){return `${FAM_LABEL[a.fam]}  v  ${FAM_LABEL[b.fam]}`;}
 /* the road to the final, as a hero: four ways to be free, one story */
-function roadHero(g){
+function roadHero(g,third){
   const teams=g.items.flatMap(m=>[m.a,m.b]).filter(id=>TEAMS[id]);
   const n=teams.length;
   const WORD={2:'Two',4:'Four'}[n]||String(n);
   const isFinal=/^Final$/i.test(g.round);
+  /* sub-hero: the two who fell at the last step, still playing for third */
+  const sub=(isFinal&&third&&third.items.length)?(()=>{
+    const t=third.items[0];
+    const pair=[t.a,t.b].filter(id=>TEAMS[id]).map(id=>{const tm=TEAMS[id];
+      return `<button class="rh-sub-nation" data-id="${id}">
+        <span class="rh-sub-flag"><svg viewBox="0 0 30 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${flagSVG(id,1,1,28,18)}</svg></span>
+        <span class="rh-sub-name">${tm.name}</span>
+        <span class="rh-sub-decl">Independence through ${tm.decl}.</span>
+      </button>`;}).join('');
+    return `<div class="rh-sub">
+      <div class="rh-sub-head"><span>Third place</span><span>${t.note||''}</span></div>
+      <div class="rh-sub-two">${pair}</div>
+    </div>`;})():'';
   const cards=teams.map(id=>{const tm=TEAMS[id];
     return `<button class="rh-nation" data-id="${id}">
       <span class="rh-flag"><svg viewBox="0 0 46 31" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${flagSVG(id,1,1,44,29)}</svg></span>
@@ -2085,6 +2111,7 @@ function roadHero(g){
     <p class="rh-lede">${WORD} nations remain, each a different expression of sovereignty and ways cultures carry on. One will write the story that will ripple through the world.</p>
     <div class="rh-four${n===2?' rh-two':''}">${cards}</div>
     <div class="rh-path"><span class="rh-node${isFinal?'':' on'}">The Four</span><span class="rh-line"></span><span class="rh-node${isFinal?' on':''}">The Final</span><span class="rh-line"></span><span class="rh-node champ">The Champion</span></div>
+    ${sub}
   </section>`;
 }
 /* elevated semi-final fixture: two surviving declarations, foregrounded */
@@ -2106,9 +2133,10 @@ function sfCard(m,a,b){
 function viewMatches(){
   setNav('MATCHES');unmountField();setAura(null);setHash('#matches');
   const hero=MATCHES.find(g=>/^Final$/i.test(g.round))||MATCHES.find(g=>/^Semi-finals$/i.test(g.round));
+  const third=MATCHES.find(g=>/^Third place$/i.test(g.round));
   const lede=hero?'':'Every fixture is a collision of two languages · results through July 15, 2026';
   let html=viewHead('Matches',lede);
-  if(hero)html+=roadHero(hero);
+  if(hero)html+=roadHero(hero,third);
   for(const g of MATCHES){
     const isSF=/^(Final|Third place|Semi-finals)$/i.test(g.round);
     html+=`<div class="round-title${isSF?' round-lead':''}">${g.round}</div>`;
@@ -2133,7 +2161,7 @@ function viewMatches(){
   viewEl.innerHTML=html;
   viewEl.querySelectorAll('.mcard[data-a],.sfcard[data-a]').forEach(c=>c.addEventListener('click',()=>{
     viewMatch(findMatch(c.dataset.a,c.dataset.b));}));
-  viewEl.querySelectorAll('.rh-nation[data-id]').forEach(c=>c.addEventListener('click',()=>viewCountry(c.dataset.id)));
+  viewEl.querySelectorAll('.rh-nation[data-id],.rh-sub-nation[data-id]').forEach(c=>c.addEventListener('click',()=>viewCountry(c.dataset.id)));
   rerise();
 }
 
