@@ -39,7 +39,7 @@ const STATE = {
       { a: 'esp', b: 'arg', prob: [37, 27, 36], note: 'July 19' },
     ]},
     { round: 'Third place', items: [
-      { a: 'fra', b: 'eng', sa: 4, sb: 6, note: 'July 18 · England take third in a ten-goal tie' },
+      { a: 'fra', b: 'eng', sa: 4, sb: 6, note: 'July 18 · England take third in a ten-goal thriller' },
     ]},
     { round: 'Semi-finals · Played', items: [
       { a: 'fra', b: 'esp', sa: 0, sb: 2, note: 'July 15 · Spain hold the ball and the game' },
