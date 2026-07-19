@@ -10,8 +10,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Libre+Franklin:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#F5F0E4;
-    --paper-2:#EFE9DA;
+    --paper:#E8E4DE;
+    --paper-2:#E2DDD4;
     --ink:#141414;
     --ink-60:rgba(20,20,20,.6);
     --ink-40:rgba(20,20,20,.4);
@@ -231,7 +231,7 @@
   .c-glyph{margin-top:26px;max-width:300px;}
   .const-head{display:grid;grid-template-columns:1fr;gap:6px 30px;align-items:start;margin-top:2px;}
   .name-row{display:flex;align-items:center;gap:18px;}
-  .flag-plate{display:inline-block;flex:0 0 auto;line-height:0;border:1.75px solid var(--ink);}
+  .flag-plate{display:inline-block;flex:0 0 auto;line-height:0;}
   .const-head .c-glyph{margin-top:20px;max-width:320px;}
   @media(min-width:600px){
     .const-head{grid-template-columns:1.15fr .85fr;align-items:end;}
@@ -311,7 +311,7 @@
   .rh-sub-nation{background:none;border:none;padding:0;text-align:left;cursor:pointer;
     display:flex;flex-direction:column;gap:8px;-webkit-tap-highlight-color:transparent;}
   .rh-sub-nation:focus-visible{outline:2px solid var(--signal);outline-offset:3px;}
-  .rh-sub-flag svg{display:block;width:30px;height:20px;border:1px solid var(--rule-strong);}
+  .rh-sub-flag svg{display:block;width:30px;height:20px;}
   .rh-sub-name{font-family:'Libre Franklin',sans-serif;font-weight:700;font-size:16px;
     letter-spacing:.01em;color:var(--ink);transition:color .18s;}
   .rh-sub-nation:hover .rh-sub-name{color:var(--signal);}
@@ -321,7 +321,7 @@
     -webkit-tap-highlight-color:transparent;transition:background .2s;}
   .rh-nation:hover{background:var(--paper);}
   .rh-nation:focus-visible{outline:2px solid var(--signal);outline-offset:-2px;}
-  .rh-flag svg{display:block;width:46px;height:31px;border:1px solid var(--rule-strong);}
+  .rh-flag svg{display:block;width:46px;height:31px;}
   .rh-name{font-size:clamp(20px,4.8vw,28px);line-height:1;text-transform:uppercase;letter-spacing:.01em;}
   .rh-decl{font-family:'IBM Plex Mono',monospace;font-size:10.5px;line-height:1.45;color:var(--ink-60);}
   .rh-path{display:flex;align-items:center;gap:12px;margin-top:26px;
@@ -657,7 +657,7 @@ function lineageSVG(tm,famId,idSuffix){
    O is us. X is them. The accent ball executes the move. */
 const MVH={
   dot:(x,y)=>`<circle cx="${x}" cy="${y}" r="4" fill="#141414"/>`,
-  opp:(x,y)=>`<circle cx="${x}" cy="${y}" r="8.5" fill="#F5F0E4"/><path d="M${x-3.6},${y-3.6} L${x+3.6},${y+3.6} M${x-3.6},${y+3.6} L${x+3.6},${y-3.6}" stroke="rgba(20,20,20,.42)" stroke-width="1.25" stroke-linecap="round"/>`,
+  opp:(x,y)=>`<circle cx="${x}" cy="${y}" r="8.5" fill="#E8E4DE"/><path d="M${x-3.6},${y-3.6} L${x+3.6},${y+3.6} M${x-3.6},${y+3.6} L${x+3.6},${y-3.6}" stroke="rgba(20,20,20,.42)" stroke-width="1.25" stroke-linecap="round"/>`,
   tr:(d)=>`<path d="${d}" fill="none" stroke="rgba(20,20,20,.32)" stroke-width="1.2" stroke-dasharray="1.5 4.5" stroke-linecap="round"/>`,
   anim(){return !(typeof reduceMotion!=='undefined'&&reduceMotion);},
   motion(dur,o){
@@ -668,10 +668,10 @@ const MVH={
     return ` keyTimes="${kt}" keyPoints="${kp}" calcMode="linear" dur="${dur}s" repeatCount="indefinite" begin="${o.begin||0}s"`;},
   ball(d,dur,ac,o){
     if(!this.anim())return '';
-    return `<circle r="4.2" fill="${ac}" stroke="#F5F0E4" stroke-width="1.2"><animateMotion${this.motion(dur,o)} path="${d}"/></circle>`;},
+    return `<circle r="4.2" fill="${ac}" stroke="#E8E4DE" stroke-width="1.2"><animateMotion${this.motion(dur,o)} path="${d}"/></circle>`;},
   run(d,dur,o){
     if(!this.anim())return '';
-    return `<circle r="4" fill="#141414" stroke="#F5F0E4" stroke-width="1"><animateMotion${this.motion(dur,o)} path="${d}"/></circle>`;},
+    return `<circle r="4" fill="#141414" stroke="#E8E4DE" stroke-width="1"><animateMotion${this.motion(dur,o)} path="${d}"/></circle>`;},
   gt(inner,values,dur,o){o=o||{};
     if(!this.anim())return `<g>${inner}</g>`;
     return `<g>${inner}<animateTransform attributeName="transform" type="${o.type||'translate'}" values="${values}" dur="${dur}s" repeatCount="indefinite" begin="${o.begin||0}s"${o.discrete?' calcMode="discrete"':''}/></g>`;},
@@ -1352,7 +1352,7 @@ function flagInner(id){
   }
 }
 function flagSVG(id,x,y,w,h){
-  return `<svg x="${x}" y="${y}" width="${w}" height="${h}" viewBox="0 0 150 100" preserveAspectRatio="none">${flagInner(id)}</svg><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="rgba(20,20,20,.4)" stroke-width="1"/>`;
+  return `<svg x="${x}" y="${y}" width="${w}" height="${h}" viewBox="0 0 150 100" preserveAspectRatio="none">${flagInner(id)}</svg>`;
 }
 
 /* ---------- index tile: the flag, annotated -------------------------------
@@ -1692,7 +1692,7 @@ const GRAMMARS={
 
 /* paper render */
 function drawPitch(){
-  ctx.fillStyle='#F5F0E4';
+  ctx.fillStyle='#E8E4DE';
   ctx.fillRect(0,0,W,H);
   ctx.strokeStyle='rgba(20,20,20,.5)';ctx.lineWidth=2.5;
   const m=Math.min(W,H)*.05;
@@ -1745,7 +1745,7 @@ function render(t){
     const bx=m+4,by=m+6,bw=tw+28,bh=22,br=5;
     ctx.beginPath();
     if(ctx.roundRect)ctx.roundRect(bx,by,bw,bh,br);else ctx.rect(bx,by,bw,bh);
-    ctx.fillStyle='#F5F0E4';ctx.fill();
+    ctx.fillStyle='#E8E4DE';ctx.fill();
     ctx.lineWidth=1;ctx.strokeStyle='rgba(20,20,20,.22)';ctx.stroke();
     ctx.beginPath();ctx.arc(m+14,m+17,3.4,0,Math.PI*2);
     ctx.fillStyle=e.color;ctx.fill();
@@ -2106,10 +2106,19 @@ function roadHero(g,third){
       <span class="rh-name anton" style="color:${tm.accent}">${tm.name}</span>
       <span class="rh-decl">Independence through ${tm.decl}.</span>
     </button>`;}).join('');
+  const [A,B]=teams.map(id=>TEAMS[id]);
+  const eyeL=isFinal?'The road ends here':'The road to the final';
+  const eyeR=isFinal?'Level going in':`${g.round} · ${WORD} remain`;
+  const head=isFinal
+    ?`Two expressions of freedom.<br>One game.<br>One writes the story.`
+    :`${WORD} expressions of freedom remain.<br>One writes the story.`;
+  const lede=isFinal
+    ?`${A.name}'s ${A.decl}, ${B.name}'s ${B.decl}: two opposite answers to how a people stays free, and the market can't separate them. Today one of them takes the last word.`
+    :`${WORD} nations remain, each a different expression of sovereignty and ways cultures carry on.`;
   return `<section class="road-hero${isFinal?' rh-final':''}">
-    <div class="rh-eyebrow"><span>The road to the final</span><span>${g.round} · ${WORD} remain</span></div>
-    <h2 class="rh-head anton">${WORD} expressions of freedom remain.<br>One writes the story.</h2>
-    <p class="rh-lede">${WORD} nations remain, each a different expression of sovereignty and ways cultures carry on. One will write the story that will ripple through the world.</p>
+    <div class="rh-eyebrow"><span>${eyeL}</span><span>${eyeR}</span></div>
+    <h2 class="rh-head anton">${head}</h2>
+    <p class="rh-lede">${lede}</p>
     <div class="rh-four${n===2?' rh-two':''}">${cards}</div>
     <div class="rh-path"><span class="rh-node${isFinal?'':' on'}">The Four</span><span class="rh-line"></span><span class="rh-node${isFinal?' on':''}">The Final</span><span class="rh-line"></span><span class="rh-node champ">The Champion</span></div>
     ${sub}
