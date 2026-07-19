@@ -1,11 +1,11 @@
 {
-  "asof": "July 15, 2026",
-  "chip": "The Final · July 19",
+  "asof": "July 18, 2026",
+  "chip": "The Final · Today",
   "statuses": {
     "esp": "F",
     "arg": "F",
-    "fra": "SF",
-    "eng": "SF",
+    "eng": "P3",
+    "fra": "P4",
     "mar": "OUT",
     "bel": "OUT",
     "nor": "OUT",
@@ -33,12 +33,9 @@
         {
           "a": "fra",
           "b": "eng",
-          "prob": [
-            45,
-            26,
-            29
-          ],
-          "note": "July 18"
+          "sa": 4,
+          "sb": 6,
+          "note": "July 18 · England take third in a ten-goal tie"
         }
       ]
     },

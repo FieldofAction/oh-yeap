@@ -27,19 +27,19 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 // ---- authored state --------------------------------------------------------
 const STATE = {
-  asof: 'July 15, 2026',
-  chip: 'The Final · July 19',
+  asof: 'July 18, 2026',
+  chip: 'The Final · Today',
 
   // Overrides vs the embedded page baseline. Semifinalists → 'SF', losers → 'OUT'.
-  // esp/arg contest the final; fra/eng reached the semis and play for third.
-  statuses: { esp: 'F', arg: 'F', fra: 'SF', eng: 'SF', mar: 'OUT', bel: 'OUT', nor: 'OUT', sui: 'OUT' },
+  // esp/arg contest the final; third place is settled — England 3rd, France 4th.
+  statuses: { esp: 'F', arg: 'F', eng: 'P3', fra: 'P4', mar: 'OUT', bel: 'OUT', nor: 'OUT', sui: 'OUT' },
 
   matches: [
     { round: 'Final', items: [
       { a: 'esp', b: 'arg', prob: [37, 27, 36], note: 'July 19' },
     ]},
     { round: 'Third place', items: [
-      { a: 'fra', b: 'eng', prob: [45, 26, 29], note: 'July 18' },
+      { a: 'fra', b: 'eng', sa: 4, sb: 6, note: 'July 18 · England take third in a ten-goal tie' },
     ]},
     { round: 'Semi-finals · Played', items: [
       { a: 'fra', b: 'esp', sa: 0, sb: 2, note: 'July 15 · Spain hold the ball and the game' },
