@@ -324,6 +324,9 @@
   .rh-flag svg{display:block;width:46px;height:31px;}
   .rh-name{font-size:clamp(20px,4.8vw,28px);line-height:1;text-transform:uppercase;letter-spacing:.01em;}
   .rh-decl{font-family:'IBM Plex Mono',monospace;font-size:10.5px;line-height:1.45;color:var(--ink-60);}
+  .rh-champ{background:var(--paper);box-shadow:inset 0 3px 0 var(--signal);}
+  .rh-tag{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--signal);margin-top:2px;}
   .rh-path{display:flex;align-items:center;gap:12px;margin-top:26px;
     font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;}
   .rh-node{flex:0 0 auto;color:var(--ink-40);}
@@ -525,7 +528,7 @@ const MANEUVERS={
    [id,name,confed,fam,tempo,declaration,motion,analogy,
     scales[rhythm,pressure,improv,heat,width],status,palette]          */
 const STATUS_LABEL={QF:'Quarter-finals',R16:'Round of 16 · in play',SF:'Semi-finals',F:'Final',W:'Champions',
-  P3:'Third place',P4:'Fourth place',
+  RU:'Runner-up',P3:'Third place',P4:'Fourth place',
   OUT16:'Out · Round of 16',OUT32:'Out · Round of 32',OUTG:'Out · group stage',OUT:'Out'};
 const T=[
 ['bra','Brazil','CONMEBOL','bra',1,'invention','Objects drift, curve, accelerate unexpectedly. Nothing repeats exactly.','Jazz improvisation',[.85,.55,.95,.85,.7],'OUT16',['#009739','#FEDD00','#012169']],
@@ -2100,27 +2103,40 @@ function roadHero(g,third){
       <div class="rh-sub-head"><span>Third place</span><span>${t.note||''}</span></div>
       <div class="rh-sub-two">${pair}</div>
     </div>`;})():'';
+  const [A,B]=teams.map(id=>TEAMS[id]);
+  /* the final, once played: resolve the whole hero to the champion */
+  const fm=g.items[0]||{};
+  const decided=isFinal&&('sa' in fm);
+  const champId=decided?(fm.sa>fm.sb?fm.a:fm.b):null;
+  const champ=decided?TEAMS[champId]:null;
+  const runner=decided?TEAMS[fm.sa>fm.sb?fm.b:fm.a]:null;
+  const hi=decided?Math.max(fm.sa,fm.sb):0, lo=decided?Math.min(fm.sa,fm.sb):0;
   const cards=teams.map(id=>{const tm=TEAMS[id];
-    return `<button class="rh-nation" data-id="${id}">
+    const isC=decided&&id===champId;
+    return `<button class="rh-nation${isC?' rh-champ':''}" data-id="${id}">
       <span class="rh-flag"><svg viewBox="0 0 46 31" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${flagSVG(id,1,1,44,29)}</svg></span>
       <span class="rh-name anton" style="color:${tm.accent}">${tm.name}</span>
       <span class="rh-decl">Independence through ${tm.decl}.</span>
+      ${isC?'<span class="rh-tag">Champions</span>':''}
     </button>`;}).join('');
-  const [A,B]=teams.map(id=>TEAMS[id]);
-  const eyeL=isFinal?'The road ends here':'The road to the final';
-  const eyeR=isFinal?'Level going in':`${g.round} · ${WORD} remain`;
-  const head=isFinal
-    ?`Two expressions of freedom.<br>One game.<br>One writes the story.`
-    :`${WORD} expressions of freedom remain.<br>One writes the story.`;
-  const lede=isFinal
-    ?`${A.name}'s ${A.decl}, ${B.name}'s ${B.decl}: two opposite answers to how a people stays free, and the market can't separate them. Today one of them takes the last word.`
-    :`${WORD} nations remain, each a different expression of sovereignty and ways cultures carry on.`;
-  return `<section class="road-hero${isFinal?' rh-final':''}">
+  const eyeL=decided?'Champions':(isFinal?'The road ends here':'The road to the final');
+  const eyeR=decided?`Full time · ${hi}–${lo}`:(isFinal?'Level going in':`${g.round} · ${WORD} remain`);
+  const head=decided
+    ?`Two expressions of freedom.<br>One game.<br>${champ.name} wrote the story.`
+    :isFinal
+      ?`Two expressions of freedom.<br>One game.<br>One writes the story.`
+      :`${WORD} expressions of freedom remain.<br>One writes the story.`;
+  const lede=decided
+    ?`${champ.name}'s ${champ.decl} took the final, ${hi}–${lo}, over ${runner.name}'s ${runner.decl}. For this tournament, one way of being free carried the trophy.`
+    :isFinal
+      ?`${A.name}'s ${A.decl}, ${B.name}'s ${B.decl}: two opposite answers to how a people stays free, and the market can't separate them. Today one of them takes the last word.`
+      :`${WORD} nations remain, each a different expression of sovereignty and ways cultures carry on.`;
+  return `<section class="road-hero${isFinal?' rh-final':''}${decided?' rh-done':''}">
     <div class="rh-eyebrow"><span>${eyeL}</span><span>${eyeR}</span></div>
     <h2 class="rh-head anton">${head}</h2>
     <p class="rh-lede">${lede}</p>
     <div class="rh-four${n===2?' rh-two':''}">${cards}</div>
-    <div class="rh-path"><span class="rh-node${isFinal?'':' on'}">The Four</span><span class="rh-line"></span><span class="rh-node${isFinal?' on':''}">The Final</span><span class="rh-line"></span><span class="rh-node champ">The Champion</span></div>
+    <div class="rh-path"><span class="rh-node${isFinal?'':' on'}">The Four</span><span class="rh-line"></span><span class="rh-node${isFinal?' on':''}">The Final</span><span class="rh-line"></span><span class="rh-node champ">${decided?champ.name:'The Champion'}</span></div>
     ${sub}
   </section>`;
 }

@@ -1,9 +1,9 @@
 {
-  "asof": "July 18, 2026",
-  "chip": "The Final · Today",
+  "asof": "July 19, 2026",
+  "chip": "Champions · Spain",
   "statuses": {
-    "esp": "F",
-    "arg": "F",
+    "esp": "W",
+    "arg": "RU",
     "eng": "P3",
     "fra": "P4",
     "mar": "OUT",
@@ -18,12 +18,9 @@
         {
           "a": "esp",
           "b": "arg",
-          "prob": [
-            37,
-            27,
-            36
-          ],
-          "note": "July 19"
+          "sa": 1,
+          "sb": 0,
+          "note": "July 19 · Spain take it by a single goal"
         }
       ]
     },
@@ -215,15 +212,15 @@
     }
   ],
   "poly": {
-    "asOf": "July 15, 2026",
+    "asOf": "July 19, 2026",
     "rows": [
       [
         "esp",
-        51
+        100
       ],
       [
         "arg",
-        49
+        0
       ]
     ]
   }
