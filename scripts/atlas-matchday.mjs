@@ -27,16 +27,16 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 
 // ---- authored state --------------------------------------------------------
 const STATE = {
-  asof: 'July 18, 2026',
-  chip: 'The Final · Today',
+  asof: 'July 19, 2026',
+  chip: 'Champions · Spain',
 
-  // Overrides vs the embedded page baseline. Semifinalists → 'SF', losers → 'OUT'.
-  // esp/arg contest the final; third place is settled — England 3rd, France 4th.
-  statuses: { esp: 'F', arg: 'F', eng: 'P3', fra: 'P4', mar: 'OUT', bel: 'OUT', nor: 'OUT', sui: 'OUT' },
+  // Overrides vs the embedded page baseline. Final is settled: Spain champions,
+  // Argentina runner-up; England 3rd, France 4th.
+  statuses: { esp: 'W', arg: 'RU', eng: 'P3', fra: 'P4', mar: 'OUT', bel: 'OUT', nor: 'OUT', sui: 'OUT' },
 
   matches: [
     { round: 'Final', items: [
-      { a: 'esp', b: 'arg', prob: [37, 27, 36], note: 'July 19' },
+      { a: 'esp', b: 'arg', sa: 1, sb: 0, note: 'July 19 · Spain take it by a single goal' },
     ]},
     { round: 'Third place', items: [
       { a: 'fra', b: 'eng', sa: 4, sb: 6, note: 'July 18 · England take third in a ten-goal thriller' },
@@ -73,8 +73,8 @@ const STATE = {
     ]},
   ],
 
-  // only the two finalists can win it now; the live fetch refines these.
-  poly: { asOf: 'July 15, 2026', rows: [['esp', 51.0], ['arg', 49.0]] },
+  // resolved: Spain are champions.
+  poly: { asOf: 'July 19, 2026', rows: [['esp', 100.0], ['arg', 0.0]] },
 };
 
 // ---- write + gate ----------------------------------------------------------
