@@ -2368,6 +2368,54 @@ async function loadRemoteData(){
 }
 loadRemoteData();
 
+/* ---------- arrival celebration: confetti that falls in and fades off,
+   once per visitor. Pointer-events-none overlay; honors reduced-motion. */
+(function confettiOnArrival(){
+  try{
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    if(localStorage.getItem('wca_confetti_v1'))return;
+    localStorage.setItem('wca_confetti_v1','1');
+  }catch(e){/* storage blocked — just play this once */}
+  const cv=document.createElement('canvas');
+  cv.setAttribute('aria-hidden','true');
+  Object.assign(cv.style,{position:'fixed',inset:'0',pointerEvents:'none',zIndex:'9999'});
+  document.body.appendChild(cv);
+  const ctx=cv.getContext('2d');
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  let W,H;
+  function size(){W=cv.width=innerWidth*dpr;H=cv.height=innerHeight*dpr;
+    cv.style.width=innerWidth+'px';cv.style.height=innerHeight+'px';}
+  size();
+  window.addEventListener('resize',size,{passive:true});
+  /* Spain-champion palette: signal, two reds, two golds, ink, cream */
+  const COLORS=['#E63311','#C60B1E','#F1BF00','#FFC400','#141414','#F5F0E4'];
+  const N=Math.min(180,Math.round(innerWidth/8));
+  const P=[];
+  for(let i=0;i<N;i++)P.push({
+    x:Math.random()*W, y:-Math.random()*H,          // staggered above the fold
+    w:(6+Math.random()*7)*dpr, h:(9+Math.random()*8)*dpr,
+    vx:(Math.random()-0.5)*1.4*dpr, vy:(2.2+Math.random()*2.8)*dpr,
+    rot:Math.random()*Math.PI, vr:(Math.random()-0.5)*0.3,
+    sway:Math.random()*Math.PI*2, sw:0.02+Math.random()*0.03,
+    color:COLORS[(Math.random()*COLORS.length)|0]});
+  const START=performance.now(), LIFE=3500, FADE=1000;
+  (function tick(now){
+    const t=now-START;
+    if(t>=LIFE){cv.remove();return;}
+    ctx.clearRect(0,0,W,H);
+    ctx.globalAlpha=t>LIFE-FADE?Math.max(0,(LIFE-t)/FADE):1;
+    for(const p of P){
+      p.sway+=p.sw;
+      p.x+=p.vx+Math.sin(p.sway)*0.6*dpr;
+      p.y+=p.vy; p.rot+=p.vr;
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);
+      ctx.fillStyle=p.color;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();
+    }
+    ctx.globalAlpha=1;
+    requestAnimationFrame(tick);
+  })(START);
+})();
+
 requestAnimationFrame(frame);
 </script>
 </body>
