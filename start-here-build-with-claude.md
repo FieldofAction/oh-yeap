@@ -123,4 +123,16 @@ Complete openers for three different tastes. Pick the closest one, paste it in, 
 
 ---
 
+## What you'll need
+
+You do not need much to start. The main choice is how hands-on you want to be.
+
+- **Claude.** I used Claude Code, which runs on your own machine and can build and change the files directly. The desktop app and claude.ai work well too, if you would rather chat and copy things across.
+- **Somewhere for it to live.** Two honest paths. To build from scratch and own every detail, pair a code home with a deploy host: I used GitHub and Vercel, both free to start. To skip the code entirely, an all-in-one builder like Squarespace or Framer lets you design and publish in one place.
+- **A domain, when you want one.** Your own URL makes it feel like yours, and you can grab one anytime. You do not need it on day one. Every host gives you a free address to begin with, and you can point a custom domain at it later.
+
+That is the whole kit. Pick the path that matches how hands-on you want to be, and you can start today.
+
+---
+
 The hardest step is the first sentence. Once you say what you want out loud, the rest starts pointing at you. Have fun with it.
