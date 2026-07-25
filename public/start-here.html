@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Start Here — Building with Claude</title>
+<meta name="description" content="A short, personal guide for friends who want to build their own site with Claude: believe it's easy, decide what you want, let your medium lead.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121212" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Start Here — Building with Claude">
+<meta property="og:description" content="How I built my site with Claude, and how you can start yours. A note to a friend, from Field of Action.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Start Here — Building with Claude">
+<meta name="twitter:description" content="How I built my site with Claude, and how you can start yours.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='88'>🌱</text></svg>">
+<style>*{box-sizing:border-box} html,body{margin:0;padding:0}</style>
+</head>
+<body>
+<style>
+  :root{
+    --paper:#FFFFFF; --ink:#1A1A1A; --muted:#767676; --faint:#EDEDED;
+    --rule:#1A1A1A; --hair:#E2E2E2; --accent:#E61428; --link:#E61428;
+    --grot:'Helvetica Neue',Helvetica,'Arial Nova',Arial,sans-serif;
+    --mono:ui-monospace,'SF Mono','SFMono-Regular',Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#121212; --ink:#F0F0F0; --muted:#8C8C8C; --faint:#1E1E1E;
+      --rule:#F0F0F0; --hair:#2A2A2A; --accent:#FF4553; --link:#FF6470;
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#FFFFFF; --ink:#1A1A1A; --muted:#767676; --faint:#EDEDED;
+    --rule:#1A1A1A; --hair:#E2E2E2; --accent:#E61428; --link:#E61428;
+  }
+  :root[data-theme="dark"]{
+    --paper:#121212; --ink:#F0F0F0; --muted:#8C8C8C; --faint:#1E1E1E;
+    --rule:#F0F0F0; --hair:#2A2A2A; --accent:#FF4553; --link:#FF6470;
+  }
+
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--paper)}
+  .page{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--grot); font-weight:400;
+    font-size:19px; line-height:1.5; letter-spacing:-.006em;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    font-feature-settings:"kern" 1;
+    padding:clamp(24px,5vw,52px) clamp(20px,5vw,64px) 140px;
+  }
+  .wrap{max-width:1080px; margin:0 auto}
+
+  .label{
+    font-family:var(--grot); font-size:12px; font-weight:500; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink);
+  }
+  .label.dim{color:var(--muted)}
+
+  /* ── Masthead ── */
+  .masthead{border-top:2px solid var(--rule); padding-top:16px}
+  .meta{display:flex; justify-content:space-between; align-items:baseline; gap:16px; flex-wrap:wrap}
+  .meta .accent{color:var(--accent)}
+  h1{
+    font-family:var(--grot); font-weight:500;
+    font-size:clamp(58px,15vw,158px); line-height:.9; letter-spacing:-.035em;
+    margin:clamp(22px,5vw,54px) 0 0; text-wrap:balance;
+  }
+  h1 .dot{color:var(--accent)}
+  .deck{
+    font-weight:400; font-size:clamp(23px,3.4vw,38px); line-height:1.12;
+    letter-spacing:-.02em; margin:clamp(22px,3vw,34px) 0 0; max-width:20ch; text-wrap:balance;
+  }
+  .lede{
+    font-size:clamp(19px,2.2vw,24px); line-height:1.4; color:var(--muted);
+    letter-spacing:-.012em; margin:clamp(30px,4vw,48px) 0 0; max-width:34ch;
+  }
+
+  /* ── Pull quote ── */
+  .pull{margin:clamp(56px,8vw,104px) 0; border-top:1px solid var(--hair); padding-top:clamp(28px,4vw,44px)}
+  .pull q{
+    display:block; quotes:none; font-weight:500;
+    font-size:clamp(34px,7vw,86px); line-height:.98; letter-spacing:-.035em;
+    color:var(--ink); text-wrap:balance;
+  }
+  .pull q .qm{color:var(--accent)}
+  .pull .attr{margin-top:clamp(20px,3vw,32px)}
+
+  /* ── Sections ── */
+  section{border-top:1px solid var(--rule); padding-top:20px; margin-top:clamp(48px,7vw,88px);
+    display:grid; grid-template-columns:minmax(0,1fr); gap:0}
+  .sec-top{display:grid; grid-template-columns:auto 1fr; gap:clamp(16px,4vw,40px); align-items:start}
+  .sec-num{
+    font-family:var(--grot); font-weight:500; color:var(--accent);
+    font-size:clamp(28px,4vw,44px); line-height:.9; letter-spacing:-.02em;
+    font-variant-numeric:tabular-nums;
+  }
+  h2{
+    font-family:var(--grot); font-weight:500;
+    font-size:clamp(27px,4.6vw,50px); line-height:1; letter-spacing:-.028em;
+    margin:0; text-wrap:balance; max-width:18ch;
+  }
+  .body{max-width:40em; margin-top:clamp(20px,3vw,30px)}
+  .body p{margin:0 0 20px}
+  .body p:last-child{margin-bottom:0}
+  .lead-line{color:var(--ink); font-weight:500}
+  a{color:var(--link); text-decoration:none; border-bottom:1px solid currentColor; padding-bottom:1px}
+  a:hover{background:var(--accent); color:var(--paper); border-color:var(--accent)}
+
+  ul.q{list-style:none; margin:26px 0; padding:0; max-width:40em}
+  ul.q li{
+    display:grid; grid-template-columns:2.4em 1fr; gap:0 4px;
+    padding:14px 0; border-top:1px solid var(--hair); align-items:baseline;
+  }
+  ul.q li .n{font-family:var(--mono); font-size:13px; color:var(--accent); font-weight:500}
+  ul.q li:last-child{border-bottom:1px solid var(--hair)}
+
+  .tips{margin-top:6px; border-top:1px solid var(--hair)}
+  .tip{
+    display:grid; grid-template-columns:1fr; gap:4px;
+    padding:20px 0; border-bottom:1px solid var(--hair);
+  }
+  @media(min-width:680px){ .tip{grid-template-columns:minmax(0,14em) 1fr; gap:clamp(20px,4vw,52px)} }
+  .tip b{font-weight:500; font-size:19px; letter-spacing:-.01em; color:var(--ink)}
+  .tip span{color:var(--muted); font-size:18px; line-height:1.42; max-width:40em}
+
+  /* ── Steal-this blocks ── */
+  .block{border:1.5px solid var(--rule); margin:24px 0 0; background:var(--paper)}
+  .block-head{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:14px 18px; border-bottom:1.5px solid var(--rule);
+  }
+  .copy{
+    font-family:var(--grot); font-size:11px; font-weight:500; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--ink); background:transparent; border:1px solid var(--rule);
+    padding:8px 14px; cursor:pointer; transition:color .15s,background .15s;
+  }
+  .copy:hover{background:var(--ink); color:var(--paper)}
+  .copy.done{background:var(--accent); border-color:var(--accent); color:#fff}
+  pre{
+    margin:0; padding:20px; overflow-x:auto; font-family:var(--mono);
+    font-size:13.5px; line-height:1.7; color:var(--ink); white-space:pre;
+  }
+  pre .k{color:var(--muted)}
+  .msg{font-family:var(--mono); font-size:14px; line-height:1.75; color:var(--ink);
+    padding:22px; white-space:pre-wrap}
+  .slot{color:var(--accent); font-weight:500}
+
+  /* ── Prompt set ── */
+  .prompts-head{border-top:1px solid var(--hair); margin-top:clamp(40px,6vw,72px); padding-top:clamp(22px,3vw,30px)}
+  .prompts-note{color:var(--muted); font-size:18px; line-height:1.42; margin:10px 0 0; max-width:42em}
+  .pn{color:var(--accent); font-variant-numeric:tabular-nums; margin-right:6px}
+
+  /* ── Close ── */
+  .close{border-top:2px solid var(--rule); margin-top:clamp(64px,9vw,110px); padding-top:clamp(28px,4vw,44px)}
+  .close > p{
+    font-weight:500; font-size:clamp(28px,5vw,56px); line-height:1.02; letter-spacing:-.03em;
+    margin:0; max-width:20ch; text-wrap:balance;
+  }
+  .close .dot{color:var(--accent)}
+  .sig{margin-top:clamp(28px,4vw,40px); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+
+  :where(a,button):focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  .reveal{opacity:0; transform:translateY(12px); animation:rise .8s cubic-bezier(.19,1,.22,1) forwards}
+  .r2{animation-delay:.07s}.r3{animation-delay:.14s}.r4{animation-delay:.21s}
+  @keyframes rise{to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion: reduce){ .reveal{animation:none;opacity:1;transform:none} }
+</style>
+
+<div class="page">
+  <div class="wrap">
+
+    <div class="masthead">
+      <div class="meta reveal">
+        <span class="label">A Note to a Friend</span>
+        <span class="label accent">Field of Action</span>
+      </div>
+      <h1 class="reveal r2">Start Here<span class="dot">.</span></h1>
+      <p class="deck reveal r3">How I built my site with Claude, and how you can start yours.</p>
+      <p class="lede reveal r4">A few friends have asked me how I made my site. This is the honest answer, written down so I can just hand it over. It is not a tutorial. It is the handful of things I wish someone had told me on day one.</p>
+    </div>
+
+    <figure class="pull">
+      <q><span class="qm">&ldquo;</span>I just asked Claude. It's really simple.<span class="qm">&rdquo;</span></q>
+      <div class="attr label dim">A friend, when I asked how he did it</div>
+    </figure>
+
+    <section>
+      <div class="sec-top">
+        <div class="sec-num">01</div>
+        <h2>The only hard part is believing it is hard</h2>
+      </div>
+      <div class="body">
+        <p>Here is how I got started. I asked a friend how he built his thing, and he said the line above. I almost didn't believe him. I had it in my head that this kind of work was supposed to be difficult, that I would need to learn a stack of things first.</p>
+        <p>Once I let go of that idea, everything opened up. The questions and thoughts I had been sitting on started pointing back at me, ready to use.</p>
+        <p class="lead-line">You do not need to know how to code. You need to know what you care about. Claude handles the how. You bring the what.</p>
+        <p>So the first step is small: open a conversation and describe what you want in plain words. Like you would to a friend.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-top">
+        <div class="sec-num">02</div>
+        <h2>Decide what you actually want</h2>
+      </div>
+      <div class="body">
+        <p>Before you build anything, get clear on what the thing is for. This one decision steers everything that comes after.</p>
+        <p>For me, the goal was specific. I wanted a living archive. A place I could update on a regular basis, put my ideas into, and change whenever I felt like it. A forever site. That is a different goal than a portfolio you finish once and leave alone, and knowing the difference shaped every choice I made.</p>
+        <p>A few questions worth answering out loud before you start:</p>
+      </div>
+      <ul class="q">
+        <li><span class="n">01</span><span>What is this for, in one sentence?</span></li>
+        <li><span class="n">02</span><span>Who is it for? (It is fine if the answer is "me.")</span></li>
+        <li><span class="n">03</span><span>Is it something you finish and leave, or something you keep changing?</span></li>
+        <li><span class="n">04</span><span>A year from now, what do you want to be able to do with it?</span></li>
+      </ul>
+      <div class="body">
+        <p>Write your answers down. Keep them short. Paste them into your first conversation so the work starts pointed in the right direction.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-top">
+        <div class="sec-num">03</div>
+        <h2>Let your medium lead</h2>
+      </div>
+      <div class="body">
+        <p>The medium you work in most should shape the kind of site you build. A few starting points:</p>
+      </div>
+      <div class="tips">
+        <div class="tip"><b>Motion, film, broadcast</b><span>Let the work play. Lead with autoplaying, muted video loops and full-bleed frames, and keep the interface quiet so the motion is the thing that moves.</span></div>
+        <div class="tip"><b>Brand and identity</b><span>Show the system, not only the logo. Big marks, work before and after, and the identity applied across real surfaces, with case studies that walk through the thinking.</span></div>
+        <div class="tip"><b>Product and digital</b><span>Show it working. Embed live demos or prototypes, walk through one real flow, and frame screens in context. Lead with the problem you solved.</span></div>
+        <div class="tip"><b>Photography and visual work</b><span>Get out of the image's way. Full-bleed pictures, generous space, minimal type, and a fast lightbox. Let scale and sequence carry it.</span></div>
+        <div class="tip"><b>Writing and strategy</b><span>Let type do the work. An index-style, text-forward site with a great reading experience and almost no decoration.</span></div>
+        <div class="tip"><b>Illustration, graphic, and print</b><span>Show range and craft. A confident grid, real color, and room for detail. A little playfulness fits here.</span></div>
+        <div class="tip"><b>Spatial and physical work</b><span>Show scale and context. Large photography, process shots, and the work in the place it lives.</span></div>
+      </div>
+      <div class="body">
+        <p>If you work across a few of these, lead with the one that carries the most weight, and let the site hold the rest quietly.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-top">
+        <div class="sec-num">04</div>
+        <h2>Bring your taste</h2>
+      </div>
+      <div class="body">
+        <p>Claude can build almost anything, which means the taste has to come from you. This is the part I care most about, and it is where I did the most work before I ever touched code.</p>
+        <p>Ahead of time, I gathered references: screenshots of sites I loved, notes on how I wanted mine to feel, a few documents I had already written about my thinking. Having that material ready got us into the right space fast. Then Claude and I worked closely on the styling, going back and forth, adjusting until it felt like mine.</p>
+        <p>The tip: write a short style note and share it early. It does not need to be fancy. A page is plenty. There is one you can steal just below.</p>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-top">
+        <div class="sec-num">05</div>
+        <h2>A few things that helped</h2>
+      </div>
+      <div class="tips">
+        <div class="tip"><b>Just ask, in plain language.</b><span>Describe the idea the way you would out loud. You do not need the right vocabulary.</span></div>
+        <div class="tip"><b>Work in small steps.</b><span>Build a little, look at it, react. Momentum comes from seeing something real quickly.</span></div>
+        <div class="tip"><b>Add, then subtract.</b><span>Some of my best decisions were removing things I had just added. Let the simple version win.</span></div>
+        <div class="tip"><b>Treat it as a conversation.</b><span>When something feels off, say so. Claude adjusts. "This feels too loud" is a real instruction.</span></div>
+        <div class="tip"><b>Keep your intentions in a document.</b><span>A short file with your goals and style notes, one you can hand back anytime, keeps the work consistent.</span></div>
+        <div class="tip"><b>Aim for something you can keep changing.</b><span>"Done" is a heavy target. A site you can return to and edit is a lighter, better one.</span></div>
+      </div>
+    </section>
+
+    <div class="block">
+      <div class="block-head">
+        <span class="label dim">Steal this &mdash; a starter style note</span>
+        <button class="copy" data-copy="stylenote">Copy</button>
+      </div>
+<pre id="stylenote"><span class="k">WHAT IT'S FOR</span>
+One sentence. What is this, and who is it for?
+
+<span class="k">HOW IT SHOULD FEEL</span>
+Three or four words. (Calm? Playful? Serious? Spacious?)
+
+<span class="k">REFERENCES I LOVE</span>
+Two or three sites, one line each on what I like.
+
+<span class="k">TYPE &amp; COLOR LEANINGS</span>
+Any fonts, colors, or moods I'm drawn to. Rough is fine.
+
+<span class="k">WHAT TO KEEP OUT</span>
+Anything I know I don't want.</pre>
+    </div>
+
+    <div class="block">
+      <div class="block-head">
+        <span class="label dim">Steal this &mdash; a first message to Claude</span>
+        <button class="copy" data-copy="firstmsg">Copy</button>
+      </div>
+      <div class="msg" id="firstmsg">I want to build a personal site. It is for <span class="slot">[what it's for]</span>. It should feel <span class="slot">[three words]</span>. I want to be able to <span class="slot">[the thing you want to keep doing with it]</span>. Here are a few references I love, and why. Can we start simple and build it up together?</div>
+    </div>
+
+    <div class="prompts-head">
+      <span class="label">Steal this &mdash; three prompts for a running start</span>
+      <p class="prompts-note">Complete openers for three different tastes. Pick the closest one, paste it in, and adjust as you go.</p>
+    </div>
+
+    <div class="block">
+      <div class="block-head">
+        <span class="label dim"><span class="pn">01</span>The elegant portfolio</span>
+        <button class="copy" data-copy="prompt1">Copy</button>
+      </div>
+      <div class="msg" id="prompt1">I want a beautiful portfolio site for my work. Keep the layout calm and confident, with generous space and strong typography doing most of the work. Add elegant micro-motion: smooth transitions between pages, subtle reveals as sections come into view, and refined hover states on links and project cards. Keep it restrained, so the motion feels expensive and hand-tuned. Start with the home page and one project page, and we'll build from there.</div>
+    </div>
+
+    <div class="block">
+      <div class="block-head">
+        <span class="label dim"><span class="pn">02</span>The quiet index with one surprise</span>
+        <button class="copy" data-copy="prompt2">Copy</button>
+      </div>
+      <div class="msg" id="prompt2">I want a simple index-style site: a clean, text-forward list of my work and writing, mostly type and space, no big images or cards. Then add one unexpected piece of motion whimsy, something small and surprising that rewards attention and makes people smile, while the reading stays easy. Keep everything else quiet so the one playful moment lands. Show me a few ideas for that moment before we build it.</div>
+    </div>
+
+    <div class="block">
+      <div class="block-head">
+        <span class="label dim"><span class="pn">03</span>Expensive through simplicity</span>
+        <button class="copy" data-copy="prompt3">Copy</button>
+      </div>
+      <div class="msg" id="prompt3">I'm a senior creative. I want a hybrid site that holds both polished case studies and smaller one-off projects, and still feels calm. I want it to look expensive, and for that to come from simplicity: restraint, precise spacing, a considered type scale, and one confident accent. Make the case studies feel editorial and the one-offs light and quick to browse. Start with a home page that ties the two together.</div>
+    </div>
+
+    <div class="close">
+      <p>The hardest step is the first sentence<span class="dot">.</span></p>
+      <div class="body" style="margin-top:22px">
+        <p>Once you say what you want out loud, the rest starts pointing at you. Have fun with it.</p>
+      </div>
+      <div class="sig">
+        <span class="label">Daniel</span>
+        <span class="label dim">Field of Action</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const PLAIN = {
+    stylenote:
+`WHAT IT'S FOR
+One sentence. What is this, and who is it for?
+
+HOW IT SHOULD FEEL
+Three or four words. (Calm? Playful? Serious? Spacious?)
+
+REFERENCES I LOVE
+Two or three sites, one line each on what I like.
+
+TYPE & COLOR LEANINGS
+Any fonts, colors, or moods I'm drawn to. Rough is fine.
+
+WHAT TO KEEP OUT
+Anything I know I don't want.`,
+    firstmsg:
+`I want to build a personal site. It is for [what it's for]. It should feel [three words]. I want to be able to [the thing you want to keep doing with it]. Here are a few references I love, and why. Can we start simple and build it up together?`,
+    prompt1:
+`I want a beautiful portfolio site for my work. Keep the layout calm and confident, with generous space and strong typography doing most of the work. Add elegant micro-motion: smooth transitions between pages, subtle reveals as sections come into view, and refined hover states on links and project cards. Keep it restrained, so the motion feels expensive and hand-tuned. Start with the home page and one project page, and we'll build from there.`,
+    prompt2:
+`I want a simple index-style site: a clean, text-forward list of my work and writing, mostly type and space, no big images or cards. Then add one unexpected piece of motion whimsy, something small and surprising that rewards attention and makes people smile, while the reading stays easy. Keep everything else quiet so the one playful moment lands. Show me a few ideas for that moment before we build it.`,
+    prompt3:
+`I'm a senior creative. I want a hybrid site that holds both polished case studies and smaller one-off projects, and still feels calm. I want it to look expensive, and for that to come from simplicity: restraint, precise spacing, a considered type scale, and one confident accent. Make the case studies feel editorial and the one-offs light and quick to browse. Start with a home page that ties the two together.`
+  };
+  document.querySelectorAll('.copy').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const text = PLAIN[btn.dataset.copy] || '';
+      try{ await navigator.clipboard.writeText(text); }
+      catch(e){
+        const t=document.createElement('textarea'); t.value=text; document.body.appendChild(t);
+        t.select(); document.execCommand('copy'); t.remove();
+      }
+      const label = btn.textContent;
+      btn.textContent='Copied'; btn.classList.add('done');
+      setTimeout(()=>{ btn.textContent=label; btn.classList.remove('done'); }, 1600);
+    });
+  });
+</script>
+
+</body>
+</html>
