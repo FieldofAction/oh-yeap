@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Field of Action — Development</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbfbfc" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d0e11" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='84'>🛠️</text></svg>">
+<style>
+:root{
+  --bg:#fbfbfc; --surface:#ffffff; --ink:#1b1e26; --mut:#5b606c; --line:#e6e7ec;
+  --accent:#2f5bff; --link:#2649d6; --code-bg:#f4f5f7; --code-ink:#2b2f3a; --code-bd:#e6e8ee;
+  --sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,'SF Mono','SFMono-Regular',Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0d0e11; --surface:#15171c; --ink:#e7eaef; --mut:#9096a1; --line:#24272e;
+    --accent:#6e8cff; --link:#93a6ff; --code-bg:#16181d; --code-ink:#cdd2da; --code-bd:#242832;
+  }
+}
+:root[data-theme="light"]{--bg:#fbfbfc;--surface:#fff;--ink:#1b1e26;--mut:#5b606c;--line:#e6e7ec;--accent:#2f5bff;--link:#2649d6;--code-bg:#f4f5f7;--code-ink:#2b2f3a;--code-bd:#e6e8ee}
+:root[data-theme="dark"]{--bg:#0d0e11;--surface:#15171c;--ink:#e7eaef;--mut:#9096a1;--line:#24272e;--accent:#6e8cff;--link:#93a6ff;--code-bg:#16181d;--code-ink:#cdd2da;--code-bd:#242832}
+
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg)}
+body{color:var(--ink);font-family:var(--sans);font-size:16.5px;line-height:1.65;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.wrap{max-width:864px;margin:0 auto;padding:clamp(28px,5vw,64px) 22px 160px}
+
+.masthead{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:8px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+h1{font-size:clamp(30px,5vw,42px);font-weight:650;letter-spacing:-.02em;line-height:1.08;margin:12px 0 0;text-wrap:balance}
+
+h2{font-size:clamp(21px,3vw,27px);font-weight:640;letter-spacing:-.015em;line-height:1.2;
+  margin:64px 0 4px;padding-top:22px;border-top:1px solid var(--line);scroll-margin-top:20px}
+h3{font-size:17.5px;font-weight:640;letter-spacing:-.01em;margin:34px 0 2px;scroll-margin-top:20px}
+h4{font-size:14.5px;font-weight:650;margin:24px 0 2px;color:var(--ink)}
+p{margin:14px 0;color:var(--ink)}
+strong{font-weight:640}
+a{color:var(--link);text-decoration:none;border-bottom:1px solid color-mix(in srgb,var(--link) 30%,transparent)}
+a:hover{border-bottom-color:var(--link)}
+hr{border:0;border-top:1px solid var(--line);margin:34px 0}
+
+ul,ol{margin:14px 0;padding-left:22px}
+li{margin:7px 0}
+li::marker{color:var(--mut)}
+
+code{font-family:var(--mono);font-size:.86em;background:var(--code-bg);border:1px solid var(--code-bd);
+  padding:1px 5px;border-radius:5px;color:var(--code-ink);white-space:nowrap}
+.codewrap{position:relative;margin:18px 0}
+.codewrap .lang{position:absolute;top:8px;right:10px;font-family:var(--mono);font-size:10.5px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--code-bd);border-radius:10px;
+  padding:16px 18px;overflow-x:auto}
+pre code{background:none;border:0;padding:0;white-space:pre;font-size:13px;line-height:1.6;
+  color:var(--code-ink);border-radius:0}
+
+.tablewrap{overflow-x:auto;margin:18px 0;border:1px solid var(--line);border-radius:10px}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:640;font-size:12.5px;letter-spacing:.02em;color:var(--mut);background:var(--code-bg);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td code,th code{white-space:normal}
+
+.toc{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:18px 22px;margin:28px 0 8px;display:flex;flex-wrap:wrap;gap:6px 20px}
+.toc-label{width:100%;font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--mut);margin-bottom:4px}
+.toc a{font-size:14.5px;border-bottom:0;color:var(--ink)}
+.toc a:hover{color:var(--accent)}
+
+:where(a):focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:3px}
+@media(max-width:560px){.toc{flex-direction:column;gap:8px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="masthead">
+<div class="eyebrow">Field of Action</div>
+<h1>Development</h1>
+</div>
+<p>How this site is built, run, and extended. For a collaborator who already knows React. For the <em>why</em> behind it, see the case study; this is the <em>how</em>.</p>
+<p>One React 19 + Vite codebase produces <strong>two builds</strong> from the same source: a <strong>public</strong> site (the portfolio) and a <strong>studio</strong> site (private tools). All content lives in a single seed file. There is no CMS, no router library, and no backend of its own — routing is hash-based and the only server calls are to Anthropic, from the studio.</p>
+<hr>
+<nav class="toc"><div class="toc-label">Contents</div><a href="#quick-start">Quick start</a><a href="#architecture">Architecture</a><a href="#adding-content">Adding content</a><a href="#studio-agents">Studio &amp; agents</a><a href="#deploy">Deploy</a></nav>
+<h2 id="quick-start">Quick start</h2>
+<div class="codewrap"><span class="lang">bash</span><pre><code>npm install
+npm run dev          # vite dev server on http://localhost:5180</code></pre></div>
+<p><code>.claude/launch.json</code> also defines a <code>dev</code> config (port 5180, <code>--strictPort</code>, auto-port).</p>
+<div class="tablewrap"><table><thead><tr><th>Script</th><th>Does</th></tr></thead><tbody><tr><td><code>npm run dev</code></td><td>Vite dev server (public tree by default)</td></tr><tr><td><code>npm run build</code></td><td>Public build → <code>dist/</code></td></tr><tr><td><code>npm run build:studio</code></td><td>Studio build (<code>BUILD_TARGET=studio</code>), renames <code>studio.html</code> → <code>index.html</code></td></tr><tr><td><code>npm run lint</code></td><td>ESLint</td></tr><tr><td><code>npm run preview</code></td><td>Serve the last build</td></tr><tr><td><code>npm run atlas:validate</code> / <code>atlas:matchday</code></td><td>World Cup Atlas data tooling (see <code>ATLAS.md</code>)</td></tr></tbody></table></div>
+<p><strong>Env vars.</strong> Only two, both optional for normal work:</p>
+<ul><li><code>ANTHROPIC_API_KEY</code> — read in <code>vite.config.js</code> for the dev-only <code>/api/generate</code> and <code>/api/anthropic</code> proxies. Needed <strong>only</strong> to exercise the AI studio tools that use the server proxy (Breakground, Desert, FOA Generator) in dev. The public site needs no key.</li><li><code>BUILD_TARGET</code> — <code>public</code> (default) or <code>studio</code>. Selects the HTML entry. Set on the Vercel project, not locally.</li></ul>
+<p>Node version is <strong>not pinned</strong> (no <code>.nvmrc</code>/<code>engines</code>); use a current LTS. Studio tools that call Anthropic from the browser read the key from the studio&#x27;s Settings panel (stored in <code>localStorage</code>), not from env — see <a href="#studio--agents">Studio &amp; agents</a>.</p>
+<hr>
+<h2 id="architecture">Architecture</h2>
+<h3 id="two-entry-points-two-react-trees">Two entry points, two React trees</h3>
+<div class="tablewrap"><table><thead><tr><th></th><th>Public</th><th>Studio</th></tr></thead><tbody><tr><td>HTML</td><td><code>index.html</code></td><td><code>studio.html</code> (<code>noindex</code>)</td></tr><tr><td>Boot</td><td><code>src/main.jsx</code> → <code>PublicApp.jsx</code></td><td><code>src/studio-main.jsx</code> → <code>App.jsx</code></td></tr><tr><td>Default view</td><td><code>public</code></td><td><code>studio</code></td></tr><tr><td>Content</td><td>reads <code>SEED</code></td><td>reads <code>SEED</code> + agent/studio data</td></tr></tbody></table></div>
+<p>Both mount <code>#root</code> in <code>&lt;StrictMode&gt;</code> and import <code>index.css</code> + <code>styles/main.css</code>. The two trees import <strong>disjoint</strong> module sets — this is what keeps proprietary studio code out of the public bundle (see below).</p>
+<h3 id="routing-hash-based-no-library">Routing (hash-based, no library)</h3>
+<p><code>PublicApp.jsx</code> maps views to hashes via <code>VIEW_TO_HASH</code> (e.g. <code>patiobeach → #patio-beach</code>, <code>canon → #relational-design</code>, <code>hotelnest → #hotel/nest</code>); <code>viewFromHash()</code> inverts it. Unknown hashes fall back to the <code>public</code> view through a <code>PUBLIC_VIEWS</code> allow-set.</p>
+<ul><li><strong>Detail deep links (public only):</strong> <code>#item/&lt;slug&gt;</code> opens a content item&#x27;s overlay. <code>openItem()</code> prefers <code>item.slug</code>, falls back to the random <code>item.id</code>; <code>findItemByHash</code> resolves either against <code>SEED</code>. Loading an <code>#item/…</code> URL directly synthesizes a home history entry so browser Back returns to the listing.</li><li><code>popstate</code>/<code>hashchange</code> keep the view and theme in sync; <code>navigateTo</code> does a 200ms fade (<code>view-leaving</code>), scrolls to top, and <code>pushState</code>s the hash.</li><li><code>App.jsx</code> (studio) uses the same pattern but has extra in-app views (<code>model</code>, <code>playbook</code>, <code>console</code>, <code>press</code>, <code>nestcompositor</code>, …) reached via <code>navigateTo</code>, and no <code>#item/</code> deep links.</li></ul>
+<h3 id="state">State</h3>
+<p><code>src/store/useASUStore.js</code> is a localStorage-backed hook (key <code>asu-store</code>), <strong>studio only</strong> — it holds <code>settings</code> (apiKey/model), <code>playbook</code>, <code>backstage</code>, <code>system</code>, <code>artOfModel</code>, and <code>atrium</code>. Methods are named MCP-tool-style (<code>get_*</code>/<code>set_*</code>). The public app carries none of this; it uses <code>src/hooks/usePublicSystemCondition.js</code>. Exploration-sketch edits overlay through <code>src/store/useExplorationStore.js</code> (keyed by title).</p>
+<h3 id="theming">Theming</h3>
+<p><code>src/data/themes.js</code> exports <code>THEMES</code> — five flat token palettes: <code>threshold</code> (dark), <code>canon</code> (mid-grey), <code>light</code>, <code>daylight</code> (paper, public work views), <code>info</code> (grey). <code>cv(t)</code> maps a palette to CSS custom properties (<code>--bg</code>, <code>--fg</code>, …) applied inline on the root <code>.app-layout</code>. The theme switches automatically per view via <code>themeForView(v)</code>:</p>
+<ul><li>work views (<code>public</code>, <code>superconscious</code>, <code>patiobeach</code>, …) → <code>threshold</code>, or <code>daylight</code> when the visitor toggles light (persisted as <code>foa-work-light</code>)</li><li><code>canon</code> → <code>canon</code>; <code>about</code>/<code>colophon</code> → <code>info</code>; everything else → <code>light</code></li></ul>
+<p>The accent is always cobalt <code>#2F5BFF</code>. There is no <code>data-theme</code> attribute; daylight adds a <code>theme-daylight</code> class. The light/dark toggle only renders on work views.</p>
+<h3 id="directory-map">Directory map</h3>
+<div class="codewrap"><pre><code>src/
+  components/        all views + tools; details/ (CaseStudy, WritingDetail, Sketchbook,
+                     SpecSheet, TheoryDetail), ui/ (Card, PracticeRow, …), Hero* visuals
+  data/             seed.js (all content), themes.js, models.js, patterns.js,
+                    agents.js (private) / agents-public.js, atrium-mocks.js, …
+  lib/              atrium-bundle.js, atrium-llm.js, atrium-runners.js, pressHelpers.js, sky.js
+  hooks/            usePublicSystemCondition.js, useSwipeNav.js
+  store/            useASUStore.js, useExplorationStore.js
+  main.jsx / PublicApp.jsx      → public tree
+  studio-main.jsx / App.jsx     → studio tree
+public/             images/, media/, audio/, standalone HTML (world-cup-atlas.html,
+                    start-here.html), atlas-data.json, favicon.svg
+scripts/            *.mjs build/QA tooling (atlas, Puppeteer captures, OG render, nest)</code></pre></div>
+<h3 id="the-public-studio-split">The public / studio split</h3>
+<p><code>BUILD_TARGET</code> picks the Vite input (<code>vite.config.js</code>): <code>studio</code> → <code>studio.html</code>; default → <code>index.html</code>. Because the two React trees import different modules, the studio-only code — <code>useASUStore.js</code>, <code>Backstage.jsx</code>, <code>IncandescantLab.jsx</code>, <code>agents.js</code>, and every agent-calling tool — is **never imported by <code>PublicApp.jsx</code>**, so the proprietary agent prompts do not enter the public bundle. Public and studio are separate Vercel projects sharing this repo, differentiated only by the <code>BUILD_TARGET</code> env var. The studio surface is gated at the edge (Vercel), not in app code.</p>
+<hr>
+<h2 id="adding-content">Adding content</h2>
+<p>All content is objects in the <code>SEED</code> array in **<code>src/data/seed.js</code>** (which also exports <code>uid()</code>, <code>isHidden()</code>, <code>NOW</code>, and <code>VIS</code> placeholder-art generators). Both trees import <code>SEED</code> and filter it.</p>
+<h3 id="item-shape">Item shape</h3>
+<p>Common top-level fields (real example, trimmed):</p>
+<div class="codewrap"><span class="lang">js</span><pre><code>{ id: uid(), slug: &quot;workbench&quot;, section: &quot;practice&quot;, published: true,
+  title: &quot;Workbench&quot;, subtitle: &quot;Field of Action&#x27;s Practice Surface&quot;,
+  desc: &quot;…&quot;, year: &quot;2026&quot;, status: &quot;live&quot;,
+  tags: [&quot;Practice&quot;,&quot;Method&quot;,&quot;Systems&quot;], relations: [],
+  role: &quot;Designer&quot;, hasVisual: true,
+  caseStudy: { … } }              // ← payload key decides the detail view</code></pre></div>
+<ul><li><code>slug</code> is stable and powers the shareable <code>#item/&lt;slug&gt;</code> link. <strong>Give every item a slug</strong> — without one the deep link uses the random <code>id</code> and won&#x27;t survive a reload.</li><li><code>status</code>: <code>live</code> / <code>wip</code> / <code>seed</code> / <code>draft</code> (…); <code>draft</code> is filtered from listings.</li><li><code>relations</code> is an array of other item <strong>titles</strong>; it drives the relation filter (press <code>G</code>).</li><li>The <strong>payload key present decides which detail view renders</strong>: <code>body</code> → essay, <code>caseStudy</code> → case study, <code>sketch</code> → sketchbook, <code>spec</code> → spec sheet, <code>theory</code> → theory page.</li></ul>
+<h3 id="sections">Sections</h3>
+<div class="tablewrap"><table><thead><tr><th><code>section</code></th><th>Renders as</th><th>Nav</th><th>Notes</th></tr></thead><tbody><tr><td><code>practice</code></td><td>Case study (<code>caseStudy</code>)</td><td>Practice</td><td>Wave-1 gated — needs <code>published: true</code></td></tr><tr><td><code>writing</code></td><td>Essay (<code>body</code>)</td><td>Writing</td><td>all current items are <code>writeType: &quot;memo&quot;</code></td></tr><tr><td><code>exploration</code></td><td>Sketchbook (<code>sketch</code>) or Theory (<code>theory</code>)</td><td>Exploration</td><td>empty on public today</td></tr><tr><td><code>artifacts</code></td><td>Spec sheet (<code>spec</code>)</td><td>Artifacts</td><td></td></tr></tbody></table></div>
+<h3 id="case-study-blocks">Case-study blocks</h3>
+<p><code>item.caseStudy</code> holds narrative sub-objects (<code>framing</code>, <code>reframe</code>, <code>intervention</code>, <code>outcomes</code>, <code>images</code>) plus a <code>layout</code> array of blocks, rendered by <code>src/components/details/CaseStudy.jsx</code>:</p>
+<div class="tablewrap"><table><thead><tr><th>block <code>type</code></th><th>key fields</th></tr></thead><tbody><tr><td><code>hero</code></td><td><code>src</code>, <code>alt</code>, <code>caption</code>, <code>variant</code> (<code>float</code>\</td><td><code>frame</code>)</td></tr><tr><td><code>figure</code></td><td><code>src</code>, <code>alt</code>, <code>caption</code>, <code>variant</code></td></tr><tr><td><code>two-up</code> / <code>three-up</code> / <code>grid</code> / <code>triptych</code></td><td><code>images:[{src,alt,caption}]</code>, <code>caption</code></td></tr><tr><td><code>section</code></td><td><code>label</code></td></tr><tr><td><code>body</code></td><td><code>key</code> (pulls a caseStudy sub-object) or literal <code>text</code></td></tr><tr><td><code>pull-quote</code></td><td><code>text</code></td></tr><tr><td><code>sticky</code> / <code>split</code></td><td><code>heading</code>, <code>body</code>, <code>src</code>/<code>images</code></td></tr><tr><td><code>device</code></td><td><code>src</code>, <code>alt</code>, <code>caption</code></td></tr><tr><td><code>video</code></td><td><code>url</code> (or item <code>videoUrl</code>), <code>poster</code></td></tr><tr><td><code>reframe</code> / <code>intervention</code> / <code>insight</code></td><td>none — render from the caseStudy sub-objects</td></tr></tbody></table></div>
+<p>(Plus composite blocks: <code>atmosphere</code>, <code>collage</code>, <code>plate</code>, <code>diptych</code>, <code>catalogue</code>, …)</p>
+<h3 id="essay-body">Essay body</h3>
+<p><code>section: &quot;writing&quot;</code> items carry a <code>body</code> array (rendered by <code>WritingDetail.jsx</code>):</p>
+<div class="codewrap"><span class="lang">js</span><pre><code>body: [
+  { type: &quot;text&quot;, content: &quot;…&quot; },
+  { type: &quot;artwork&quot;, src: &quot;/images/essays/…png&quot;, alt: &quot;…&quot;, caption: &quot;…&quot; },
+  { type: &quot;credit&quot;, thesis: &quot;…&quot; },
+  { type: &quot;citations&quot;, items: [&quot;&lt;strong&gt;…&lt;/strong&gt;. …&quot;] },
+]</code></pre></div>
+<p>Audio: set <code>audioSrc</code> (an <code>/audio/*.m4a</code> path) for the inline player, or <code>audioDur</code> + <code>substackUrl</code> for a &quot;Listen on Substack&quot; link. Sketch, theory, and spec shapes follow the same pattern — see the respective <code>details/</code> renderer for their fields.</p>
+<h3 id="hidden-items-the-wave-1-gate">Hidden items &amp; the Wave-1 gate</h3>
+<div class="codewrap"><span class="lang">js</span><pre><code>export const isHidden = (item) =&gt;
+  Boolean(item?.hidden) || (item?.section === &quot;practice&quot; &amp;&amp; !item?.published);</code></pre></div>
+<p>Two ways to hide: <code>hidden: true</code>, or a <code>practice</code> item without <code>published: true</code> (the Wave-1 launch gate — only &quot;Workbench&quot; is published today). Listings use <code>SEED.filter(c =&gt; import.meta.env.DEV || !isHidden(c))</code>, so <strong>dev shows everything</strong>. On the studio deployment, appending <code>?preview</code> reveals hidden items on the live site.</p>
+<h3 id="media">Media</h3>
+<p>Images live under <code>public/images/&lt;category&gt;/…</code> (<code>case-studies</code>, <code>essays</code>, <code>theory</code>, <code>hotel</code>, <code>nest</code>, …); other media under <code>public/media/…</code>; audio under <code>public/audio/*.m4a</code>. Reference them by absolute path from the <code>public</code> root, e.g. <code>/images/case-studies/Workbench/band.png</code>. Archives (Patio Beach, NYC, Superconscious) are <strong>not</strong> in <code>SEED</code> — they&#x27;re hardcoded in their own components / <code>src/data/nycArchive.js</code>.</p>
+<p><strong>To add a case study:</strong> append a <code>section:&quot;practice&quot;</code>, <code>published:true</code> object with a <code>slug</code> and a <code>caseStudy:{ framing, reframe, intervention, outcomes, layout:[…] }</code>; drop art in <code>public/images/case-studies/&lt;Name&gt;/</code>.</p>
+<p><strong>To add an essay:</strong> <code>section:&quot;writing&quot;</code>, <code>writeType:&quot;memo&quot;</code>, a <code>body:[…]</code> array, optional <code>audioSrc</code>. Give it a <code>slug</code>.</p>
+<hr>
+<h2 id="studio-agents">Studio &amp; agents</h2>
+<p>High level — the studio is where the practice&#x27;s tools live, and it stays private on purpose.</p>
+<ul><li><strong>The agent model.</strong> An eleven-agent system organized in three rings — an operational cycle, a practice layer, and a governance layer. The roster and one-line roles are in <code>src/data/agents-public.js</code> (the public-safe slice, used by the About page). The **full system prompts live in <code>src/data/agents.js</code>**, which is imported only by studio modules (<code>useASUStore.js</code>, <code>Backstage.jsx</code>, <code>IncandescantLab.jsx</code>) and <strong>never by the public tree</strong> — that import isolation is the whole point of the two-build split. Treat <code>agents.js</code> as proprietary; don&#x27;t wire it into any public path.</li><li><strong>Atrium</strong> (<code>src/lib/atrium-*.js</code>, state in <code>useASUStore.atrium</code>) is the orchestration surface that runs modules in sequence. It runs &quot;shape-honest&quot; mocks (<code>atrium-mocks.js</code>) by default and real LLM runs for a small set of wired modules when a key is present; <code>atrium-bundle.js</code> exports a portable <em>field-direction bundle</em> (<code>field-direction-bundle/v1</code>) meant to seed downstream tools. Details intentionally omitted.</li><li><strong>Tools</strong> (studio components): Studio/Atrium home, Art of Model, Playbook, Field Console, Backstage, Lab, FOA Generator, Breakground, Desert, Exploration Editor, and the Press container (Nest Compositor, Nest Reel).</li><li><strong>Anthropic integration.</strong> Bring-your-own-key: the Backstage <strong>Settings</strong> panel writes <code>settings.apiKey</code> and picks <code>settings.model</code> into <code>localStorage</code>. Most tools call <code>api.anthropic.com</code> directly from the browser with that key; three (Breakground, Desert, FOA Generator) POST to <code>/api/generate</code>, which currently exists <strong>only</strong> as a dev Vite middleware (see below).</li></ul>
+<hr>
+<h2 id="deploy">Deploy</h2>
+<p><code>vercel.json</code>:</p>
+<div class="codewrap"><span class="lang">json</span><pre><code>{ &quot;buildCommand&quot;: &quot;if [ \&quot;$BUILD_TARGET\&quot; = \&quot;studio\&quot; ]; then npm run build:studio; else npm run build; fi&quot;,
+  &quot;rewrites&quot;: [
+    { &quot;source&quot;: &quot;/world-cup-atlas&quot;, &quot;destination&quot;: &quot;/world-cup-atlas.html&quot; },
+    { &quot;source&quot;: &quot;/start-here&quot;,      &quot;destination&quot;: &quot;/start-here.html&quot; } ] }</code></pre></div>
+<ul><li><strong>Public</strong> deploy: <code>vite build</code> → <code>dist/index.html</code> (from <code>PublicApp</code>). Serves <code>https://fieldofaction.org</code>.</li><li><strong>Studio</strong> deploy: <code>BUILD_TARGET=studio</code> build, <code>studio.html</code> becomes <code>index.html</code>, served at <code>studio.fieldofaction.org</code>, edge-gated on Vercel.</li><li><strong>Standalone pages:</strong> anything in <code>public/*.html</code> ships as-is. <code>world-cup-atlas.html</code> and <code>start-here.html</code> get clean URLs via the rewrites above (mirror a new rewrite here when you add another standalone page; dev serves the <code>.html</code> path directly except for <code>/world-cup-atlas</code>, which a Vite plugin rewrites).</li></ul>
+<h3 id="known-gaps-todo">Known gaps / TODO</h3>
+<ul><li>**<code>/api/generate</code> has no production handler** — it&#x27;s only the dev Vite middleware, so Breakground / Desert / FOA Generator&#x27;s proxy path won&#x27;t work on the deployed studio until a serverless function is added.</li><li><strong>DNS / apex→www / SSL</strong> are managed on Vercel, not in the repo (<code>launch-plan.md</code> still lists them as open).</li><li><strong>Node version</strong> is unpinned — add <code>.nvmrc</code>/<code>engines</code> if the team wants a guaranteed version.</li><li>The <strong>studio edge-gate/password</strong> is configured on Vercel, outside version control.</li></ul>
+</div>
+</body>
+</html>
