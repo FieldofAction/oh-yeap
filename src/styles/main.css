@@ -508,11 +508,13 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .ix-title{font-family:var(--display);font-size:clamp(22px,3vw,32px);font-weight:600;line-height:1.15;letter-spacing:-0.02em}
 .ix-sub{font-size:13px;color:var(--fm);line-height:1.65;max-width:480px;font-weight:300}
 .ix-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;position:relative;z-index:1}
-.ix-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.ix-tag{font-size:10px;font-weight:500;letter-spacing:.02em;text-transform:uppercase;color:var(--ff);padding:5px 14px;border:1px solid var(--bd);border-radius:100px;transition:border-color .2s,color .2s}
-.ix-row:hover .ix-tag{border-color:var(--fm);color:var(--fm)}
-.ix-tag-rel{cursor:pointer;border-style:dashed}
-.ix-tag-rel:hover{color:var(--ac1);border-color:var(--ac1)}
+/* Meta line, not pills: inline mono tags with slash separators. */
+.ix-tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;align-items:baseline}
+.ix-tag{font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--fm);padding:0;border:none;border-radius:0;background:none;transition:color .2s}
+.ix-tag + .ix-tag::before{content:"/";color:var(--ff);margin-right:8px}
+.ix-row:hover .ix-tag{color:var(--fg)}
+.ix-tag-rel{cursor:pointer}
+.ix-tag-rel:hover{color:var(--fg)}
 .ix-year{font-size:11px;color:var(--ff);letter-spacing:.01em}
 .ix-dot{width:7px;height:7px;border-radius:50%;display:inline-block}
 .ix-dot.wip{background:var(--ac2)}.ix-dot.live{background:var(--ac1)}.ix-dot.seed{background:var(--ff)}
