@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { SEED } from "../data/seed";
+import useReveal from "../hooks/useReveal";
 
 const SECTIONS = [
   { id: "overview", label: "Overview" },
@@ -85,6 +86,8 @@ export default function Canon() {
   const [xrayMode, setXrayMode] = useState(false);
   const [xrayFilter, setXrayFilter] = useState("all"); // "all" | "signal" | "inflation" | "shadow"
   const sectionRefs = useRef({});
+  // Scroll-linked reveal for the below-fold sections (same system as the work rows).
+  useReveal([xrayMode, xrayFilter]);
 
   /* Scroll-spy */
   useEffect(() => {
@@ -215,12 +218,12 @@ export default function Canon() {
 
       {renderCards(XRAY_DATA.overview)}
 
-      <div className="ph-section en d3">
+      <div className="ph-section" data-reveal>
         <div className="ph-sl">Introduction</div>
         <p className="ph-intro">{theory.intro}</p>
       </div>
 
-      <div className="ph-abstract en d4">
+      <div className="ph-abstract" data-reveal>
         <div className="ph-sl">Abstract</div>
         <p className="ph-abstract-text">{theory.abstract}</p>
         <img src="/images/theory/canon-abstract.png" alt="Relational Design abstract diagram" className="cn-diagram" loading="lazy" />
@@ -231,7 +234,7 @@ export default function Canon() {
       <div ref={el => sectionRefs.current["philosophy"] = el} id="canon-philosophy" style={{ scrollMarginTop: 56 }}>
 
         {theory.sections.map((sec, i) => (
-          <div key={i} className="ph-section en">
+          <div key={i} className="ph-section" data-reveal>
             <div className="ph-body-heading">{sec.heading}</div>
             {sec.body.split("\n\n").map((p, j) => (
               <p key={j} className="ph-body-text">{p}</p>
@@ -250,7 +253,7 @@ export default function Canon() {
 
       {/* ── 3. Principles ── */}
       <div ref={el => sectionRefs.current["principles"] = el} id="canon-principles" style={{ scrollMarginTop: 56 }}>
-        <div className="ph-principles en">
+        <div className="ph-principles" data-reveal>
           <div className="ph-sl">Principles</div>
           <div className="ph-principles-grid">
             {theory.principles.map((p, i) => (
@@ -275,7 +278,7 @@ export default function Canon() {
 
       {/* ── 4. Lineages ── */}
       <div ref={el => sectionRefs.current["lineages"] = el} id="canon-lineages" style={{ scrollMarginTop: 56 }}>
-        <div className="ph-lineages en">
+        <div className="ph-lineages" data-reveal>
           <div className="ph-sl">Lineages</div>
           <div className="ph-lineages-grid">
             {theory.lineages.map((lin, i) => (

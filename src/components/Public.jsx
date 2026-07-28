@@ -344,7 +344,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 {showAll && <div className="content-section-gloss">{SECTION_GLOSSES.Exploration}</div>}
                 <div className="ix-art">
                   {exploration.map((item, i) => (
-                    <div key={item.id} className={`ix-art-item${showAll ? " en" : ""}${import.meta.env.DEV && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.05+i*0.04}s`} : undefined}>
+                    <div key={item.id} data-reveal className={`ix-art-item${import.meta.env.DEV && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)}>
                       <div className="ix-art-head">
                         <span className="ix-art-type">{item.status === "wip" ? "In Progress" : item.status}</span>
                         <span className={`ix-dot ${item.status}`} />
@@ -376,7 +376,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 {showAll && <div className="content-section-gloss">{SECTION_GLOSSES.Artifacts}</div>}
                 <div className="ix-art">
                   {artifacts.map((item, i) => (
-                    <div key={item.id} className={`ix-art-item${showAll ? " en" : ""}${import.meta.env.DEV && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.05+i*0.04}s`} : undefined}>
+                    <div key={item.id} data-reveal className={`ix-art-item${import.meta.env.DEV && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)}>
                       <div className="ix-art-head">
                         <span className="ix-art-type">{item.artifactType || "Artifact"}</span>
                         <span className="ix-art-ver">{item.version}</span>
