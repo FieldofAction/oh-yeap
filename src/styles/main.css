@@ -2005,7 +2005,7 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 @media(max-width:768px){.co{padding:80px 20px 60px}.co-grid{grid-template-columns:1fr}.co-type-row{flex-direction:column;gap:8px}.co-type-sample{min-width:auto}}
 
 /* ── Philosophy Page ── */
-.ph{max-width:720px;margin:0 auto;padding:100px 32px 80px}
+.ph{max-width:720px;margin:0 auto;padding:100px 32px 80px;counter-reset:phSec}
 .ph-header{margin-bottom:56px}
 .ph-pre{font-size:11px;font-weight:600;letter-spacing:0.08em;color:var(--ff);margin-bottom:16px}
 .ph-h{font-family:var(--display);font-size:clamp(36px,6vw,56px);font-weight:600;letter-spacing:-0.02em;line-height:1.08;margin-bottom:8px}
@@ -2019,7 +2019,8 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 .ph-canon-al{font-size:11px;font-weight:500;letter-spacing:.01em;color:var(--ff);margin-bottom:8px;display:block}
 .ph-canon-at{font-family:var(--display);font-size:18px;line-height:1.55;color:var(--fm);max-width:520px}
 .ph-section{margin-bottom:64px}
-.ph-sl{font-size:13px;font-weight:600;letter-spacing:.01em;color:var(--fm);margin-bottom:16px}
+.ph-sl{counter-increment:phSec;font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:0;color:var(--fm);margin-bottom:16px;line-height:1.4}
+.ph-sl::before{content:"§" counter(phSec,decimal-leading-zero) "  ";color:var(--ff)}
 .ph-intro{font-size:15px;font-weight:400;line-height:1.8;color:var(--fm)}
 .ph-abstract{margin-bottom:56px;padding:32px 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
 .ph-abstract-text{font-family:var(--display);font-size:18px;font-weight:500;line-height:1.7;color:var(--fm)}
@@ -2033,17 +2034,19 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 .ph-process-dot{width:8px;height:8px;border-radius:50%;background:var(--fg);opacity:.25}
 .ph-process-name{font-size:11px;font-weight:500;letter-spacing:.01em;color:var(--fm)}
 .ph-principles{margin-top:72px;padding-top:40px;border-top:1px solid var(--bd);margin-bottom:72px}
-.ph-principles-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.ph-principle{background:var(--sf);padding:20px}
-.ph-principle-num{font-family:var(--display);font-size:10px;color:var(--ff);opacity:.5;margin-bottom:6px}
-.ph-principle-title{font-family:var(--display);font-size:15px;font-weight:600;line-height:1.4;margin-bottom:6px;color:var(--fg)}
-.ph-principle-desc{font-size:12px;font-weight:300;color:var(--fm);line-height:1.6}
+/* Editorial de-box: principles as a ruled ledger-grid with mono margin indices,
+   no filled cards. */
+.ph-principles-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 48px}
+.ph-principle{background:none;padding:22px 0;border-top:1px solid var(--bd);display:grid;grid-template-columns:38px 1fr;gap:0 18px;align-items:start}
+.ph-principle-num{font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:.06em;color:var(--ff);opacity:1;margin-bottom:0;grid-row:1/3;align-self:start;padding-top:3px}
+.ph-principle-title{font-family:var(--display);font-size:16px;font-weight:600;line-height:1.35;margin-bottom:6px;color:var(--fg)}
+.ph-principle-desc{font-size:13px;font-weight:400;color:var(--fm);line-height:1.6}
 .ph-lineages{margin-bottom:72px;padding-top:40px;border-top:1px solid var(--bd)}
-.ph-lineage{background:var(--sf);padding:20px}
-.ph-lineage.convergence{grid-column:1/-1;background:transparent;border-top:1px solid var(--bd);border-radius:0;padding:20px 0}
-.ph-lineage-heading{font-size:11px;font-weight:500;letter-spacing:.04em;margin-bottom:8px}
-.ph-lineage-body{font-size:12px;font-weight:300;color:var(--fm);line-height:1.7}
-.ph-lineages-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ph-lineage{background:none;padding:22px 0;border-top:1px solid var(--bd)}
+.ph-lineage.convergence{grid-column:1/-1;background:transparent;border-top:1px solid var(--bd);border-radius:0;padding:22px 0}
+.ph-lineage-heading{font-family:var(--display);font-size:16px;font-weight:600;letter-spacing:0;margin-bottom:8px;color:var(--fg)}
+.ph-lineage-body{font-size:13px;font-weight:400;color:var(--fm);line-height:1.7}
+.ph-lineages-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 48px}
 .ph-works-cited{margin-bottom:72px;padding-top:40px;border-top:1px solid var(--bd)}
 .ph-works-list{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px}
 .ph-work-item{font-size:11px;color:var(--ff);line-height:1.6;padding-left:12px;border-left:1px solid var(--bd)}
