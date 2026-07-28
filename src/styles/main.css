@@ -602,7 +602,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 @media(prefers-reduced-motion:reduce){.cs-sr{opacity:1;transform:none;transition:none}.cs-sr--stagger>*{opacity:1;transform:none;transition:none}}
 
 /* ── Case Study Detail ── */
-.cs-overlay{position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;animation:rdOpen .3s ease both}
+.cs-overlay{position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;animation:rdOpen .3s ease both;counter-reset:csSec}
 .cs-overlay.closing{animation:rdClose .3s ease both}
 .cs-inner{max-width:900px;margin:0 auto;padding:100px 40px 160px;display:grid;grid-template-columns:minmax(0,600px) minmax(0,220px);gap:0 48px}
 .cs-inner>*{grid-column:1/-1}
@@ -694,8 +694,12 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 /* Section header — editorial */
 .cs-block--section{grid-column:1/2;margin-top:clamp(44px,6vw,80px);margin-bottom:12px;padding-bottom:0;border:none}
 .cs-block--hero + .cs-block--section{margin-top:0}
-.cs-block--section-label{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ff);margin-bottom:0;line-height:1}
-.cs-block--section-rule{width:32px;height:1px;background:var(--bd);margin-top:12px}
+/* Re-formed section eyebrow: a mono running index (notebook annotation) rather
+   than the 9px tracked-uppercase micro-cap. Keeps the tag; drops the maker's-mark
+   form and the hairline rule. Auto-numbers in reading order via a counter. */
+.cs-block--section-label{counter-increment:csSec;font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--fm);margin-bottom:0;line-height:1.4}
+.cs-block--section-label::before{content:"§" counter(csSec,decimal-leading-zero) "  ";color:var(--ff)}
+.cs-block--section-rule{display:none}
 
 /* Body — text column */
 .cs-block--body{grid-column:1/2}
@@ -711,7 +715,8 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .cs-block--pull-quote-attr{font-size:11px;font-weight:400;color:var(--ff);margin-top:20px;letter-spacing:.02em}
 
 /* Section labels (legacy compat) */
-.cs-section-label{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ff);margin-bottom:20px}
+.cs-section-label{counter-increment:csSec;font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--fm);margin-bottom:20px;line-height:1.4}
+.cs-section-label::before{content:"§" counter(csSec,decimal-leading-zero) "  ";color:var(--ff)}
 
 /* Narrative sections */
 .cs-narrative{margin-bottom:20px;grid-column:1/2}
@@ -738,16 +743,15 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .cs-reframe-body{text-align:left;max-width:520px;margin:0 auto}
 
 /* Intervention — editorial voice, horizontal cards */
-.cs-block--intervention{grid-column:1/-1;width:calc(100% + 80px);margin-left:-40px;margin-bottom:64px}
-.cs-intervention-grid{display:flex;flex-direction:column;gap:16px}
-@media(max-width:768px){.cs-block--intervention{width:calc(100% + 40px);margin-left:-20px}}
-.cs-intv-card{position:relative;background:linear-gradient(180deg,color-mix(in srgb,var(--sf) 55%,var(--bg)) 0%,var(--sf) 100%);border:1px solid var(--bd);box-shadow:0 1px 3px rgba(0,0,0,.03);padding:38px 42px;display:grid;grid-template-columns:72px 1fr;gap:0 28px;align-items:start;border-radius:16px;transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s cubic-bezier(.16,1,.3,1),border-color .4s cubic-bezier(.16,1,.3,1)}
-.cs-intv-card::before{content:"";position:absolute;left:0;top:20px;bottom:20px;width:3px;border-radius:0 3px 3px 0;background:var(--fg);opacity:0;transform:scaleY(.5);transform-origin:center;transition:opacity .4s,transform .45s cubic-bezier(.16,1,.3,1)}
-.cs-intv-card:hover{transform:translateY(-4px);box-shadow:0 22px 55px rgba(0,0,0,.09);border-color:color-mix(in srgb,var(--fg) 12%,transparent)}
-.cs-intv-card:hover::before{opacity:1;transform:scaleY(1)}
-.cs-intv-num{font-family:var(--display);font-size:52px;font-weight:600;color:var(--ff);opacity:.16;line-height:1;grid-row:1/3;transition:opacity .4s,color .4s}
-.cs-intv-card:hover .cs-intv-num{opacity:.28}
-.cs-intv-h{font-size:15px;font-weight:700;letter-spacing:0.04em;color:var(--fg);margin-bottom:8px}
+/* Editorial de-box: the intervention reads as a ruled ledger, aligned to the
+   text column. The old ghost numeral becomes a small set-in mono margin index. */
+.cs-block--intervention{grid-column:1/-1;width:100%;margin-left:0;margin-bottom:64px}
+.cs-intervention-grid{display:flex;flex-direction:column;gap:0}
+@media(max-width:768px){.cs-block--intervention{width:100%;margin-left:0}}
+.cs-intv-card{position:relative;background:none;border:none;border-top:1px solid var(--bd);box-shadow:none;border-radius:0;padding:26px 0;display:grid;grid-template-columns:52px 1fr;gap:0 24px;align-items:start}
+.cs-intv-card::before{display:none}
+.cs-intv-num{font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:.06em;color:var(--ff);opacity:1;line-height:1.6;grid-row:1/3;align-self:start;padding-top:3px}
+.cs-intv-h{font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:0;line-height:1.3;color:var(--fg);margin-bottom:10px}
 .cs-intv-body{font-size:14px;font-weight:400;color:color-mix(in srgb,var(--fg) 75%,var(--fm));line-height:1.85}
 .cs-intv-body p{margin-bottom:8px}
 .cs-intv-body p:last-child{margin-bottom:0}
@@ -970,7 +974,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .cs-plates-row{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,2vw,24px)}
 .cs-plate-item{margin:0;display:flex;flex-direction:column;gap:12px}
 .cs-plate-item figcaption{display:flex;flex-direction:column;gap:4px}
-.cs-plate-eyebrow{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ff)}
+.cs-plate-eyebrow{font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--ff)}
 .cs-plate-line{font-size:13px;line-height:1.5;color:var(--fm)}
 @media(max-width:768px){.cs-plates-row{grid-template-columns:1fr}}
 
