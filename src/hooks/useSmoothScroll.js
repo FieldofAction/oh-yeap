@@ -1,11 +1,15 @@
 import { useEffect } from "react";
 import Lenis from "lenis";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-/* Weighted, inertial page scroll (replaces native + CSS smooth-scroll).
+gsap.registerPlugin(ScrollTrigger);
+
+/* Weighted, inertial page scroll (replaces native + CSS smooth-scroll), wired to
+   GSAP so ScrollTrigger reveals read off the same scroll value.
    - Honours prefers-reduced-motion (bails, leaving native scroll).
    - Leaves internal scrollers marked [data-lenis-prevent] on native scroll.
-   - Exposes the instance on window.__lenis so navigation resets and, later,
-     GSAP ScrollTrigger can drive off the same scroll value. */
+   - Exposes the instance on window.__lenis for navigation resets. */
 export default function useSmoothScroll() {
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -19,13 +23,15 @@ export default function useSmoothScroll() {
     });
     window.__lenis = lenis;
 
-    let raf = requestAnimationFrame(function loop(time) {
-      lenis.raf(time);
-      raf = requestAnimationFrame(loop);
-    });
+    // Drive Lenis off GSAP's ticker and update ScrollTrigger on every scroll,
+    // so both share one clock and one scroll position.
+    lenis.on("scroll", ScrollTrigger.update);
+    const tick = (time) => lenis.raf(time * 1000);
+    gsap.ticker.add(tick);
+    gsap.ticker.lagSmoothing(0);
 
     return () => {
-      cancelAnimationFrame(raf);
+      gsap.ticker.remove(tick);
       lenis.destroy();
       if (window.__lenis === lenis) window.__lenis = null;
     };
