@@ -693,6 +693,7 @@ export default function PatioBeach() {
             <p className="pb-narr-body">The curb, it turns out, is a tideline. Things wash up there. Sanitation arrives like the tide and carries them away.</p>
             <div className="pb-narr-figure">
               <img src="/media/nest/prada-map.png" alt="A discarded Prada ribbon on the pavement beside the walking route map" className="pb-narr-figure-img" />
+              <div className="pb-narr-figure-cap">Prada Ribbon + Rivendell Route</div>
             </div>
           </NarrativeSection>
 
