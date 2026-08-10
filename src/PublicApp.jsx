@@ -2,6 +2,7 @@ import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { THEMES } from "./data/themes";
 import { SEED, isHidden } from "./data/seed";
 import usePublicSystemCondition from "./hooks/usePublicSystemCondition";
+import useSmoothScroll, { scrollTopNow } from "./hooks/useSmoothScroll";
 import useExplorationStore from "./store/useExplorationStore";
 import Public from "./components/Public";
 import Models from "./components/Models";
@@ -106,6 +107,7 @@ export default function PublicApp() {
   const [transitioning, setTransitioning] = useState(false);
   const explorationStore = useExplorationStore();
   const nowState = usePublicSystemCondition();
+  useSmoothScroll();
 
   const enrichedActiveItem = useMemo(() => {
     if (!activeItem?.sketch) return activeItem;
@@ -137,7 +139,7 @@ export default function PublicApp() {
     setThemeKey(themeForView(target, workLight));
     setTimeout(() => {
       setView(target);
-      window.scrollTo(0, 0);
+      scrollTopNow();
       setTransitioning(false);
       const hash = VIEW_TO_HASH[target] || "";
       const desired = hash ? `#${hash}` : "";
@@ -165,7 +167,7 @@ export default function PublicApp() {
       if (target === view) return;
       setThemeKey(themeForView(target, workLight));
       setView(target);
-      window.scrollTo(0, 0);
+      scrollTopNow();
     };
     window.addEventListener("popstate", handler);
     window.addEventListener("hashchange", handler);
@@ -183,7 +185,7 @@ export default function PublicApp() {
         if (item && item.id !== activeItem?.id) {
           setClosing(false);
           setActiveItem(item);
-          window.scrollTo(0, 0);
+          scrollTopNow();
         }
       } else if (activeItem) {
         setClosing(true);
@@ -212,7 +214,7 @@ export default function PublicApp() {
   const openItem = useCallback((item) => {
     if (item.body || item.caseStudy || item.sketch || item.spec || item.theory) {
       setActiveItem(item);
-      window.scrollTo(0, 0);
+      scrollTopNow();
       pushHashForItem(item);
     }
   }, []);

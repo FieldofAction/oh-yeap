@@ -1,6 +1,13 @@
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--sans:'Inter',system-ui,sans-serif;--display:'Inter',system-ui,sans-serif;--mono:'Space Mono',monospace}
-html{scroll-behavior:smooth}
+:root{--sans:'Hanken Grotesk',system-ui,sans-serif;--display:'Schibsted Grotesk','Hanken Grotesk',system-ui,sans-serif;--mono:'Space Mono',monospace}
+/* Lenis owns smooth scrolling now (see useSmoothScroll). Native smooth-scroll
+   is left off so anchor jumps and lenis.scrollTo don't double-animate. */
+.lenis,.lenis body{height:auto}
+.lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}
+.lenis.lenis-stopped{overflow:hidden}
+.lenis.lenis-smooth iframe{pointer-events:none}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:smooth}}
 body,#root{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;transition:background .3s,color .3s}
 ::selection{background:var(--fg);color:var(--bg)}
 @keyframes en{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
@@ -501,11 +508,13 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .ix-title{font-family:var(--display);font-size:clamp(22px,3vw,32px);font-weight:600;line-height:1.15;letter-spacing:-0.02em}
 .ix-sub{font-size:13px;color:var(--fm);line-height:1.65;max-width:480px;font-weight:300}
 .ix-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;position:relative;z-index:1}
-.ix-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
-.ix-tag{font-size:10px;font-weight:500;letter-spacing:.02em;text-transform:uppercase;color:var(--ff);padding:5px 14px;border:1px solid var(--bd);border-radius:100px;transition:border-color .2s,color .2s}
-.ix-row:hover .ix-tag{border-color:var(--fm);color:var(--fm)}
-.ix-tag-rel{cursor:pointer;border-style:dashed}
-.ix-tag-rel:hover{color:var(--ac1);border-color:var(--ac1)}
+/* Meta line, not pills: inline mono tags with slash separators. */
+.ix-tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;align-items:baseline}
+.ix-tag{font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--fm);padding:0;border:none;border-radius:0;background:none;transition:color .2s}
+.ix-tag + .ix-tag::before{content:"/";color:var(--ff);margin-right:8px}
+.ix-row:hover .ix-tag{color:var(--fg)}
+.ix-tag-rel{cursor:pointer}
+.ix-tag-rel:hover{color:var(--fg)}
 .ix-year{font-size:11px;color:var(--ff);letter-spacing:.01em}
 .ix-dot{width:7px;height:7px;border-radius:50%;display:inline-block}
 .ix-dot.wip{background:var(--ac2)}.ix-dot.live{background:var(--ac1)}.ix-dot.seed{background:var(--ff)}
@@ -595,7 +604,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 @media(prefers-reduced-motion:reduce){.cs-sr{opacity:1;transform:none;transition:none}.cs-sr--stagger>*{opacity:1;transform:none;transition:none}}
 
 /* ── Case Study Detail ── */
-.cs-overlay{position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;animation:rdOpen .3s ease both}
+.cs-overlay{position:fixed;inset:0;z-index:150;background:var(--bg);overflow-y:auto;animation:rdOpen .3s ease both;counter-reset:csSec}
 .cs-overlay.closing{animation:rdClose .3s ease both}
 .cs-inner{max-width:900px;margin:0 auto;padding:100px 40px 160px;display:grid;grid-template-columns:minmax(0,600px) minmax(0,220px);gap:0 48px}
 .cs-inner>*{grid-column:1/-1}
@@ -687,8 +696,12 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 /* Section header — editorial */
 .cs-block--section{grid-column:1/2;margin-top:clamp(44px,6vw,80px);margin-bottom:12px;padding-bottom:0;border:none}
 .cs-block--hero + .cs-block--section{margin-top:0}
-.cs-block--section-label{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ff);margin-bottom:0;line-height:1}
-.cs-block--section-rule{width:32px;height:1px;background:var(--bd);margin-top:12px}
+/* Re-formed section eyebrow: a mono running index (notebook annotation) rather
+   than the 9px tracked-uppercase micro-cap. Keeps the tag; drops the maker's-mark
+   form and the hairline rule. Auto-numbers in reading order via a counter. */
+.cs-block--section-label{counter-increment:csSec;font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--fm);margin-bottom:0;line-height:1.4}
+.cs-block--section-label::before{content:"§" counter(csSec,decimal-leading-zero) "  ";color:var(--ff)}
+.cs-block--section-rule{display:none}
 
 /* Body — text column */
 .cs-block--body{grid-column:1/2}
@@ -704,7 +717,8 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .cs-block--pull-quote-attr{font-size:11px;font-weight:400;color:var(--ff);margin-top:20px;letter-spacing:.02em}
 
 /* Section labels (legacy compat) */
-.cs-section-label{font-size:10px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ff);margin-bottom:20px}
+.cs-section-label{counter-increment:csSec;font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--fm);margin-bottom:20px;line-height:1.4}
+.cs-section-label::before{content:"§" counter(csSec,decimal-leading-zero) "  ";color:var(--ff)}
 
 /* Narrative sections */
 .cs-narrative{margin-bottom:20px;grid-column:1/2}
@@ -731,16 +745,15 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .cs-reframe-body{text-align:left;max-width:520px;margin:0 auto}
 
 /* Intervention — editorial voice, horizontal cards */
-.cs-block--intervention{grid-column:1/-1;width:calc(100% + 80px);margin-left:-40px;margin-bottom:64px}
-.cs-intervention-grid{display:flex;flex-direction:column;gap:16px}
-@media(max-width:768px){.cs-block--intervention{width:calc(100% + 40px);margin-left:-20px}}
-.cs-intv-card{position:relative;background:linear-gradient(180deg,color-mix(in srgb,var(--sf) 55%,var(--bg)) 0%,var(--sf) 100%);border:1px solid var(--bd);box-shadow:0 1px 3px rgba(0,0,0,.03);padding:38px 42px;display:grid;grid-template-columns:72px 1fr;gap:0 28px;align-items:start;border-radius:16px;transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s cubic-bezier(.16,1,.3,1),border-color .4s cubic-bezier(.16,1,.3,1)}
-.cs-intv-card::before{content:"";position:absolute;left:0;top:20px;bottom:20px;width:3px;border-radius:0 3px 3px 0;background:var(--fg);opacity:0;transform:scaleY(.5);transform-origin:center;transition:opacity .4s,transform .45s cubic-bezier(.16,1,.3,1)}
-.cs-intv-card:hover{transform:translateY(-4px);box-shadow:0 22px 55px rgba(0,0,0,.09);border-color:color-mix(in srgb,var(--fg) 12%,transparent)}
-.cs-intv-card:hover::before{opacity:1;transform:scaleY(1)}
-.cs-intv-num{font-family:var(--display);font-size:52px;font-weight:600;color:var(--ff);opacity:.16;line-height:1;grid-row:1/3;transition:opacity .4s,color .4s}
-.cs-intv-card:hover .cs-intv-num{opacity:.28}
-.cs-intv-h{font-size:15px;font-weight:700;letter-spacing:0.04em;color:var(--fg);margin-bottom:8px}
+/* Editorial de-box: the intervention reads as a ruled ledger, aligned to the
+   text column. The old ghost numeral becomes a small set-in mono margin index. */
+.cs-block--intervention{grid-column:1/-1;width:100%;margin-left:0;margin-bottom:64px}
+.cs-intervention-grid{display:flex;flex-direction:column;gap:0}
+@media(max-width:768px){.cs-block--intervention{width:100%;margin-left:0}}
+.cs-intv-card{position:relative;background:none;border:none;border-top:1px solid var(--bd);box-shadow:none;border-radius:0;padding:26px 0;display:grid;grid-template-columns:52px 1fr;gap:0 24px;align-items:start}
+.cs-intv-card::before{display:none}
+.cs-intv-num{font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:.06em;color:var(--ff);opacity:1;line-height:1.6;grid-row:1/3;align-self:start;padding-top:3px}
+.cs-intv-h{font-family:var(--display);font-size:17px;font-weight:600;letter-spacing:0;line-height:1.3;color:var(--fg);margin-bottom:10px}
 .cs-intv-body{font-size:14px;font-weight:400;color:color-mix(in srgb,var(--fg) 75%,var(--fm));line-height:1.85}
 .cs-intv-body p{margin-bottom:8px}
 .cs-intv-body p:last-child{margin-bottom:0}
@@ -763,7 +776,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .cs-sticky-body p{margin-bottom:16px}
 .cs-sticky-body p:last-child{margin-bottom:0}
 .cs-sticky-images{padding:15vh 24px 4vh;display:flex;flex-direction:column;gap:32px}
-.cs-sticky-card{background:linear-gradient(180deg,var(--sf) 0%,color-mix(in srgb,var(--sf) 60%,var(--bg)) 100%);border-radius:16px;padding:16px 16px 12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.cs-sticky-card{background:linear-gradient(180deg,var(--sf) 0%,color-mix(in srgb,var(--sf) 60%,var(--bg)) 100%);border-radius:16px;padding:16px 16px 12px;overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,.18)}
 .cs-sticky-card .cs-block-img{width:100%;aspect-ratio:4/3;background:var(--bg);border-radius:10px;overflow:hidden;display:flex;align-items:center;justify-content:center}
 .cs-sticky-card .cs-block-img img{width:100%;height:100%;object-fit:cover}
 @media(max-width:768px){.cs-block--sticky{grid-template-columns:1fr;min-height:auto;width:calc(100% + 40px);margin-left:-20px}.cs-sticky-text{position:relative;height:auto;padding:40px 20px}.cs-sticky-images{padding:0 20px 40px}}
@@ -850,7 +863,8 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .cs-atmo-bg-gradient{position:absolute;inset:0}
 .cs-atmo-bg::after{content:'';position:absolute;inset:0;background:rgba(0,0,0,.35);pointer-events:none}
 .cs-atmo-content{position:relative;z-index:2;display:grid;grid-template-columns:auto 1fr;gap:clamp(32px,6vw,80px);align-items:center;max-width:960px;width:100%}
-.cs-atmo-card{background:rgba(10,10,10,.75);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:24px 20px;width:240px;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+/* De-glassed: solid card over the atmospheric gradient, no backdrop blur. */
+.cs-atmo-card{background:rgba(8,8,10,.94);border:1px solid rgba(255,255,255,.10);border-radius:12px;padding:24px 20px;width:240px;box-shadow:0 14px 40px rgba(0,0,0,.4)}
 .cs-atmo-card img{width:100%;border-radius:10px}
 .cs-atmo-card-title{font-weight:600;font-size:15px;color:#fff;margin-bottom:16px}
 .cs-atmo-card-item{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13px;color:rgba(255,255,255,.5);border-bottom:1px solid rgba(255,255,255,.05)}
@@ -895,7 +909,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 
 /* Gradient split panel — screenshot floats as a card */
 .cs-split-image--panel{display:flex;align-items:center;justify-content:center;gap:clamp(12px,2vw,22px);padding:clamp(28px,4vw,52px) clamp(20px,3vw,40px);min-height:clamp(420px,40vw,560px);overflow:hidden}
-.cs-split-card{height:84%;aspect-ratio:5/6;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 36px 80px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.14)}
+.cs-split-card{height:84%;aspect-ratio:5/6;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 18px 44px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.10)}
 .cs-split-image--panel .cs-split-card img{position:static;display:block;width:100%;height:100%;object-fit:cover;object-position:top}
 @media(max-width:768px){.cs-split-image--panel{min-height:auto;padding:36px 20px}.cs-split-card{height:auto;width:100%;max-width:340px;aspect-ratio:5/6}}
 
@@ -963,7 +977,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .cs-plates-row{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(12px,2vw,24px)}
 .cs-plate-item{margin:0;display:flex;flex-direction:column;gap:12px}
 .cs-plate-item figcaption{display:flex;flex-direction:column;gap:4px}
-.cs-plate-eyebrow{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ff)}
+.cs-plate-eyebrow{font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--ff)}
 .cs-plate-line{font-size:13px;line-height:1.5;color:var(--fm)}
 @media(max-width:768px){.cs-plates-row{grid-template-columns:1fr}}
 
@@ -1994,7 +2008,7 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 @media(max-width:768px){.co{padding:80px 20px 60px}.co-grid{grid-template-columns:1fr}.co-type-row{flex-direction:column;gap:8px}.co-type-sample{min-width:auto}}
 
 /* ── Philosophy Page ── */
-.ph{max-width:720px;margin:0 auto;padding:100px 32px 80px}
+.ph{max-width:720px;margin:0 auto;padding:100px 32px 80px;counter-reset:phSec}
 .ph-header{margin-bottom:56px}
 .ph-pre{font-size:11px;font-weight:600;letter-spacing:0.08em;color:var(--ff);margin-bottom:16px}
 .ph-h{font-family:var(--display);font-size:clamp(36px,6vw,56px);font-weight:600;letter-spacing:-0.02em;line-height:1.08;margin-bottom:8px}
@@ -2008,7 +2022,8 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 .ph-canon-al{font-size:11px;font-weight:500;letter-spacing:.01em;color:var(--ff);margin-bottom:8px;display:block}
 .ph-canon-at{font-family:var(--display);font-size:18px;line-height:1.55;color:var(--fm);max-width:520px}
 .ph-section{margin-bottom:64px}
-.ph-sl{font-size:13px;font-weight:600;letter-spacing:.01em;color:var(--fm);margin-bottom:16px}
+.ph-sl{counter-increment:phSec;font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:0;color:var(--fm);margin-bottom:16px;line-height:1.4}
+.ph-sl::before{content:"§" counter(phSec,decimal-leading-zero) "  ";color:var(--ff)}
 .ph-intro{font-size:15px;font-weight:400;line-height:1.8;color:var(--fm)}
 .ph-abstract{margin-bottom:56px;padding:32px 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
 .ph-abstract-text{font-family:var(--display);font-size:18px;font-weight:500;line-height:1.7;color:var(--fm)}
@@ -2022,17 +2037,19 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 .ph-process-dot{width:8px;height:8px;border-radius:50%;background:var(--fg);opacity:.25}
 .ph-process-name{font-size:11px;font-weight:500;letter-spacing:.01em;color:var(--fm)}
 .ph-principles{margin-top:72px;padding-top:40px;border-top:1px solid var(--bd);margin-bottom:72px}
-.ph-principles-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.ph-principle{background:var(--sf);padding:20px}
-.ph-principle-num{font-family:var(--display);font-size:10px;color:var(--ff);opacity:.5;margin-bottom:6px}
-.ph-principle-title{font-family:var(--display);font-size:15px;font-weight:600;line-height:1.4;margin-bottom:6px;color:var(--fg)}
-.ph-principle-desc{font-size:12px;font-weight:300;color:var(--fm);line-height:1.6}
+/* Editorial de-box: principles as a ruled ledger-grid with mono margin indices,
+   no filled cards. */
+.ph-principles-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 48px}
+.ph-principle{background:none;padding:22px 0;border-top:1px solid var(--bd);display:grid;grid-template-columns:38px 1fr;gap:0 18px;align-items:start}
+.ph-principle-num{font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:.06em;color:var(--ff);opacity:1;margin-bottom:0;grid-row:1/3;align-self:start;padding-top:3px}
+.ph-principle-title{font-family:var(--display);font-size:16px;font-weight:600;line-height:1.35;margin-bottom:6px;color:var(--fg)}
+.ph-principle-desc{font-size:13px;font-weight:400;color:var(--fm);line-height:1.6}
 .ph-lineages{margin-bottom:72px;padding-top:40px;border-top:1px solid var(--bd)}
-.ph-lineage{background:var(--sf);padding:20px}
-.ph-lineage.convergence{grid-column:1/-1;background:transparent;border-top:1px solid var(--bd);border-radius:0;padding:20px 0}
-.ph-lineage-heading{font-size:11px;font-weight:500;letter-spacing:.04em;margin-bottom:8px}
-.ph-lineage-body{font-size:12px;font-weight:300;color:var(--fm);line-height:1.7}
-.ph-lineages-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.ph-lineage{background:none;padding:22px 0;border-top:1px solid var(--bd)}
+.ph-lineage.convergence{grid-column:1/-1;background:transparent;border-top:1px solid var(--bd);border-radius:0;padding:22px 0}
+.ph-lineage-heading{font-family:var(--display);font-size:16px;font-weight:600;letter-spacing:0;margin-bottom:8px;color:var(--fg)}
+.ph-lineage-body{font-size:13px;font-weight:400;color:var(--fm);line-height:1.7}
+.ph-lineages-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 48px}
 .ph-works-cited{margin-bottom:72px;padding-top:40px;border-top:1px solid var(--bd)}
 .ph-works-list{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px}
 .ph-work-item{font-size:11px;color:var(--ff);line-height:1.6;padding-left:12px;border-left:1px solid var(--bd)}
