@@ -632,6 +632,9 @@ export default function PatioBeach() {
           {/* 1. Opening — The Premise */}
           <NarrativeSection>
             <p className="pb-narr-lead">Discarded things have meaning.</p>
+            <div className="pb-narr-figure">
+              <img src="/media/nest/cd-court.jpg" alt="A discarded CD on a maroon sport court, catching the light" className="pb-narr-figure-img" />
+            </div>
             <p className="pb-narr-body">This project began as a simple act of noticing.</p>
             <p className="pb-narr-body">Starting in late 2016, I walked my son Mathis to preschool along the same route each morning, Park Slope to Gowanus in Brooklyn. Along the way I'd whip out my iPhone or my Fujifilm X100 and photograph objects that had been left behind: broken furniture, lost toys, crushed packaging, forgotten tools, empty alcohol containers. Honestly, it felt like a wild party happened after dark. Every night. Chaos.</p>
             <p className="pb-narr-body">One of the first images I took was of me in a thrown-out mirror. Funny looking back on it now. But it snowballed from there. At first it felt like a small curiosity, a way to sharpen my eye. Over time I realized the documenting was fun. New York is a dirty city. Lots of garbage and all types. Large and small. People throw away anything. The quiet life of things the city had decided it no longer needed. And perhaps the things we decide are the same about ourselves.</p>
@@ -688,6 +691,9 @@ export default function PatioBeach() {
             <p className="pb-narr-body">That name held for about six months. By April 2018 I understood the project differently than I had when I named it, and I renamed the account @patiobeach. It was an admission that the project was not about garbage.</p>
             <p className="pb-narr-body">A patio is the threshold between a home and what's outside it. A beach is the threshold between solid ground and what moves underneath everything. Both are places of rest and observation, defined by what they're next to. Patio Beach names the zone where private life meets the unconscious and leaves evidence on the ground between them.</p>
             <p className="pb-narr-body">The curb, it turns out, is a tideline. Things wash up there. Sanitation arrives like the tide and carries them away.</p>
+            <div className="pb-narr-figure">
+              <img src="/media/nest/prada-map.png" alt="A discarded Prada ribbon on the pavement beside the walking route map" className="pb-narr-figure-img" />
+            </div>
           </NarrativeSection>
 
           {/* 4. The Shadow */}
