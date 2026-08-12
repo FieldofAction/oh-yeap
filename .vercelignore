@@ -6,7 +6,9 @@ dist
 screenshots
 art_templates
 instagram
-motion
+# Anchor to repo root: a bare "motion" also matches public/media/motion/,
+# which holds the essays' referenced .mp4 files and must stay deployed.
+/motion
 threads-backup-*.json
 *.md
 
