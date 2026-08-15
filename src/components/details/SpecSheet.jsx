@@ -51,7 +51,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
   }, []);
 
   return (
-    <div ref={overlayRef} className={`sp-overlay ${closing ? "closing" : ""}${item.spec?.specimen ? " sp-specimen" : ""}`}>
+    <div ref={overlayRef} data-lenis-prevent className={`sp-overlay ${closing ? "closing" : ""}${item.spec?.specimen ? " sp-specimen" : ""}`}>
       <button className="rd-back" onClick={onClose}>&larr; Back</button>
       <div className="sp-inner">
         <HiddenStrip item={item} />

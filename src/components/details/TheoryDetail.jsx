@@ -25,7 +25,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
   const imgs = theory?.images || {};
 
   return (
-    <div ref={overlayRef} className={`th-overlay ${closing ? "closing" : ""}`}>
+    <div ref={overlayRef} data-lenis-prevent className={`th-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>← Back</button>
       <div className="th-inner">
         <HiddenStrip item={item} />

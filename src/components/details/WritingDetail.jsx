@@ -132,7 +132,7 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
   }, [item.title]);
 
   return (
-    <div ref={overlayRef} className={`rd-overlay ${closing ? "closing" : ""}`}>
+    <div ref={overlayRef} data-lenis-prevent className={`rd-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>← Back</button>
       <div className="rd-inner">
         <HiddenStrip item={item} />
