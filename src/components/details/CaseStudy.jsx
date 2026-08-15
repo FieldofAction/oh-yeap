@@ -707,7 +707,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
   };
 
   return (
-    <div ref={overlayRef} className={`cs-overlay ${closing ? "closing" : ""}`}>
+    <div ref={overlayRef} data-lenis-prevent className={`cs-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>&larr; Back</button>
       <div className="cs-inner">
         <HiddenStrip item={item} />

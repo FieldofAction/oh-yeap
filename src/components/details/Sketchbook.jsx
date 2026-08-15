@@ -12,7 +12,7 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
   const artVi = useCallback((i) => VIS[(Math.abs(item.title.charCodeAt(0)) + i) % VIS.length](fg), [item.title, fg]);
 
   return (
-    <div ref={overlayRef} className={`sk-overlay ${closing ? "closing" : ""}`}>
+    <div ref={overlayRef} data-lenis-prevent className={`sk-overlay ${closing ? "closing" : ""}`}>
       <button className="rd-back" onClick={onClose}>← Back</button>
       <div className="sk-inner">
         <HiddenStrip item={item} />
