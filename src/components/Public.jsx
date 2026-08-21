@@ -7,6 +7,7 @@ import NetworkGraph from "./NetworkGraph";
 import HeroCycle from "./HeroCycle";
 import HeroGrid from "./HeroGrid";
 import useReveal from "../hooks/useReveal";
+import { DEV_MODE } from "../lib/devMode";
 
 /* ── Hero mode: 1 = Threshold Strip, 2 = Signal Bar, 3 = Ambient Dashboard, 4 = Available Light Grid ── */
 const HERO_MODE = 4;
@@ -219,7 +220,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
 
       {(filter !== "All" || relFilter) && (
         <div className="filters en d5">
-          {[FILTERS[0], "Practice", ...FILTERS.slice(1)].filter(f => import.meta.env.DEV || f !== "Exploration").map(f => <button key={f} className={`fc ${!relFilter && filter===f?"on":""}`} onClick={() => setFilter(f)}>{f}</button>)}
+          {[FILTERS[0], "Practice", ...FILTERS.slice(1)].filter(f => DEV_MODE || f !== "Exploration").map(f => <button key={f} className={`fc ${!relFilter && filter===f?"on":""}`} onClick={() => setFilter(f)}>{f}</button>)}
         </div>
       )}
       {/* ── Differentiated Sections ── */}
@@ -243,7 +244,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 )}
                 <div className="ix">
                   {practice.map((item, i) => (
-                    <div key={item.id} data-reveal className={`ix-row${import.meta.env.DEV && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)}>
+                    <div key={item.id} data-reveal className={`ix-row${DEV_MODE && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)}>
                       <div className="ix-main">
                         <div className="ix-pre">{item.role}<HiddenChip item={item} /></div>
                         <div className="ix-title">{item.title}</div>
@@ -280,7 +281,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                   {featured.length > 0 && (
                     <div className="ix-wr-feat">
                       {featured.map((item, i) => (
-                        <div key={item.id} className={`ix-wr-feat-card${showAll ? " en" : ""}${import.meta.env.DEV && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.03+i*0.05}s`} : undefined}>
+                        <div key={item.id} className={`ix-wr-feat-card${showAll ? " en" : ""}${DEV_MODE && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.03+i*0.05}s`} : undefined}>
                           <div className="ix-wr-feat-img" style={(item.cardImg || item.coverImg) ? {backgroundImage:`url(${item.cardImg || item.coverImg})`,backgroundSize:"cover",backgroundPosition:"center"} : undefined} />
                           <div className="ix-wr-feat-body">
                             <div className="ix-wr-pre">{item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}<HiddenChip item={item} /></div>
@@ -300,7 +301,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                       {rest.map((item, i) => {
                         const isMemo = item.writeType === "memo";
                         return (
-                          <div key={item.id} className={`ix-wr-item${showAll ? " en" : ""}${import.meta.env.DEV && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.02+i*0.03}s`} : undefined}>
+                          <div key={item.id} className={`ix-wr-item${showAll ? " en" : ""}${DEV_MODE && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.02+i*0.03}s`} : undefined}>
                             <div className="ix-wr-head">
                               <span className="ix-wr-pre">{isMemo && item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}<HiddenChip item={item} /></span>
                               <span className="ix-wr-meta">
@@ -332,8 +333,8 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
             })()}
 
             {/* Exploration — 2-col compact (matches Artifacts). Empty publicly, so
-                only surfaces in dev or via relation navigation, not on the public All view. */}
-            {((import.meta.env.DEV && (showAll || filter === "Exploration")) || relFilter) && exploration.length > 0 && (
+                only surfaces in dev mode or via relation navigation, not on the public All view. */}
+            {((DEV_MODE && (showAll || filter === "Exploration")) || relFilter) && exploration.length > 0 && (
               <div className={`content-section${showAll ? " reveal" : ""}`}>
                 {showAll && (
                   <div className="content-section-head">
@@ -344,7 +345,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 {showAll && <div className="content-section-gloss">{SECTION_GLOSSES.Exploration}</div>}
                 <div className="ix-art">
                   {exploration.map((item, i) => (
-                    <div key={item.id} data-reveal className={`ix-art-item${import.meta.env.DEV && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)}>
+                    <div key={item.id} data-reveal className={`ix-art-item${DEV_MODE && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)}>
                       <div className="ix-art-head">
                         <span className="ix-art-type">{item.status === "wip" ? "In Progress" : item.status}</span>
                         <span className={`ix-dot ${item.status}`} />
@@ -376,7 +377,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 {showAll && <div className="content-section-gloss">{SECTION_GLOSSES.Artifacts}</div>}
                 <div className="ix-art">
                   {artifacts.map((item, i) => (
-                    <div key={item.id} data-reveal className={`ix-art-item${import.meta.env.DEV && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)}>
+                    <div key={item.id} data-reveal className={`ix-art-item${DEV_MODE && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)}>
                       <div className="ix-art-head">
                         <span className="ix-art-type">{item.artifactType || "Artifact"}</span>
                         <span className="ix-art-ver">{item.version}</span>

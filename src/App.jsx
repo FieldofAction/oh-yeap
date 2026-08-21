@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { THEMES } from "./data/themes";
 import { SEED, uid, VIS, isHidden } from "./data/seed";
+import { DEV_MODE } from "./lib/devMode";
+import useDevModeShortcut from "./hooks/useDevModeShortcut";
 import useASUStore from "./store/useASUStore";
 import Public from "./components/Public";
 import ArtOfModel from "./components/ArtOfModel";
@@ -9,6 +11,7 @@ import Backstage from "./components/Backstage";
 import Models from "./components/Models";
 import SiteFooter from "./components/SiteFooter";
 import Sidebar from "./components/Sidebar";
+import DevModeBar from "./components/DevModeBar";
 import About from "./components/About";
 import Colophon from "./components/Colophon";
 import Canon from "./components/Canon";
@@ -89,6 +92,7 @@ export default function App() {
   const [activeItem, setActiveItem] = useState(null);
   const [closing, setClosing] = useState(false);
   const explorationStore = useExplorationStore();
+  useDevModeShortcut();
 
   // Enrich activeItem with exploration store overrides
   const enrichedActiveItem = useMemo(() => {
@@ -176,31 +180,29 @@ export default function App() {
     return () => window.removeEventListener("keydown", handler);
   }, [activeItem]);
 
-  // Hidden-from-public items (Wave-1 practice + per-item `hidden: true`) are excluded from production builds.
-  // Dev (`npm run dev`) shows everything so unfinished pages can be previewed locally; visual indicators
-  // distinguish hidden material — see HIDDEN-ITEMS.md. Studio-gated views (Backstage, etc.) still receive full `content`.
-  //
-  // Browser preview escape hatch: append `?preview` to any URL to reveal hidden/unfinished
-  // work on the live site (same as dev). Not secret — anyone who appends it can see drafts.
-  const revealHidden = useMemo(() => {
-    if (import.meta.env.DEV) return true;
-    if (typeof window === "undefined") return false;
-    return new URLSearchParams(window.location.search).has("preview");
-  }, []);
+  // Hidden-from-public items (Wave-1 practice + per-item `hidden: true`) are excluded for visitors.
+  // Dev mode (`npm run dev`, or `?dev` on a deployed build) shows everything so unfinished pages can be
+  // reviewed in place; visual indicators distinguish hidden material. See src/lib/devMode.js and
+  // HIDDEN-ITEMS.md. Studio-gated views (Backstage, etc.) still receive full `content`.
   const publicContent = useMemo(
-    () => content.filter(c => revealHidden || !isHidden(c)),
-    [content, revealHidden]
+    () => content.filter(c => DEV_MODE || !isHidden(c)),
+    [content]
   );
 
-  // Per-section counts of hidden items, used to drive the nav + section-header indicators
-  // wherever hidden material is revealed (dev or ?preview). Empty otherwise (no indicators).
+  // The hidden material dev mode is revealing, for the dev bar's list. Empty for visitors.
+  const hiddenItems = useMemo(
+    () => (DEV_MODE ? content.filter(isHidden) : []),
+    [content]
+  );
+
+  // Per-section counts of hidden items, used to drive the dev-mode nav + section-header indicators.
+  // Empty object for visitors (no indicators rendered).
   const hiddenCounts = useMemo(() => {
-    if (!revealHidden) return {};
-    return content.reduce((acc, c) => {
-      if (isHidden(c)) acc[c.section] = (acc[c.section] || 0) + 1;
+    return hiddenItems.reduce((acc, c) => {
+      acc[c.section] = (acc[c.section] || 0) + 1;
       return acc;
     }, {});
-  }, [content, revealHidden]);
+  }, [hiddenItems]);
 
   const filtered = useMemo(() => {
     let items = publicContent.filter(c => c.status !== "draft");
@@ -290,6 +292,8 @@ export default function App() {
       {activeItem && activeItem.spec && !activeItem.sketch && !activeItem.theory && <SpecSheetDetail item={activeItem} allItems={content} closing={closing} onClose={closeItem} onOpen={openItem} fg={theme.fg} lens={lens} patternLens={patternLens} />}
 
       {/* Dual lens toggle — floating button pair */}
+      <DevModeBar items={hiddenItems} onOpen={openItem} />
+
       {view !== "models" && view !== "patterns" && <DualLensToggle modelActive={lens} patternActive={patternLens} onToggleModel={toggleLens} onTogglePattern={togglePatternLens} />}
 
       {/* Easter egg overlay — press ? to toggle */}
