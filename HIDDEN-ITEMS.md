@@ -1,8 +1,10 @@
 # Hidden Items — Revisions Thread
 
-Items flagged `hidden: true` in `src/data/seed.js` are filtered out of every public surface (cards, detail overlays, cross-linking from Models and Pattern Language) via `App.jsx:174`. The data is intact; they're invisible until the flag comes off.
+Items flagged `hidden: true` in `src/data/seed.js` are filtered out of every public surface (cards, detail overlays, cross-linking from Models and Pattern Language). The data is intact; they're invisible until the flag comes off.
 
-Two other hide mechanisms are also active: a Wave-1 launch gate that removes all `section: "practice"` items, and a title-match in `Public.jsx:208` that relocates Relational Design out of the Exploration grid into the CANON nav.
+Two other hide mechanisms are also active: a Wave-1 launch gate that removes every `section: "practice"` item that has not been cleared with `published: true`, and a title-match in `Public.jsx` that relocates Relational Design out of the Exploration grid into the CANON nav.
+
+Both hide mechanisms live in one predicate, [`isHidden`](src/data/seed.js:8), and one switch, [`DEV_MODE`](src/lib/devMode.js). See **How to see the hidden items** below.
 
 ---
 
@@ -16,10 +18,11 @@ Two other hide mechanisms are also active: a Wave-1 launch gate that removes all
 | 2 | Relational Field Model | Artifacts | seed / v0.1 | Spec sheet | No preview visual; couples tightly to Relational Design canon without adding new signal |
 | 3 | Hybrid Intelligence | Exploration | wip | Sketchbook | Fragments reference visuals (agent comparison, architecture diagram) with no `src`; reads as essay, not sketch |
 | 4 | Condition-First | Exploration | wip | Sketchbook | Held back for revision pass |
+| 5 | Relational Design Under Stress | Writing | live / Memo 10 | Memo | Held back for revision pass |
 
 *With Condition-First and Hybrid Intelligence both hidden, the public Exploration section is now empty. The filter button and section header still render on direct navigation; consider suppressing empty sections in `Public.jsx` if that becomes visually awkward.*
 
-### B. By Wave-1 launch gate (`section !== "practice"` at [App.jsx:174](src/App.jsx:174))
+### B. By Wave-1 launch gate (unpublished `section: "practice"`, at [seed.js:8](src/data/seed.js:8))
 
 | # | Item | Section | Year | Status | Type |
 |---|------|---------|------|--------|------|
@@ -28,7 +31,7 @@ Two other hide mechanisms are also active: a Wave-1 launch gate that removes all
 | 6 | Vevo | Practice | 2016–2021 | live | Case study |
 | 7 | Tribeca Festival | Practice | 2014–2016 | archived | Case study |
 
-*Wave 2 refinement ships these back on. See the comment block at [App.jsx:171–174](src/App.jsx:171).*
+*Wave 2 refinement ships these back on, one at a time: adding `published: true` to a practice entry clears that single case study for release. Workbench already carries it.*
 
 ### C. Relocated, not hidden
 
@@ -98,10 +101,39 @@ Clicking any of these chips now resolves to `undefined` in `findSeedItem` and no
 
 ---
 
+## How to see the hidden items
+
+Dev mode reveals everything on this page, marks it with amber indicators, and lists it in a bar at the bottom of the screen. Every hidden item is one click away from that list.
+
+**Keyboard**
+
+Type `dev` anywhere on the site, local or deployed, to toggle it. Three keystrokes inside 1.2s, then the page reloads into the other mode.
+
+It is a sequence rather than a chord for two reasons: the single keys are already spent on the lenses (M, P, G, ?), and a bare D would hand every visitor the unfinished work by accident. The sequence resets on any pause longer than the window, ignores keystrokes typed into inputs and contenteditable regions, and ignores a first keystroke carrying Cmd, Ctrl, or Alt. While dev mode is on, the `?` overlay names the shortcut in its legend.
+
+**By URL**
+
+| URL | Effect |
+|-----|--------|
+| `fieldofaction.org/?dev` | Turn dev mode on for this browser tab |
+| `fieldofaction.org/?dev=off` | Turn it off (Exit in the bar does the same) |
+
+`?preview` is accepted as an alias.
+
+**Defaults and storage**
+
+`npm run dev` starts in dev mode; a deployed build starts in the public view. The choice is stored in `sessionStorage` under `foa-dev-mode` as an explicit `"1"` or `"0"`, so it survives hash navigation and reloads, disappears when the tab closes, and lets the shortcut drop a local dev server into the public view without a rebuild. That is the fastest way to check what a visitor actually sees.
+
+The flag resolves once per page load: `setDevMode` reloads rather than flipping it mid-session, because the content filters are memoized on mount.
+
+This is convenience, not a security boundary. Anyone who types `dev` sees the drafts, and the seed data ships in the public bundle either way. Material that must stay private belongs outside `seed.js`.
+
+**Implementation** — [src/lib/devMode.js](src/lib/devMode.js) resolves the flag, [useDevModeShortcut.js](src/hooks/useDevModeShortcut.js) is the key sequence, [DevModeBar.jsx](src/components/DevModeBar.jsx) is the bar, [HiddenIndicators.jsx](src/components/HiddenIndicators.jsx) is the chip / strip / count set, and [PublicApp.jsx](src/PublicApp.jsx) + [App.jsx](src/App.jsx) apply the filter. `Public.jsx` and `PublicSidebar.jsx` also gate the Exploration section and nav entry on `DEV_MODE`, since that section is empty for visitors.
+
 ## How to unhide
 
-Remove `hidden: true` from the item's seed entry. Nothing else changes.
+Remove `hidden: true` from the item's seed entry. For a practice case study, add `published: true` instead. Nothing else changes.
 
 ## How to add another hidden page
 
-Add `hidden: true` to the seed entry. The filter in `App.jsx:174` catches it across Public, Models, and Pattern Language.
+Add `hidden: true` to the seed entry. `isHidden` catches it across Public, Models, and Pattern Language.

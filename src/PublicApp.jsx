@@ -1,13 +1,16 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { THEMES } from "./data/themes";
 import { SEED, isHidden } from "./data/seed";
+import { DEV_MODE } from "./lib/devMode";
 import usePublicSystemCondition from "./hooks/usePublicSystemCondition";
 import useSmoothScroll, { scrollTopNow } from "./hooks/useSmoothScroll";
+import useDevModeShortcut from "./hooks/useDevModeShortcut";
 import useExplorationStore from "./store/useExplorationStore";
 import Public from "./components/Public";
 import Models from "./components/Models";
 import SiteFooter from "./components/SiteFooter";
 import PublicSidebar from "./components/PublicSidebar";
+import DevModeBar from "./components/DevModeBar";
 import About from "./components/About";
 import Colophon from "./components/Colophon";
 import Canon from "./components/Canon";
@@ -108,6 +111,7 @@ export default function PublicApp() {
   const explorationStore = useExplorationStore();
   const nowState = usePublicSystemCondition();
   useSmoothScroll();
+  useDevModeShortcut();
 
   const enrichedActiveItem = useMemo(() => {
     if (!activeItem?.sketch) return activeItem;
@@ -246,23 +250,28 @@ export default function PublicApp() {
     return () => window.removeEventListener("keydown", handler);
   }, [activeItem, closeItem]);
 
-  // Hidden-from-public items (Wave-1 practice + per-item `hidden: true`) are excluded from production builds.
-  // Dev (`npm run dev`) shows everything so unfinished pages can be previewed locally; visual indicators
-  // distinguish hidden material — see HIDDEN-ITEMS.md.
+  // Hidden-from-public items (Wave-1 practice + per-item `hidden: true`) are excluded for visitors.
+  // Dev mode (`npm run dev`, or `?dev` on the deployed site) shows everything so unfinished pages can be
+  // reviewed in place; visual indicators distinguish hidden material. See src/lib/devMode.js and HIDDEN-ITEMS.md.
   const publicContent = useMemo(
-    () => SEED.filter(c => import.meta.env.DEV || !isHidden(c)),
+    () => SEED.filter(c => DEV_MODE || !isHidden(c)),
     []
   );
 
-  // Per-section counts of hidden items, used to drive dev-only nav + section-header indicators.
-  // Empty object in production (no indicators rendered).
+  // The hidden material dev mode is revealing, for the dev bar's list. Empty for visitors.
+  const hiddenItems = useMemo(
+    () => (DEV_MODE ? SEED.filter(isHidden) : []),
+    []
+  );
+
+  // Per-section counts of hidden items, used to drive the dev-mode nav + section-header indicators.
+  // Empty object for visitors (no indicators rendered).
   const hiddenCounts = useMemo(() => {
-    if (!import.meta.env.DEV) return {};
-    return SEED.reduce((acc, c) => {
-      if (isHidden(c)) acc[c.section] = (acc[c.section] || 0) + 1;
+    return hiddenItems.reduce((acc, c) => {
+      acc[c.section] = (acc[c.section] || 0) + 1;
       return acc;
     }, {});
-  }, []);
+  }, [hiddenItems]);
 
   const filtered = useMemo(() => {
     let items = publicContent.filter(c => c.status !== "draft");
@@ -336,6 +345,8 @@ export default function PublicApp() {
         </button>
       )}
 
+      <DevModeBar items={hiddenItems} onOpen={openItem} />
+
       {view !== "models" && view !== "patterns" && <DualLensToggle modelActive={lens} patternActive={patternLens} onToggleModel={toggleLens} onTogglePattern={togglePatternLens} />}
 
       {egg && (
@@ -343,7 +354,7 @@ export default function PublicApp() {
           <div style={{ fontSize: 9, fontWeight: 500, letterSpacing: ".14em", textTransform: "uppercase", color: "var(--ff)", marginBottom: 8 }}>System Condition</div>
           <div><strong style={{ color: "var(--fg)" }}>{nowState.condition}</strong> · Reading {nowState.reading} · Building {nowState.building} · At {nowState.working}</div>
           <div style={{ marginTop: 12, fontSize: 10, color: "var(--ff)" }}>11 agents · {publicContent.length} artifacts · {publicContent.filter(c => c.status === "live").length} live · {lens ? "Model Lens on" : "Model Lens off"} · {patternLens ? "Pattern Lens on" : "Pattern Lens off"}</div>
-          <div style={{ marginTop: 8, fontSize: 9, color: "var(--ff)", fontWeight: 300 }}>Press ? to close · M for model lens · P for pattern lens · G for connections · Esc to clear</div>
+          <div style={{ marginTop: 8, fontSize: 9, color: "var(--ff)", fontWeight: 300 }}>Press ? to close · M for model lens · P for pattern lens · G for connections · Esc to clear{DEV_MODE ? " · type dev to leave dev mode" : ""}</div>
         </div>
       )}
     </div>

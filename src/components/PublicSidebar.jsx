@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { DEV_MODE } from "../lib/devMode";
 
 // Public-facing sidebar.
 // Studio entry is a plain external link to the gated studio subdomain.
@@ -14,7 +15,7 @@ const NAV = [
       { key: "public", label: "Practice", filter: "Practice" },
       { key: "public", label: "Writing", filter: "Writing" },
       // Exploration is empty publicly; keep it dev-only until it has ready work.
-      ...(import.meta.env.DEV ? [{ key: "public", label: "Exploration", filter: "Exploration" }] : []),
+      ...(DEV_MODE ? [{ key: "public", label: "Exploration", filter: "Exploration" }] : []),
       { key: "public", label: "Artifacts", filter: "Artifacts" },
     ]},
     { group: "spaces", children: [
