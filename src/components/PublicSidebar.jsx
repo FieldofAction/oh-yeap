@@ -17,6 +17,9 @@ const NAV = [
       // Exploration is empty publicly; keep it dev-only until it has ready work.
       ...(DEV_MODE ? [{ key: "public", label: "Exploration", filter: "Exploration" }] : []),
       { key: "public", label: "Artifacts", filter: "Artifacts" },
+      // Generated static pages (public/experiments/, built from content/experiments/*.md).
+      // A full-page load like the Atlas below, not a SPA filter — see EXPERIMENTS-PUBLISHING.md.
+      { href: "/experiments", label: "Experiments" },
     ]},
     { group: "spaces", children: [
       { key: "patiobeach", label: "Patio Beach" },

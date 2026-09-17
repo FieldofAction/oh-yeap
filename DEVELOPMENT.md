@@ -24,7 +24,7 @@ npm run dev          # vite dev server on http://localhost:5180
 | `npm run build:studio` | Studio build (`BUILD_TARGET=studio`), renames `studio.html` → `index.html` |
 | `npm run lint` | ESLint |
 | `npm run preview` | Serve the last build |
-| `npm run experiments:validate` / `experiments:build` | Experiments content gate and page generation (see `EXPERIMENTS-PUBLISHING.md`) |
+| `npm run experiments:validate` / `experiments:build` / `experiments:test` | Experiments content gate, page generation, and validator/renderer tests (see `EXPERIMENTS-PUBLISHING.md`) |
 | `npm run atlas:validate` / `atlas:matchday` | World Cup Atlas data tooling (see `ATLAS.md`) |
 
 **Env vars.** Only two, both optional for normal work:

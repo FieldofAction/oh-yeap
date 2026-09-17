@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "experiments:validate": "node scripts/experiments-validate.mjs",
+    "experiments:test": "node scripts/experiments-test.mjs",
     "experiments:build": "node scripts/experiments-build.mjs",
     "atlas:validate": "node scripts/atlas-data.validate.mjs",
     "atlas:matchday": "node scripts/atlas-matchday.mjs"

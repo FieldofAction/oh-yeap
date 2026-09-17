@@ -14,8 +14,8 @@
 import { GROUPS, SECTIONS, SECTION_BASE, SITE_ORIGIN, escapeHtml, renderBlocks, renderInline } from './experiments-lib.mjs';
 
 const SECTION_TITLE = 'Experiments';
-const SECTION_DECK = 'Daily material experiments — recipe, process, environment, and what was actually observed.';
-const SECTION_SUMMARY = 'Material-first experiment abstracts from Field of Action: what was mixed, how it was run, what was observed, and how much confidence the record carries.';
+const SECTION_DECK = 'Daily experiments that treat AI as a material — recipe, process, environment, and what was actually observed.';
+const SECTION_SUMMARY = 'Material-first experiment abstracts from Field of Action, treating AI as a material: what was mixed, how it was run, what was observed, and how much confidence the record carries.';
 const AUTHOR = 'Alfred (Daniel) Dickson II';
 const FONTS = 'https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&family=Schibsted+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap';
 
@@ -348,7 +348,7 @@ ${rows}
     </div>`
     : `    <div class="x-empty">
       <h2>No experiments published yet.</h2>
-      <p>This section carries FOA Material Experiment Abstracts: the recipe or mixture, the process, the environment it ran in, the phenomenon actually observed, the confidence that record carries, and any anomaly — kept separate from what the material might be doing.</p>
+      <p>This section carries FOA Material Experiment Abstracts, which treat AI as a material: the mixture, the process, the environment it ran in, the phenomenon actually observed, the confidence that record carries, and any anomaly — kept separate from any hypothesis about how a person might act on it.</p>
       <p>The first approved entry will appear here, newest first.</p>
     </div>`;
 

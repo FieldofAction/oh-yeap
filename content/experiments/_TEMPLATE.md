@@ -17,35 +17,49 @@ version: 1
 # status: published            # `published` (default) or `draft` — drafts are skipped by the build
 # confidence_level: moderate   # low | moderate | high
 # tags:
-#   - clay
-#   - silicate
+#   - framing
+#   - refusal
 # related:
 #   - FOA-EXP-0000-001
 ---
 
 ## Recipe
 
-What went in. Quantities, ratios, grades, sources, substitutions.
+The mixture. What was combined, and in what proportion.
+
+Keep two kinds of quantity apart, and label which is which:
+
+- **Conceptual proportions** — your own description of the blend, e.g. "roughly
+  two parts instruction to one part example". These are a reading of the
+  mixture, not a measurement of it.
+- **Exposed settings** — values the system actually takes, e.g. the model
+  identifier and version, or a sampling parameter you set directly. Give the
+  literal value.
+
+Say which ingredients were fixed from a previous run and which were varied.
 
 ## Process
 
-What was done, in order. Times, temperatures, tools, sequence.
+What was done, in order. The sequence of turns or calls, what was held
+constant between them, and where you intervened.
 
 ## Environment
 
-Where and under what conditions it ran. Temperature, humidity, light, surface,
-container, duration of rest.
+The conditions the run sat in. The model and its version, the surface it was
+run through, whether the context was fresh or continued, what else was already
+in that context, what tools or retrieval were available, and the date.
 
 ## Observed Phenomenon
 
-What was actually seen, heard, smelled, measured. Observation only — no cause,
-no explanation, no claim about what the material "wants". Those belong under
-Possible Behavior.
+What the material actually did. Quote it, count it, or describe it plainly.
+
+Observation only — no cause, no explanation, no claim about what the system
+"wants" or "understands". Those belong under Possible Behavior.
 
 ## Confidence
 
-How much this record can carry. How many runs, how controlled, what was
-measured versus estimated, what would change the reading.
+How much this record can carry. How many runs, how much they varied, what was
+measured against what was estimated, and what would change the reading.
 
 ## Anomaly
 
@@ -54,12 +68,15 @@ so plainly.
 
 ## Possible Behavior
 
-Optional. The behavioural hypothesis — what the material may be doing, stated
-as a hypothesis. Delete this section if there is nothing to propose yet.
+Optional. Possible *human* behaviour in relation to this material — what a
+person might do differently, given the record above. State it as a hypothesis.
+
+Do not force a use case. Delete this section if the run does not support one.
 
 ## Evidence
 
-Optional. What backs the record: measurements, counts, photographs, repeats.
+Optional. What backs the record: transcript excerpts, counts across runs,
+repeats, comparisons against a control.
 
 ## Sources
 

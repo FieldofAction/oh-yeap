@@ -53,7 +53,7 @@ export const GROUPS = {
   },
   interpretation: {
     label: 'Interpretation',
-    note: 'Hypothesis drawn from the record above. Not an observation, and not a result.',
+    note: 'Possible human behaviour, drawn from the record above. A hypothesis — not an observation, and not a result.',
   },
   support: {
     label: 'Support',
@@ -62,6 +62,39 @@ export const GROUPS = {
 };
 
 const HEADING_LOOKUP = new Map(SECTIONS.map((s) => [s.heading.toLowerCase(), s]));
+
+// Slugs the generator itself owns. `index.md` would pass the slug pattern, but
+// the build writes index.html for the section index and then <slug>.html for
+// every entry — so an entry called "index" would silently overwrite the index.
+export const RESERVED_SLUGS = new Set(['index']);
+
+// Markdown the publishing document does not promise. Each of these renders as
+// something misleading if it slips through (a table flattens to a paragraph, an
+// image to stray punctuation), so they are refused with a pointer to the
+// supported alternative rather than silently flattened.
+const UNSUPPORTED_FORMS = [
+  {
+    test: (l) => /^\|.*\|$/.test(l) || /^\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)+\|?$/.test(l),
+    hint: 'tables are not supported — use a list, or one labelled line per row',
+  },
+  {
+    test: (l) => /!\[[^\]]*\]\([^)]*\)/.test(l),
+    hint: 'images are not supported — describe the evidence in text, or link to it under "## Sources"',
+  },
+  {
+    test: (l) => /\[\^[^\]]+\]/.test(l),
+    hint: 'footnotes are not supported — put the reference under "## Sources"',
+  },
+  {
+    test: (l) => /^(?:```|~~~)/.test(l),
+    hint: 'fenced code blocks are not supported — use `inline code`',
+  },
+  {
+    test: (l) => /^([-*_])\1{2,}$/.test(l),
+    hint: 'horizontal rules are not supported — the "## " sections are the only dividers',
+  },
+];
+
 const ID_RE = /^[A-Z0-9][A-Z0-9._-]{2,63}$/;
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -167,6 +200,7 @@ function parseFrontMatter(lines, fail) {
 function parseSections(body, fail) {
   const found = new Map();
   let current = null;
+  let currentHeading = '';
 
   for (const rawLine of body.split('\n')) {
     const heading = rawLine.match(/^##\s+(.+?)\s*$/);
@@ -179,6 +213,7 @@ function parseSections(body, fail) {
       }
       if (found.has(def.key)) fail(`duplicate section "## ${def.heading}"`);
       current = [];
+      currentHeading = def.heading;
       found.set(def.key, current);
       continue;
     }
@@ -186,8 +221,12 @@ function parseSections(body, fail) {
       fail(`"${rawLine.trim()}" is not a section heading — entries use "## " headings only`);
       continue;
     }
-    if (current) current.push(rawLine);
-    else if (rawLine.trim()) {
+    if (current) {
+      const line = rawLine.trim();
+      const unsupported = line && UNSUPPORTED_FORMS.find((form) => form.test(line));
+      if (unsupported) fail(`under "## ${currentHeading}": ${unsupported.hint} (at "${line.slice(0, 60)}")`);
+      current.push(rawLine);
+    } else if (rawLine.trim()) {
       fail(`text outside a section: "${rawLine.trim().slice(0, 60)}" — every line must sit under a "## " heading`);
     }
   }
@@ -243,7 +282,9 @@ export function parseEntry(filePath) {
 
   const fileSlug = file.replace(/\.md$/i, '');
   if (!SLUG_RE.test(fileSlug)) {
-    fail(`filename "${file}" is not a valid slug (lowercase words joined by single hyphens, e.g. kaolin-silicate-bloom.md)`);
+    fail(`filename "${file}" is not a valid slug (lowercase words joined by single hyphens, e.g. refusal-drift-under-role-framing.md)`);
+  } else if (RESERVED_SLUGS.has(fileSlug)) {
+    fail(`filename "${file}" uses the reserved slug "${fileSlug}" — the build writes ${fileSlug}.html for the section index, so this entry would overwrite it`);
   }
   if (typeof data.slug === 'string' && data.slug && data.slug !== fileSlug) {
     fail(`slug "${data.slug}" does not match the filename — rename the file or drop the slug field (the filename is the URL)`);
