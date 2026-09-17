@@ -108,3 +108,26 @@ output and untested claims about human behavior.
 Optional. The next variable or comparison to test and what observation would
 support, weaken, or distinguish the current reading. Describe it as planned,
 not as already performed.
+
+## Simple Application / Plain-Language Read
+
+Required for every new FOA Material Lab run. End with three short pieces at
+an eighth-grade reading level. Keep the technical record intact. The example
+is an illustration, not extra experimental evidence; implications stay
+conditional. Use these bold labels in this order, not additional headings.
+
+**In simple terms:**
+
+Explain what happened in plain language, without turning a provisional
+finding into a proven mechanism.
+
+**Simple example:**
+
+Give an easy-to-picture everyday example or analogy. Do not present the
+illustration as another experiment result.
+
+**Why it matters:**
+
+Explain what could become different if the phenomenon became common. A
+possible consequence does not require a product proposal or a demonstrated
+human-behavior claim.

@@ -13,6 +13,7 @@
  * Usage:  node scripts/experiments-test.mjs
  * Exit 0 = all cases pass; 1 = at least one failed.
  */
+import './experiments-plain-language-test.mjs';
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
@@ -98,10 +99,11 @@ console.log('ships a template that satisfies the contract');
     } else {
       pass('the shipped _TEMPLATE.md validates once its placeholders are filled');
       const html = renderEntryPage(published[0], byId);
-      const bands = ['Material record', 'Interpretation', 'Support'];
-      const missing = bands.filter((b) => !html.includes(b));
-      if (missing.length) fail('the template renders all three bands', `missing: ${missing.join(', ')}`);
-      else pass('the template renders all three bands');
+      const bands = ['Material record', 'Interpretation', 'Support', 'Plain-language read'];
+      const positions = bands.map((b) => html.indexOf(`>${b}</h2>`));
+      if (positions.some((p) => p < 0)) fail('the template renders all four bands', `positions: ${positions.join(', ')}`);
+      else if (positions.some((p, n) => n > 0 && p <= positions[n - 1])) fail('the plain-language band closes the record', `positions: ${positions.join(', ')}`);
+      else pass('the template renders all four bands with the plain-language read last');
     }
   } finally {
     rmSync(dir, { recursive: true, force: true });

@@ -7,7 +7,8 @@ title: Experiment 002 — Procedural Imprinting
 summary: What changes when the same AI material composition is processed in a different order?
 experiment_date: 2026-09-16
 published: 2026-09-17
-version: 1
+updated: 2026-09-17
+version: 1.1
 status: published
 tags:
   - AI-material
@@ -166,3 +167,23 @@ This record stops at the structural phenomenon. It does not report human-partici
 The proposed research sequence moves from “composition matters,” to “process matters,” to the possibility that material properties may interact to create new phenomena. These are organizing questions for the research program, not established causal laws.
 
 Experiment 003 is described here as a proposed follow-up, not a completed result.
+
+## Simple Application / Plain-Language Read
+
+**In simple terms:**
+
+The same AI “ingredients” produced different results depending on what happened first. If structure came first, later ideas stayed trapped inside that structure. If recursion came first, the system was more likely to change what it thought the whole problem was about.
+
+**Simple example:**
+
+Imagine three people organizing the same messy bedroom.
+
+One person makes labeled boxes first, then sorts everything into them.
+Another person looks through the room several times and keeps changing the categories before finally organizing it.
+A third tries to organize and rethink at the same time.
+
+They have the same stuff, but the order of operations gives them very different rooms.
+
+**Why it matters:**
+
+This means AI behavior may depend not only on the mixture of its qualities, but also on the sequence in which those qualities are used. The process may shape what becomes fundamental.

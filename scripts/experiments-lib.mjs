@@ -44,6 +44,8 @@ export const SECTIONS = [
   { key: 'sources', heading: 'Sources', group: 'support', required: false },
   { key: 'limitations', heading: 'Limitations', group: 'support', required: false },
   { key: 'next_test', heading: 'Next Test', group: 'support', required: false },
+  // Required by the authoring policy for new runs; optional for legacy records.
+  { key: 'plain_language', heading: 'Simple Application / Plain-Language Read', group: 'plain_language', required: false },
 ];
 
 export const GROUPS = {
@@ -58,6 +60,10 @@ export const GROUPS = {
   support: {
     label: 'Support',
     note: 'What backs the record, what it does not cover, and what comes next.',
+  },
+  plain_language: {
+    label: 'Plain-language read',
+    note: 'An explanation and illustration of the reported finding. Examples are not additional experiments; possible implications are not demonstrated outcomes.',
   },
 };
 
@@ -329,6 +335,21 @@ export function parseEntry(filePath) {
 
   for (const def of SECTIONS) {
     if (def.required && !sections[def.key]) fail(`missing required section "## ${def.heading}"`);
+  }
+  // Legacy entries may omit the closing section. When supplied, all three
+  // labelled pieces must be present, in order, and contain actual text.
+  if (Object.hasOwn(sections, 'plain_language')) {
+    const text = sections.plain_language;
+    const expected = ['In simple terms', 'Simple example', 'Why it matters'];
+    const labels = [...text.matchAll(/^\*\*(In simple terms|Simple example|Why it matters):\*\*[ \t]*/gm)];
+    if (labels.length !== expected.length || labels.some((m, n) => m[1] !== expected[n])) {
+      fail('"## Simple Application / Plain-Language Read" needs **In simple terms:**, **Simple example:**, and **Why it matters:** exactly once, in that order');
+    } else {
+      labels.forEach((m, n) => {
+        const part = text.slice(m.index + m[0].length, labels[n + 1]?.index ?? text.length).trim();
+        if (!part) fail(`"## Simple Application / Plain-Language Read": "${m[1]}" cannot be empty`);
+      });
+    }
   }
   if (sections.behavior && !sections.evidence) {
     warn('has "## Possible Behavior" but no "## Evidence" — a hypothesis with nothing behind it');

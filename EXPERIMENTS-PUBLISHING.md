@@ -19,6 +19,7 @@ or content list is edited. The directory *is* the index.
 | `scripts/experiments-build.mjs` | Generates the pages. |
 | `scripts/experiments-validate.mjs` | Checks the content without generating. |
 | `scripts/experiments-test.mjs` | Tests the checks and the renderer. |
+| `scripts/experiments-plain-language-test.mjs` | Closing-section checks, also imported by the main test suite. |
 | `scripts/fixtures/experiments/` | Test fixtures. **Not experiments** — outside `content/` so they can never publish. |
 | `public/experiments/` | **Generated. Git-ignored. Never hand-edit.** |
 
@@ -42,6 +43,8 @@ Pages are regenerated on every `npm run dev` and `npm run build` (wired as
 
 2. Fill in the front matter (between the `---` fences) and the sections. Only
    the approved public-facing text goes in; see **Safeguards** below.
+   Every new run must end with **Simple Application / Plain-Language Read**,
+   following the three-part authoring rule below.
 
 3. Validate:
 
@@ -117,11 +120,14 @@ renders observation before interpretation.
 | `## Sources` | no | Support | References. |
 | `## Limitations` | no | Support | What this run does not establish. |
 | `## Next Test` | no | Support | The single next thing to vary. |
+| `## Simple Application / Plain-Language Read` | new runs; optional for legacy records | Plain-language read | Three short pieces: In simple terms, Simple example, Why it matters. |
 
-The page labels the three bands and states on the page that the interpretation
-band is hypothesis, not observation. The research sequence runs **mixture →
-phenomenon → possible human behavior**, and the template renders it in that
-order regardless of how the file is written.
+The page labels the three research bands and states on the page that the
+interpretation band is hypothesis, not observation. The research sequence runs
+**mixture → phenomenon → possible human behavior**, and the template renders
+it in that order regardless of how the file is written. The plain-language
+read follows those bands as the final content section, before related links
+and the footer.
 
 Keeping claims in the right band is the author's job: if a line explains *why*
 something happened, it belongs under Possible Behavior, not under Observed
@@ -132,6 +138,32 @@ quantities and actual model settings.** A conceptual weight is your reading of
 the mixture; an exposed setting is a value the system actually takes. Do not
 imply that a percentage directly controls a model parameter unless that
 relationship was implemented and documented.
+
+### Simple Application / Plain-Language Read
+
+The authoring policy requires this ending for every new FOA Material Lab run.
+Use an eighth-grade reading level and these bold labels, in this order:
+
+- **In simple terms:** what happened, in plain language.
+- **Simple example:** an easy-to-picture everyday example or analogy.
+- **Why it matters:** what could become different if the phenomenon became common.
+
+In the entry itself, put each bold label on its own line, followed by its
+paragraphs. These are labels, not `###` headings. The renderer places this
+section last even if the source file orders its headings differently.
+Examples illustrate the reported phenomenon; they are not additional
+experimental evidence. Possible implications are not demonstrated outcomes.
+The technical record and its limitations remain intact.
+
+For backward compatibility, the validator still accepts older records without
+this section. When the section is present, all three labels must occur exactly
+once, in order, with non-empty text. New entries must include it at editorial
+review even though legacy omission remains technically valid. Do not silently
+add or rewrite older entries without the author's approval.
+
+Underscore-prefixed files can hold approved closing fragments awaiting a full
+record. They never generate pages; do not rename a fragment into a publishable
+entry before its full record and metadata are complete and approved.
 
 ### Markdown accepted inside a section
 
@@ -194,6 +226,8 @@ refuses to generate anything if it fails):
 - every `related` id resolves to a real entry, and no entry relates to itself;
 - all required sections present; unknown, duplicated or misspelled headings
   rejected; no text outside a section;
+- all three plain-language pieces present, non-empty, and ordered when that
+  closing section is supplied;
 - `summary` length (error over 300 characters, warning over 180).
 
 `npm run experiments:test` runs the suite behind those checks:
@@ -201,6 +235,10 @@ refuses to generate anything if it fails):
 `scripts/fixtures/experiments/`. Each rejection has a fixture proving it fires,
 and a valid fixture proves every promised Markdown form is still accepted and
 still renders — so tightening a check cannot quietly become over-restriction.
+The suite also imports `scripts/experiments-plain-language-test.mjs` to test the
+new closing section, missing/duplicate/empty/reordered labels, legacy omission,
+and exclusion of underscore-prefixed fragments. Its fixtures use temporary
+directories rather than the real content folder.
 
 Fixtures live outside `content/experiments/` on purpose. A fixture must never be
 publishable, and must never read as a real experiment.

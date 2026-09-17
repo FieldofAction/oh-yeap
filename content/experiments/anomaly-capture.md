@@ -8,7 +8,7 @@ summary: What changes when Whimsy replaces Constraint-Binding in an AI material 
 experiment_date: 2026-09-15
 published: 2026-09-17
 updated: 2026-09-17
-version: 1.1
+version: 1.2
 status: published
 tags:
   - AI-material
@@ -123,3 +123,17 @@ This record stops at the phenomenon. It makes no claim about future human behavi
 Separate the effects of Whimsy and reduced Constraint-Binding, then test whether Anomaly Capture appears on other substrates.
 
 These are proposed follow-up tests, not results of this experiment. The finding is intended to generate subsequent experiments rather than prove a theory.
+
+## Simple Application / Plain-Language Read
+
+**In simple terms:**
+
+When the AI was given more permission to follow unusual details and less pressure to stay inside a fixed structure, the weird detail started to matter more. At the highest Whimsy setting, the anomaly stopped being background noise and became the thing that reorganized the whole field.
+
+**Simple example:**
+
+Imagine a class is sorting a box of objects by size and color, but one object makes a strange sound. In one version, everyone ignores the sound and keeps sorting. In another, someone notices it and creates a small side category. In the highest-Whimsy version, the class suddenly starts organizing everything by what kind of sound it makes instead.
+
+**Why it matters:**
+
+This suggests AI may be able to help weak or overlooked signals become important enough to change how a situation is understood. That could matter in environments where the most valuable clue is not the most obvious one.
