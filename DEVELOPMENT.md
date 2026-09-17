@@ -15,6 +15,8 @@ npm run dev          # vite dev server on http://localhost:5180
 
 `.claude/launch.json` also defines a `dev` config (port 5180, `--strictPort`, auto-port).
 
+`dev` and `build` both run `scripts/experiments-build.mjs` first (`predev`/`prebuild`), which regenerates `public/experiments/` from `content/experiments/*.md`. That directory is generated and git-ignored.
+
 | Script | Does |
 |---|---|
 | `npm run dev` | Vite dev server (public tree by default) |
@@ -22,6 +24,7 @@ npm run dev          # vite dev server on http://localhost:5180
 | `npm run build:studio` | Studio build (`BUILD_TARGET=studio`), renames `studio.html` → `index.html` |
 | `npm run lint` | ESLint |
 | `npm run preview` | Serve the last build |
+| `npm run experiments:validate` / `experiments:build` | Experiments content gate and page generation (see `EXPERIMENTS-PUBLISHING.md`) |
 | `npm run atlas:validate` / `atlas:matchday` | World Cup Atlas data tooling (see `ATLAS.md`) |
 
 **Env vars.** Only two, both optional for normal work:
