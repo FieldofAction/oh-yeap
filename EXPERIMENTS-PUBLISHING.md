@@ -77,7 +77,7 @@ Pages are regenerated on every `npm run dev` and `npm run build` (wired as
 | `published` | yes | `YYYY-MM-DD`, first publication. Must be on or after `experiment_date`. |
 | `version` | yes | `1`, `1.2`, or `1.2.3`. |
 | `updated` | no | `YYYY-MM-DD`. Defaults to `published`. Must not precede it. |
-| `status` | no | `published` (default) or `draft`. Drafts generate no page and are skipped by the index. |
+| `status` | no | `published` (default) or `draft`. Drafts generate no page and are skipped by the index. The template ships `status: draft` explicitly, so a copied entry stays unrendered until you choose otherwise. |
 | `confidence_level` | no | `low`, `moderate` or `high`. Renders as a chip; the `## Confidence` section still carries the reasoning. |
 | `tags` | no | List. |
 | `related` | no | List of other entries' `id` values. Each must resolve to a real entry; a related entry that is still a draft renders unlinked. |
@@ -127,11 +127,11 @@ Keeping claims in the right band is the author's job: if a line explains *why*
 something happened, it belongs under Possible Behavior, not under Observed
 Phenomenon.
 
-**Under `## Recipe`, label which kind of quantity you are giving.** A conceptual
-proportion ("roughly two parts instruction to one part example") is your reading
-of the mixture. An exposed setting (a model identifier and version, a sampling
-parameter you set directly) is a value the system actually takes. They are not
-the same evidence and should not read as though they were.
+**Under `## Recipe`, keep conceptual recipe weights apart from measured
+quantities and actual model settings.** A conceptual weight is your reading of
+the mixture; an exposed setting is a value the system actually takes. Do not
+imply that a percentage directly controls a model parameter unless that
+relationship was implemented and documented.
 
 ### Markdown accepted inside a section
 
@@ -263,9 +263,19 @@ Two things this gate does not do:
 ## Safeguards
 
 - **Only approved public-facing text.** Do not paste private conversations,
-  unapproved research, or anyone else's material into an entry.
+  unapproved research, or anyone else's material into an entry. Quote brief
+  approved excerpts or link to shareable traces; do not publish the entire
+  working conversation by default.
 - **Do not invent results.** If there is no approved entry, the section stays in
-  its empty state. That is a correct state, not a gap to fill.
+  its empty state. That is a correct state, not a gap to fill. An imagined
+  output is not a result, and missing evidence stays missing rather than being
+  reconstructed.
+- **Say "not recorded" rather than inferring.** Where a model version, sampling
+  setting or hidden system configuration was not captured, record that it was
+  not captured. Do not fill the gap with a plausible value.
+- **Do not manufacture an anomaly or a clean result.** "No anomaly recorded"
+  means it was not recorded, not that none occurred. A single exploratory
+  observation is not a replicated finding.
 - **A draft branch in a public repository is not private storage.** Anything
   committed here is public the moment it is pushed, merged or not, and
   `status: draft` only hides it from the site — not from the repository.

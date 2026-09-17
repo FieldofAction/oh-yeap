@@ -13,7 +13,9 @@
  * Usage:  node scripts/experiments-test.mjs
  * Exit 0 = all cases pass; 1 = at least one failed.
  */
-import { resolve } from 'node:path';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 import { ROOT, loadEntries } from './experiments-lib.mjs';
 import { renderEntryPage, renderIndexPage } from './experiments-render.mjs';
 
@@ -70,6 +72,39 @@ console.log('accepts the documented subset');
       else fail(`renders ${what}`, `no match for ${re}`);
     }
     if (entries.length === published.length) pass('no fixture is treated as a draft');
+  }
+}
+
+// The template teaches the contract. If the two drift apart, an author follows
+// the template and the validator rejects the result — so bind them here.
+console.log('ships a template that satisfies the contract');
+{
+  const raw = readFileSync(resolve(ROOT, 'content/experiments/_TEMPLATE.md'), 'utf8');
+  const filled = raw
+    .replace(/^id: .*$/m, 'id: FIXTURE-TEMPLATE')
+    .replace(/^experiment_date: .*$/m, 'experiment_date: 2026-09-16')
+    .replace(/^published: .*$/m, 'published: 2026-09-17')
+    .replace(/^status: .*$/m, 'status: published');
+
+  const dir = mkdtempSync(join(tmpdir(), 'experiments-template-'));
+  try {
+    writeFileSync(join(dir, 'validator-fixture-from-template.md'), filled);
+    const { published, errors, byId } = loadEntries(dir);
+    if (errors.length) {
+      fail('the shipped _TEMPLATE.md validates once its placeholders are filled',
+        `the template teaches something the validator rejects:\n      ${errors.join('\n      ')}`);
+    } else if (published.length !== 1) {
+      fail('the shipped _TEMPLATE.md validates once its placeholders are filled', `expected 1 entry, got ${published.length}`);
+    } else {
+      pass('the shipped _TEMPLATE.md validates once its placeholders are filled');
+      const html = renderEntryPage(published[0], byId);
+      const bands = ['Material record', 'Interpretation', 'Support'];
+      const missing = bands.filter((b) => !html.includes(b));
+      if (missing.length) fail('the template renders all three bands', `missing: ${missing.join(', ')}`);
+      else pass('the template renders all three bands');
+    }
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
   }
 }
 
