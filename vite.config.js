@@ -39,15 +39,18 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react(),
       {
-        // Dev-only mirror of the vercel.json rewrite: serve the standalone
-        // World Cup Atlas page at the clean URL /world-cup-atlas. Without this,
-        // vite's SPA fallback would render the React home page instead.
-        name: 'atlas-clean-url',
+        // Dev-only mirror of the vercel.json rewrites: serve the standalone
+        // instrument pages at their clean URLs. Without this, vite's SPA
+        // fallback would render the React home page instead.
+        name: 'standalone-pages-clean-url',
         configureServer(server) {
           server.middlewares.use((req, res, next) => {
             const path = (req.url || '').split('?')[0]
-            if (path === '/world-cup-atlas' || path === '/world-cup-atlas/') {
-              req.url = '/world-cup-atlas.html'
+            for (const slug of ['world-cup-atlas', 'oz-index']) {
+              if (path === `/${slug}` || path === `/${slug}/`) {
+                req.url = `/${slug}.html`
+                break
+              }
             }
             next()
           })
@@ -102,6 +105,35 @@ export default defineConfig(({ mode }) => {
                 res.end(JSON.stringify({ error: { message: e.message } }))
               }
             })
+          })
+        },
+      },
+      {
+        // Dev mirror of api/poster.js (TMDB poster lookup for the Oz Index).
+        // The route handler itself is Vercel-shaped (req.query/res.status), so
+        // dev calls its exported lookup directly instead.
+        name: 'api-poster',
+        configureServer(server) {
+          server.middlewares.use('/api/poster', async (req, res) => {
+            const send = (code, body) => {
+              res.setHeader('Content-Type', 'application/json')
+              res.statusCode = code
+              res.end(JSON.stringify(body))
+            }
+            if (req.method !== 'GET') return send(405, { error: 'Method not allowed' })
+            const url = new URL(req.url || '/', 'http://localhost')
+            const title = (url.searchParams.get('title') || '').trim().slice(0, 200)
+            const year = (url.searchParams.get('year') || '').trim()
+            if (!title) return send(400, { error: 'title is required' })
+            const key = env.TMDB_API_KEY || process.env.TMDB_API_KEY || ''
+            if (!key) return send(200, { poster: null, reason: 'no-key' })
+            try {
+              const { lookupPoster } = await import('./api/poster.js')
+              const out = await lookupPoster({ title, year, key })
+              return send(200, out.status === 200 ? out : { poster: null, reason: `tmdb-${out.status}` })
+            } catch {
+              return send(200, { poster: null, reason: 'lookup-failed' })
+            }
           })
         },
       },
