@@ -125,9 +125,15 @@
   .prompt input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent;
     color: #fff; font: inherit; font-size: 16px; letter-spacing: -0.01em; padding: 10px 0; }
   .prompt input::placeholder { color: rgba(255,255,255,0.55); }
+  /* Stretched rather than centred. Centring left the button 2px shorter than
+     the pill's content box, so its top and bottom gaps came to 8.3px against
+     7px at the right, and a pill inside a pill shows that. Filling the content
+     height puts all three exposed gaps on the same 7px. The height then comes
+     from the input alone, which is the one thing setting it. */
   .prompt button { border: 0; border-radius: 999px; background: #F5F5F7; color: #0A0A0B;
     font: inherit; font-size: 14px; font-weight: 600; letter-spacing: -0.01em;
-    padding: 10px 20px; cursor: pointer; transition: opacity 0.2s ease; }
+    align-self: stretch; display: inline-flex; align-items: center; justify-content: center;
+    padding: 0 22px; cursor: pointer; transition: opacity 0.2s ease; }
   .prompt button:disabled { opacity: 0.45; cursor: default; }
   .prompt button:focus-visible, .prompt input:focus-visible { outline: none; }
 
@@ -171,8 +177,7 @@
   @media (max-width: 620px) {
     .seg button { padding: 14px 22px; }
     .prompt { padding: 5px 5px 5px 20px; }
-    .prompt input { padding: 13px 0; }
-    .prompt button { padding: 14px 20px; }
+    .prompt input { padding: 14px 0; }
     .actions button { padding: 13px 22px; }
     /* The cards hold a 26px inset that costs real measure at this width. */
     .card { padding: 20px; }
