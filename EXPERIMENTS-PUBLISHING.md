@@ -252,7 +252,9 @@ publishable, and must never read as a real experiment.
 output directory is wiped and rebuilt each run, so a deleted or renamed entry
 cannot leave a stale page behind.
 
-- **Ordering:** newest `experiment_date` first, then `published`, then `id`.
+- **Ordering:** newest `experiment_date` first, then `published`, then `id` —
+  all descending. Entries run on the same day are numbered in the order they
+  were run, so the descending id keeps the later run on top.
 - **URLs:** `/experiments` and `/experiments/<slug>`, extensionless. The
   `vercel.json` rewrites serve them in production; a Vite plugin
   (`experiments-clean-url`) mirrors that for `npm run dev` and `npm run preview`.

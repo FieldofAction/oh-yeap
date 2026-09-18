@@ -381,11 +381,16 @@ export function parseEntry(filePath) {
   };
 }
 
-/** Newest first: experiment date, then publication date, then id. */
+/**
+ * Newest first: experiment date, then publication date, then id.
+ * The id tiebreak descends too. Entries run on the same day are numbered in
+ * the order they were run, so ascending ids there would put the older run on
+ * top and contradict the section's promise.
+ */
 export const byNewest = (a, b) => (
   b.experimentDate.localeCompare(a.experimentDate)
   || b.published.localeCompare(a.published)
-  || a.id.localeCompare(b.id)
+  || b.id.localeCompare(a.id)
 );
 
 /**

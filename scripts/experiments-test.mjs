@@ -110,6 +110,20 @@ console.log('ships a template that satisfies the contract');
   }
 }
 
+// Daily publishing means same-day runs. The index promises newest first, so
+// the id tiebreak has to descend: the later run of a day belongs on top.
+console.log('orders same-day entries newest first');
+{
+  const { published, errors } = loadEntries(resolve(FIXTURES, 'same-day-order'));
+  if (errors.length) {
+    fail('two entries sharing a date still order newest first', `unexpected errors:\n      ${errors.join('\n      ')}`);
+  } else {
+    const order = published.map((e) => e.id);
+    if (order.join() === 'FIXTURE-DAY-004,FIXTURE-DAY-003') pass('the later of two same-day runs sorts first');
+    else fail('the later of two same-day runs sorts first', `got ${order.join(' then ') || '(none)'}`);
+  }
+}
+
 console.log('renders the empty state');
 {
   const html = renderIndexPage([]);
