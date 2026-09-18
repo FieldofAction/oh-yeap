@@ -27,9 +27,10 @@ npm run dev          # vite dev server on http://localhost:5180
 | `npm run experiments:validate` / `experiments:build` / `experiments:test` | Experiments content gate, page generation, and validator/renderer tests (see `EXPERIMENTS-PUBLISHING.md`) |
 | `npm run atlas:validate` / `atlas:matchday` | World Cup Atlas data tooling (see `ATLAS.md`) |
 
-**Env vars.** Only two, both optional for normal work:
+**Env vars.** Three, all optional for normal work:
 
-- `ANTHROPIC_API_KEY` — read in `vite.config.js` for the dev-only `/api/generate` and `/api/anthropic` proxies. Needed **only** to exercise the AI studio tools that use the server proxy (Breakground, Desert, FOA Generator) in dev. The public site needs no key.
+- `ANTHROPIC_API_KEY` — read in `vite.config.js` for the dev-only `/api/generate` and `/api/anthropic` proxies. Needed **only** to exercise the AI studio tools that use the server proxy (Breakground, Desert, FOA Generator) and The Oz Index in dev. The public site needs no key. In production the key lives on the Vercel project and is read by `api/generate.js`.
+- `TMDB_API_KEY` — read by `api/poster.js` for the Oz Index poster lookup. Either credential works: a v3 API key or a v4 read token. Without it the route answers `{ poster: null }` and the instrument runs without the poster tier. See `OZ-INDEX.md`.
 - `BUILD_TARGET` — `public` (default) or `studio`. Selects the HTML entry. Set on the Vercel project, not locally.
 
 Node version is **not pinned** (no `.nvmrc`/`engines`); use a current LTS. Studio tools that call Anthropic from the browser read the key from the studio's Settings panel (stored in `localStorage`), not from env — see [Studio & agents](#studio--agents).
