@@ -64,7 +64,7 @@
   .head { text-align: center; margin-bottom: 28px; }
   .head h1 { font-size: clamp(30px, 5.4vw, 42px); font-weight: 600;
     letter-spacing: -0.022em; margin: 0 0 10px; }
-  .head p { font-size: 15px; line-height: 1.5; color: var(--fg2);
+  .head p { font-size: 17px; line-height: 1.5; color: var(--fg2);
     max-width: 46ch; margin: 0 auto; letter-spacing: -0.006em; }
 
   /* HERO */
@@ -74,11 +74,19 @@
   .hero { position: relative; border-radius: 24px; overflow: hidden;
     border: 1px solid var(--stroke); aspect-ratio: 1822 / 1824;
     background: rgba(255,255,255,0.03); }
-  .hero img.plate { display: block; width: 100%; height: 100%; object-fit: cover;
+  /* The plates stack and cross-fade. Only one carries .on at a time; the rest
+     hold at zero opacity in the same box, so the frame never collapses between
+     them and nothing reflows as they change. */
+  .hero img.plate { position: absolute; inset: 0; display: block;
+    width: 100%; height: 100%; object-fit: cover; opacity: 0;
     filter: saturate(0.35) sepia(0.35) brightness(0.92);
-    transition: filter 1.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    transition: filter 1.6s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 2.2s cubic-bezier(0.4, 0, 0.2, 1); }
+  .hero img.plate.on { opacity: 1; }
   .hero.lit img.plate { filter: saturate(1.04) sepia(0) brightness(1); }
-  @media (prefers-reduced-motion: reduce) { .hero img.plate { transition: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .hero img.plate { transition: none; }
+  }
 
   .chip { position: absolute; top: 14px; left: 14px;
     background: rgba(10,10,11,0.5); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
@@ -260,7 +268,7 @@
     </header>
 
     <div class="hero" id="hero">
-      <img class="plate" src="media/background-image.png" width="1822" height="1824"
+      <img class="plate on" src="media/background-image.png" width="1822" height="1824"
            alt="The travelers on the yellow brick road approaching the Emerald City">
 
       <div class="chip" id="chip"><span class="dot"></span><span id="chip-text">Kansas</span></div>
@@ -299,6 +307,40 @@
 // The hero plate is in the markup with a preload hint, so it starts loading
 // before this script runs. Its path lives there, not here.
 
+// PLATES — the stills the hero drifts through while the instrument is idle.
+// Index 0 is the road, and it is not interchangeable: TRACK below is a
+// polyline traced against that image, so a resolved trace always returns here
+// before it sets its markers down. The rest are free.
+//
+// A plate whose file is missing drops out of the rotation on its own, so this
+// list can be filled in one image at a time. Each carries the alt text a
+// screen reader gets and an object-position, which decides what survives the
+// square crop — "center" is fine for a close-up, but a wide landscape often
+// wants "center 40%" or similar to keep the horizon.
+// Sequenced so the scale of the shot changes each time, wide, close, medium,
+// and so the two Witch plates are held apart. Every one is in colour, because
+// the whole frame is graded from Kansas to Oz and a black-and-white plate
+// could never bloom.
+const PLATES = [
+  { src: "media/background-image.png", pos: "center",
+    alt: "The travelers on the yellow brick road approaching the Emerald City" },
+  { src: "media/oz-dorothy-closeup.jpg", pos: "center",
+    alt: "Dorothy, close on her face, caught mid-startle" },
+  { src: "media/oz-witch-castle.jpg", pos: "center",
+    alt: "The Wicked Witch and a winged monkey in her castle" },
+  { src: "media/oz-glinda-munchkinland.jpg", pos: "center",
+    alt: "Glinda and Dorothy hand in hand in Munchkinland" },
+  { src: "media/oz-witch-closeup.jpg", pos: "center",
+    alt: "The Wicked Witch, close on her face" },
+  { src: "media/oz-dorothy-toto.jpg", pos: "center",
+    alt: "Dorothy holding Toto" },
+];
+
+// Gentle: each plate holds for HOLD, then takes FADE to hand over. FADE is the
+// CSS transition on .plate, so the two have to stay in step.
+const PLATE_HOLD_MS = 8000;
+const PLATE_FADE_MS = 2200;
+
 // Marker track along the road in the hero (% coords, t=0 at the travelers →
 // t=1 in the foreground). The trace walks toward the viewer: step 1 stands with
 // the travelers, the last step arrives at the film under examination.
@@ -333,7 +375,7 @@ return is the recognition that the Self was never absent.
 const MODES = {
   film: {
     label: "Film",
-    sub: "Every film since 1939 carries a thread back to The Wizard of Oz. Name one and the instrument traces it.",
+    sub: "Every film since 1939 carries a thread back to The Wizard of Oz. Name one — the instrument traces it.",
     placeholder: "Name any film",
     strengthLabel: "Thread",
     deepCutLabel: "Deep cut",
@@ -350,7 +392,7 @@ const MODES = {
   },
   spirit: {
     label: "Spirit",
-    sub: "Every film restages a station of the inner journey Oz encoded. Name one and the instrument reads it esoterically.",
+    sub: "Every film restages a station of the inner journey Oz encoded. Name one — the instrument reads it esoterically.",
     placeholder: "Name any film",
     strengthLabel: "Resonance",
     deepCutLabel: "Transmission",
@@ -494,6 +536,7 @@ function reset(clearQuery) {
   clearMarkers();
   if (clearQuery) inputEl.value = "";
   paintChrome();
+  startCycling();
   inputEl.focus();
 }
 
@@ -503,6 +546,99 @@ function switchMode(next) {
   reset(false);
   paintMode();
 }
+
+// ———————————————————————————————— the plate carousel
+
+// Plate 0 is already in the markup. The rest are built here and only join the
+// rotation once their file has actually decoded, so a missing or broken image
+// costs a slot rather than a blank frame.
+// Fixed slots in PLATES order. A slot holds its element from the start and
+// only becomes eligible once the file has loaded, so the sequence you author
+// is the sequence that plays, whatever order the network answers in.
+const plateEls = [heroEl.querySelector(".plate")];
+const plateReady = [true];
+let plateIndex = 0;
+let plateTimer = null;
+
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+function buildPlates() {
+  plateEls[0].style.objectPosition = PLATES[0].pos;
+  let after = plateEls[0];
+  PLATES.slice(1).forEach((p, i) => {
+    const slot = i + 1;
+    const img = document.createElement("img");
+    img.className = "plate";
+    img.alt = p.alt || "";
+    img.decoding = "async";
+    // Low priority so the road, which is what the page opens on, wins the
+    // network. These sit in the frame at zero opacity rather than detached:
+    // a detached image is in no viewport, so the browser is free never to
+    // fetch it at all.
+    img.fetchPriority = "low";
+    img.style.objectPosition = p.pos;
+    // Behind the chip, the markers and the pill, which are later siblings.
+    heroEl.insertBefore(img, after.nextSibling);
+    after = img;
+    plateEls[slot] = img;
+    plateReady[slot] = false;
+    img.addEventListener("load", () => { plateReady[slot] = true; });
+    // A slot that cannot be filled costs nothing: the plate leaves the frame
+    // and the rotation steps straight over it.
+    img.addEventListener("error", () => { plateReady[slot] = false; img.remove(); });
+    img.src = p.src;
+  });
+}
+
+// The next slot that has actually loaded, wrapping around. Returns the current
+// one when nothing else is ready, so a lone plate simply holds.
+function nextReadyPlate() {
+  for (let n = 1; n <= plateEls.length; n++) {
+    const i = (plateIndex + n) % plateEls.length;
+    if (plateReady[i]) return i;
+  }
+  return plateIndex;
+}
+
+function showPlate(i) {
+  if (!plateEls[i]) return;
+  plateEls.forEach((el, n) => el.classList.toggle("on", n === i));
+  plateIndex = i;
+}
+
+function stopCycling() {
+  clearTimeout(plateTimer);
+  plateTimer = null;
+}
+
+// Idle drift. It runs only in Kansas: once a trace resolves, the road plate is
+// the one the markers are measured against, so the hero holds there.
+function startCycling() {
+  stopCycling();
+  if (reducedMotion.matches || document.hidden) return;
+  plateTimer = setTimeout(function next() {
+    if (state !== "kansas" && state !== "error") return stopCycling();
+    showPlate(nextReadyPlate());
+    plateTimer = setTimeout(next, PLATE_HOLD_MS + PLATE_FADE_MS);
+  }, PLATE_HOLD_MS);
+}
+
+// Returning to the road takes the same fade as any other hand-over, so the
+// bloom and the plate change read as one movement rather than a cut.
+function settleOnRoad() {
+  stopCycling();
+  showPlate(0);
+}
+
+// A background tab has nothing to show; pick the drift back up on return.
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) stopCycling();
+  else if (state === "kansas" || state === "error") startCycling();
+});
+reducedMotion.addEventListener("change", () => {
+  if (reducedMotion.matches) stopCycling();
+  else if (state === "kansas" || state === "error") startCycling();
+});
 
 // ———————————————————————————————— the api
 
@@ -745,6 +881,10 @@ async function trace() {
   statusEl.className = "status";
   statusEl.textContent = "";
   clearMarkers();
+  // The road is the plate TRACK is measured against, so go back to it now.
+  // It has the whole length of the trace to arrive, and the bloom then lands
+  // on a plate that is already settled.
+  settleOnRoad();
   paintChrome();
 
   try {
@@ -786,6 +926,8 @@ traceBtn.addEventListener("click", trace);
 inputEl.addEventListener("keydown", (e) => { if (e.key === "Enter") trace(); });
 inputEl.addEventListener("input", paintChrome);
 
+buildPlates();
+startCycling();
 paintMode();
 paintChrome();
 // The trace pill sits at the foot of the hero, so a plain focus() on load
