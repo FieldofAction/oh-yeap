@@ -317,18 +317,21 @@
 // screen reader gets and an object-position, which decides what survives the
 // square crop — "center" is fine for a close-up, but a wide landscape often
 // wants "center 40%" or similar to keep the horizon.
-// Sequenced so the scale of the shot changes each time: wide, close, wide,
-// medium, medium. Every one of these is in colour, because the whole frame is
-// graded from Kansas to Oz and a black-and-white plate can never bloom.
+// Sequenced so the scale of the shot changes each time, wide, close, medium,
+// and so the two Witch plates are held apart. Every one is in colour, because
+// the whole frame is graded from Kansas to Oz and a black-and-white plate
+// could never bloom.
 const PLATES = [
   { src: "media/background-image.png", pos: "center",
     alt: "The travelers on the yellow brick road approaching the Emerald City" },
   { src: "media/oz-dorothy-closeup.jpg", pos: "center",
     alt: "Dorothy, close on her face, caught mid-startle" },
-  { src: "media/oz-glinda-munchkinland.jpg", pos: "center",
-    alt: "Glinda and Dorothy hand in hand in Munchkinland" },
   { src: "media/oz-witch-castle.jpg", pos: "center",
     alt: "The Wicked Witch and a winged monkey in her castle" },
+  { src: "media/oz-glinda-munchkinland.jpg", pos: "center",
+    alt: "Glinda and Dorothy hand in hand in Munchkinland" },
+  { src: "media/oz-witch-closeup.jpg", pos: "center",
+    alt: "The Wicked Witch, close on her face" },
   { src: "media/oz-dorothy-toto.jpg", pos: "center",
     alt: "Dorothy holding Toto" },
 ];
