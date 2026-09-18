@@ -37,7 +37,11 @@ so it lands at `/oz-index.html` with its hero at `/media/background-image.png`. 
 To ship changes: edit the file, commit, push. Vercel does the rest.
 Never run a formatter, minifier, or linter over it. Never split it into multiple files.
 
-The page is not linked from the site navigation. It is reached by its URL, like the Atlas.
+The page sits in the **spaces** group of the public sidebar, beside the Atlas. The way
+back out is a `.foa-back` chevron at the top left of the instrument, matching the Atlas's
+in position and wording, so the two are entered and left the same way. Its hit area is
+padded to 44px with a compensating negative margin, because below 560px the label is
+hidden and the chevron alone is 14px.
 
 ## Design — C4 "Emerald"
 Register: Apple / OpenAI. System type, near-black canvas `#0A0A0B`, frosted pills,
