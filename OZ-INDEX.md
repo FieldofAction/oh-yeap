@@ -46,7 +46,8 @@ the piece.
 
 - **The hero plate is the instrument's face.** The travelers on the road approaching the
   Emerald City, full-bleed in a 24px-radius frame, with the trace field floating over its
-  foot as a frosted pill. Everything else on the page is quiet by comparison. The plate
+  foot as a frosted pill at 50-57% of the plate, which clears the travelers' heads at 61%
+  by about 4%. Everything else on the page is quiet by comparison. The plate
   lives at `public/media/background-image.png` (1822×1824) and is referenced twice in the
   page: the preload hint in `<head>` and the `<img class="plate">` src, whose `width`/
   `height` reserve the aspect box. Both are written relative (`media/…`, no leading
@@ -61,10 +62,16 @@ the piece.
   information: the state changed. A frosted chip top-left names the state in words —
   Kansas, then Tracing…, then Oz → *title*.
 - **The road carries the journey.** Each step of the trace places a numbered frosted
-  marker along `TRACK`, a five-point polyline in percentage coordinates running from the
-  city (t=0) to the foreground (t=1). Markers scale `0.72 → 1.14` with distance so they
-  sit in the plate's perspective, and they fade in on a 300ms-per-step beat. Editing
-  `TRACK` re-fits the markers if the plate is ever replaced.
+  marker along `TRACK`, a five-point polyline in percentage coordinates. The trace walks
+  toward the viewer: step 1 stands with the travelers at 61% and the last step arrives in
+  the foreground at 91%. Markers scale `0.72 → 1.14` with distance so they sit in the
+  plate's perspective, and they fade in on a 300ms-per-step beat.
+  Three constraints bind that span, and any re-fit has to respect all three: the pill
+  occupies 50-57%, and a marker behind frosted glass reads as a smudge; the markers are a
+  fixed 30px while the plate scales, so below 620px five of them stack into a bead chain
+  and are hidden, with the journey card carrying the numbering instead; and the x column
+  is sampled from the road's own centreline, so it moves with y. Verified clear at 3, 4,
+  and 5 steps, which is the range the contract allows.
 - **Motion doctrine.** Fades and a single color bloom. The report rises 12px once on
   arrival; the chip dot pulses only while a trace is open. No springs, parallax, or
   float. `prefers-reduced-motion` removes every animation and the bloom transition.

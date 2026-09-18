@@ -76,8 +76,12 @@
   @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { .marker { animation: none; } }
 
-  /* Frosted pill input over the image */
-  .prompt { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
+  /* Frosted pill input over the image. Its height is keyed to the plate's
+     composition rather than the frame: the travelers run from 61% to 81.5%
+     of the plate, so the pill sits at 50-57% and clears the Tin Man's funnel
+     by about 4%. A percentage holds that relationship at every width, since
+     the plate is square and the frame tracks its aspect ratio. */
+  .prompt { position: absolute; left: 50%; bottom: 43%; transform: translateX(-50%);
     width: min(86%, 520px); display: flex; align-items: center;
     background: rgba(12,12,14,0.55); -webkit-backdrop-filter: blur(22px); backdrop-filter: blur(22px);
     border: 1px solid rgba(255,255,255,0.22); border-radius: 999px;
@@ -121,6 +125,12 @@
   .art-col { flex: 0 0 168px; }
   .text-col { flex: 1; min-width: 0; }
   @media (max-width: 620px) { .grid { flex-direction: column; } .art-col { flex-basis: auto; max-width: 200px; } }
+
+  /* The markers are a fixed 30px while the plate scales with the viewport, so
+     on a phone five of them stack into a bead chain over the travelers. The
+     plate stays a plate at that size and the journey card below carries the
+     same numbering, legibly. */
+  @media (max-width: 620px) { .marker { display: none; } }
 
   .keyart { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block;
     border-radius: 14px; border: 1px solid var(--stroke); }
@@ -262,8 +272,14 @@
 // The hero plate is in the markup with a preload hint, so it starts loading
 // before this script runs. Its path lives there, not here.
 
-// Marker track along the road in the hero (% coords, t=0 city → t=1 foreground)
-const TRACK = [ [55,47],[52,56],[50,65],[49,77],[48,90] ];
+// Marker track along the road in the hero (% coords, t=0 at the travelers →
+// t=1 in the foreground). The trace walks toward the viewer: step 1 stands with
+// the travelers, the last step arrives at the film under examination.
+//
+// The span starts at 61% because the pill sits at 50-57% and a marker behind
+// frosted glass reads as a smudge. x values are sampled from the road's own
+// centreline, so re-fit both columns together if the plate is ever replaced.
+const TRACK = [ [51,61],[49.8,68.5],[49.2,76],[48.6,83.5],[48,91] ];
 
 const trackPoint = (t) => {
   const segs = TRACK.length - 1;
