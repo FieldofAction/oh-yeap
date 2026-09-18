@@ -29,7 +29,7 @@ const NAV = [
       // Standalone static pages (public/world-cup-atlas.html, public/oz-index.html) —
       // full-page loads, not React views.
       { href: "/world-cup-atlas", label: "World Cup Atlas" },
-      { href: "/oz-index", label: "The Oz Index" },
+      { href: "/oz-index", label: "Oz Index" },
     ]},
   ]},
   { tier: "HOTEL", items: [
