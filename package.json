@@ -4,11 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "node scripts/experiments-build.mjs",
     "dev": "vite",
+    "prebuild": "node scripts/experiments-build.mjs",
     "build": "vite build",
     "build:studio": "BUILD_TARGET=studio vite build && mv dist/studio.html dist/index.html",
     "lint": "eslint .",
     "preview": "vite preview",
+    "experiments:validate": "node scripts/experiments-validate.mjs",
+    "experiments:test": "node scripts/experiments-test.mjs",
+    "experiments:build": "node scripts/experiments-build.mjs",
     "atlas:validate": "node scripts/atlas-data.validate.mjs",
     "atlas:matchday": "node scripts/atlas-matchday.mjs"
   },

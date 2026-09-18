@@ -25,3 +25,7 @@ public/images/case-studies/Workbench/workbench_architecture
 *.wav
 *.psd
 *.ai
+
+# Experiment entries are the SOURCE for the generated /experiments pages, so
+# they have to survive the blanket "*.md" rule above — the build reads them.
+!content/experiments/*.md

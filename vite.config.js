@@ -3,6 +3,22 @@ import react from '@vitejs/plugin-react'
 import fs from 'fs'
 import path from 'path'
 
+// Serve the generated Experiments pages at their extensionless, permanent URLs.
+// Anything that already resolves to a file (/experiments/foo.html, assets) is
+// left alone — only the clean URL is rewritten.
+const experimentsCleanUrl = (server) => {
+  server.middlewares.use((req, res, next) => {
+    const url = (req.url || '').split('?')[0]
+    if (url === '/experiments' || url === '/experiments/') {
+      req.url = '/experiments/index.html'
+    } else {
+      const slug = url.match(/^\/experiments\/([a-z0-9]+(?:-[a-z0-9]+)*)\/?$/)
+      if (slug) req.url = `/experiments/${slug[1]}.html`
+    }
+    next()
+  })
+}
+
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   const apiKey = env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY || ''
@@ -36,6 +52,16 @@ export default defineConfig(({ mode }) => {
             next()
           })
         },
+      },
+      {
+        // Dev/preview mirror of the vercel.json rewrites for the Experiments
+        // section: /experiments -> /experiments/index.html and
+        // /experiments/<slug> -> /experiments/<slug>.html. The pages themselves
+        // are generated into public/experiments by `npm run experiments:build`
+        // (wired as predev/prebuild).
+        name: 'experiments-clean-url',
+        configureServer: experimentsCleanUrl,
+        configurePreviewServer: experimentsCleanUrl,
       },
       {
         name: 'api-generate',

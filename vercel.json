@@ -4,6 +4,8 @@
   "rewrites": [
     { "source": "/world-cup-atlas", "destination": "/world-cup-atlas.html" },
     { "source": "/start-here", "destination": "/start-here.html" },
-    { "source": "/development", "destination": "/development.html" }
+    { "source": "/development", "destination": "/development.html" },
+    { "source": "/experiments", "destination": "/experiments/index.html" },
+    { "source": "/experiments/:slug", "destination": "/experiments/:slug.html" }
   ]
 }
