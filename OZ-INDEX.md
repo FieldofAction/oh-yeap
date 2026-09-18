@@ -3,7 +3,8 @@
 ## What this is
 `public/oz-index.html` is The Oz Index, Cultural Infrastructure Instrument 002.
 A single self-contained HTML file (~33KB): no build step, no dependencies, no imports,
-no web fonts. Its one external asset is the hero plate at `public/media/background-image.png`.
+no web fonts. Its external assets are the six hero plates in `public/media/`, 872KB
+in total.
 It deploys as a static asset and serves at fieldofaction.org/oz-index.
 
 Thesis under test: every film since 1939 carries a thread back to *The Wizard of Oz*.
@@ -28,7 +29,7 @@ ever reads like promotion, the prompt has drifted.
 
 ## Deploy
 The file lives at `public/oz-index.html`. Vite copies `public/` to the deploy root,
-so it lands at `/oz-index.html` with its hero at `/media/background-image.png`. The clean URL
+so it lands at `/oz-index.html` with its plates at `/media/`. The clean URL
 `/oz-index` is served by:
 - `vercel.json` — a production rewrite `/oz-index` → `/oz-index.html`.
 - `vite.config.js` — a dev-server middleware (`standalone-pages-clean-url`) mirroring
@@ -48,34 +49,50 @@ Register: Apple / OpenAI. System type, near-black canvas `#0A0A0B`, frosted pill
 hairline strokes, generous radii. The chrome recedes so the plate and the prose carry
 the piece.
 
-- **The hero plate is the instrument's face.** The travelers on the road approaching the
-  Emerald City, full-bleed in a 24px-radius frame, with the trace field floating over its
-  foot as a frosted pill at 50-57% of the plate, which clears the travelers' heads at 61%
-  by about 4%. Everything else on the page is quiet by comparison. The plate
-  lives at `public/media/background-image.png` (1822×1824) and is referenced twice in the
-  page: the preload hint in `<head>` and the `<img class="plate">` src, whose `width`/
-  `height` reserve the aspect box. Both are written relative (`media/…`, no leading
-  slash) so the page renders identically served from the deploy root and opened straight
-  off disk. `.hero` carries the plate's `aspect-ratio` and a faint fill of its own, so a
-  plate that fails to load leaves the frame and the trace pill intact. A web-weight derivative sits beside it at
-  `background-image.jpg` (1600px, 436KB against the PNG's 3.6MB) if load time matters more
-  than the lossless master.
+- **The hero plate is the instrument's face**, full-bleed in a 24px-radius frame, with
+  the trace field floating at its foot as a frosted pill. Everything else on the page is
+  quiet by comparison.
+- **Six plates, cycling while idle.** `PLATES` lists them in the order they play: the
+  road, Dorothy close, the Witch and a winged monkey, Glinda and Dorothy in Munchkinland,
+  the Witch close, Dorothy and Toto. The scale of the shot changes each time and the two
+  Witch plates are held apart. Each holds 8s and hands over on a 2.2s cross-fade.
+  Every plate is in colour, because the whole frame is graded from Kansas to Oz and a
+  black-and-white plate could never bloom.
+  Plate 0 is the one the markers are measured against and is not interchangeable.
+  Adding a plate is one line in `PLATES`; each carries its own `object-position`, which
+  decides what survives the square crop. Plates hold fixed slots rather than joining as
+  they load, so the authored order plays whatever order the network answers in, and a
+  slot whose file is missing is stepped over. The first plate is referenced in the markup
+  too, by the preload hint and the `<img class="plate on">` src, whose `width`/`height`
+  reserve the aspect box; the rest are built after `window.load` so they never compete
+  with first paint. All paths are relative (`media/…`, no leading slash) so the page
+  renders identically served from the deploy root and opened straight off disk. `.hero`
+  carries the plate's `aspect-ratio` and a faint fill of its own, so a plate that fails
+  to load leaves the frame and the trace pill intact.
+  The plates are web-weight derivatives, not masters. `background-image.jpg` is 1598px
+  and 436KB; the frame displays at 758px, so that still covers a 2× screen.
 - **The registers are the signature move.** Kansas idle holds the plate under
   `saturate(0.35) sepia(0.35) brightness(0.92)`. On resolve it blooms to full color over
   1.6s. That transition is the one orchestrated motion in the piece, and it carries
   information: the state changed. A frosted chip top-left names the state in words —
   Kansas, then Tracing…, then Oz → *title*.
 - **The road carries the journey.** Each step of the trace places a numbered frosted
-  marker along `TRACK`, a five-point polyline in percentage coordinates. The trace walks
-  toward the viewer: step 1 stands with the travelers at 61% and the last step arrives in
-  the foreground at 91%. Markers scale `0.72 → 1.14` with distance so they sit in the
-  plate's perspective, and they fade in on a 300ms-per-step beat.
-  Three constraints bind that span, and any re-fit has to respect all three: the pill
-  occupies 50-57%, and a marker behind frosted glass reads as a smudge; the markers are a
-  fixed 30px while the plate scales, so below 620px five of them stack into a bead chain
-  and are hidden, with the journey card carrying the numbering instead; and the x column
-  is sampled from the road's own centreline, so it moves with y. Verified clear at 3, 4,
-  and 5 steps, which is the range the contract allows.
+  marker along `TRACK`, a five-point polyline in percentage coordinates running from the
+  far bend by the city at 47% down to the foreground at 86%. Markers scale `0.72 → 1.14`
+  with distance so they sit in the plate's perspective, and they fade in on a
+  300ms-per-step beat.
+  Three constraints bind that span, and any re-fit has to respect all three: the pill sits
+  at 90%, and a marker behind frosted glass reads as a smudge, which is why the run stops
+  at 86% rather than the bottom edge; the markers are a fixed 30px while the plate scales,
+  so below 620px five of them stack into a bead chain and are hidden, with the journey
+  card carrying the numbering instead; and the x column is sampled from the road's own
+  centreline, so it moves with y. Verified clear at 3, 4, and 5 steps, which is the range
+  the contract allows.
+- **Everything a thumb has to hit clears 44px below 620px**, which the lens pill, the
+  trace field and its button, and the report's buttons all needed help to reach. The
+  desktop composition is tuned to a pointer and is left alone. The Trace button stretches
+  to the pill's content height rather than centring in it, so its three exposed gaps are
+  equal; centred, it was 2px short and read as misaligned.
 - **Motion doctrine.** Fades and a single color bloom. The report rises 12px once on
   arrival; the chip dot pulses only while a trace is open. No springs, parallax, or
   float. `prefers-reduced-motion` removes every animation and the bloom transition.
