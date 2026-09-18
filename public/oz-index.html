@@ -5,10 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Oz Index · Every Film Since 1939 Leads Back</title>
 <meta name="description" content="A live instrument testing one thesis: every film since 1939 carries a thread back to The Wizard of Oz. Two lenses, film history and esoteric reading. Cultural Infrastructure, Instrument 002.">
-<link rel="preload" as="image" href="media/background-image.png">
+<link rel="preload" as="image" href="media/background-image.jpg">
 <style>
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; background: #0A0A0B; }
+  /* iOS inflates text when a phone turns landscape unless this is pinned. */
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
   .root {
     --bg: #0A0A0B;
@@ -72,7 +74,7 @@
      keeps its box and the trace pill stays reachable instead of the whole
      instrument collapsing to a line of alt text. */
   .hero { position: relative; border-radius: 24px; overflow: hidden;
-    border: 1px solid var(--stroke); aspect-ratio: 1822 / 1824;
+    border: 1px solid var(--stroke); aspect-ratio: 1598 / 1600;
     background: rgba(255,255,255,0.03); }
   /* The plates stack and cross-fade. Only one carries .on at a time; the rest
      hold at zero opacity in the same box, so the frame never collapses between
@@ -107,12 +109,12 @@
   @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) { .marker { animation: none; } }
 
-  /* Frosted pill input over the image. Its height is keyed to the plate's
-     composition rather than the frame: the travelers run from 61% to 81.5%
-     of the plate, so the pill sits at 50-57% and clears the Tin Man's funnel
-     by about 4%. A percentage holds that relationship at every width, since
-     the plate is square and the frame tracks its aspect ratio. */
-  .prompt { position: absolute; left: 50%; bottom: 43%; transform: translateX(-50%);
+  /* Frosted pill input, at the foot of the frame. It sat higher for a while,
+     clear of the travelers on the road plate, but the hero now cycles through
+     six compositions and no single height clears all of them: raised, it
+     crossed Dorothy's mouth on one plate and the Witch's chin on another. At
+     the foot it reads as a search field over an image rather than a gag. */
+  .prompt { position: absolute; left: 50%; bottom: 22px; transform: translateX(-50%);
     width: min(86%, 520px); display: flex; align-items: center;
     background: rgba(12,12,14,0.55); -webkit-backdrop-filter: blur(22px); backdrop-filter: blur(22px);
     border: 1px solid rgba(255,255,255,0.22); border-radius: 999px;
@@ -123,9 +125,15 @@
   .prompt input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent;
     color: #fff; font: inherit; font-size: 16px; letter-spacing: -0.01em; padding: 10px 0; }
   .prompt input::placeholder { color: rgba(255,255,255,0.55); }
+  /* Stretched rather than centred. Centring left the button 2px shorter than
+     the pill's content box, so its top and bottom gaps came to 8.3px against
+     7px at the right, and a pill inside a pill shows that. Filling the content
+     height puts all three exposed gaps on the same 7px. The height then comes
+     from the input alone, which is the one thing setting it. */
   .prompt button { border: 0; border-radius: 999px; background: #F5F5F7; color: #0A0A0B;
     font: inherit; font-size: 14px; font-weight: 600; letter-spacing: -0.01em;
-    padding: 10px 20px; cursor: pointer; transition: opacity 0.2s ease; }
+    align-self: stretch; display: inline-flex; align-items: center; justify-content: center;
+    padding: 0 22px; cursor: pointer; transition: opacity 0.2s ease; }
   .prompt button:disabled { opacity: 0.45; cursor: default; }
   .prompt button:focus-visible, .prompt input:focus-visible { outline: none; }
 
@@ -162,6 +170,18 @@
      plate stays a plate at that size and the journey card below carries the
      same numbering, legibly. */
   @media (max-width: 620px) { .marker { display: none; } }
+
+  /* Thumbs, not cursors. 44px is the floor, and the lens pill, the trace field
+     and the report's buttons all sat under it. The desktop composition is
+     tuned to a pointer and is left alone. */
+  @media (max-width: 620px) {
+    .seg button { padding: 14px 22px; }
+    .prompt { padding: 5px 5px 5px 20px; }
+    .prompt input { padding: 14px 0; }
+    .actions button { padding: 13px 22px; }
+    /* The cards hold a 26px inset that costs real measure at this width. */
+    .card { padding: 20px; }
+  }
 
   .keyart { width: 100%; aspect-ratio: 2/3; object-fit: cover; display: block;
     border-radius: 14px; border: 1px solid var(--stroke); }
@@ -268,7 +288,7 @@
     </header>
 
     <div class="hero" id="hero">
-      <img class="plate on" src="media/background-image.png" width="1822" height="1824"
+      <img class="plate on" src="media/background-image.jpg" width="1598" height="1600"
            alt="The travelers on the yellow brick road approaching the Emerald City">
 
       <div class="chip" id="chip"><span class="dot"></span><span id="chip-text">Kansas</span></div>
@@ -322,7 +342,7 @@
 // the whole frame is graded from Kansas to Oz and a black-and-white plate
 // could never bloom.
 const PLATES = [
-  { src: "media/background-image.png", pos: "center",
+  { src: "media/background-image.jpg", pos: "center",
     alt: "The travelers on the yellow brick road approaching the Emerald City" },
   { src: "media/oz-dorothy-closeup.jpg", pos: "center",
     alt: "Dorothy, close on her face, caught mid-startle" },
@@ -341,14 +361,13 @@ const PLATES = [
 const PLATE_HOLD_MS = 8000;
 const PLATE_FADE_MS = 2200;
 
-// Marker track along the road in the hero (% coords, t=0 at the travelers →
-// t=1 in the foreground). The trace walks toward the viewer: step 1 stands with
-// the travelers, the last step arrives at the film under examination.
-//
-// The span starts at 61% because the pill sits at 50-57% and a marker behind
-// frosted glass reads as a smudge. x values are sampled from the road's own
+// Marker track along the road in the hero (% coords, t=0 at the far bend by
+// the city → t=1 in the foreground). x values are sampled from the road's own
 // centreline, so re-fit both columns together if the plate is ever replaced.
-const TRACK = [ [51,61],[49.8,68.5],[49.2,76],[48.6,83.5],[48,91] ];
+//
+// The span stops at 86% rather than running to the bottom edge: the pill sits
+// at 90% and a marker behind frosted glass reads as a smudge.
+const TRACK = [ [55,47],[52,56],[50,65],[49.1,76],[48.3,86] ];
 
 const trackPoint = (t) => {
   const segs = TRACK.length - 1;
@@ -926,7 +945,11 @@ traceBtn.addEventListener("click", trace);
 inputEl.addEventListener("keydown", (e) => { if (e.key === "Enter") trace(); });
 inputEl.addEventListener("input", paintChrome);
 
-buildPlates();
+// The second plate is not needed for eight seconds, so the rotation is built
+// after the page has finished loading rather than competing with the first
+// paint for bandwidth. On a phone that is the difference that shows.
+if (document.readyState === "complete") buildPlates();
+else window.addEventListener("load", buildPlates, { once: true });
 startCycling();
 paintMode();
 paintChrome();
