@@ -1,30 +1,14 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { SYSTEM_PROMPT } from "./_lib/markus-prompt.js";
+import { cors } from "./_lib/markus-cors.js";
 
 // Markus, Soul Mega's bartender. Called from soulmega.com, so CORS is
 // limited to Soul Mega origins. Streams plain text back to the page.
 
-const ALLOWED_ORIGINS = [
-  /^https:\/\/(www\.)?soulmega\.com$/,
-  /^https:\/\/[a-z0-9-]+\.webflow\.io$/,
-  /^http:\/\/localhost(:\d+)?$/,
-];
 const MAX_TURNS = 30;
 const MAX_CHARS = 2000;
 
 const client = new Anthropic();
-
-function cors(req, res) {
-  const origin = req.headers.origin || "";
-  const ok = ALLOWED_ORIGINS.some((re) => re.test(origin));
-  if (ok) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-    res.setHeader("Vary", "Origin");
-    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-  }
-  return ok;
-}
 
 // Keep only well-formed user/assistant text turns, starting on a user turn.
 function cleanMessages(raw) {
