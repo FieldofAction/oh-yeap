@@ -8,5 +8,14 @@
     { "source": "/development", "destination": "/development.html" },
     { "source": "/experiments", "destination": "/experiments/index.html" },
     { "source": "/experiments/:slug", "destination": "/experiments/:slug.html" }
+  ],
+  "headers": [
+    {
+      "source": "/vendor/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    }
   ]
 }

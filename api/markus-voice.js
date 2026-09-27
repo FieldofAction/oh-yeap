@@ -1,8 +1,10 @@
 import { cors } from "./_lib/markus-cors.js";
 
-// Markus's voice. The page sends one sentence of his reply at a time and
-// plays the MP3 that comes back, so he starts talking before the whole
-// reply has streamed. Needs ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID.
+// Markus's voice. The page sends one sentence of his reply at a time, so
+// he starts talking before the whole reply has streamed. format "mp3" (the
+// default) plays in the page; "pcm" is 16 kHz 16-bit mono for the Simli
+// live face (api/markus-avatar.js), which lip-syncs to it.
+// Needs ELEVENLABS_API_KEY and ELEVENLABS_VOICE_ID.
 
 const MAX_CHARS = 600;
 const MODEL = "eleven_flash_v2_5";
@@ -26,15 +28,16 @@ export default async function handler(req, res) {
   const voiceId = process.env.ELEVENLABS_VOICE_ID;
   if (!apiKey || !voiceId) return res.status(503).json({ error: "Voice not configured" });
 
+  const pcm = req.body?.format === "pcm";
   const text = typeof req.body?.text === "string" ? req.body.text.trim().slice(0, MAX_CHARS) : "";
   if (!text) return res.status(400).json({ error: "Bad text" });
 
   try {
     const upstream = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}/stream?output_format=mp3_44100_128`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${encodeURIComponent(voiceId)}/stream?output_format=${pcm ? "pcm_16000" : "mp3_44100_128"}`,
       {
         method: "POST",
-        headers: { "xi-api-key": apiKey, "Content-Type": "application/json", Accept: "audio/mpeg" },
+        headers: { "xi-api-key": apiKey, "Content-Type": "application/json", Accept: pcm ? "application/octet-stream" : "audio/mpeg" },
         body: JSON.stringify({
           text: forSpeech(text),
           model_id: MODEL,
@@ -47,7 +50,7 @@ export default async function handler(req, res) {
       return res.status(502).json({ error: "Voice unavailable" });
     }
 
-    res.setHeader("Content-Type", "audio/mpeg");
+    res.setHeader("Content-Type", pcm ? "application/octet-stream" : "audio/mpeg");
     res.setHeader("Cache-Control", "no-store");
     const reader = upstream.body.getReader();
     for (;;) {
