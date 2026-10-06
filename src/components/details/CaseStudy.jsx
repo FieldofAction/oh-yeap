@@ -776,6 +776,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
           <div className="cs-meta-row">
             {item.role && <div className="cs-meta-col"><span className="cs-meta-label">Role</span><span className="cs-meta-val">{item.role}</span></div>}
             <div className="cs-meta-col"><span className="cs-meta-label">Year</span><span className="cs-meta-val">{item.year}</span></div>
+            {cs.client && <div className="cs-meta-col"><span className="cs-meta-label">Client</span><span className="cs-meta-val">{cs.client}</span></div>}
           </div>
         </div>
 
