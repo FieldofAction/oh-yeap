@@ -682,6 +682,63 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
           </div>
         );
 
+      /* ── Impact — metrics grid showing quantitative outcomes ── */
+      case "impact":
+        return (
+          <div key={key} ref={observe} className="cs-block cs-block--impact cs-sr cs-sr--rise">
+            {block.label && <div className="cs-block--section-label">{block.label}</div>}
+            {block.heading && <h2 className="cs-impact-heading">{block.heading}</h2>}
+            <div className="cs-impact-grid">
+              {block.metrics?.map((m, i) => (
+                <div key={i} className="cs-impact-card">
+                  {m.value && <div className="cs-impact-value">{m.value}</div>}
+                  {m.label && <div className="cs-impact-label">{m.label}</div>}
+                  {m.description && <div className="cs-impact-desc">{m.description}</div>}
+                </div>
+              ))}
+            </div>
+            {block.body && <div className="cs-impact-body">{block.body.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>}
+          </div>
+        );
+
+      /* ── Augments — design properties or techniques explained ── */
+      case "augments":
+        return (
+          <div key={key} ref={observe} className="cs-block cs-block--augments cs-sr cs-sr--stagger">
+            {block.label && <div className="cs-block--section-label">{block.label}</div>}
+            {block.heading && <h2 className="cs-augments-heading">{block.heading}</h2>}
+            {block.intro && <div className="cs-augments-intro">{block.intro}</div>}
+            <div className="cs-augments-list">
+              {block.items?.map((item, i) => (
+                <div key={i} className="cs-augment-item">
+                  <h3 className="cs-augment-title">{item.title}</h3>
+                  <div className="cs-augment-body">
+                    {item.body.split("\n\n").map((p, j) => <p key={j}>{p}</p>)}
+                  </div>
+                  {item.src && (
+                    <div className="cs-augment-visual">
+                      <img src={item.src} alt={item.alt || item.title} />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+
+      /* ── Meta — clean project metadata block ── */
+      case "meta":
+        return (
+          <div key={key} ref={observe} className="cs-block cs-block--meta cs-sr cs-sr--rise">
+            {block.items?.map((item, i) => (
+              <div key={i} className="cs-meta-item">
+                <div className="cs-meta-item-label">{item.label}</div>
+                <div className="cs-meta-item-value">{item.value}</div>
+              </div>
+            ))}
+          </div>
+        );
+
       default:
         return null;
     }

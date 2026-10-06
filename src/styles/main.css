@@ -1008,6 +1008,39 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .cs-fourfold-body{font-size:15px;line-height:1.7;color:var(--fm);max-width:600px}
 @media(max-width:680px){.cs-fourfold-row{grid-template-columns:repeat(2,1fr);gap:22px}}
 
+/* Impact — metrics grid with quantitative outcomes */
+.cs-block--impact{margin:clamp(44px,6vw,80px) 0 12px;padding:clamp(28px,5vw,52px) 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+.cs-impact-heading{font-family:var(--display);font-size:clamp(24px,3.4vw,40px);font-weight:500;letter-spacing:-.01em;color:var(--fg);margin:8px 0 36px}
+.cs-impact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:clamp(24px,4vw,48px);margin-bottom:30px}
+.cs-impact-card{display:flex;flex-direction:column;gap:10px;padding:clamp(20px,3vw,32px);background:linear-gradient(135deg,var(--sf) 0%,color-mix(in srgb,var(--sf) 60%,var(--bg)) 100%);border-radius:12px;border:1px solid var(--bd)}
+.cs-impact-value{font-family:var(--display);font-size:clamp(36px,5vw,56px);font-weight:600;letter-spacing:-.02em;color:var(--fg);line-height:1}
+.cs-impact-label{font-size:clamp(15px,1.6vw,18px);font-weight:600;letter-spacing:-.005em;color:var(--fg);line-height:1.3}
+.cs-impact-desc{font-size:14px;line-height:1.6;color:var(--fm);margin-top:4px}
+.cs-impact-body{font-size:15px;line-height:1.7;color:var(--fm);max-width:600px;margin-top:12px}
+@media(max-width:680px){.cs-impact-grid{grid-template-columns:1fr}}
+
+/* Augments — design properties and techniques explained */
+.cs-block--augments{margin:clamp(44px,6vw,80px) 0 12px}
+.cs-augments-heading{font-family:var(--display);font-size:clamp(24px,3.4vw,40px);font-weight:500;letter-spacing:-.01em;color:var(--fg);margin:8px 0 16px}
+.cs-augments-intro{font-size:15px;line-height:1.7;color:var(--fm);max-width:600px;margin-bottom:36px}
+.cs-augments-list{display:flex;flex-direction:column;gap:clamp(36px,5vw,64px)}
+.cs-augment-item{display:grid;grid-template-columns:1fr;gap:16px;padding-bottom:clamp(28px,4vw,48px);border-bottom:1px solid var(--bd)}
+.cs-augment-item:last-child{border-bottom:none;padding-bottom:0}
+.cs-augment-title{font-size:clamp(18px,2vw,24px);font-weight:600;letter-spacing:-.01em;color:var(--fg);margin:0}
+.cs-augment-body{font-size:15px;line-height:1.7;color:var(--fm)}
+.cs-augment-body p{margin-bottom:16px}
+.cs-augment-body p:last-child{margin-bottom:0}
+.cs-augment-visual{width:100%;border-radius:10px;overflow:hidden;background:var(--sf);border:1px solid var(--bd);margin-top:20px}
+.cs-augment-visual img{display:block;width:100%;height:auto}
+@media(max-width:768px){.cs-augment-item{gap:12px}}
+
+/* Meta — clean project metadata block */
+.cs-block--meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:clamp(20px,3vw,32px);margin:clamp(32px,4vw,48px) 0;padding:clamp(24px,3vw,36px);background:linear-gradient(135deg,var(--sf) 0%,color-mix(in srgb,var(--sf) 60%,var(--bg)) 100%);border-radius:12px;border:1px solid var(--bd)}
+.cs-meta-item{display:flex;flex-direction:column;gap:6px}
+.cs-meta-item-label{font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--ff)}
+.cs-meta-item-value{font-size:clamp(14px,1.5vw,16px);font-weight:500;color:var(--fg);line-height:1.4}
+@media(max-width:680px){.cs-block--meta{grid-template-columns:1fr}}
+
 /* Footer — deliverables + tags */
 .cs-footer{border-top:1px solid var(--bd);padding-top:56px;margin-top:48px}
 .cs-deliv{margin-bottom:24px}
