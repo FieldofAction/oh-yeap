@@ -4,7 +4,7 @@
 **September 30, 2026 · Daniel Dickson / Field of Action**  
 **Status:** Manual pilot completed; human calibration pending  
 **Starting field:** Gathering, restoration, and participation  
-**Corpus:** 30 observations across 15 inspected source pages. See the companion evidence register for all observation IDs, links, dates, and limits.
+**Corpus:** 30 observations across 15 inspected source pages for this September 30 pilot. The instrument’s evidence register now also includes 13 later field additions (43 observations in total). See that register for the current index, links, dates, and limits.
 
 ## What the wider pass changes
 
