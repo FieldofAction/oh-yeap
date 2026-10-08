@@ -7,7 +7,8 @@
   --line: #1a1a1a;
   --rule: rgba(26, 26, 26, 0.16);
   --sans: "Inter", "Helvetica Neue", Arial, sans-serif;
-  --mono: "Space Mono", ui-monospace, monospace;
+  --label: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Roboto Mono", ui-monospace, monospace;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -47,38 +48,37 @@ a:hover { color: var(--fg); }
   gap: 24px;
   margin-bottom: 28px;
 }
-.foa-back,
-.edition,
-.brand p,
 .eyebrow,
-.navigation button,
-.mode-switch button,
+.brand p,
 .path-label,
 .reading-button small,
-.watch-card small,
-.metadata,
-.limits a,
-.save-button,
-.watch-card button,
-.empty button,
-footer,
-.observation-details summary {
-  font-family: var(--sans);
+.watch-card small {
+  font-family: var(--label);
   font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+  text-transform: none;
 }
 .foa-back {
   color: var(--fg);
-  font-size: 12px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
   text-decoration: none;
+  text-transform: none;
 }
 .foa-back:hover { text-decoration: underline; }
 .edition {
   margin: 0;
   color: var(--fg);
-  font-size: 12px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
   text-align: right;
+  text-transform: none;
 }
 .edition span {
   display: block;
@@ -96,7 +96,7 @@ footer,
 .brand p {
   margin-top: 14px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .workspace { max-width: 1440px; margin: 0 auto; padding: 42px 5vw 28px; }
@@ -112,7 +112,9 @@ footer,
 .eyebrow {
   margin: 0 0 10px;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 .field-title h2,
 .reading-detail > h2,
@@ -133,11 +135,11 @@ footer,
   padding-bottom: 4px;
   color: var(--muted);
   font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
   text-align: right;
-  text-transform: uppercase;
+  text-transform: none;
 }
 .scope strong {
   color: var(--fg);
@@ -148,7 +150,7 @@ footer,
   text-transform: none;
 }
 .scope span { padding: 0 8px; color: var(--faint); }
-.scope p { margin: 8px 0 0; color: var(--muted); font-size: 11px; }
+.scope p { margin: 8px 0 0; color: var(--muted); font-family: var(--sans); font-size: 13px; font-weight: 400; letter-spacing: 0; text-transform: none; }
 
 .navigation {
   display: flex;
@@ -164,7 +166,11 @@ footer,
   flex: none;
   padding: 0 0 12px;
   color: var(--muted);
-  font-size: 12px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
 }
 .navigation button:hover { color: var(--fg); }
 .navigation button[aria-selected="true"] { color: var(--fg); }
@@ -200,16 +206,17 @@ footer,
   flex: none;
   width: 2rem;
   color: var(--faint);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 400;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
   line-height: 1.6;
   letter-spacing: 0;
   text-transform: none;
 }
 .reading-button small, .watch-card small {
   color: var(--muted);
-  font-size: 10px;
+  font-size: 11px;
 }
 .reading-button h3 {
   margin: 6px 0 8px;
@@ -223,10 +230,10 @@ footer,
   margin: 0;
   color: var(--muted);
   font-family: var(--sans);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
 }
 .limits {
   padding: 22px 0 8px;
@@ -245,7 +252,7 @@ footer,
   letter-spacing: -0.03em;
 }
 .limits p { margin: 0 0 16px; }
-.limits a { color: var(--fg); font-size: 11px; }
+.limits a { color: var(--fg); font-family: var(--sans); font-size: 14px; font-weight: 500; letter-spacing: 0; text-transform: none; }
 
 .reading-detail {
   min-width: 0;
@@ -260,8 +267,11 @@ footer,
 }
 .metadata {
   color: var(--muted);
-  font-size: 12px;
-  letter-spacing: 0.04em;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
 }
 .reading-detail > h2 {
   max-width: 18ch;
@@ -287,10 +297,10 @@ footer,
 }
 .mapping dt {
   font-family: var(--sans);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 .mapping dd { margin: 0; font-size: 17px; }
 .mapping dd p { margin: 6px 0 0; }
@@ -311,9 +321,9 @@ h3 {
   margin-left: 10px;
   color: var(--faint);
   font-family: var(--sans);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
 }
 .evidence-links > div, .history > div {
   display: flex;
@@ -321,7 +331,8 @@ h3 {
   padding: 16px 0;
   border-bottom: 1px solid var(--rule);
 }
-.id {
+.id,
+.obs-id {
   font-family: var(--mono);
   font-weight: 400;
   letter-spacing: 0;
@@ -332,12 +343,8 @@ h3 {
   width: 4.2rem;
   max-width: none;
   color: var(--fg);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 0;
+  font-size: 12px;
   line-height: 1.7;
-  text-transform: none;
 }
 .evidence-links p { margin: 0 0 8px; }
 .evidence-links small, .evidence-card small, .history small {
@@ -345,10 +352,10 @@ h3 {
   margin-top: 8px;
   color: var(--muted);
   font-family: var(--sans);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
 }
 .reflection {
   margin-right: 0;
@@ -360,10 +367,10 @@ h3 {
   display: block;
   margin: 18px 0 8px;
   font-family: var(--sans);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 .reflection textarea, .reflection select,
 .collect-field input, .collect-field textarea, .collect-field select,
@@ -397,7 +404,11 @@ h3 {
   color: #fff;
   background: var(--fg);
   border-radius: 0;
-  font-size: 11px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
 }
 .save-button:hover, .watch-card button:hover, .empty button:hover { background: #000; }
 .reflection > .metadata { margin-top: 14px; }
@@ -422,7 +433,7 @@ h3 {
 .evidence-card .obs-id { white-space: nowrap; }
 .evidence-card .detail-top .metadata { max-width: 70%; text-align: right; }
 .observation-details { margin: 4px 0 8px; color: var(--muted); font-size: 16px; line-height: 1.55; }
-.observation-details summary { cursor: pointer; color: var(--faint); font-size: 10px; }
+.observation-details summary { cursor: pointer; color: var(--faint); font-family: var(--sans); font-size: 13px; font-weight: 500; letter-spacing: 0; text-transform: none; }
 .observation-details p { margin: 10px 0; }
 
 .watch-heading h2 { max-width: 16ch; margin-bottom: 12px; font-size: clamp(2.2rem, 4vw, 3.2rem); }
@@ -455,7 +466,11 @@ footer {
   padding: 18px 0 8px;
   border-top: 1px solid var(--line);
   color: var(--muted);
-  font-size: 10px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
 }
 footer span { text-align: right; }
 
@@ -466,10 +481,10 @@ footer span { text-align: right; }
   display: block;
   margin: 22px 0 8px;
   font-family: var(--sans);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0;
+  text-transform: none;
 }
 .collect-field input, .collect-field textarea, .collect-field select { display: block; margin-top: 8px; }
 .collect-field textarea { min-height: 120px; }
@@ -479,7 +494,11 @@ footer span { text-align: right; }
   position: relative;
   padding: 0 0 10px;
   color: var(--muted);
-  font-size: 11px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
 }
 .mode-switch button:hover,
 .mode-switch button[aria-pressed="true"] { color: var(--fg); }
@@ -516,10 +535,10 @@ footer span { text-align: right; }
   margin-bottom: 4px;
   color: var(--muted);
   font-family: var(--sans);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
 }
 .collect .watch-card button { display: inline-block; margin-top: 16px; }
 .status { margin-top: 12px; font-family: var(--sans); font-size: 16px; letter-spacing: 0; text-transform: none; }
