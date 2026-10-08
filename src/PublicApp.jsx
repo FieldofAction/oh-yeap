@@ -295,7 +295,7 @@ export default function PublicApp() {
     setFilter(f);
   }, []);
   return (
-    <div style={cv(theme)} className={`app-layout${isLight ? " theme-daylight" : ""}`}>
+    <div style={cv(theme)} className={`app-layout public-site${isLight ? " theme-daylight" : ""}`}>
       <PublicSidebar view={view} navigateTo={navigateTo} filter={filter} setFilter={handleFilter} hiddenCounts={hiddenCounts} />
       <div className="app-content">
         <DualLensBar modelActive={lens} patternActive={patternLens} onToggleModel={toggleLens} onTogglePattern={togglePatternLens} onOpenModels={() => navigateTo("models")} onOpenPatterns={() => navigateTo("patterns")} />
@@ -314,7 +314,7 @@ export default function PublicApp() {
           {view === "resume" && <Resume />}
         </main>
 
-        <SiteFooter />
+        <SiteFooter view={view} />
       </div>
 
       {activeItem && activeItem.body && !activeItem.caseStudy && !activeItem.sketch && <WritingDetail item={activeItem} allItems={publicContent} closing={closing} onClose={closeItem} onRelation={handleRelation} onOpen={openItem} fg={theme.fg} lens={lens} patternLens={patternLens} />}

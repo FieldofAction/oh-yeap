@@ -75,7 +75,8 @@ function cv(t) {
   return {
     "--bg": t.bg, "--fg": t.fg, "--fm": t.fm, "--ff": t.ff,
     "--bd": t.bd, "--sf": t.sf, "--sfh": t.sfh, "--cbg": t.cbg, "--ch": t.ch,
-    "--ac1": t.ac1, "--ac2": t.ac2,
+    // Workshop controls stay ink. Cobalt is the public live mark, not a second brand color in here.
+    "--ac1": t.ac1, "--ac2": t.fg,
   };
 }
 

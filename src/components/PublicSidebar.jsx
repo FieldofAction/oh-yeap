@@ -4,53 +4,18 @@ import { DEV_MODE } from "../lib/devMode";
 // Public-facing sidebar.
 // Studio entry is a plain external link to the gated studio subdomain.
 // No password gate, no STUDIO_PASSWORD, no STUDIO_KEYS — auth happens at the edge.
-const STUDIO_URL = "https://studio.fieldofaction.org";
-
-// Practice is always shown in the public Work nav (Workbench is published; other
-// case studies stay hidden via isHidden in seed.js until marked published). In dev,
-// hidden items are additionally revealed with a HIDDEN indicator for local preview.
+// The drawer is the short path: practice, writing, the model, about, and a way to write.
+// Spaces, Hotel, models, patterns, and the workshop live in the footer notebook.
+// In dev, Exploration stays here so hidden work can still be opened.
 const NAV = [
   { tier: "WORK", items: [
-    { group: "sections", children: [
-      { key: "public", label: "Practice", filter: "Practice" },
-      { key: "public", label: "Writing", filter: "Writing" },
-      // Exploration is empty publicly; keep it dev-only until it has ready work.
-      ...(DEV_MODE ? [{ key: "public", label: "Exploration", filter: "Exploration" }] : []),
-      { key: "public", label: "Artifacts", filter: "Artifacts" },
-      // Generated static pages (public/experiments/, built from content/experiments/*.md).
-      // A full-page load like the Atlas below, not a SPA filter — see EXPERIMENTS-PUBLISHING.md.
-      { href: "/experiments", label: "Experiments" },
-    ]},
-    { group: "spaces", children: [
-      { key: "patiobeach", label: "Patio Beach" },
-      { key: "superconscious", label: "Share Location" },
-      { key: "flowers", label: "Bloom" },
-      { key: "galaxy", label: "Galaxy" },
-      // Standalone static pages (public/world-cup-atlas.html, public/oz-index.html) —
-      // full-page loads, not React views.
-      { href: "/world-cup-atlas", label: "World Cup Atlas" },
-      { href: "/oz-index", label: "Oz Index" },
-    ]},
-  ]},
-  { tier: "HOTEL", items: [
-    { key: "hotelnest", label: "Nest" },
-  ]},
-  { tier: "CANON", items: [
+    { key: "public", label: "Practice", filter: "Practice" },
+    { key: "public", label: "Writing", filter: "Writing" },
+    ...(DEV_MODE ? [{ key: "public", label: "Exploration", filter: "Exploration" }] : []),
     { key: "canon", label: "Relational Design" },
-  ]},
-  { tier: "WORKSHOP", external: true, items: [
-    { href: STUDIO_URL, label: "Workshop", studio: true },
-  ]},
-  { tier: "INFO", items: [
     { key: "about", label: "About" },
-    { key: "colophon", label: "Colophon" },
   ]},
-  { tier: "REFERENCE", items: [
-    { key: "models", label: "Mental Models" },
-    { key: "patterns", label: "Pattern Language" },
-  ]},
-  { tier: "EXTERNAL", items: [
-    { href: "https://daniel-dickson.org/", label: "Archive" },
+  { tier: "WRITE", items: [
     { href: "https://substack.com/@adickson", label: "Substack" },
     { href: "https://linkedin.com/in/alfred-daniel-dickson-ii-5803423", label: "LinkedIn" },
   ]},

@@ -1,11 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef } from "react";
 import { FILTERS } from "../data/playbook-public";
 import { isHidden } from "../data/seed";
 import { HiddenChip, HiddenCountSuffix } from "./HiddenIndicators";
 import { PatternChips, AlexanderChips } from "./PatternLens";
 import NetworkGraph from "./NetworkGraph";
 import HeroCycle from "./HeroCycle";
-import HeroGrid from "./HeroGrid";
 import useReveal from "../hooks/useReveal";
 import { DEV_MODE } from "../lib/devMode";
 
@@ -16,9 +15,9 @@ const HERO_MODE = 4;
 const MOBILE_WRITING_CAP = 4;
 
 const SECTION_GLOSSES = {
-  Writing: "Evolving documents. Memos build in numbered series; Field Notes stand alone.",
-  Exploration: "Active experiments. Work still in motion.",
-  Artifacts: "System artifacts. Specs, models, frameworks.",
+  Writing: "I write the memos as a series, one theme at a time. The field notes are a single observation, left where it landed.",
+  Exploration: "Still open. The form has not settled.",
+  Artifacts: "A way to compress a signal, and a way to derive a condition set. Made to be used.",
 };
 
 /* ── Extract artwork images from item body for hover preview ── */
@@ -43,51 +42,17 @@ function getPreviewImages(item) {
   return [];
 }
 
-/* ── Hover slideshow preview for work cards ── */
-function HoverPreview({ images, fallbackBg }) {
-  const [idx, setIdx] = useState(0);
-  const timer = useRef(null);
-  const [hovering, setHovering] = useState(false);
-
-  useEffect(() => {
-    if (hovering && images.length > 1) {
-      timer.current = setInterval(() => {
-        setIdx(prev => (prev + 1) % images.length);
-      }, 1200);
-    }
-    return () => clearInterval(timer.current);
-  }, [hovering, images.length]);
-
-  const onEnter = useCallback(() => { setHovering(true); setIdx(0); }, []);
-  const onLeave = useCallback(() => { setHovering(false); setIdx(0); clearInterval(timer.current); }, []);
-
-  if (!images.length) {
-    return <div className="ix-preview" style={{ background: fallbackBg }} />;
-  }
-
+/* One still crop on hover. No timer, no blur, no drift. */
+function StillPreview({ src }) {
+  if (!src) return null;
   return (
-    <div className="ix-preview ix-preview-live" onMouseEnter={onEnter} onMouseLeave={onLeave}>
-      {images.map((src, i) => (
-        <img
-          key={src}
-          src={src}
-          alt=""
-          className={`ix-preview-img${i === idx ? " on" : ""}`}
-          loading="lazy"
-        />
-      ))}
-      {images.length > 1 && (
-        <div className="ix-preview-dots">
-          {images.map((_, i) => (
-            <span key={i} className={`ix-preview-dot${i === idx ? " on" : ""}`} />
-          ))}
-        </div>
-      )}
+    <div className="ix-preview">
+      <img src={src} alt="" className="ix-preview-img" />
     </div>
   );
 }
 
-export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, theme, nowState, onOpen, lens, patternLens, showGraph, hiddenCounts, isLight }) {
+export default function Public({ items, allItems, filter, setFilter, relFilter, onRelation, nowState, onOpen, lens, patternLens, showGraph, hiddenCounts }) {
   // Scroll-linked reveal for the work rows; re-binds when the filtered set changes.
   useReveal([items, filter, relFilter]);
   const isHome = filter === "All" && !relFilter;
@@ -190,7 +155,12 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
           )}
 
           {HERO_MODE === 4 && (
-            <HeroGrid isLight={isLight} />
+            <div className="hero hero--door en">
+              <span className="hero-door-mark" role="img" aria-label="Field of Action" />
+              <h1 className="hero-h">Designing structure<br/>for living systems</h1>
+              <a className="hero-door-line" href="#relational-design">Relational Design</a>
+              <a className="hero-door-now" href="/experiments">Current inquiry · Experiments, September 2026</a>
+            </div>
           )}
 
           {/* Network diagram — easter egg, press G to toggle */}
@@ -225,7 +195,10 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
       )}
       {/* ── Differentiated Sections ── */}
       {(() => {
-        const practice = items.filter(i => i.section === "practice");
+        const practice = items.filter(i => i.section === "practice").slice().sort((a, b) => {
+          const rank = (item) => (item.title === "Workbench" ? 1 : 0);
+          return rank(a) - rank(b);
+        });
         const allWriting = items.filter(i => i.section === "writing");
         const exploration = items.filter(i => i.section === "exploration" && i.title !== "Relational Design");
         const artifacts = items.filter(i => i.section === "artifacts");
@@ -256,7 +229,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                         </div>
                         <div className="ix-year">{item.year}</div>
                       </div>
-                      <HoverPreview images={getPreviewImages(item)} fallbackBg={`linear-gradient(135deg, ${theme.ac1}30, ${theme.ac2}20)`} />
+                      <StillPreview src={getPreviewImages(item)[0]} />
                       {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
                       {patternLens && <AlexanderChips itemTitle={item.title} active={patternLens} compact />}
                     </div>
