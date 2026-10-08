@@ -26,8 +26,8 @@ const NAV = [
       { key: "superconscious", label: "Share Location" },
       { key: "flowers", label: "Bloom" },
       { key: "galaxy", label: "Galaxy" },
-      // Standalone static pages (public/world-cup-atlas.html, public/oz-index.html) —
-      // full-page loads, not React views.
+      // Standalone static pages (public/*.html) — full-page loads, not React views.
+      { href: "/signal-surface", label: "Signal Surface" },
       { href: "/world-cup-atlas", label: "World Cup Atlas" },
       { href: "/oz-index", label: "Oz Index" },
     ]},
