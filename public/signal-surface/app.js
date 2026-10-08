@@ -91,7 +91,8 @@ function inline(text) {
   const safe = esc(text);
   return safe
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-    .replace(/\[([^\]]+)\]\((https:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+    .replace(/\[([^\]]+)\]\((https:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+    .replace(/\b(O\d{2}|F\d+)\b/g, '<span class="id">$1</span>');
 }
 
 function observationBody(text) {
@@ -196,7 +197,7 @@ function paintReadings() {
       <article class="reading-detail">
         <div class="detail-top">
           <span class="path-label">${esc(selected.path)}</span>
-          <span class="metadata">F${index + 1} / interpretation open</span>
+          <span class="metadata"><span class="id">F${index + 1}</span> / interpretation open</span>
         </div>
         <h2>${esc(selected.title)}</h2>
         ${(selected.paragraphs || []).map(paragraphHtml).join("")}
@@ -399,7 +400,7 @@ function paintPicker() {
   picker.innerHTML = items.map((item) => `
     <label>
       <input type="checkbox" value="${esc(item.observation_id)}"${selected.has(item.observation_id) ? " checked" : ""} />
-      <span><small>${esc(ids.get(item.observation_id))} · ${esc(item.source)}</small>${esc(item.observation)}</span>
+      <span><small><span class="id">${esc(ids.get(item.observation_id))}</span> · ${esc(item.source)}</small>${esc(item.observation)}</span>
     </label>
   `).join("");
   picker.querySelectorAll("input").forEach((input) => {
