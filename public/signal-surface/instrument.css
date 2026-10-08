@@ -453,26 +453,14 @@ h3 {
 .evidence-toolbar input, .evidence-toolbar select { height: 46px; }
 .evidence-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0 48px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
   margin: 8px 0 28px;
 }
 .evidence-card {
-  padding: 22px 0;
-  background: transparent;
-  border: 0;
-  border-top: 1px solid var(--line);
-}
-.evidence-card:has(.evidence-image) { padding-top: 0; }
-.evidence-image {
-  display: block;
-  margin: 0 0 16px;
-}
-.evidence-image img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 0;
+  padding: 22px;
+  background: var(--bg);
+  border: 1px solid var(--line);
   border-radius: 0;
 }
 .evidence-card p, .evidence-card > p { margin: 12px 0; font-size: 17px; line-height: 1.55; }
@@ -613,7 +601,7 @@ footer span { text-align: right; }
 
 @media (max-width: 1000px) {
   .reading-grid { grid-template-columns: 240px 1fr; gap: 28px; }
-  .evidence-grid { gap: 0 28px; }
+  .evidence-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .field-title h2 { font-size: 2.6rem; }
 }
 @media (max-width: 720px) {
