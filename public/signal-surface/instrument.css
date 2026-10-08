@@ -6,9 +6,8 @@
   --faint: #8a8a8a;
   --line: #1a1a1a;
   --rule: rgba(26, 26, 26, 0.16);
-  --display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
-  --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
-  --label: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+  --sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Space Mono", ui-monospace, monospace;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -17,7 +16,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--fg);
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 18px;
   font-weight: 400;
   line-height: 1.65;
@@ -55,10 +54,8 @@ a:hover { color: var(--fg); }
 .navigation button,
 .mode-switch button,
 .path-label,
-.reading-number,
 .reading-button small,
 .watch-card small,
-.obs-id,
 .metadata,
 .limits a,
 .save-button,
@@ -66,7 +63,7 @@ a:hover { color: var(--fg); }
 .empty button,
 footer,
 .observation-details summary {
-  font-family: var(--label);
+  font-family: var(--sans);
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -89,7 +86,7 @@ footer,
   color: var(--muted);
 }
 .brand h1 {
-  font-family: var(--display);
+  font-family: var(--sans);
   font-size: clamp(3.4rem, 8vw, 6.4rem);
   font-weight: 500;
   letter-spacing: -0.045em;
@@ -123,7 +120,7 @@ footer,
 .collect > h2,
 .watch-card h3,
 .empty h3 {
-  font-family: var(--display);
+  font-family: var(--sans);
   font-weight: 500;
   letter-spacing: -0.035em;
   line-height: 0.96;
@@ -135,7 +132,7 @@ footer,
 .scope {
   padding-bottom: 4px;
   color: var(--muted);
-  font-family: var(--label);
+  font-family: var(--sans);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
@@ -144,7 +141,7 @@ footer,
 }
 .scope strong {
   color: var(--fg);
-  font-family: var(--display);
+  font-family: var(--sans);
   font-size: 28px;
   font-weight: 500;
   letter-spacing: -0.04em;
@@ -203,7 +200,9 @@ footer,
   flex: none;
   width: 2rem;
   color: var(--faint);
+  font-family: var(--mono);
   font-size: 11px;
+  font-weight: 400;
   line-height: 1.6;
   letter-spacing: 0;
   text-transform: none;
@@ -214,7 +213,7 @@ footer,
 }
 .reading-button h3 {
   margin: 6px 0 8px;
-  font-family: var(--display);
+  font-family: var(--sans);
   font-size: 18px;
   font-weight: 500;
   letter-spacing: -0.03em;
@@ -223,7 +222,7 @@ footer,
 .reading-button p {
   margin: 0;
   color: var(--muted);
-  font-family: var(--label);
+  font-family: var(--sans);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.04em;
@@ -240,7 +239,7 @@ footer,
   display: block;
   margin-bottom: 8px;
   color: var(--fg);
-  font-family: var(--display);
+  font-family: var(--sans);
   font-size: 18px;
   font-weight: 500;
   letter-spacing: -0.03em;
@@ -287,7 +286,7 @@ footer,
   border-bottom: 1px solid var(--rule);
 }
 .mapping dt {
-  font-family: var(--label);
+  font-family: var(--sans);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
@@ -303,7 +302,7 @@ footer,
   border-top: 1px solid var(--line);
 }
 h3 {
-  font-family: var(--display);
+  font-family: var(--sans);
   font-size: 22px;
   font-weight: 500;
   letter-spacing: -0.03em;
@@ -311,7 +310,7 @@ h3 {
 .evidence-links h3 span {
   margin-left: 10px;
   color: var(--faint);
-  font-family: var(--label);
+  font-family: var(--sans);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
@@ -327,8 +326,10 @@ h3 {
   width: 4.2rem;
   max-width: none;
   color: var(--fg);
+  font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.04em;
+  font-weight: 400;
+  letter-spacing: 0;
   line-height: 1.7;
   text-transform: none;
 }
@@ -337,7 +338,7 @@ h3 {
   display: block;
   margin-top: 8px;
   color: var(--muted);
-  font-family: var(--label);
+  font-family: var(--sans);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.04em;
@@ -352,7 +353,7 @@ h3 {
 .reflection label:not(.watch-toggle) {
   display: block;
   margin: 18px 0 8px;
-  font-family: var(--label);
+  font-family: var(--sans);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
@@ -366,7 +367,7 @@ h3 {
   border-radius: 0;
   background: #fff;
   padding: 10px 12px;
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 16px;
   letter-spacing: 0;
   text-transform: none;
@@ -378,7 +379,7 @@ h3 {
   align-items: center;
   gap: 12px;
   margin: 18px 0;
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 17px;
   letter-spacing: 0;
   text-transform: none;
@@ -438,7 +439,7 @@ h3 {
 .empty p { margin-top: 10px; color: var(--muted); }
 .empty button { margin-top: 20px; }
 .history p { margin: 4px 0; }
-.history strong { font-family: var(--display); font-size: 16px; font-weight: 500; letter-spacing: -0.02em; }
+.history strong { font-family: var(--sans); font-size: 16px; font-weight: 500; letter-spacing: -0.02em; }
 
 footer {
   display: flex;
@@ -458,7 +459,7 @@ footer span { text-align: right; }
 .collect-field {
   display: block;
   margin: 22px 0 8px;
-  font-family: var(--label);
+  font-family: var(--sans);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.04em;
@@ -498,7 +499,7 @@ footer span { text-align: right; }
   gap: 12px;
   padding: 14px 0;
   border-bottom: 1px solid var(--rule);
-  font-family: var(--serif);
+  font-family: var(--sans);
   font-size: 16px;
   font-weight: 400;
   letter-spacing: 0;
@@ -508,14 +509,14 @@ footer span { text-align: right; }
   display: block;
   margin-bottom: 4px;
   color: var(--muted);
-  font-family: var(--label);
+  font-family: var(--sans);
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 .collect .watch-card button { display: inline-block; margin-top: 16px; }
-.status { margin-top: 12px; font-family: var(--serif); font-size: 16px; letter-spacing: 0; text-transform: none; }
+.status { margin-top: 12px; font-family: var(--sans); font-size: 16px; letter-spacing: 0; text-transform: none; }
 
 @media (max-width: 1000px) {
   .reading-grid { grid-template-columns: 240px 1fr; gap: 28px; }
