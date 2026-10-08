@@ -95,6 +95,12 @@ function inline(text) {
     .replace(/\b(O\d{2}|F\d+)\b/g, '<span class="id">$1</span>');
 }
 
+function evidenceImage(item) {
+  if (!item.image_url || !item.url) return "";
+  const alt = item.image_alt || item.source || "Source image";
+  return `<a class="evidence-image" href="${esc(item.url)}" target="_blank" rel="noopener noreferrer"><img src="${esc(item.image_url)}" alt="${esc(alt)}" onerror="this.parentElement.remove()" /></a>`;
+}
+
 function observationBody(text) {
   const stripped = String(text).replace(/^Source summary \([^)]*\):\s*/, "");
   const [body, limitation] = stripped.split(/\s+Limitation:\s*/);
@@ -302,6 +308,7 @@ function paintEvidence() {
     <div class="evidence-grid">
       ${visible.map((item) => `
         <article class="evidence-card">
+          ${evidenceImage(item)}
           <div class="detail-top">
             <span class="obs-id">${esc(ids.get(item.observation_id))}</span>
             <span class="metadata">${esc(item.domain)}</span>

@@ -463,6 +463,18 @@ h3 {
   border: 0;
   border-top: 1px solid var(--line);
 }
+.evidence-card:has(.evidence-image) { padding-top: 0; }
+.evidence-image {
+  display: block;
+  margin: 0 0 16px;
+}
+.evidence-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+}
 .evidence-card p, .evidence-card > p { margin: 12px 0; font-size: 17px; line-height: 1.55; }
 .evidence-card .metadata { text-align: right; }
 .evidence-card .detail-top { align-items: baseline; gap: 16px; }
