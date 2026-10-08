@@ -214,7 +214,7 @@ function paintReadings() {
           `).join("")}
         </section>
         <section class="reflection">
-          <p class="eyebrow">Calibration</p>
+          <p class="eyebrow">YOUR DISCERNMENT</p>
           <h3>What changed in your perception?</h3>
           <label for="judgment">Reading judgment</label>
           <select id="judgment">${JUDGMENTS.map((item) => `<option value="${esc(item)}"${item === state.judgment ? " selected" : ""}>${esc(item)}</option>`).join("")}</select>
@@ -607,7 +607,7 @@ function mount() {
     <div class="field-title">
       <div>
         <p class="eyebrow">CURRENT FIELD</p>
-        <h2>Gathering, restoration, and participation.</h2>
+        <h2>Gathering, restoration,<br />and participation.</h2>
       </div>
       <div class="scope"><strong id="obs-count">${items.length}</strong> observations <span>/</span> <strong id="page-count">${sourcePages(items)}</strong> source pages<p>Curated sample · calibration open</p></div>
     </div>
