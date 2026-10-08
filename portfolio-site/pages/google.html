@@ -1,10 +1,9 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daniel Dickson — Creative Director & Systems Designer</title>
+  <title>Google Cloud | Daniel Dickson</title>
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * {
@@ -319,44 +318,57 @@
       nav ul { gap: 1rem; }
     }
 
-    /* ===== Home: full-width canvas ===== */
+    /* ===== Case study: Spangler x Collins ===== */
     .wide { max-width: none; padding: 0 2rem; }
-    .ph { background: linear-gradient(135deg, var(--border-light) 0%, #F0EFED 100%); display: flex; align-items: flex-end; justify-content: flex-start; padding: 0.5rem 0.625rem; color: var(--text-light-gray); font-size: 0.6875rem; width: 100%; }
+    .ph { background: linear-gradient(135deg, var(--border-light) 0%, #F0EFED 100%); display: flex; align-items: flex-end; padding: 0.5rem 0.625rem; color: var(--text-light-gray); font-size: 0.6875rem; width: 100%; }
     .ph.dark { background: linear-gradient(135deg, #2A2A28 0%, #1A1A1A 100%); color: #777; }
     .ph.warm { background: linear-gradient(135deg, #E9E2D6 0%, #DCD3C3 100%); }
     .ph.cool { background: linear-gradient(135deg, #DFE3E6 0%, #CFD5DA 100%); }
+    .bleed { width: 100%; aspect-ratio: 16 / 7; min-height: 320px; }
+    .bleed.short { aspect-ratio: 21 / 7; min-height: 240px; }
 
-    /* hero collage */
-    .collage { position: relative; height: 560px; margin: 2rem 0 4rem; }
-    .collage .piece { position: absolute; }
-    .collage .statement { position: absolute; left: 61%; top: 44%; width: 320px; }
-    .collage .statement p { font-family: 'Lora', serif; font-size: 1.3125rem; line-height: 1.25; color: var(--text-dark); letter-spacing: -0.01em; margin-bottom: 0.75rem; }
-    .collage .statement .sub { font-family: 'Inter', sans-serif; font-size: 0.8125rem; line-height: 1.45; color: var(--text-muted); }
+    .cs-intro { display: grid; grid-template-columns: 1fr 340px; gap: 4rem; align-items: start; padding: 4rem 0 5rem; }
+    .cs-intro .lead-img .ph { aspect-ratio: 4/3; }
+    .cs-intro h1 { font-size: 1.5rem; line-height: 1.15; margin-bottom: 1rem; }
+    .cs-intro h1 span { color: var(--text-light-gray); font-weight: 400; }
+    .credits { margin-bottom: 1.25rem; }
+    .credits p { font-size: 0.8125rem; line-height: 1.45; margin-bottom: 0.25rem; color: var(--text-muted); }
+    .credits b { color: var(--text-dark); font-weight: 600; }
+    .cs-intro .problem p { font-size: 0.875rem; line-height: 1.5; }
 
-    /* work stream */
-    .stream { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 1.5rem; row-gap: 6rem; margin-bottom: 7rem; }
-    .stream .item { display: block; text-decoration: none; color: inherit; }
-    .stream .item .ph { transition: opacity .2s; }
-    .stream .item:hover .ph { opacity: .8; }
-    .stream .cap { font-size: 0.75rem; color: var(--text-dark); margin-top: 0.625rem; letter-spacing: 0; }
-    .stream .cap span { color: var(--text-light-gray); }
-    .stream .item.nolink .cap { color: var(--text-muted); }
+    .story { padding: 2rem 0 5rem; display: grid; grid-template-columns: 160px 1fr; gap: 2rem; }
+    .story .label, .section-label { font-family: 'Inter', sans-serif; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light-gray); }
+    .story p { font-family: 'Lora', serif; font-size: 1.875rem; line-height: 1.2; letter-spacing: -0.015em; color: var(--text-dark); max-width: 760px; margin: 0; }
 
-    /* contact */
-    .contact { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; padding: 3rem 0 2rem; border-top: 1px solid var(--border-light); }
-    .contact h5 { font-family: 'Inter', sans-serif; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light-gray); margin-bottom: 0.875rem; }
-    .contact p { font-size: 0.875rem; margin-bottom: 0.375rem; color: var(--text-dark); }
-    .contact a { text-decoration: none; }
-    .contact a:hover { text-decoration: underline; }
-    .colophon { text-align: center; font-size: 0.75rem; color: var(--text-light-gray); padding: 4rem 0 2rem; }
+    .gallery { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; padding-bottom: 5rem; }
+    .gallery .g { display: block; }
+    .gallery .g .cap { font-size: 0.75rem; color: var(--text-light-gray); margin-top: 0.5rem; }
+
+    .frameworks { padding: 0 0 5rem; display: grid; grid-template-columns: 160px 1fr; gap: 2rem; }
+    .frameworks .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+    .frameworks h3 { font-family: 'Inter', sans-serif; font-size: 0.9375rem; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0; }
+    .frameworks p { font-size: 0.875rem; line-height: 1.5; margin: 0; }
+
+    .impact { padding: 4rem 0 5rem; border-top: 1px solid var(--border-light); display: grid; grid-template-columns: 160px 1fr; gap: 2rem; }
+    .impact .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+    .impact .fig { font-family: 'Lora', serif; font-size: 3.5rem; line-height: 1; letter-spacing: -0.03em; color: var(--text-dark); margin-bottom: 0.75rem; }
+    .impact .fig.ph-fig { color: var(--text-light-gray); }
+    .impact h3 { font-family: 'Lora', serif; font-size: 1.375rem; font-weight: 500; line-height: 1.2; letter-spacing: -0.015em; margin-bottom: 0.625rem; }
+    .impact p { font-size: 0.875rem; line-height: 1.5; margin: 0; }
+
+    .scatter { position: relative; display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; padding: 0 0 5rem; }
+
+    .next { border-top: 1px solid var(--border-light); padding: 2.5rem 0 3rem; display: flex; justify-content: space-between; align-items: baseline; }
+    .next a { text-decoration: none; font-size: 0.875rem; }
+    .next a:hover { text-decoration: underline; }
+    .next .label { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light-gray); margin-right: 0.75rem; }
 
     @media (max-width: 900px) {
-      .collage { height: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 3rem; }
-      .collage .piece, .collage .statement { position: static !important; width: auto !important; }
-      .collage .statement { grid-column: 1 / -1; order: -1; margin-bottom: 1rem; }
-      .stream { row-gap: 3rem; }
-      .stream .item { grid-column: 1 / -1 !important; }
-      .contact { grid-template-columns: 1fr; }
+      .cs-intro, .story, .frameworks, .impact { grid-template-columns: 1fr; gap: 1.5rem; }
+      .frameworks .grid, .impact .grid { grid-template-columns: 1fr; gap: 1.5rem; }
+      .story p { font-size: 1.375rem; }
+      .gallery .g, .scatter .g { grid-column: 1 / -1 !important; margin-top: 0 !important; }
+      .cs-intro { padding: 2.5rem 0 3rem; }
     }
   </style>
 </head>
@@ -366,80 +378,58 @@
       <a href="index.html" class="logo">Daniel Dickson</a>
       <ul>
         <li><a href="writing.html">Writing</a></li>
-        <li><a href="cases.html">Cases</a></li>
+        <li><a href="cases.html" class="active">Cases</a></li>
         <li><a href="about.html">About</a></li>
         <li><a href="https://fieldofaction.org">Field of Action</a></li>
       </ul>
     </div>
   </nav>
 
+  <div class="ph cool bleed">[Hero — campaign frame, full bleed]</div>
+
   <div class="container wide">
-    <!-- Hero collage -->
-    <div class="collage">
-      <div class="piece" style="left:22%; top:4%; width:170px;"><div class="ph warm" style="aspect-ratio:3/4">[MLS season key art]</div></div>
-      <div class="piece" style="left:40%; top:0; width:230px;"><div class="ph dark" style="aspect-ratio:16/10">[F1 broadcast frame]</div></div>
-      <div class="piece" style="left:49%; top:40%; width:150px;"><div class="ph cool" style="aspect-ratio:1">[Vevo artist mark]</div></div>
-      <div class="piece" style="left:16%; top:66%; width:240px;"><div class="ph" style="aspect-ratio:16/9">[Google Cloud narrative frame]</div></div>
-      <div class="piece" style="left:63%; top:74%; width:200px;"><div class="ph dark" style="aspect-ratio:4/3">[Tribeca festival signage]</div></div>
-      <div class="statement">
-        <p>I build the creative systems other people can use.</p>
-        <p class="sub">Creative director and systems designer. Reusable tools, clear decision rules, and shared infrastructure that let distributed teams move faster without losing judgment — across Apple, Google Cloud, Vevo, and Tribeca.</p>
-      </div>
-    </div>
-
-    <!-- Work stream -->
-    <div class="stream">
-      <a href="apple.html" class="item" style="grid-column: 1 / 10;">
-        <div class="ph dark" style="aspect-ratio:16/8">[Apple — sports broadcast design system, season reel]</div>
-        <p class="cap">Apple Music/Sports, 2021–Present <span>→</span></p>
-      </a>
-
-      <a href="google.html" class="item" style="grid-column: 2 / 6;">
-        <div class="ph" style="aspect-ratio:4/5">[Google Cloud — narrative module]</div>
-        <p class="cap">Google Cloud, 2019–2021 <span>→</span></p>
-      </a>
-      <a href="vevo.html" class="item" style="grid-column: 7 / 13; margin-top: 8rem;">
-        <div class="ph cool" style="aspect-ratio:16/10">[Vevo — artist franchise identity system]</div>
-        <p class="cap">Vevo, 2015–2019 <span>→</span></p>
-      </a>
-
-      <a href="tribeca.html" class="item" style="grid-column: 1 / 13;">
-        <div class="ph warm" style="aspect-ratio:21/9">[Tribeca Film Festival — institutional design system, full bleed]</div>
-        <p class="cap">Tribeca Film Festival, 2012–2015 <span>→</span></p>
-      </a>
-
-      <div class="item nolink" style="grid-column: 3 / 7;">
-        <div class="ph dark" style="aspect-ratio:1">[Nickelodeon — brand system]</div>
-        <p class="cap">Nickelodeon, 2010–2012</p>
-      </div>
-      <div class="item nolink" style="grid-column: 8 / 12; margin-top: 5rem;">
-        <div class="ph" style="aspect-ratio:3/4">[Cartoon Network — broadcast package]</div>
-        <p class="cap">Cartoon Network</p>
-      </div>
-
-      <a href="https://fieldofaction.org" class="item" style="grid-column: 1 / 8;">
-        <div class="ph cool" style="aspect-ratio:16/9">[Field of Action — practice, instruments, canon]</div>
-        <p class="cap">Field of Action, 2026 <span>→</span></p>
-      </a>
-    </div>
-
-    <!-- Contact -->
-    <div class="contact">
+    <div class="cs-intro">
+      <div class="lead-img"><div class="ph ">[Narrative module system]</div></div>
       <div>
-        <h5>Contact</h5>
-        <p><a href="mailto:alfreddaniel@hey.com">alfreddaniel@hey.com</a></p>
-        <p>Los Angeles</p>
-      </div>
-      <div>
-        <h5>Elsewhere</h5>
-        <p><a href="https://fieldofaction.org">Field of Action</a></p>
-        <p><a href="#">LinkedIn</a></p>
-        <p><a href="#">Instagram</a></p>
+        <h1>Google Cloud<span>, 2019–2021</span></h1>
+        <div class="credits"><p><b>Role:</b> Design Lead, Enterprise Communications</p><p><b>Scope:</b> Cloud infrastructure, AI transformation</p><p><b>Teams:</b> Product, marketing, sales</p></div>
+        <div class="problem"><p>Cloud infrastructure and AI capabilities needed one coherent story across product, marketing, and sales. Each function told it differently, opening interpretation gaps between technical capability and customer communication, and every campaign began with custom translation.</p></div>
       </div>
     </div>
-    <p class="colophon">Daniel Dickson, 2026</p>
+
+    <div class="story">
+      <p class="label">The reframe</p>
+      <p>Three functions were not disagreeing about the product. They were missing a shared language for it. Give them the structure and the translation work disappears.</p>
+    </div>
+
+    <div class="gallery">
+      <div class="g" style="grid-column: 1 / 8;"><div class="ph cool" style="aspect-ratio:16/10">[Modular narrative architecture — diagram]</div></div>
+      <div class="g" style="grid-column: 9 / 13; margin-top: 6rem;"><div class="ph " style="aspect-ratio:4/5">[Audience decision rules]</div></div>
+    </div>
+
+    <div class="frameworks">
+      <p class="section-label">Frameworks built</p>
+      <div class="grid"><div><h3>Modular narrative architecture</h3><p>Adaptable storytelling systems that translate infrastructure complexity into clear, audience-appropriate narratives.</p></div><div><h3>Shared language & visual systems</h3><p>Decision rules defining which stories fit which audiences and contexts, so teams adapt independently.</p></div><div><h3>Cross-function translation</h3><p>Frameworks that let product, marketing, and business teams apply coherent storytelling without bespoke translation.</p></div></div>
+    </div>
+  </div>
+
+  <div class="ph dark bleed short">[Campaign system across channels]</div>
+
+  <div class="container wide">
+    <div class="impact">
+      <p class="section-label">Impact</p>
+      <div class="grid"><div><h3>Interpretation gaps closed</h3><p>Technical capability and customer communication aligned across product, marketing, and sales touchpoints.</p></div><div><h3>Faster campaign delivery</h3><p>Ready-made narrative structures replaced custom translation for each initiative.</p></div><div><h3>Independent team operation</h3><p>Teams adapted the frameworks on their own while staying aligned organization-wide.</p></div></div>
+    </div>
+
+    <div class="scatter">
+      <div class="g" style="grid-column: 2 / 6;"><div class="ph " style="aspect-ratio:1">[Sales deck frame]</div></div>
+      <div class="g" style="grid-column: 7 / 12; margin-top: 7rem;"><div class="ph cool" style="aspect-ratio:16/10">[Event environment]</div></div>
+    </div>
+
+    <div class="next">
+      <a href="cases.html">← All cases</a>
+      <span><span class="label">Next</span><a href="vevo.html">Vevo →</a></span>
+    </div>
   </div>
 </body>
 </html>
-
-</body></html>
