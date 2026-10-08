@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Field of Action | Daniel Dickson</title>
+  <title>Apple Music | Daniel Dickson</title>
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     * {
@@ -61,24 +61,18 @@
       line-height: 1.75;
     }
 
-    html { scroll-behavior: smooth; }
-    
     a {
       color: var(--text-dark);
       text-decoration: underline;
-      text-decoration-thickness: 1px;
-      text-underline-offset: 2px;
-      transition: color 0.3s ease, text-decoration-color 0.3s ease;
+      transition: color 0.2s;
     }
 
     a:hover {
       color: var(--text-muted);
-      text-decoration-color: transparent;
     }
 
     nav {
-      background: rgba(250, 250, 248, 0.95);
-      backdrop-filter: blur(12px);
+      background: var(--bg-light);
       border-bottom: 1px solid var(--border-light);
       padding: 1.5rem 0;
       position: sticky;
@@ -141,6 +135,7 @@
     .ph.warm { background: linear-gradient(135deg, #E9E2D6 0%, #DCD3C3 100%); }
     .ph.cool { background: linear-gradient(135deg, #DFE3E6 0%, #CFD5DA 100%); }
     .bleed { width: 100%; aspect-ratio: 16 / 7; min-height: 320px; animation: fadeIn 0.8s ease-out; }
+    .bleed.short { aspect-ratio: 21 / 7; min-height: 240px; }
 
     .cs-intro { display: grid; grid-template-columns: 1fr 340px; gap: 4rem; align-items: start; padding: 4rem 0 5rem; opacity: 0; animation: fadeInUp 0.8s ease-out 0.2s forwards; }
     .cs-intro .lead-img .ph { aspect-ratio: 4/3; }
@@ -160,9 +155,22 @@
     .gallery .g:hover { transform: translateY(-4px); }
     .gallery .g .cap { font-size: 0.75rem; color: var(--text-light-gray); margin-top: 0.5rem; }
 
+    .frameworks { padding: 0 0 5rem; display: grid; grid-template-columns: 160px 1fr; gap: 2rem; }
+    .frameworks .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+    .frameworks h3 { font-family: 'Inter', sans-serif; font-size: 0.9375rem; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0; }
+    .frameworks p { font-size: 0.875rem; line-height: 1.5; margin: 0; }
+
+    .impact { padding: 4rem 0 5rem; border-top: 1px solid var(--border-light); display: grid; grid-template-columns: 160px 1fr; gap: 2rem; }
+    .impact .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+    .impact h3 { font-family: 'Lora', serif; font-size: 1.375rem; font-weight: 500; line-height: 1.2; letter-spacing: -0.015em; margin-bottom: 0.625rem; }
+    .impact p { font-size: 0.875rem; line-height: 1.5; margin: 0; }
+
+    .scatter { position: relative; display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; padding: 0 0 5rem; }
+
     .next { border-top: 1px solid var(--border-light); padding: 2.5rem 0 3rem; display: flex; justify-content: space-between; align-items: baseline; }
     .next a { text-decoration: none; font-size: 0.875rem; transition: transform 0.2s ease; display: inline-block; }
     .next a:hover { text-decoration: underline; }
+    .next .label { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light-gray); margin-right: 0.75rem; }
 
     /* Animations */
     @keyframes fadeIn {
@@ -176,9 +184,10 @@
     }
 
     @media (max-width: 900px) {
-      .cs-intro, .story { grid-template-columns: 1fr; gap: 1.5rem; }
+      .cs-intro, .story, .frameworks, .impact { grid-template-columns: 1fr; gap: 1.5rem; }
+      .frameworks .grid, .impact .grid { grid-template-columns: 1fr; gap: 1.5rem; }
       .story p { font-size: 1.375rem; }
-      .gallery .g { grid-column: 1 / -1 !important; }
+      .gallery .g, .scatter .g { grid-column: 1 / -1 !important; }
     }
   </style>
 </head>
@@ -188,48 +197,57 @@
       <a href="../index.html" class="logo">Daniel Dickson</a>
       <ul>
         <li><a href="writing.html">Writing</a></li>
-        <li><a href="cases.html">Cases</a></li>
+        <li><a href="cases.html" class="active">Cases</a></li>
         <li><a href="about.html">About</a></li>
         <li><a href="https://fieldofaction.org">Field of Action</a></li>
       </ul>
     </div>
   </nav>
 
-  <div class="ph cool bleed">[Field of Action — practice surface, full bleed]</div>
+  <div class="ph dark bleed">[Apple Music hero]</div>
 
   <div class="container wide">
     <div class="cs-intro">
-      <div class="lead-img"><div class="ph cool">[Patio Beach — shared writing space]</div></div>
+      <div class="lead-img"><div class="ph dark">[Apple Music work sample]</div></div>
       <div>
-        <h1>Field of Action<span> · 2026–Present</span></h1>
-        <div class="credits"><p><b>Role:</b> Founder, Designer, Writer</p><p><b>Scope:</b> Design practice, research, and experimental tools</p></div>
-        <div class="problem"><p>Field of Action is my independent design practice and research workbench. It brings together writing, interactive tools, and experiments in how people notice patterns, develop ideas, and act on them.</p></div>
+        <h1>Apple Music<span>, [Dates to confirm]</span></h1>
+        <div class="credits"><p><b>Role:</b> [To confirm]</p><p><b>Scope:</b> [To confirm]</p></div>
+        <div class="problem"><p>[To develop]</p></div>
       </div>
     </div>
 
     <div class="story">
-      <p class="label">The practice</p>
-      <p>I investigate how design influences the relationships between people, tools, and environments. Field of Action gives those questions a place to develop through research, writing, and practical experiments.</p>
+      <p class="label">The challenge</p>
+      <p>[To develop]</p>
     </div>
 
     <div class="gallery">
-      <div class="g" style="grid-column: 1 / 8;"><div class="ph warm" style="aspect-ratio:16/9">[Patio Beach]</div><p class="cap">Patio Beach — a shared writing space</p></div>
-      <div class="g" style="grid-column: 9 / 13; margin-top: 6rem;"><div class="ph cool" style="aspect-ratio:4/5">[Share Location]</div><p class="cap">Share Location — publishing with context</p></div>
+      <div class="g" style="grid-column: 1 / 8;"><div class="ph dark" style="aspect-ratio:16/10">[Work example 1]</div></div>
+      <div class="g" style="grid-column: 9 / 13; margin-top: 6rem;"><div class="ph" style="aspect-ratio:4/5">[Work example 2]</div></div>
     </div>
 
-    <div class="gallery">
-      <div class="g" style="grid-column: 2 / 7;"><div class="ph dark" style="aspect-ratio:1">[Art of Model]</div><p class="cap">Art of Model — a tool for connecting ideas and identifying patterns</p></div>
-      <div class="g" style="grid-column: 8 / 13; margin-top: 4rem;"><div class="ph" style="aspect-ratio:16/10">[Pattern Language]</div><p class="cap">Pattern Language — a collection of conceptual models</p></div>
+    <div class="frameworks">
+      <p class="section-label">The system</p>
+      <div class="grid"><div><h3>[Component 1]</h3><p>[To develop]</p></div><div><h3>[Component 2]</h3><p>[To develop]</p></div><div><h3>[Component 3]</h3><p>[To develop]</p></div></div>
+    </div>
+  </div>
+
+  <div class="ph dark bleed short">[Visual examples]</div>
+
+  <div class="container wide">
+    <div class="impact">
+      <p class="section-label">What changed</p>
+      <div class="grid"><div><h3>[Impact 1]</h3><p>[To develop]</p></div><div><h3>[Impact 2]</h3><p>[To develop]</p></div><div><h3>[Impact 3]</h3><p>[To develop]</p></div></div>
     </div>
 
-    <div class="gallery">
-      <div class="g" style="grid-column: 1 / 6;"><div class="ph warm" style="aspect-ratio:3/4">[Workbench]</div><p class="cap">Workbench — tools for synthesis, generation, and reflection</p></div>
-      <div class="g" style="grid-column: 7 / 12; margin-top: 5rem;"><div class="ph cool" style="aspect-ratio:16/9">[Exploration Editor]</div><p class="cap">Exploration Editor — a workspace for developing research</p></div>
+    <div class="scatter">
+      <div class="g" style="grid-column: 2 / 6;"><div class="ph dark" style="aspect-ratio:1">[Detail]</div></div>
+      <div class="g" style="grid-column: 7 / 12; margin-top: 7rem;"><div class="ph" style="aspect-ratio:16/10">[Context]</div></div>
     </div>
 
     <div class="next">
       <a href="cases.html">← All cases</a>
-      <span><a href="https://fieldofaction.org" target="_blank">Visit Field of Action →</a></span>
+      <span><span class="label">Next</span><a href="apple-sports.html">Apple TV Sports →</a></span>
     </div>
   </div>
 </body>

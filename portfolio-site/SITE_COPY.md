@@ -7,23 +7,21 @@ All text content from the portfolio site for review and refinement.
 ## Homepage
 
 ### Hero Statement
-**Main:** I build the creative systems other people can use.
+**Main:** Executive creative direction and strategy for AI-native spaces.
 
-**Subtitle:** Creative director and systems designer. Reusable tools, clear decision rules, and shared infrastructure that let distributed teams move faster without losing judgment — across Apple, Google Cloud, Vevo, and Tribeca.
+**Subtitle:** Creative director and systems designer. I connect vision, people, and systems so teams can create distinctive work at scale. Experience across Apple, Google Cloud, Vevo, and Tribeca.
 
-### Work Items
+### Selected work
+- Apple Music · [Dates to confirm]
+- Apple TV Sports · [Dates to confirm]
+- Google Cloud · 2019–2021
+- Vevo · 2015–2019
+- Tribeca Film Festival · 2012–2015
+- Field of Action · 2026–Present
 
-**Apple Music/Sports, 2021–Present**
-
-**Google Cloud, 2019–2021**
-
-**Vevo, 2015–2019**
-
-**Tribeca Film Festival, 2012–2015**
-
-**Field of Action, 2026**
-- Patio Beach — shared writing space
-- Share Location — contextual publishing
+### Field of Action Projects
+- Patio Beach — photography and context
+- Share Location — drawings and context
 
 ---
 
@@ -32,143 +30,172 @@ All text content from the portfolio site for review and refinement.
 ### Page Header
 **Title:** Case Studies
 
-**Intro:** Systems built for scale. Each demonstrates the same principle: translate judgment into infrastructure that lets distributed teams operate independently while maintaining coherence.
+**Intro:** Creative direction across music, sports, technology, and culture. Each case explores the relationship between a design vision and the people, tools, and decisions that sustain it.
 
 ### Case Study Summaries
 
-**Apple Music/Sports**
-- Role: Creative Lead
-- Years: 2021–Present
-- Description: Reduced review overhead and turnaround time while maintaining brand consistency across hundreds of seasonal assets. Enabled geographically distributed teams to operate independently on global sports broadcast.
+**Apple Music**
+[Description to develop from the specific work, role, and scope.]
+
+**Apple TV Sports**
+[Dates to confirm]
+Design and production systems for recurring sports broadcasts, giving teams shared standards and clear parameters for delivery.
 
 **Google Cloud**
-- Role: Design Lead
-- Years: 2019–2021
-- Description: Closed interpretation gaps between technical capabilities and customer communication. Accelerated campaign delivery by providing ready-made narrative structures across product, marketing, and sales.
+2019–2021 · Design Lead
+A shared visual language and reusable story structures that helped product, marketing, and sales teams explain complex technology.
 
 **Vevo**
-- Role: Creative Director
-- Years: 2015–2019
-- Description: Grew franchise partnerships significantly without proportional creative overhead increase. Maintained brand distinctiveness across hundreds of creative properties despite distributed authorship.
+2015–2019 · Creative Director
+Identity systems for artist franchises that balanced a recognizable Vevo presence with room for individual expression.
 
 **Tribeca Film Festival**
-- Role: Creative Director
-- Years: 2012–2015
-- Description: Maintained institutional coherence across 100+ annual projects while preserving artistic and curatorial integrity. Built in-house governance team that sustained the system after transition.
+2012–2015 · Creative Director
+A festival-wide design system and internal team supporting more than 100 annual projects while preserving the character of individual programs.
 
 ---
 
 ## Apple Music Case Study
 
 ### Intro
-**Title:** Apple Music/Sports, 2021–Present
+**Title:** Apple Music
+**Dates:** [To confirm]
+**Role:** [To confirm]
+**Scope:** [To confirm]
 
-**Role:** Creative Lead, Sports Broadcast
+### The challenge
+[To develop]
 
+### Creative direction
+[To develop]
+
+### The system
+[To develop]
+
+### What changed
+[To develop]
+
+---
+
+## Apple TV Sports Case Study
+
+### Intro
+**Title:** Apple TV Sports
+**Dates:** [To confirm]
+**Role:** [Formal title and project responsibilities to confirm]
 **Scope:** MLS, MLB, Formula 1
+**Collaborators:** Creative teams, external vendors, and in-house production
 
-**Teams:** Regional creative teams, external vendors, in-house production
+### The challenge
+Sports broadcast production repeats across seasons, languages, teams, and vendors. Recurring questions about layout, brand standards, and approvals slowed delivery and increased reliance on central review.
 
-**Problem:** Global sports across MLS, MLB, and F1 means hundreds of seasonal assets each cycle, produced by distributed teams across regions and a network of external vendors. Every cycle hit the same walls: review bottlenecks, consistency drift, and approval delays that slowed time-to-market while adding overhead.
+### The approach
+Establish shared standards for recurring work and clarify where creative judgment is needed. Give teams the guidance to resolve routine production questions and clear checkpoints for review.
 
-### The Reframe
-The bottleneck was never capability. It was that every decision routed back through one desk. The work was to move the judgment into the system so the desk could disappear.
+### The system
 
-### Frameworks Built
+**Production templates**
+Reusable layouts and assets that translate design standards into everyday production decisions.
 
-**Reusable production templates**
-Design templates that standardize decision-making across recurring broadcast cycles, so teams operate inside clear parameters rather than negotiating each asset.
+**Review standards**
+Clear criteria for evaluating work and determining when further creative review is needed.
 
-**Approval workflows & guardrails**
-Quality frameworks that let distributed teams and vendors ship independently without routing through centralized creative review.
+**Production workflows**
+Defined steps and responsibilities for preparing, reviewing, and delivering assets across teams and vendors.
 
-**AI-assisted production**
-Automation-ready workflows that take on repetitive production effort while preserving creative judgment where it matters.
-
-### Impact
-
-**Review overhead reduced**
-Distributed teams operated independently, cutting centralized review cycles and turnaround time.
-
-**Assets held to one standard**
-Hundreds of assets across multiple sports stayed coherent despite geographically distributed production.
-
-**Team velocity**
-Regional teams moved at their own pace inside a single global framework.
+### What changed
+Teams could resolve more routine decisions within a shared framework, supporting consistent delivery across recurring broadcast assets.
 
 ---
 
 ## Google Cloud Case Study
 
 ### Intro
-**Title:** Google Cloud, 2019–2021
-
+**Title:** Google Cloud
+**Dates:** 2019–2021
 **Role:** Design Lead
+**Scope:** Enterprise brand, product marketing, and sales enablement
 
-**Scope:** Enterprise brand, product marketing, sales enablement
+### The challenge
+[To develop from a specific example of the communication problem.]
 
-**Problem:** [To be written]
+### Creative direction
+[To develop]
 
-### The Reframe
-[To be written]
+### The system
+[To develop]
 
-### Frameworks Built
-[To be written]
-
-### Impact
-[To be written]
+### What changed
+[To develop from documented results.]
 
 ---
 
 ## Vevo Case Study
 
 ### Intro
-**Title:** Vevo, 2015–2019
-
+**Title:** Vevo
+**Dates:** 2015–2019
 **Role:** Creative Director
-
 **Scope:** Artist franchise identity systems
 
-**Problem:** [To be written]
+### The challenge
+[To develop from the relationship between Vevo's identity and individual artist expression.]
+
+### Creative direction
+[To develop]
+
+### The system
+[To develop]
+
+### What changed
+[To develop from documented results.]
 
 ---
 
-## Tribeca Case Study
+## Tribeca Film Festival Case Study
 
 ### Intro
-**Title:** Tribeca Film Festival, 2012–2015
-
+**Title:** Tribeca Film Festival
+**Dates:** 2012–2015
 **Role:** Creative Director
-
 **Scope:** Institutional design system
 
-**Problem:** [To be written]
+### The challenge
+[To develop from the range of programs, audiences, and design needs across the festival.]
+
+### Creative direction
+[To develop]
+
+### The system
+[To develop]
+
+### What changed
+[To develop from documented results.]
 
 ---
 
 ## Field of Action Page
 
 ### Intro
-**Title:** Field of Action, 2026–Present
+**Title:** Field of Action · 2026–Present
 
 **Role:** Founder, Designer, Writer
 
-**Scope:** Practice, Tools, Canon
+**Scope:** Design practice, research, and experimental tools
 
-**Platform:** Web, Interactive Systems
+**Description:**
+Field of Action is my independent design practice and research workbench. It brings together writing, interactive tools, and experiments in how people notice patterns, develop ideas, and act on them.
 
-**Description:** A publishing platform, design practice, and research workbench built to hold more than it shows. Method made visible. Tools for synthesis, generation, and reflection.
+### The practice
+I investigate how design influences the relationships between people, tools, and environments. Field of Action gives those questions a place to develop through research, writing, and practical experiments.
 
-### The Practice
-Field of Action is where the work happens before it becomes work. A place for relational design, pattern languages, and the instruments that make emergence legible.
-
-### Featured Items
-- Patio Beach — collaborative writing environment / Writing space with shared context
-- Share Location — contextual publishing / Contextual publishing system
-- Art of Model — synthesis engine / Pattern synthesis interface
-- Pattern Language — 71 models / Conceptual model database
-- Workbench — nine instruments / Practice surface
-- Exploration editor / Research workbench
+### Featured items
+- Patio Beach — a shared writing space
+- Share Location — publishing with context
+- Art of Model — a tool for connecting ideas and identifying patterns
+- Pattern Language — a collection of conceptual models
+- Workbench — tools for synthesis, generation, and reflection
+- Exploration Editor — a workspace for developing research
 
 ---
 
@@ -180,20 +207,15 @@ Field of Action is where the work happens before it becomes work. A place for re
 
 ### Bio
 
-**Lede (Opening Paragraph):**
-Daniel Dickson is a creative director and systems designer with twenty years across broadcast, brand, technology, and culture. His work sits where high design meets enterprise scale: building the frameworks that let large, distributed teams move fast without losing judgment or distinctiveness.
+I'm Daniel Dickson, a creative director and systems designer based in Los Angeles. My work spans broadcast, brand, technology, and culture.
 
-**Apple Experience:**
-At Apple, he leads design systems for global sports broadcast across MLS, MLB, and F1 — hundreds of seasonal assets produced by regional teams and external vendors each cycle. The production templates, approval guardrails, and AI-assisted workflows he built cut centralized review, held brand consistency across geographies, and let teams run at their own velocity inside one global framework.
+I set creative direction and establish the conditions that help people carry it forward: a shared visual language, clear decisions, useful tools, and room for judgment. My focus is how a design vision develops through the contributions of a team while retaining its character and purpose.
 
-**Google Cloud Experience:**
-Before Apple, he was Design Lead at Google Cloud, where product, marketing, and sales each told the story of cloud infrastructure and AI differently. He built the modular narrative architecture and shared visual language that closed those interpretation gaps and let teams ship campaigns from ready-made structures rather than custom translation.
+My experience includes Apple Music and Apple TV Sports, enterprise storytelling at Google Cloud, artist franchise identities at Vevo, and festival-wide design at Tribeca. Earlier roles at Nickelodeon and Cartoon Network grounded my practice in broadcast design.
 
-**Vevo, Tribeca, and Earlier:**
-As Creative Director at Vevo, he designed the identity frameworks behind hundreds of artist franchises — systems that let artists and partner labels create distinctive work inside coherent parameters, so partnerships could grow without creative overhead growing with them. At the Tribeca Film Festival, he built the institutional design system, editorial standards, and in-house governance team that kept 100+ annual projects coherent while protecting curatorial integrity — a system that outlasted his tenure. Earlier work at Nickelodeon and Cartoon Network established his grounding in broadcast design and Emmy-recognized brand systems.
+Across these settings, my responsibilities have ranged from art direction and systems design to creative leadership and team management. That range informs how I connect the quality of the work with the organization behind it.
 
-**Current Practice:**
-Today he runs Field of Action, an independent practice in creative systems and design governance — the infrastructure that lets people and intelligent tools work coherently together. The question is constant across every engagement: as an organization distributes across teams, tools, and geographies, how does it keep its judgment? The answer is never tighter control. It is systems designed to hand decision-making outward while holding the whole together.
+Through Field of Action, I extend this practice into research, writing, and experimental tools. I explore how design influences what people can understand, contribute to, and make possible together.
 
 ---
 
@@ -201,9 +223,9 @@ Today he runs Field of Action, an independent practice in creative systems and d
 
 **Title:** Writing
 
-**Intro:** Essays and notes on systems design, creative direction, and building infrastructure for teams.
+**Intro:** Essays and research notes on creative direction, systems, and the relationships between people, tools, and environments.
 
-**Message:** Writing is published at Field of Action
+**Link:** Read at Field of Action.
 
 ---
 
