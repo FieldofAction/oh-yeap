@@ -136,6 +136,13 @@ Rings: **Operational** Field→WIP→Action→Cache · **Practice** Art Practice
 - Principle it sets: theory introduces the practice; the instrument has enough space to be used independently.
 - Agent(s): Codex, sequential implementation and review.
 
+### 2026-10-08 · Synthesize selected materials and expose the instrument in Canon navigation
+- Context / signal: Daniel asked Connections to synthesize how the selected materials relate and what might emerge. He also requested Materials in Relation as a tab beneath Relational Design in the Canon section.
+- Decision: derive a live, explicitly hypothetical reading from authored material relationships. Every physical/digital pairing has an explicit interpretation; physical/relational and digital/relational contributions combine into a possible emergence, tension, and small trial. The public and Studio menus now expose a nested instrument entry.
+- Rejected (and why): a selection list that leaves all synthesis to the reader; a universal prediction of an outcome; automatic replacement of a person's own interpretation or saved evidence.
+- Principle it sets: selecting materials should produce a useful reading immediately. A saved synthesis stays a hypothesis, survives further exploration, and travels with study exports and recorded iterations.
+- Agent(s): Codex, sequential implementation and review.
+
 ---
 
 ## 6 · Anomaly register (Anomaly Inquiry Protocol)

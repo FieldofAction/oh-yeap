@@ -1,5 +1,6 @@
 import { useId, useRef, useState } from 'react';
 import { MATERIAL_DOMAINS, CONNECTION_STUDIES, INVITATION_EXAMPLE, blankStudy, normalizeStudy, studyMarkdown } from '../data/materials';
+import { synthesizeMaterials, synthesisText } from '../data/material-synthesis';
 import '../styles/materials.css';
 
 const STORAGE_KEY = 'foa.materials-in-relation.v1';
@@ -75,6 +76,9 @@ export default function MaterialsInRelation() {
   const id = useId();
   const guide = CONNECTION_STUDIES.find(s => s.id === example);
   const domain = MATERIAL_DOMAINS.find(d => d.id === view);
+  const synthesis = synthesizeMaterials(study.selected);
+  const synthesisNote = synthesisText(synthesis);
+  const synthesisKept = study.synthesisNote === synthesisNote;
   const hasWork = Object.keys(blankStudy()).some(key => typeof study[key] === 'string' && key !== 'connectionStatus' && study[key].trim()) || study.history.length > 0;
 
   function save(next, feedback = 'Saved on this device.') {
@@ -150,13 +154,34 @@ export default function MaterialsInRelation() {
           </div>)}
         </div>
         <svg className="mir-joins" viewBox="0 0 600 50" aria-hidden="true"><path d="M100 0V20H300V50M300 0V50M500 0V20H300" /></svg>
-        <div className="mir-intention"><span className="mir-kicker">What becomes possible?</span><p>{study.intention || 'Name a situation and an intention to give these choices a purpose.'}</p></div>
-        <p className="mir-context">The lines gather your choices around an intention. They do not assert causation or equivalence.</p>
-        {field('connection', 'How might these conditions affect one another?', 'Name a specific connection. What might support or contradict it?')}
-        <label className="mir-select-label" htmlFor={`${id}-status`}>Connection status</label>
-        <select id={`${id}-status`} value={study.connectionStatus} onChange={e => edit('connectionStatus', e.target.value)}>{Object.keys(STATUS_HELP).map(s => <option key={s} value={s}>{s[0].toUpperCase() + s.slice(1)}</option>)}</select>
-        <p className="mir-context">{STATUS_HELP[study.connectionStatus]}</p>
-        {study.connectionStatus === 'observation' && !study.observation.trim() && <p className="mir-notice">Add the context and evidence in your study record to support this label.</p>}
+        <section className="mir-synthesis" aria-labelledby={`${id}-synthesis`}>
+          <div className="mir-synthesis-meta"><span className="mir-kicker">Working synthesis</span><span className="mir-kicker">Hypothesis · updates with your choices</span></div>
+          <p className="mir-synthesis-selection" role="status" aria-live="polite">{synthesis.pairing}</p>
+          <div className="mir-emergence">
+            <span className="mir-kicker">What could emerge</span>
+            <h3 id={`${id}-synthesis`}>{synthesis.title}</h3>
+            <p>{synthesis.summary}</p>
+            <p>{synthesis.emergence}</p>
+          </div>
+          <h4>How the materials relate</h4>
+          <dl className="mir-relations">{synthesis.relationships.map(pair => <div key={pair.label}><dt>{pair.label}</dt><dd>{pair.text}</dd></div>)}</dl>
+          <div className="mir-synthesis-practice">
+            <div><h4>Where it may pull apart</h4><p>{synthesis.tension}</p><details><summary>Material limits</summary><p>{synthesis.materialLimits}</p></details></div>
+            <div><h4>A small experiment</h4><p>{synthesis.trial}</p><p><strong>Notice:</strong> {synthesis.observe}</p></div>
+          </div>
+          {study.intention && <div className="mir-synthesis-intent"><span className="mir-kicker">Read this against your intention</span><p>{study.intention}</p></div>}
+          <p className="mir-context">This reading starts from the selected material properties. Your situation, participants, and observations can change it.</p>
+          <button type="button" className="mir-button" disabled={synthesisKept} onClick={() => save({ ...study, synthesisNote }, 'Synthesis saved with your study. Your own reading is unchanged.')}>{synthesisKept ? 'Synthesis saved' : study.synthesisNote ? 'Replace saved synthesis' : 'Keep this synthesis'}</button>
+          <p className="mir-context">Keeps a copy in your study and export. Changing materials updates this view; your saved copy changes only when you replace it.</p>
+        </section>
+        <details className="mir-own-reading">
+          <summary>Develop your own reading</summary>
+          {field('connection', 'How might these conditions affect one another?', 'Adapt, challenge, or extend the synthesis for your situation.')}
+          <label className="mir-select-label" htmlFor={`${id}-status`}>Your connection status</label>
+          <select id={`${id}-status`} value={study.connectionStatus} onChange={e => edit('connectionStatus', e.target.value)}>{Object.keys(STATUS_HELP).map(s => <option key={s} value={s}>{s[0].toUpperCase() + s.slice(1)}</option>)}</select>
+          <p className="mir-context">{STATUS_HELP[study.connectionStatus]}</p>
+          {study.connectionStatus === 'observation' && !study.observation.trim() && <p className="mir-notice">Add the context and evidence in your study record to support this label.</p>}
+        </details>
         <details className="mir-examples">
           <summary>Explore a possible connection</summary>
           <label className="mir-select-label" htmlFor={`${id}-example`}>Study prompt</label>
@@ -178,6 +203,7 @@ export default function MaterialsInRelation() {
           {field('power', 'Who sets the terms?', 'Who can enter, refuse, change the conditions, or leave? Who bears the cost?')}
         </fieldset>
         <fieldset><legend>02 · Compose the conditions</legend>
+          {study.synthesisNote && <details className="mir-saved-synthesis"><summary>Saved synthesis · hypothesis</summary><p>{study.synthesisNote}</p></details>}
           {MATERIAL_DOMAINS.map(d => <div key={d.id} className="mir-condition">
             <label className="mir-select-label" htmlFor={`${id}-record-${d.id}`}>{d.name} material</label>
             <select id={`${id}-record-${d.id}`} value={study.selected[d.id]} onChange={e => selectMaterial(d.id, e.target.value)}>{d.items.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}</select>

@@ -64,7 +64,7 @@ export const STUDY_FIELDS = [
   ['situation', 'Situation'], ['intention', 'What should become possible, and for whom?'],
   ['participants', 'People, systems, and surroundings'], ['power', 'Who sets the terms?'],
   ['physicalNote', 'Physical condition'], ['digitalNote', 'Digital condition'], ['relationalNote', 'Relational condition'],
-  ['connection', 'Proposed connection'], ['change', 'One change to try'], ['expectation', 'What do you expect, and why?'],
+  ['synthesisNote', 'Saved synthesis (hypothesis)'], ['connection', 'Proposed connection'], ['change', 'One change to try'], ['expectation', 'What do you expect, and why?'],
   ['notice', 'What would support or challenge that expectation?'], ['review', 'When and with whom will you review?'],
   ['stop', 'What would make you stop or reverse the change?'],
   ['observation', 'What actually happened?'], ['accounts', 'What did participants say?'],

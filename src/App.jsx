@@ -247,7 +247,7 @@ export default function App() {
 
   return (
     <div style={cv(theme)} className="app-layout">
-      <Sidebar view={view === "materials" ? "canon" : view} navigateTo={navigateTo} filter={filter} setFilter={handleFilter} hiddenCounts={hiddenCounts} />
+      <Sidebar view={view} navigateTo={navigateTo} filter={filter} setFilter={handleFilter} hiddenCounts={hiddenCounts} />
       <div className="app-content">
         <DualLensBar modelActive={lens} patternActive={patternLens} onToggleModel={toggleLens} onTogglePattern={togglePatternLens} onOpenModels={() => navigateTo("models")} onOpenPatterns={() => navigateTo("patterns")} />
         <main className={`view-wrap${transitioning ? " view-leaving" : ""}`}>

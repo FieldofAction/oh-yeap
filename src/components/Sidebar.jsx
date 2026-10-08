@@ -181,10 +181,13 @@ export default function Sidebar({ view, navigateTo, filter, setFilter, hiddenCou
               const sectionKey = item.filter?.toLowerCase();
               const hiddenInSection = sectionKey ? (hiddenCounts[sectionKey] || 0) : 0;
               return (
-                <button key={`${item.key}-${item.label}`} className={`sb-link${isActive(item) ? " on" : ""}${hiddenInSection ? " sb-link-has-hidden" : ""}`} style={{ paddingLeft: 20 }} onClick={() => handleNav(item)} title={hiddenInSection ? `${hiddenInSection} hidden` : undefined}>
+                <React.Fragment key={`${item.key}-${item.label}`}>
+                <button className={`sb-link${isActive(item) ? " on" : ""}${hiddenInSection ? " sb-link-has-hidden" : ""}`} style={{ paddingLeft: 20 }} onClick={() => handleNav(item)} title={hiddenInSection ? `${hiddenInSection} hidden` : undefined}>
                   {item.label}
                   {hiddenInSection ? <span className="sb-link-hidden-count" aria-hidden="true">{hiddenInSection}</span> : null}
                 </button>
+                {item.key === "canon" && <div role="group" aria-label="Relational Design instruments"><button className={`sb-link${view === "materials" ? " on" : ""}`} style={{ paddingLeft: 36 }} aria-current={view === "materials" ? "page" : undefined} onClick={() => handleNav({ key: "materials" })}>Materials in Relation</button></div>}
+                </React.Fragment>
               );
             })}
           </div>
