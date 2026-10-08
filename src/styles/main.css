@@ -1008,6 +1008,39 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .cs-fourfold-body{font-size:15px;line-height:1.7;color:var(--fm);max-width:600px}
 @media(max-width:680px){.cs-fourfold-row{grid-template-columns:repeat(2,1fr);gap:22px}}
 
+/* Impact — metrics grid with quantitative outcomes */
+.cs-block--impact{margin:clamp(56px,7vw,96px) 0 12px;padding:0 0 clamp(28px,4vw,48px);border-bottom:1px solid var(--bd)}
+.cs-impact-heading{font-family:var(--display);font-size:clamp(28px,3.8vw,48px);font-weight:500;letter-spacing:-.015em;color:var(--fg);margin:0 0 clamp(32px,5vw,64px)}
+.cs-impact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:clamp(20px,3.5vw,40px);margin-bottom:0}
+.cs-impact-card{display:flex;flex-direction:column;gap:12px;padding:0;background:none;border-radius:0;border:none}
+.cs-impact-value{font-family:var(--display);font-size:clamp(48px,6vw,72px);font-weight:600;letter-spacing:-.025em;color:var(--ac1);line-height:.95;margin-bottom:4px}
+.cs-impact-label{font-size:clamp(16px,1.7vw,20px);font-weight:600;letter-spacing:-.008em;color:var(--fg);line-height:1.25}
+.cs-impact-desc{font-size:14px;line-height:1.65;color:var(--fm);margin-top:6px;max-width:32ch}
+.cs-impact-body{font-size:15px;line-height:1.7;color:var(--fm);max-width:600px;margin-top:clamp(28px,4vw,44px)}
+@media(max-width:680px){.cs-impact-grid{grid-template-columns:1fr;gap:clamp(32px,5vw,44px)}}
+
+/* Augments — design properties and techniques explained */
+.cs-block--augments{margin:clamp(56px,7vw,96px) 0 12px}
+.cs-augments-heading{font-family:var(--display);font-size:clamp(28px,3.8vw,48px);font-weight:500;letter-spacing:-.015em;color:var(--fg);margin:0 0 clamp(24px,3vw,36px)}
+.cs-augments-intro{font-size:15px;line-height:1.75;color:var(--fm);max-width:640px;margin-bottom:clamp(40px,6vw,64px)}
+.cs-augments-list{display:flex;flex-direction:column;gap:clamp(44px,6vw,72px)}
+.cs-augment-item{display:grid;grid-template-columns:1fr;gap:14px;padding:0;border-bottom:none}
+.cs-augment-item:last-child{padding-bottom:0}
+.cs-augment-title{font-size:clamp(19px,2.2vw,26px);font-weight:600;letter-spacing:-.012em;color:var(--fg);margin:0 0 4px;line-height:1.2}
+.cs-augment-body{font-size:15px;line-height:1.75;color:var(--fm);max-width:68ch}
+.cs-augment-body p{margin-bottom:18px}
+.cs-augment-body p:last-child{margin-bottom:0}
+.cs-augment-visual{width:100%;border-radius:10px;overflow:hidden;background:var(--sf);border:1px solid var(--bd);margin-top:24px}
+.cs-augment-visual img{display:block;width:100%;height:auto}
+@media(max-width:768px){.cs-augment-item{gap:12px}}
+
+/* Meta — clean project metadata block */
+.cs-block--meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:clamp(20px,3vw,32px);margin:clamp(32px,4vw,48px) 0;padding:clamp(24px,3vw,36px);background:linear-gradient(135deg,var(--sf) 0%,color-mix(in srgb,var(--sf) 60%,var(--bg)) 100%);border-radius:12px;border:1px solid var(--bd)}
+.cs-meta-item{display:flex;flex-direction:column;gap:6px}
+.cs-meta-item-label{font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--ff)}
+.cs-meta-item-value{font-size:clamp(14px,1.5vw,16px);font-weight:500;color:var(--fg);line-height:1.4}
+@media(max-width:680px){.cs-block--meta{grid-template-columns:1fr}}
+
 /* Footer — deliverables + tags */
 .cs-footer{border-top:1px solid var(--bd);padding-top:56px;margin-top:48px}
 .cs-deliv{margin-bottom:24px}

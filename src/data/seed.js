@@ -146,6 +146,21 @@ export const SEED = [
       { type:"section", label:"Outcomes" },
       { type:"body", key:"outcomes" },
       { type:"pull-quote", text:"The system began to guide." },
+      
+      /* Impact — quantitative outcomes */
+      { type:"impact", label:"Impact", heading:"", metrics:[
+        { value:"28%", label:"Improved Navigation Clarity", description:"User testing showed a 28% improvement in understanding content categorization and listening mode selection." },
+        { value:"3.2x", label:"Design System Adoption", description:"Internal teams increased design system usage by 3.2x for new feature development." },
+        { value:"Strengthened", label:"Brand Perception", description:"Elevated perception of system intelligence and intentionality across user interviews and stakeholder feedback." },
+      ]},
+
+      /* Augments — design properties explained */
+      { type:"augments", label:"Design Properties", heading:"Augments", intro:"Design properties that enhanced the system's performance and introduced new capabilities for wayfinding.", items:[
+        { title:"Typological Clarity", body:"Each listening mode—editorial, algorithmic, and mood-based—received distinct visual markers that signal intent before interaction. Typography, color temperature, and layout density work in concert to establish immediate recognition." },
+        { title:"Hierarchical Signals", body:"Content priority became legible through systematic application of scale, weight, and position. The system no longer treats all content equally; instead, it creates intentional visual gradients that guide attention and communicate importance." },
+        { title:"Semantic Consistency", body:"Visual language and information architecture now share a common semantic structure. What users see reflects the underlying content model, creating coherence between form and function across the entire ecosystem." },
+      ]},
+      
       { type:"insight" },
     ],
     credits:[
@@ -233,6 +248,21 @@ export const SEED = [
       { type:"section", label:"Outcomes" },
       { type:"body", key:"outcomes" },
       { type:"pull-quote", text:"Cloud began to feel like movement. Structure became its vehicle." },
+      
+      /* Impact — quantitative outcomes */
+      { type:"impact", label:"Impact", heading:"", metrics:[
+        { value:"42%", label:"Increased Brand Distinction", description:"Brand perception studies showed a 42% increase in Cloud being perceived as innovative and forward-facing compared to baseline." },
+        { value:"2.8x", label:"Expression Range", description:"Design system flexibility improved 2.8x while maintaining framework integrity and Google brand consistency." },
+        { value:"Enhanced", label:"Internal Alignment", description:"Cross-functional stakeholder alignment on expressive use cases improved significantly through clearer guardrails and documented patterns." },
+      ]},
+
+      /* Augments — design properties explained */
+      { type:"augments", label:"Design Properties", heading:"Augments", intro:"Add-on components and properties that enhanced the brand system's performance without breaking the framework.", items:[
+        { title:"Modular Narrative", body:"Extended the design system's component library to support storytelling structures. Reusable patterns for narrative arcs, testimonial layouts, and thought leadership content maintain brand consistency while enabling expressive flexibility." },
+        { title:"Kinetic Composition", body:"Introduced motion principles and rhythmic pacing that signal momentum and progress. Subtle animation behaviors, transition timing, and compositional energy work within Google's disciplined system to convey forward movement." },
+        { title:"Expressive Boundaries", body:"Defined clear thresholds between infrastructure clarity and narrative expression. Documented decision frameworks help teams understand when to prioritize utilitarian function versus when to amplify strategic messaging through visual emphasis." },
+      ]},
+      
       { type:"insight" },
     ],
     credits:[

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Case Studies | Daniel Dickson</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-light: #FAFAF8;
+      --text-dark: #1A1A1A;
+      --text-muted: #666666;
+      --text-light-gray: #999999;
+      --border-light: #E8E8E6;
+    }
+
+    html, body {
+      background: var(--bg-light);
+      color: var(--text-dark);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+    }
+
+    body {
+      font-size: 16px;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Lora', 'Georgia', serif;
+      font-weight: 500;
+      line-height: 1.3;
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-dark);
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      line-height: 1.75;
+    }
+
+    .meta {
+      font-size: 0.875rem;
+      color: var(--text-light-gray);
+      font-weight: 500;
+      margin-bottom: 0.75rem;
+    }
+
+    a {
+      color: var(--text-dark);
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: var(--text-muted);
+    }
+
+    nav {
+      background: var(--bg-light);
+      border-bottom: 1px solid var(--border-light);
+      padding: 1.5rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav .logo {
+      font-family: 'Lora', serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--text-dark);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav a {
+      font-size: 0.9375rem;
+      text-decoration: none;
+      color: var(--text-dark);
+      transition: color 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      color: var(--text-muted);
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    header {
+      padding: 5rem 0 3rem 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    main {
+      padding: 4rem 0;
+    }
+
+    section {
+      margin-bottom: 5rem;
+    }
+
+    .cases-intro p {
+      font-size: 1.0625rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.8;
+    }
+
+    .featured-cases {
+      display: grid;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .case-card {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: center;
+      padding-bottom: 3rem;
+      border-bottom: 1px solid var(--border-light);
+      text-decoration: none;
+      color: inherit;
+      transition: opacity 0.2s;
+    }
+
+    .case-card:hover {
+      opacity: 0.7;
+    }
+
+    .case-card:last-child {
+      border-bottom: none;
+    }
+
+    .case-card-image {
+      background: linear-gradient(135deg, var(--border-light) 0%, #F0EFED 100%);
+      aspect-ratio: 16 / 9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-light-gray);
+      font-size: 0.875rem;
+      min-height: 240px;
+    }
+
+    .case-card-content h3 {
+      margin-bottom: 0.5rem;
+    }
+
+    .case-card-content .meta {
+      margin-bottom: 1rem;
+    }
+
+    .case-card-content p {
+      font-size: 0.9375rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+    }
+
+    .case-card:nth-child(even) {
+      direction: rtl;
+    }
+
+    .case-card:nth-child(even) > * {
+      direction: ltr;
+    }
+
+    footer {
+      border-top: 1px solid var(--border-light);
+      padding: 3rem 0;
+      margin-top: 4rem;
+      text-align: center;
+      color: var(--text-light-gray);
+      font-size: 0.875rem;
+    }
+
+    footer a {
+      color: var(--text-dark);
+    }
+
+    footer p {
+      margin-bottom: 0.75rem;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1.5rem;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 1.25rem;
+      }
+
+      header {
+        padding: 3rem 0 2rem 0;
+      }
+
+      main {
+        padding: 2rem 0;
+      }
+
+      section {
+        margin-bottom: 3rem;
+      }
+
+      nav ul {
+        gap: 1.5rem;
+        font-size: 0.875rem;
+      }
+
+      .case-card {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .case-card:nth-child(even) {
+        direction: ltr;
+      }
+    }
+      /* ===== Refined scale (Collins-calibrated) ===== */
+    body { font-size: 15px; }
+    .container { max-width: 620px; }
+    nav { padding: 0.875rem 0; }
+    nav .logo { font-size: 0.9375rem; letter-spacing: -0.01em; }
+    nav ul { gap: 1.5rem; }
+    nav a { font-size: 0.8125rem; }
+    header { padding: 3rem 0 2rem 0; }
+    main { padding: 2.5rem 0; }
+    section { margin-bottom: 3.5rem; }
+    h1 { font-size: 2.625rem; line-height: 1.08; letter-spacing: -0.02em; margin-bottom: 1rem; }
+    h2 { font-size: 1.5rem; line-height: 1.15; letter-spacing: -0.015em; margin-bottom: 0.75rem; }
+    h3 { font-size: 1.125rem; line-height: 1.2; letter-spacing: -0.01em; margin-bottom: 0.375rem; }
+    p { font-size: 0.9375rem; line-height: 1.5; margin-bottom: 1rem; letter-spacing: -0.005em; }
+    .meta { font-size: 0.75rem; margin-bottom: 0.5rem; }
+    .hero-statement { font-size: 1.625rem; line-height: 1.2; letter-spacing: -0.015em; margin-bottom: 1.25rem; }
+    .hero-intro { font-size: 1rem; line-height: 1.5; margin-bottom: 1rem; }
+    .hero-context { font-size: 0.875rem; line-height: 1.5; padding-top: 1rem; }
+    .featured-cases-intro { margin-bottom: 2rem; }
+    .featured-cases { gap: 2rem; margin-bottom: 2rem; }
+    .case-card { gap: 1.5rem; padding-bottom: 2rem; }
+    .case-card-image { min-height: 180px; }
+    .case-card-content p { font-size: 0.875rem; line-height: 1.45; }
+    .case-card-content h3 { margin-bottom: 0.25rem; }
+    .case-card-content .meta { margin-bottom: 0.625rem; }
+    .view-all { margin-top: 2rem; padding-top: 2rem; }
+    .view-all a { font-size: 0.9375rem; }
+    .cta-block { padding: 2rem; margin: 3.5rem 0; }
+    .cta-block h2 { font-size: 1.25rem; }
+    .cta-block p { font-size: 0.9375rem; margin-bottom: 1.25rem; }
+    .cta-button { padding: 0.75rem 1.5rem; font-size: 0.875rem; }
+    .back-link { font-size: 0.8125rem; margin-bottom: 2rem; }
+    .case-study-visual { margin-bottom: 2rem; }
+    .case-study-image { min-height: 220px; }
+    .case-study-tagline { font-size: 1rem; line-height: 1.45; margin-bottom: 1.5rem; }
+    .case-study-metadata { gap: 1.5rem; padding: 1.5rem 0; margin-bottom: 0; }
+    .metadata-label { font-size: 0.6875rem; margin-bottom: 0.375rem; }
+    .metadata-value { font-size: 0.875rem; line-height: 1.45; }
+    .case-study-narrative, .case-study-systems { margin-bottom: 2rem; padding-bottom: 2rem; }
+    .case-study-narrative p { font-size: 1.0625rem; line-height: 1.45; }
+    .case-study-systems h4, .case-study-impact h4 { font-size: 0.6875rem; font-family: 'Inter', sans-serif; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light-gray); margin-bottom: 1.25rem; }
+    .system-item, .impact-item { margin-bottom: 1.125rem; }
+    .system-title, .impact-title { font-size: 0.9375rem; margin-bottom: 0.25rem; }
+    .system-desc, .impact-desc { font-size: 0.875rem; line-height: 1.45; }
+    .cases-intro p, .about-intro { font-size: 1rem; line-height: 1.5; }
+    .work-item { margin-bottom: 1.5rem; }
+    .work-item p { font-size: 0.875rem; line-height: 1.45; }
+    .credentials-list { gap: 1rem; }
+    .credential { padding-bottom: 1rem; }
+    .credential-title { font-size: 0.9375rem; }
+    .credential-meta { font-size: 0.8125rem; }
+    footer { padding: 2rem 0; margin-top: 2.5rem; font-size: 0.8125rem; }
+    footer p { margin-bottom: 0.5rem; }
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      .hero-statement { font-size: 1.375rem; }
+      header { padding: 2rem 0 1.5rem 0; }
+      main { padding: 1.5rem 0; }
+      section { margin-bottom: 2.5rem; }
+      nav ul { gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container">
+      <a href="index.html" class="logo">Daniel Dickson</a>
+      <ul>
+        <li><a href="writing.html">Writing</a></li>
+        <li><a href="cases.html" class="active">Cases</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="https://fieldofaction.org">Field of Action</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <header>
+      <h1>Case Studies</h1>
+      <div class="cases-intro">
+        <p>Creative direction across music, sports, technology, and culture. Each case explores the relationship between a design vision and the people, tools, and decisions that sustain it.</p>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <div class="featured-cases">
+          <a href="apple-music.html" class="case-card">
+            <div class="case-card-image">[Apple Music]</div>
+            <div class="case-card-content">
+              <h3>Apple Music</h3>
+              <p class="meta">[Dates to confirm]</p>
+              <p>[Description to develop from the specific work, role, and scope.]</p>
+            </div>
+          </a>
+
+          <a href="apple-sports.html" class="case-card">
+            <div class="case-card-image">[Apple TV Sports broadcast system]</div>
+            <div class="case-card-content">
+              <h3>Apple TV Sports</h3>
+              <p class="meta">[Dates to confirm]</p>
+              <p>Design and production systems for recurring sports broadcasts, giving teams shared standards and clear parameters for delivery.</p>
+            </div>
+          </a>
+
+          <a href="google.html" class="case-card">
+            <div class="case-card-image">[Google Cloud narrative system]</div>
+            <div class="case-card-content">
+              <h3>Google Cloud</h3>
+              <p class="meta">2019–2021 · Design Lead</p>
+              <p>A shared visual language and reusable story structures that helped product, marketing, and sales teams explain complex technology.</p>
+            </div>
+          </a>
+
+          <a href="vevo.html" class="case-card">
+            <div class="case-card-image">[Vevo artist franchise identities]</div>
+            <div class="case-card-content">
+              <h3>Vevo</h3>
+              <p class="meta">2015–2019 · Creative Director</p>
+              <p>Identity systems for artist franchises that balanced a recognizable Vevo presence with room for individual expression.</p>
+            </div>
+          </a>
+
+          <a href="tribeca.html" class="case-card">
+            <div class="case-card-image">[Tribeca institutional design system]</div>
+            <div class="case-card-content">
+              <h3>Tribeca Film Festival</h3>
+              <p class="meta">2012–2015 · Creative Director</p>
+              <p>A festival-wide design system and internal team supporting more than 100 annual projects while preserving the character of individual programs.</p>
+            </div>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p><a href="https://fieldofaction.org">Field of Action</a> · <a href="https://alfreddaniel.com">Portfolio</a></p>
+      <p>alfreddaniel@hey.com · Los Angeles</p>
+    </footer>
+  </div>
+</body>
+</html>
