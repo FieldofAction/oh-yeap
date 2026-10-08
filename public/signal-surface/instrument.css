@@ -209,9 +209,9 @@ a:hover { color: var(--fg); }
   flex: none;
   width: 2rem;
   color: var(--faint);
-  font-family: var(--mono);
+  font-family: var(--sans);
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 1.4;
   letter-spacing: 0;
   text-transform: none;
