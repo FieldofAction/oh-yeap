@@ -8,7 +8,7 @@
   --rule: rgba(26, 26, 26, 0.16);
   --display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
   --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
-  --mono: "Space Mono", ui-monospace, monospace;
+  --label: "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -66,21 +66,21 @@ a:hover { color: var(--fg); }
 .empty button,
 footer,
 .observation-details summary {
-  font-family: var(--mono);
-  font-weight: 400;
-  letter-spacing: 0.12em;
+  font-family: var(--label);
+  font-weight: 500;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 .foa-back {
   color: var(--fg);
-  font-size: 11px;
+  font-size: 12px;
   text-decoration: none;
 }
 .foa-back:hover { text-decoration: underline; }
 .edition {
   margin: 0;
   color: var(--fg);
-  font-size: 11px;
+  font-size: 12px;
   text-align: right;
 }
 .edition span {
@@ -99,7 +99,7 @@ footer,
 .brand p {
   margin-top: 14px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .workspace { max-width: 1440px; margin: 0 auto; padding: 42px 5vw 28px; }
@@ -115,7 +115,7 @@ footer,
 .eyebrow {
   margin: 0 0 10px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 .field-title h2,
 .reading-detail > h2,
@@ -135,9 +135,10 @@ footer,
 .scope {
   padding-bottom: 4px;
   color: var(--muted);
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
+  font-family: var(--label);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   text-align: right;
   text-transform: uppercase;
 }
@@ -166,7 +167,7 @@ footer,
   flex: none;
   padding: 0 0 12px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 .navigation button:hover { color: var(--fg); }
 .navigation button[aria-selected="true"] { color: var(--fg); }
@@ -222,9 +223,10 @@ footer,
 .reading-button p {
   margin: 0;
   color: var(--muted);
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
+  font-family: var(--label);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 .limits {
@@ -259,8 +261,8 @@ footer,
 }
 .metadata {
   color: var(--muted);
-  font-size: 11px;
-  letter-spacing: 0.06em;
+  font-size: 12px;
+  letter-spacing: 0.04em;
 }
 .reading-detail > h2 {
   max-width: 18ch;
@@ -285,10 +287,10 @@ footer,
   border-bottom: 1px solid var(--rule);
 }
 .mapping dt {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 0.08em;
+  font-family: var(--label);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 .mapping dd { margin: 0; font-size: 17px; }
@@ -309,10 +311,10 @@ h3 {
 .evidence-links h3 span {
   margin-left: 10px;
   color: var(--faint);
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 0.08em;
+  font-family: var(--label);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
 }
 .evidence-links > div, .history > div {
   display: flex;
@@ -335,9 +337,10 @@ h3 {
   display: block;
   margin-top: 8px;
   color: var(--muted);
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.06em;
+  font-family: var(--label);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 .reflection {
@@ -349,9 +352,10 @@ h3 {
 .reflection label:not(.watch-toggle) {
   display: block;
   margin: 18px 0 8px;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
+  font-family: var(--label);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 .reflection textarea, .reflection select,
@@ -454,9 +458,10 @@ footer span { text-align: right; }
 .collect-field {
   display: block;
   margin: 22px 0 8px;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.1em;
+  font-family: var(--label);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 .collect-field input, .collect-field textarea, .collect-field select { display: block; margin-top: 8px; }
@@ -503,9 +508,10 @@ footer span { text-align: right; }
   display: block;
   margin-bottom: 4px;
   color: var(--muted);
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.08em;
+  font-family: var(--label);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 .collect .watch-card button { display: inline-block; margin-top: 16px; }
