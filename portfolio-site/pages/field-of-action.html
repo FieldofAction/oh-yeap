@@ -180,6 +180,21 @@
       .story p { font-size: 1.375rem; }
       .gallery .g { grid-column: 1 / -1 !important; }
     }
+    
+    /* Experimental tools */
+    .lab-controls { position: fixed; bottom: 2rem; right: 2rem; background: rgba(250, 250, 248, 0.95); backdrop-filter: blur(12px); border: 1px solid var(--border-light); padding: 1.5rem; z-index: 1000; min-width: 240px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); opacity: 0; animation: fadeInUp 0.6s ease-out 1s forwards; }
+    .lab-controls h4 { font-family: 'Inter', sans-serif; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light-gray); margin-bottom: 1rem; }
+    .control-group { margin-bottom: 1rem; }
+    .control-group:last-child { margin-bottom: 0; }
+    .control-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.375rem; display: block; }
+    .control-slider { width: 100%; margin-bottom: 0.25rem; }
+    .control-value { font-size: 0.6875rem; color: var(--text-light-gray); }
+    .control-toggle { font-family: 'Inter', sans-serif; font-size: 0.75rem; padding: 0.5rem 1rem; background: transparent; border: 1px solid var(--border-light); color: var(--text-muted); cursor: pointer; transition: all 0.2s ease; width: 100%; text-align: left; }
+    .control-toggle:hover { border-color: var(--text-dark); color: var(--text-dark); }
+    .control-toggle.active { background: var(--text-dark); color: var(--bg-light); border-color: var(--text-dark); }
+    .grid-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 999; display: none; }
+    .grid-overlay.active { display: block; }
+    .grid-overlay::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg, transparent, transparent 23px, rgba(26, 26, 26, 0.08) 23px, rgba(26, 26, 26, 0.08) 24px), repeating-linear-gradient(90deg, transparent, transparent 23px, rgba(26, 26, 26, 0.08) 23px, rgba(26, 26, 26, 0.08) 24px); }
   </style>
 </head>
 <body>
@@ -232,5 +247,90 @@
       <span><a href="https://fieldofaction.org" target="_blank">Visit Field of Action →</a></span>
     </div>
   </div>
+
+  <!-- Lab Controls -->
+  <div class="lab-controls">
+    <h4>⚡ Lab Mode</h4>
+    <div class="control-group">
+      <button class="control-toggle" id="gridToggle">Show Grid</button>
+    </div>
+    <div class="control-group">
+      <label class="control-label">Gallery Gap</label>
+      <input type="range" class="control-slider" id="gapSlider" min="8" max="48" value="24" step="4">
+      <span class="control-value" id="gapValue">24px</span>
+    </div>
+    <div class="control-group">
+      <label class="control-label">Hover Lift</label>
+      <input type="range" class="control-slider" id="liftSlider" min="0" max="16" value="4" step="2">
+      <span class="control-value" id="liftValue">4px</span>
+    </div>
+    <div class="control-group">
+      <button class="control-toggle" id="randomizeBtn">🎲 Randomize</button>
+    </div>
+  </div>
+
+  <!-- Grid Overlay -->
+  <div class="grid-overlay" id="gridOverlay"></div>
+
+  <script>
+    // Lab Mode: Interactive Controls
+    (function() {
+      const gridToggle = document.getElementById('gridToggle');
+      const gridOverlay = document.getElementById('gridOverlay');
+      const gapSlider = document.getElementById('gapSlider');
+      const gapValue = document.getElementById('gapValue');
+      const liftSlider = document.getElementById('liftSlider');
+      const liftValue = document.getElementById('liftValue');
+      const randomizeBtn = document.getElementById('randomizeBtn');
+      const galleries = document.querySelectorAll('.gallery');
+      
+      // Grid toggle
+      gridToggle.addEventListener('click', () => {
+        gridOverlay.classList.toggle('active');
+        gridToggle.classList.toggle('active');
+        gridToggle.textContent = gridOverlay.classList.contains('active') ? 'Hide Grid' : 'Show Grid';
+      });
+      
+      // Gap slider
+      gapSlider.addEventListener('input', (e) => {
+        const value = e.target.value;
+        gapValue.textContent = value + 'px';
+        galleries.forEach(gallery => {
+          gallery.style.gap = value + 'px';
+        });
+      });
+      
+      // Lift slider
+      liftSlider.addEventListener('input', (e) => {
+        const value = e.target.value;
+        liftValue.textContent = value + 'px';
+        document.documentElement.style.setProperty('--hover-lift', '-' + value + 'px');
+      });
+      
+      // Randomize button
+      randomizeBtn.addEventListener('click', () => {
+        const items = document.querySelectorAll('.gallery .g');
+        items.forEach(item => {
+          const randomRotation = (Math.random() - 0.5) * 3; // ±1.5deg
+          const randomScale = 0.95 + Math.random() * 0.1; // 0.95-1.05
+          item.style.transform = `rotate(${randomRotation}deg) scale(${randomScale})`;
+          item.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+        });
+        
+        // Reset after animation
+        setTimeout(() => {
+          items.forEach(item => {
+            item.style.transform = '';
+          });
+        }, 3000);
+      });
+      
+      // Apply hover lift CSS variable
+      document.documentElement.style.setProperty('--hover-lift', '-4px');
+      const style = document.createElement('style');
+      style.textContent = `.gallery .g:hover { transform: translateY(var(--hover-lift, -4px)); }`;
+      document.head.appendChild(style);
+    })();
+  </script>
 </body>
 </html>

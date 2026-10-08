@@ -361,19 +361,27 @@
 
     /* hero collage */
     .collage { position: relative; height: 560px; margin: 2rem 0 4rem; }
-    .collage .piece { position: absolute; opacity: 0; animation: fadeInUp 0.8s ease-out forwards; }
+    .collage .piece { position: absolute; opacity: 0; animation: fadeInUp 0.8s ease-out forwards; cursor: grab; user-select: none; }
+    .collage .piece.dragging { cursor: grabbing; z-index: 1000; opacity: 0.9; }
     .collage .piece:nth-child(1) { animation-delay: 0.1s; }
     .collage .piece:nth-child(2) { animation-delay: 0.2s; }
     .collage .piece:nth-child(3) { animation-delay: 0.3s; }
     .collage .piece:nth-child(4) { animation-delay: 0.4s; }
     .collage .piece:nth-child(5) { animation-delay: 0.5s; }
-    .collage .piece .ph { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease; overflow: hidden; }
+    .collage .piece .ph { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease; overflow: hidden; pointer-events: none; }
     .collage .piece .ph::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.05); opacity: 0; transition: opacity 0.4s ease; }
     .collage .piece:hover .ph { transform: translateY(-4px); }
     .collage .piece:hover .ph::before { opacity: 1; }
     .collage .statement { position: absolute; left: 61%; top: 44%; width: 320px; opacity: 0; animation: fadeIn 1s ease-out 0.6s forwards; }
     .collage .statement p { font-family: 'Lora', serif; font-size: 1.3125rem; line-height: 1.25; color: var(--text-dark); letter-spacing: -0.01em; margin-bottom: 0.75rem; }
     .collage .statement .sub { font-family: 'Inter', sans-serif; font-size: 0.8125rem; line-height: 1.45; color: var(--text-muted); }
+    
+    /* playground controls */
+    .playground-hint { position: absolute; top: -2rem; right: 0; font-size: 0.6875rem; color: var(--text-light-gray); opacity: 0; animation: fadeIn 1s ease-out 2s forwards; }
+    .playground-controls { display: flex; gap: 0.75rem; margin-bottom: 1rem; opacity: 0; animation: fadeIn 1s ease-out 2.5s forwards; }
+    .playground-btn { font-family: 'Inter', sans-serif; font-size: 0.75rem; padding: 0.5rem 1rem; background: transparent; border: 1px solid var(--border-light); color: var(--text-muted); cursor: pointer; transition: all 0.2s ease; }
+    .playground-btn:hover { border-color: var(--text-dark); color: var(--text-dark); transform: translateY(-1px); }
+    .playground-btn:active { transform: translateY(0); }
 
     /* work stream */
     .stream { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: 1.5rem; row-gap: 6rem; margin-bottom: 7rem; }
@@ -387,6 +395,9 @@
     .stream .cap span { color: var(--text-light-gray); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: inline-block; }
     .stream .item:hover .cap span { transform: translateX(4px); }
     .stream .item.nolink .cap { color: var(--text-muted); }
+    
+    /* generative pattern overlay */
+    .stream .item .ph::before { content: ''; position: absolute; inset: 0; opacity: 0.03; background-size: 4px 4px; pointer-events: none; }
 
     /* contact */
     .contact { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; padding: 3rem 0 2rem; border-top: 1px solid var(--border-light); }
@@ -438,8 +449,15 @@
   </nav>
 
   <div class="container wide">
+    <!-- Playground controls -->
+    <div class="playground-controls">
+      <button class="playground-btn" id="shuffleBtn">↻ Shuffle</button>
+      <button class="playground-btn" id="resetBtn">⟲ Reset</button>
+    </div>
+    
     <!-- Hero collage -->
     <div class="collage">
+      <span class="playground-hint">← drag pieces to rearrange</span>
       <div class="piece" style="left:18%; top:8%; width:170px;"><div class="ph warm" style="aspect-ratio:3/4">[Vevo book]</div></div>
       <div class="piece" style="left:38%; top:3%; width:210px;"><div class="ph dark" style="aspect-ratio:16/10">[Apple Music live]</div></div>
       <div class="piece" style="left:10%; top:60%; width:220px;"><div class="ph" style="aspect-ratio:16/9">[Trailblazers Radio]</div></div>
@@ -503,6 +521,306 @@
     </div>
     <p class="colophon">Daniel Dickson, 2026</p>
   </div>
+
+  <script>
+    // Playground: Draggable Collage
+    (function() {
+      const collage = document.querySelector('.collage');
+      const pieces = document.querySelectorAll('.collage .piece');
+      const shuffleBtn = document.getElementById('shuffleBtn');
+      const resetBtn = document.getElementById('resetBtn');
+      
+      // Store default positions
+      const defaultPositions = Array.from(pieces).map(piece => ({
+        left: piece.style.left,
+        top: piece.style.top
+      }));
+      
+      let draggedElement = null;
+      let offsetX = 0;
+      let offsetY = 0;
+      
+      // Load saved positions from localStorage
+      function loadPositions() {
+        const saved = localStorage.getItem('collagePositions');
+        if (saved) {
+          const positions = JSON.parse(saved);
+          pieces.forEach((piece, i) => {
+            if (positions[i]) {
+              piece.style.left = positions[i].left;
+              piece.style.top = positions[i].top;
+            }
+          });
+        }
+      }
+      
+      // Save positions to localStorage
+      function savePositions() {
+        const positions = Array.from(pieces).map(piece => ({
+          left: piece.style.left,
+          top: piece.style.top
+        }));
+        localStorage.setItem('collagePositions', JSON.stringify(positions));
+      }
+      
+      // Shuffle positions
+      function shuffle() {
+        const collageRect = collage.getBoundingClientRect();
+        pieces.forEach(piece => {
+          const randomLeft = Math.random() * 80 + 5; // 5-85%
+          const randomTop = Math.random() * 70 + 5; // 5-75%
+          piece.style.left = randomLeft + '%';
+          piece.style.top = randomTop + '%';
+        });
+        savePositions();
+      }
+      
+      // Reset to default
+      function reset() {
+        pieces.forEach((piece, i) => {
+          piece.style.left = defaultPositions[i].left;
+          piece.style.top = defaultPositions[i].top;
+        });
+        localStorage.removeItem('collagePositions');
+      }
+      
+      // Mouse/Touch drag handlers
+      function startDrag(e, piece) {
+        e.preventDefault();
+        draggedElement = piece;
+        piece.classList.add('dragging');
+        
+        const rect = piece.getBoundingClientRect();
+        const collageRect = collage.getBoundingClientRect();
+        
+        const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+        
+        offsetX = clientX - rect.left;
+        offsetY = clientY - rect.top;
+      }
+      
+      function drag(e) {
+        if (!draggedElement) return;
+        e.preventDefault();
+        
+        const collageRect = collage.getBoundingClientRect();
+        const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+        
+        const x = clientX - collageRect.left - offsetX;
+        const y = clientY - collageRect.top - offsetY;
+        
+        const percentX = (x / collageRect.width) * 100;
+        const percentY = (y / collageRect.height) * 100;
+        
+        draggedElement.style.left = Math.max(0, Math.min(95, percentX)) + '%';
+        draggedElement.style.top = Math.max(0, Math.min(90, percentY)) + '%';
+      }
+      
+      function endDrag() {
+        if (draggedElement) {
+          draggedElement.classList.remove('dragging');
+          savePositions();
+          draggedElement = null;
+        }
+      }
+      
+      // Attach event listeners
+      pieces.forEach(piece => {
+        // Mouse events
+        piece.addEventListener('mousedown', (e) => startDrag(e, piece));
+        
+        // Touch events
+        piece.addEventListener('touchstart', (e) => startDrag(e, piece), { passive: false });
+      });
+      
+      document.addEventListener('mousemove', drag);
+      document.addEventListener('touchmove', drag, { passive: false });
+      document.addEventListener('mouseup', endDrag);
+      document.addEventListener('touchend', endDrag);
+      
+      // Button handlers
+      shuffleBtn.addEventListener('click', shuffle);
+      resetBtn.addEventListener('click', reset);
+      
+      // Load saved positions on page load
+      loadPositions();
+    })();
+    
+    // Playground: Generative Patterns
+    (function() {
+      const patterns = [
+        'linear-gradient(45deg, currentColor 25%, transparent 25%, transparent 75%, currentColor 75%)',
+        'linear-gradient(135deg, currentColor 25%, transparent 25%, transparent 75%, currentColor 75%)',
+        'radial-gradient(circle, currentColor 1px, transparent 1px)',
+        'repeating-linear-gradient(45deg, currentColor, currentColor 1px, transparent 1px, transparent 6px)',
+        'repeating-linear-gradient(90deg, currentColor, currentColor 1px, transparent 1px, transparent 6px)',
+        'linear-gradient(90deg, currentColor 50%, transparent 50%)'
+      ];
+      
+      // Apply random patterns to placeholder boxes
+      document.querySelectorAll('.ph').forEach(ph => {
+        const pattern = patterns[Math.floor(Math.random() * patterns.length)];
+        const beforePseudo = ph.querySelector('::before');
+        ph.style.setProperty('--pattern', pattern);
+        
+        // Set via pseudo-element using CSS variable
+        if (!ph.style.getPropertyValue('--pattern-set')) {
+          const randomPattern = patterns[Math.floor(Math.random() * patterns.length)];
+          ph.style.setProperty('--bg-pattern', randomPattern);
+          ph.style.setProperty('--pattern-set', '1');
+        }
+      });
+      
+      // Add subtle rotation variance to work items
+      const workItems = document.querySelectorAll('.stream .item');
+      workItems.forEach(item => {
+        const variance = (Math.random() - 0.5) * 0.5; // ±0.25deg
+        item.style.setProperty('--rotation-variance', variance + 'deg');
+      });
+    })();
+    
+    // Playground: Randomize work stream layout on each visit
+    (function() {
+      const stream = document.querySelector('.stream');
+      if (!stream) return;
+      
+      const items = Array.from(stream.querySelectorAll('.item'));
+      const savedOrder = sessionStorage.getItem('streamOrder');
+      
+      // Only randomize once per session
+      if (!savedOrder && Math.random() > 0.5) {
+        // 50% chance to shuffle on new session
+        const marginVariants = ['0', '3rem', '5rem', '7rem', '8rem'];
+        items.forEach((item, i) => {
+          if (i > 0 && Math.random() > 0.6) {
+            const randomMargin = marginVariants[Math.floor(Math.random() * marginVariants.length)];
+            item.style.marginTop = randomMargin;
+          }
+        });
+        sessionStorage.setItem('streamOrder', 'randomized');
+      }
+    })();
+    
+    // Easter Egg: Konami Code (↑↑↓↓←→←→BA)
+    (function() {
+      const konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+      let konamiIndex = 0;
+      
+      document.addEventListener('keydown', (e) => {
+        const key = e.key.toLowerCase();
+        if (key === konamiCode[konamiIndex] || key === konamiCode[konamiIndex].toLowerCase()) {
+          konamiIndex++;
+          if (konamiIndex === konamiCode.length) {
+            activateStudioMode();
+            konamiIndex = 0;
+          }
+        } else {
+          konamiIndex = 0;
+        }
+      });
+      
+      function activateStudioMode() {
+        document.body.style.filter = 'invert(1) hue-rotate(180deg)';
+        const message = document.createElement('div');
+        message.textContent = '🎨 Studio Mode Activated';
+        message.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 2rem; font-family: Lora, serif; color: var(--text-dark); z-index: 10000; animation: fadeInUp 0.6s ease-out;';
+        document.body.appendChild(message);
+        
+        setTimeout(() => {
+          message.style.animation = 'fadeOut 0.6s ease-out';
+          setTimeout(() => message.remove(), 600);
+        }, 2000);
+        
+        setTimeout(() => {
+          document.body.style.filter = '';
+        }, 5000);
+      }
+    })();
+    
+    // Easter Egg: Shift + Hover reveals grid
+    (function() {
+      let gridOverlay = null;
+      let shiftPressed = false;
+      
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Shift' && !shiftPressed) {
+          shiftPressed = true;
+          showGrid();
+        }
+      });
+      
+      document.addEventListener('keyup', (e) => {
+        if (e.key === 'Shift') {
+          shiftPressed = false;
+          hideGrid();
+        }
+      });
+      
+      function showGrid() {
+        if (!gridOverlay) {
+          gridOverlay = document.createElement('div');
+          gridOverlay.style.cssText = 'position: fixed; inset: 0; pointer-events: none; z-index: 9999; background-image: repeating-linear-gradient(0deg, transparent, transparent 23px, rgba(26, 26, 26, 0.08) 23px, rgba(26, 26, 26, 0.08) 24px), repeating-linear-gradient(90deg, transparent, transparent 23px, rgba(26, 26, 26, 0.08) 23px, rgba(26, 26, 26, 0.08) 24px); opacity: 0; transition: opacity 0.2s ease;';
+          document.body.appendChild(gridOverlay);
+        }
+        setTimeout(() => gridOverlay.style.opacity = '1', 10);
+      }
+      
+      function hideGrid() {
+        if (gridOverlay) {
+          gridOverlay.style.opacity = '0';
+        }
+      }
+    })();
+    
+    // Easter Egg: Triple-click logo to toggle experimental view
+    (function() {
+      const logo = document.querySelector('.logo');
+      let clickCount = 0;
+      let clickTimer = null;
+      
+      logo.addEventListener('click', (e) => {
+        clickCount++;
+        
+        if (clickCount === 1) {
+          clickTimer = setTimeout(() => {
+            clickCount = 0;
+          }, 500);
+        }
+        
+        if (clickCount === 3) {
+          clearTimeout(clickTimer);
+          clickCount = 0;
+          toggleExperimentalView();
+        }
+      });
+      
+      function toggleExperimentalView() {
+        const body = document.body;
+        body.classList.toggle('experimental-mode');
+        
+        if (body.classList.contains('experimental-mode')) {
+          // Add experimental styles
+          const style = document.createElement('style');
+          style.id = 'experimental-styles';
+          style.textContent = `
+            .experimental-mode * { outline: 1px solid rgba(255, 0, 0, 0.1) !important; }
+            .experimental-mode .container { outline: 2px solid rgba(0, 0, 255, 0.2) !important; }
+            .experimental-mode .collage .piece { outline: 2px solid rgba(0, 255, 0, 0.3) !important; }
+          `;
+          document.head.appendChild(style);
+          
+          console.log('🔬 Experimental view activated');
+        } else {
+          // Remove experimental styles
+          const style = document.getElementById('experimental-styles');
+          if (style) style.remove();
+          console.log('👁️ Normal view restored');
+        }
+      }
+    })();
+  </script>
 </body>
 </html>
 
