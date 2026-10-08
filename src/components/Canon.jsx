@@ -1,13 +1,12 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { SEED } from "../data/seed";
 import useReveal from "../hooks/useReveal";
-import MaterialsInRelation from "./MaterialsInRelation";
+import "../styles/materials.css";
 
 const SECTIONS = [
   { id: "overview", label: "Overview" },
   { id: "philosophy", label: "Philosophy" },
   { id: "principles", label: "Principles" },
-  { id: "instrument", label: "Instrument" },
   { id: "lineages", label: "Lineages" },
   { id: "works-cited", label: "Works Cited" },
 ];
@@ -278,9 +277,12 @@ export default function Canon() {
         </div>
       </div>
 
-      <div ref={el => sectionRefs.current["instrument"] = el} id="canon-instrument" style={{ scrollMarginTop: 56 }}>
-        <MaterialsInRelation />
-      </div>
+      <section className="cn-instrument" aria-labelledby="canon-instrument-title">
+        <div className="cn-instrument-label">Put it into practice</div>
+        <h2 id="canon-instrument-title">Materials in Relation</h2>
+        <p>Explore physical, digital, and relational materials together. Use the instrument to compose a situation, try a change, and learn from what happens.</p>
+        <a href="#materials-in-relation">Open the instrument <span aria-hidden="true">↗</span></a>
+      </section>
 
       {/* ── 4. Lineages ── */}
       <div ref={el => sectionRefs.current["lineages"] = el} id="canon-lineages" style={{ scrollMarginTop: 56 }}>

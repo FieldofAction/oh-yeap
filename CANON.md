@@ -129,6 +129,13 @@ Rings: **Operational** Field→WIP→Action→Cache · **Practice** Art Practice
 - Implementation scope: a browser-local study and Markdown export; no shared data collection. The arrival example is an untested proposal with blank observation fields. This addition remains a draft for review.
 - Agent(s): Codex, sequential implementation and review.
 
+### 2026-10-08 · Give Materials in Relation its own detail page
+- Context / signal: Daniel found the full instrument too complex to nest within the theory text.
+- Decision: move the complete instrument to a dedicated, shareable `#materials-in-relation` detail page. Keep a short introduction and link after Principles, with a return link on the detail page. Retain the same study storage so the move preserves existing notes.
+- Rejected (and why): embedding the complete interaction inside the Canon (interrupts reading); a second copy of the instrument (creates competing states and maintenance).
+- Principle it sets: theory introduces the practice; the instrument has enough space to be used independently.
+- Agent(s): Codex, sequential implementation and review.
+
 ---
 
 ## 6 · Anomaly register (Anomaly Inquiry Protocol)

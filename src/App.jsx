@@ -15,6 +15,7 @@ import DevModeBar from "./components/DevModeBar";
 import About from "./components/About";
 import Colophon from "./components/Colophon";
 import Canon from "./components/Canon";
+import MaterialsDetail from "./components/details/MaterialsDetail";
 import PatternLanguage from "./components/PatternLanguage";
 import FieldConsole from "./components/FieldConsole";
 import IncandescantLab from "./components/IncandescantLab";
@@ -43,6 +44,7 @@ const VIEW_TO_HASH = {
   patiobeach: "patio-beach",
   superconscious: "share-location",
   canon: "relational-design",
+  materials: "materials-in-relation",
   studio: "studio",
   about: "about",
   colophon: "colophon",
@@ -64,7 +66,7 @@ const viewFromHash = () => {
 };
 
 const WORK_VIEWS = new Set(["public", "superconscious", "patiobeach"]);
-const CANON_VIEWS = new Set(["canon"]);
+const CANON_VIEWS = new Set(["canon", "materials"]);
 const INFO_VIEWS = new Set(["about", "colophon"]);
 const themeForView = (v) =>
   WORK_VIEWS.has(v) ? "threshold" :
@@ -245,7 +247,7 @@ export default function App() {
 
   return (
     <div style={cv(theme)} className="app-layout">
-      <Sidebar view={view} navigateTo={navigateTo} filter={filter} setFilter={handleFilter} hiddenCounts={hiddenCounts} />
+      <Sidebar view={view === "materials" ? "canon" : view} navigateTo={navigateTo} filter={filter} setFilter={handleFilter} hiddenCounts={hiddenCounts} />
       <div className="app-content">
         <DualLensBar modelActive={lens} patternActive={patternLens} onToggleModel={toggleLens} onTogglePattern={togglePatternLens} onOpenModels={() => navigateTo("models")} onOpenPatterns={() => navigateTo("patterns")} />
         <main className={`view-wrap${transitioning ? " view-leaving" : ""}`}>
@@ -257,6 +259,7 @@ export default function App() {
           {view === "about" && <About theme={theme} />}
           {view === "colophon" && <Colophon />}
           {view === "canon" && <Canon />}
+          {view === "materials" && <MaterialsDetail />}
           {view === "console" && <FieldConsole />}
           {view === "lab" && <IncandescantLab asu={asu} />}
           {view === "patterns" && <PatternLanguage content={publicContent} onOpen={openItem} fg={theme.fg} />}

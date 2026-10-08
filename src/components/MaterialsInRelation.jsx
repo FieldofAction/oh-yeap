@@ -118,8 +118,8 @@ export default function MaterialsInRelation() {
   const sameAsLast = last && Object.entries(study).filter(([key]) => key !== 'history').every(([key, value]) => JSON.stringify(value) === JSON.stringify(last[key]));
 
   return <section className="mir" aria-labelledby={`${id}-heading`}>
-    <div className="ph-sl">Instrument · v0.1</div>
-    <h2 id={`${id}-heading`}>Materials in Relation</h2>
+    <div className="mir-eyebrow">Instrument · v0.1</div>
+    <h1 id={`${id}-heading`}>Materials in Relation</h1>
     <p className="mir-lead">Study what a material makes possible. Compose the conditions. Learn from what happens.</p>
     <p>A chair, an interface, and an invitation can shape the same encounter. This instrument brings physical, digital, and relational materials into a shared study while preserving the differences between them.</p>
     <p>Use each chart on its own to explore behavior and resistance. Bring materials together around a situation, propose a connection, and try a small change. Return with an observation that can revise the proposal.</p>
@@ -168,7 +168,7 @@ export default function MaterialsInRelation() {
         </details>
       </>}
 
-      {view === 'record' && <div>
+      {view === 'record' && <div className="mir-record">
         <div className="mir-view-title"><h3>Working study</h3><span className="mir-kicker">Frame → compose → try → observe → revise</span></div>
         <p className="mir-context">Begin with one situation and one change. The record can stay incomplete while the work is happening. An observation, refusal, or disagreement can change the next move.</p>
         <fieldset><legend>01 · Frame the situation</legend>

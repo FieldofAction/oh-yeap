@@ -119,5 +119,5 @@ export function studyMarkdown(study) {
   ].join('\n\n');
   return `# Materials in Relation\n\nField of Action · Working study\n\n${body(study)}\n\n` +
     study.history.map((h, i) => `## Recorded iteration ${i + 1}\n\n${h.recordedAt}\n\n${body(h)}`).join('\n\n') +
-    '\n\nInstrument: https://www.fieldofaction.org/#relational-design\n';
+    '\n\nInstrument: https://www.fieldofaction.org/#materials-in-relation\n';
 }

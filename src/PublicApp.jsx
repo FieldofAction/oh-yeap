@@ -14,6 +14,7 @@ import DevModeBar from "./components/DevModeBar";
 import About from "./components/About";
 import Colophon from "./components/Colophon";
 import Canon from "./components/Canon";
+import MaterialsDetail from "./components/details/MaterialsDetail";
 import PatternLanguage from "./components/PatternLanguage";
 import PatioBeach from "./components/PatioBeach";
 import Superconscious from "./components/Superconscious";
@@ -35,6 +36,7 @@ const VIEW_TO_HASH = {
   patiobeach: "patio-beach",
   superconscious: "share-location",
   canon: "relational-design",
+  materials: "materials-in-relation",
   about: "about",
   colophon: "colophon",
   models: "mental-models",
@@ -48,7 +50,7 @@ const HASH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_HASH).map(([view, hash]) => [hash, view])
 );
 const PUBLIC_VIEWS = new Set([
-  "public", "patiobeach", "superconscious", "canon", "about",
+  "public", "patiobeach", "superconscious", "canon", "materials", "about",
   "colophon", "models", "patterns", "hotelnest", "flowers", "galaxy", "resume",
 ]);
 const viewFromHash = () => {
@@ -77,7 +79,7 @@ const pushHashForItem = (item) => {
 };
 
 const WORK_VIEWS = new Set(["public", "superconscious", "patiobeach", "flowers", "galaxy"]);
-const CANON_VIEWS = new Set(["canon"]);
+const CANON_VIEWS = new Set(["canon", "materials"]);
 const INFO_VIEWS = new Set(["about", "colophon"]);
 // Work views honor a visitor-controllable light preference (daylight) over the default dark (threshold).
 const readWorkLight = () =>
@@ -159,7 +161,7 @@ export default function PublicApp() {
   const toggleWorkLight = useCallback(() => {
     setWorkLight(prev => {
       const next = !prev;
-      try { localStorage.setItem("foa-work-light", next ? "1" : "0"); } catch (_) { /* ignore */ }
+      try { localStorage.setItem("foa-work-light", next ? "1" : "0"); } catch { /* ignore */ }
       if (WORK_VIEWS.has(view)) setThemeKey(next ? "daylight" : "threshold");
       return next;
     });
@@ -296,7 +298,7 @@ export default function PublicApp() {
   }, []);
   return (
     <div style={cv(theme)} className={`app-layout${isLight ? " theme-daylight" : ""}`}>
-      <PublicSidebar view={view} navigateTo={navigateTo} filter={filter} setFilter={handleFilter} hiddenCounts={hiddenCounts} />
+      <PublicSidebar view={view === "materials" ? "canon" : view} navigateTo={navigateTo} filter={filter} setFilter={handleFilter} hiddenCounts={hiddenCounts} />
       <div className="app-content">
         <DualLensBar modelActive={lens} patternActive={patternLens} onToggleModel={toggleLens} onTogglePattern={togglePatternLens} onOpenModels={() => navigateTo("models")} onOpenPatterns={() => navigateTo("patterns")} />
         <main className={`view-wrap${transitioning ? " view-leaving" : ""}`}>
@@ -305,6 +307,7 @@ export default function PublicApp() {
           {view === "about" && <About theme={theme} />}
           {view === "colophon" && <Colophon />}
           {view === "canon" && <Canon />}
+          {view === "materials" && <MaterialsDetail />}
           {view === "patterns" && <PatternLanguage content={publicContent} onOpen={openItem} fg={theme.fg} />}
           {view === "patiobeach" && <PatioBeach />}
           {view === "superconscious" && <Superconscious />}
