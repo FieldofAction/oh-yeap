@@ -46,7 +46,7 @@ export default defineConfig(({ mode }) => {
         configureServer(server) {
           server.middlewares.use((req, res, next) => {
             const path = (req.url || '').split('?')[0]
-            for (const slug of ['world-cup-atlas', 'oz-index']) {
+            for (const slug of ['world-cup-atlas', 'oz-index', 'signal-surface']) {
               if (path === `/${slug}` || path === `/${slug}/`) {
                 req.url = `/${slug}.html`
                 break
