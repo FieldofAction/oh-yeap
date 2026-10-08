@@ -121,6 +121,14 @@ Rings: **Operational** Field→WIP→Action→Cache · **Practice** Art Practice
 - Principle it sets: progress is period-relative. Surfaces to LOOPS.md as a required Period field. Grace reads drag against period, not calendar.
 - Agent(s): Field (read the anomaly) → Open (re-sort loops) → Freedom Embassy (set the property).
 
+### 2026-10-08 · Materials in Relation instrument draft
+- Context / signal: Daniel asked to connect physical, digital, and relational material charts, retain their independent use, and develop an active instrument for the Relational Design Canon.
+- Decision: place a working instrument after Principles, accessible from the Canon navigation. Each chart exposes behavior, resistance, a material experiment, and a question. A shared composition feeds an editable study: frame, compose, try, observe, revise.
+- Rejected (and why): a universal correspondence table (analogy does not establish causation); a score for trust or coherence (these cannot be set as interface properties); invented example outcomes (practice must supply the observations).
+- Principle it sets: a connection declares its status as analogy, hypothesis, or contextual observation. Preserve participants’ agency, refusal, and disagreement. Exportable iterations make change legible without prescribing an outcome.
+- Implementation scope: a browser-local study and Markdown export; no shared data collection. The arrival example is an untested proposal with blank observation fields. This addition remains a draft for review.
+- Agent(s): Codex, sequential implementation and review.
+
 ---
 
 ## 6 · Anomaly register (Anomaly Inquiry Protocol)

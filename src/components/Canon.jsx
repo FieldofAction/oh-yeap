@@ -1,11 +1,13 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { SEED } from "../data/seed";
 import useReveal from "../hooks/useReveal";
+import MaterialsInRelation from "./MaterialsInRelation";
 
 const SECTIONS = [
   { id: "overview", label: "Overview" },
   { id: "philosophy", label: "Philosophy" },
   { id: "principles", label: "Principles" },
+  { id: "instrument", label: "Instrument" },
   { id: "lineages", label: "Lineages" },
   { id: "works-cited", label: "Works Cited" },
 ];
@@ -274,6 +276,10 @@ export default function Canon() {
           <em>Pattern Lens</em>: overlay Alexander's architectural patterns. Press <kbd>P</kbd> to activate.
           {!xrayMode && <><br /><em>X-Ray</em>: field diagnostic overlay. Press <kbd>X</kbd> to activate.</>}
         </div>
+      </div>
+
+      <div ref={el => sectionRefs.current["instrument"] = el} id="canon-instrument" style={{ scrollMarginTop: 56 }}>
+        <MaterialsInRelation />
       </div>
 
       {/* ── 4. Lineages ── */}
