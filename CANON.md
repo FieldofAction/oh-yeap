@@ -121,6 +121,28 @@ Rings: **Operational** Field→WIP→Action→Cache · **Practice** Art Practice
 - Principle it sets: progress is period-relative. Surfaces to LOOPS.md as a required Period field. Grace reads drag against period, not calendar.
 - Agent(s): Field (read the anomaly) → Open (re-sort loops) → Freedom Embassy (set the property).
 
+### 2026-10-08 · Materials in Relation instrument draft
+- Context / signal: Daniel asked to connect physical, digital, and relational material charts, retain their independent use, and develop an active instrument for the Relational Design Canon.
+- Decision: place a working instrument after Principles, accessible from the Canon navigation. Each chart exposes behavior, resistance, a material experiment, and a question. A shared composition feeds an editable study: frame, compose, try, observe, revise.
+- Rejected (and why): a universal correspondence table (analogy does not establish causation); a score for trust or coherence (these cannot be set as interface properties); invented example outcomes (practice must supply the observations).
+- Principle it sets: a connection declares its status as analogy, hypothesis, or contextual observation. Preserve participants’ agency, refusal, and disagreement. Exportable iterations make change legible without prescribing an outcome.
+- Implementation scope: a browser-local study and Markdown export; no shared data collection. The arrival example is an untested proposal with blank observation fields. This addition remains a draft for review.
+- Agent(s): Codex, sequential implementation and review.
+
+### 2026-10-08 · Give Materials in Relation its own detail page
+- Context / signal: Daniel found the full instrument too complex to nest within the theory text.
+- Decision: move the complete instrument to a dedicated, shareable `#materials-in-relation` detail page. Keep a short introduction and link after Principles, with a return link on the detail page. Retain the same study storage so the move preserves existing notes.
+- Rejected (and why): embedding the complete interaction inside the Canon (interrupts reading); a second copy of the instrument (creates competing states and maintenance).
+- Principle it sets: theory introduces the practice; the instrument has enough space to be used independently.
+- Agent(s): Codex, sequential implementation and review.
+
+### 2026-10-08 · Synthesize selected materials and expose the instrument in Canon navigation
+- Context / signal: Daniel asked Connections to synthesize how the selected materials relate and what might emerge. He also requested Materials in Relation as a tab beneath Relational Design in the Canon section.
+- Decision: derive a live, explicitly hypothetical reading from authored material relationships. Every physical/digital pairing has an explicit interpretation; physical/relational and digital/relational contributions combine into a possible emergence, tension, and small trial. The public and Studio menus now expose a nested instrument entry.
+- Rejected (and why): a selection list that leaves all synthesis to the reader; a universal prediction of an outcome; automatic replacement of a person's own interpretation or saved evidence.
+- Principle it sets: selecting materials should produce a useful reading immediately. A saved synthesis stays a hypothesis, survives further exploration, and travels with study exports and recorded iterations.
+- Agent(s): Codex, sequential implementation and review.
+
 ---
 
 ## 6 · Anomaly register (Anomaly Inquiry Protocol)

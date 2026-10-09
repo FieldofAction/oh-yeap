@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import useNavigationDrawer from "../hooks/useNavigationDrawer";
+import React from "react";
 import { DEV_MODE } from "../lib/devMode";
+import RelationalDesignNav from "./RelationalDesignNav";
 
 // Public-facing sidebar.
 // Studio entry is a plain external link to the gated studio subdomain.
@@ -57,7 +59,7 @@ const NAV = [
 ];
 
 export default function PublicSidebar({ view, navigateTo, filter, setFilter, hiddenCounts = {} }) {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { mobileOpen, setMobileOpen, toggleRef, drawerRef } = useNavigationDrawer();
 
   const handleNav = (item) => {
     if (item.href) { window.open(item.href, item.studio ? "_self" : "_blank"); return; }
@@ -77,7 +79,7 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter, hid
   return (
     <>
       <div className="topbar">
-        <button className="sb-toggle" onClick={() => setMobileOpen(p => !p)} aria-label="Menu">
+        <button ref={toggleRef} className="sb-toggle" onClick={() => setMobileOpen(p => !p)} aria-label="Menu" aria-expanded={mobileOpen} aria-controls="site-navigation">
           <span className="sb-toggle-bar" />
           <span className="sb-toggle-bar" />
         </button>
@@ -87,7 +89,8 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter, hid
         </div>
       </div>
 
-      <aside className={`sb${mobileOpen ? " sb-open" : ""}`}>
+      <aside ref={drawerRef} id="site-navigation" role="dialog" aria-label="Site navigation" aria-modal={mobileOpen ? true : undefined} aria-hidden={!mobileOpen} inert={!mobileOpen} className={`sb${mobileOpen ? " sb-open" : ""}`}>
+        <button type="button" className="sb-link" onClick={() => setMobileOpen(false)}>Close menu</button>
         {NAV.map(group => (
           <div key={group.tier} className="sb-tier">
             <div className="sb-tier-h">
@@ -97,6 +100,9 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter, hid
               )}
             </div>
             {group.items.map((item) => {
+              if (item.key === "canon") {
+                return <RelationalDesignNav key={item.key} view={view} onNavigate={handleNav} />;
+              }
               if (item.group) {
                 return (
                   <div key={item.group} className="sb-group">
