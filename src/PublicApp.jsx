@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { THEMES } from "./data/themes";
 import { SEED, isHidden } from "./data/seed";
 import { DEV_MODE } from "./lib/devMode";
@@ -110,6 +110,8 @@ export default function PublicApp() {
   const [activeItem, setActiveItem] = useState(() => findItemByHash(hashItemId()));
   const [closing, setClosing] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
+  const navigationTimer = useRef(null);
+  useEffect(() => () => clearTimeout(navigationTimer.current), []);
   const explorationStore = useExplorationStore();
   const nowState = usePublicSystemCondition();
   useSmoothScroll();
@@ -140,10 +142,12 @@ export default function PublicApp() {
   const togglePatternLens = useCallback(() => setPatternLens(p => !p), []);
 
   const navigateTo = useCallback((target) => {
+    clearTimeout(navigationTimer.current);
     if (target === view && !transitioning) return;
     setTransitioning(true);
     setThemeKey(themeForView(target, workLight));
-    setTimeout(() => {
+    navigationTimer.current = setTimeout(() => {
+      navigationTimer.current = null;
       setView(target);
       scrollTopNow();
       setTransitioning(false);
@@ -169,8 +173,10 @@ export default function PublicApp() {
 
   useEffect(() => {
     const handler = () => {
+      // Back/Forward and hash links supersede an unfinished menu transition.
+      clearTimeout(navigationTimer.current);
+      setTransitioning(false);
       const target = viewFromHash();
-      if (target === view) return;
       setThemeKey(themeForView(target, workLight));
       setView(target);
       scrollTopNow();

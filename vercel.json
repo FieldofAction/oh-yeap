@@ -1,5 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "git": {
+    "deploymentEnabled": {
+      "codex/materials-in-relation-20261008-ccaf5a6e": false,
+      "cursor/site-touchup-soon-8b7b": false
+    }
+  },
   "buildCommand": "if [ \"$BUILD_TARGET\" = \"studio\" ]; then npm run build:studio; else npm run build; fi",
   "rewrites": [
     { "source": "/world-cup-atlas", "destination": "/world-cup-atlas.html" },

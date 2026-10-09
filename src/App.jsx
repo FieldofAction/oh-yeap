@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { THEMES } from "./data/themes";
 import { SEED, uid, VIS, isHidden } from "./data/seed";
 import { DEV_MODE } from "./lib/devMode";
@@ -103,6 +103,8 @@ export default function App() {
     return merged || activeItem;
   }, [activeItem, explorationStore]);
   const [transitioning, setTransitioning] = useState(false);
+  const navigationTimer = useRef(null);
+  useEffect(() => () => clearTimeout(navigationTimer.current), []);
   const asu = useASUStore();
   const theme = THEMES[themeKey];
   const toggleLens = useCallback(() => setLens(p => !p), []);
@@ -110,10 +112,12 @@ export default function App() {
 
   // Page transition — fade out, swap, fade in, auto-switch theme, sync URL hash.
   const navigateTo = useCallback((target) => {
+    clearTimeout(navigationTimer.current);
     if (target === view && !transitioning) return;
     setTransitioning(true);
     setThemeKey(themeForView(target));
-    setTimeout(() => {
+    navigationTimer.current = setTimeout(() => {
+      navigationTimer.current = null;
       setView(target);
       window.scrollTo(0, 0);
       setTransitioning(false);
@@ -129,8 +133,10 @@ export default function App() {
   // Back/forward + manual hash edits sync the view without re-pushing history.
   useEffect(() => {
     const handler = () => {
+      // Back/Forward and hash links supersede an unfinished menu transition.
+      clearTimeout(navigationTimer.current);
+      setTransitioning(false);
       const target = viewFromHash();
-      if (target === view) return;
       setThemeKey(themeForView(target));
       setView(target);
       window.scrollTo(0, 0);
