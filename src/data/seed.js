@@ -36,7 +36,7 @@ export const SEED = [
       { type:"body", key:"framing" },
 
       /* The Workbench surface, shown legibly, above the instrument index */
-      { type:"plate", src:"/images/case-studies/Workbench/workbench-landing.png", caption:"The Workbench: Field of Action's practice surface, the nine instruments at a glance" },
+      { type:"plate", src:"/images/case-studies/Workbench/workbench-landing.png", caption:"The tool. Nine instruments, as the interface." },
 
       /* Catalogue — the nine instruments as a disciplined index */
       { type:"catalogue", label:"Method as Interface", heading:"Nine Instruments", groups:[
@@ -239,7 +239,7 @@ export const SEED = [
       { name:"Daniel Dickson", role:"Design Lead", studio:"Google Cloud" },
     ],
   }},
-  { id:uid(), section:"practice", title:"Vevo", subtitle:"Designing in Service of the Artist", desc:"Brand identity, product design, and creative direction for the world's largest music video platform.", year:"2015–2019", status:"live", tags:["Brand","Product","Music"], relations:[], hasVisual:true, role:"Creative Director", deliverables:["Brand Identity","Product Design","Creative Direction","Design Systems"], caseStudy:{
+  { id:uid(), slug:"vevo", section:"practice", published:true, title:"Vevo", subtitle:"Designing in Service of the Artist", desc:"Brand identity, product design, and creative direction for the world's largest music video platform.", year:"2015–2019", status:"live", tags:["Brand","Product","Music"], relations:[], hasVisual:true, role:"Creative Director", deliverables:["Brand Identity","Product Design","Creative Direction","Design Systems"], caseStudy:{
     framing:"Vevo emerged in a media environment shaped by loud platform identities. But artists increasingly arrived with their own aesthetic gravity. The platform needed to evolve. Not louder. More disciplined.\n\nThe brand occupied space that belonged to the artist. Brand expression was visually assertive, competing with artist identity. Hierarchy between artist and platform was inconsistent, and over-expression diluted authority.\n\nThe platform was speaking too loudly.",
     reframe:{
       thesis:"Supporting Brand",
@@ -259,68 +259,14 @@ export const SEED = [
       figures:[],
     },
     layout:[
-      /* Act 1 — The Hook: cinematic performance, full-bleed */
-      { type:"hero", variant:"bleed", src:"/images/case-studies/WIP/Vevo/d0446437-3af8-48f9-b724-7d5a07c7d822.jpg", caption:"Khalid performing at a school gymnasium. The platform recedes, the artist holds the frame" },
+      { type:"hero", variant:"bleed", src:"/images/case-studies/WIP/Vevo/vevo_desktop_website-1600x1067.jpg", caption:"The redesigned platform. The artist holds the frame. The brand steps back." },
       { type:"section", label:"Framing" },
       { type:"body", key:"framing" },
-      { type:"pull-quote", text:"The platform was speaking too loudly." },
-
-      /* Sticky — text pinned while artist images scroll past */
-      { type:"sticky", label:"The Landscape", heading:"Artists arrived with their own aesthetic gravity.", body:"The platform's visual identity competed with the very thing that gave it value. Every artist brought a fully formed world. The brand needed to stop shouting over it.", images:[
-        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-40_2500_c.jpg", caption:"Live performance. The energy belongs to the artist" },
-        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-42_2500_c.jpg", caption:"Artist identity, already fully formed" },
-        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-46_2500_c.jpg", caption:"The performer holds the frame" },
-      ]},
-
-      { type:"section", label:"Reframe" },
-      { type:"reframe" },
-
-      /* Split — the shift from personality to infrastructure */
-      { type:"split", subtitle:"The Shift", heading:"From personality to infrastructure", src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-14_2500_c.jpg", align:"left" },
-
-      { type:"section", label:"The Intervention" },
-      { type:"intervention" },
-
-      /* Triptych — SXSW activation: the brand in physical space */
-      { type:"triptych", images:[
-        { src:"/images/case-studies/WIP/Vevo/sxsw_vevo_00.webp", label:"SXSW 2017", title:"The Stage\nBelongs to\nThe Artist" },
-        { src:"/images/case-studies/WIP/Vevo/sxsw_vevo_02.webp", label:"SXSW 2017", title:"Platform\nas\nInfrastructure" },
-        { src:"/images/case-studies/WIP/Vevo/sxsw_vevo_04.webp", label:"SXSW 2017", title:"Restraint\nin\nAction" },
-      ], caption:"SXSW activation: artist-first hierarchy in physical space" },
-
-      /* Device — the redesigned product in a monitor frame */
-      { type:"device", src:"/images/case-studies/WIP/Vevo/vevo_desktop_website-1600x1067.jpg", caption:"The redesigned platform. Artist-first hierarchy, restrained brand presence" },
-
-      { type:"video", url:"/images/case-studies/WIP/Vevo/vevo_launch_v1%20(1080p).mp4", poster:"/images/case-studies/WIP/Vevo/vevo_launch_poster.jpg" },
-
-      /* Atmosphere — product surfaces floating on dark field */
-      { type:"atmosphere", bgGradient:"linear-gradient(160deg, #0a0a0a 0%, #1a1a2e 50%, #0a0a0a 100%)", cardSrc:"/images/case-studies/WIP/Vevo/FEATURE_MOCK.webp", heading:"Product as Stage", body:"Every surface was designed to recede. The artist's imagery, palette, and energy define the experience. The platform provides structure without competing for attention." },
-
-      /* Two-up — product mockups */
-      { type:"two-up", images:[{ src:"/images/case-studies/WIP/Vevo/ABOUT_MOCK.webp", caption:"Artist profile: identity-first hierarchy" },{ src:"/images/case-studies/WIP/Vevo/ARTICLE_MOCK.webp", caption:"Editorial surface: editorial voice within restraint" }] },
-
-      /* Grid — contact sheet of the breadth of artist work */
-      { type:"grid", cols:4, images:[
-        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-09_2500_c.jpg" },
-        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-17_2500_c.jpg" },
-        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-25_2500_c.jpg" },
-        { brand:"Vevo" },
-        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-32_2500_c.jpg" },
-        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-03_2500_c.jpg" },
-        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-21_2500_c.jpg" },
-        { src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-48_2500_c.jpg" },
-      ], caption:"The Vevo Book. Documenting the transformation" },
-
-      /* SXSW street photography — the brand outside the screen */
-      { type:"figure", variant:"bleed", src:"/images/case-studies/WIP/Vevo/sxsw_vevo_01.webp", caption:"SXSW 2017: the brand in the street" },
-
-      { type:"video", url:"/images/case-studies/WIP/Vevo/vevoeoy_2017_v07_v1%20(1080p).mp4" },
-
-      { type:"section", label:"Outcomes" },
-      { type:"body", key:"outcomes" },
-      { type:"figure", variant:"float", src:"/images/case-studies/WIP/Vevo/ALL_COVERS_MOCK.webp", caption:"The system at scale. Every cover, one voice" },
-      { type:"pull-quote", text:"Restraint became authority." },
-      { type:"insight" },
+      { type:"figure", variant:"bleed", src:"/images/case-studies/WIP/Vevo/ABOUT_MOCK.webp", caption:"Artist profile. Identity first, platform second." },
+      { type:"figure", variant:"bleed", src:"/images/case-studies/WIP/Vevo/ARTICLE_MOCK.webp", caption:"Editorial surface. The voice stays inside the restraint." },
+      { type:"figure", variant:"bleed", src:"/images/case-studies/WIP/Vevo/sxsw_vevo_01.webp", caption:"SXSW 2017. The same hierarchy, in the street." },
+      { type:"figure", variant:"bleed", src:"/images/case-studies/WIP/Vevo/VEVO%20BOOK/VEVO-40_2500_c.jpg", caption:"Live performance. The energy belongs to the artist." },
+      { type:"figure", variant:"bleed", src:"/images/case-studies/WIP/Vevo/ALL_COVERS_MOCK.webp", caption:"The system at scale. Every cover, one voice." },
     ],
     credits:[
       { name:"Daniel Dickson", role:"Creative Director", studio:"Vevo" },

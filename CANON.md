@@ -145,6 +145,14 @@ Rings: **Operational** Field→WIP→Action→Cache · **Practice** Art Practice
 5. Disposition: INTEGRATE.
 - Changed: LOOPS.md gains a GATE loop type; Location reclassified as a long-line gate with wake triggers. Evidence trail: weekly digests Jun 8–28, Anomaly Inquiry pass run 2026-06-28.
 
+### 2026-10-08 · Public type and the canon cuts are not the same face
+1. What does not fit: §2 names Playfair Display, IBM Plex Sans, and IBM Plex Mono. The public notebook is set in one neo-grotesk, Hanken Grotesk, which is what DESIGN_SYSTEM_FORM.md asked for. Playfair Display and IBM Plex Mono remain the faces of the Nest compositor.
+2. Improving or degrading: neither. The two documents were already in conflict, and the August de-default had already left the canon cuts on the public page.
+3. Deeper truth it may reveal: the public notebook and the press instruments are different surfaces. One face for the notebook. The canon cuts for the press tools.
+4. Scope: regional (public type).
+5. Disposition: CONTAIN.
+- §2 was not changed. Hanken and Schibsted are not written into the canon. Evidence: DESIGN_SYSTEM_FORM.md §2c, NestCompositor.jsx, the 8 October 2026 touch-up.
+
 ---
 
 ## 7 · Signal-fit test (Grace's pass/fail, since design has no unit tests)
