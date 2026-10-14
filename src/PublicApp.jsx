@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { THEMES } from "./data/themes";
 import { SEED, isHidden } from "./data/seed";
 import { DEV_MODE } from "./lib/devMode";
@@ -14,6 +14,7 @@ import DevModeBar from "./components/DevModeBar";
 import About from "./components/About";
 import Colophon from "./components/Colophon";
 import Canon from "./components/Canon";
+import MaterialsDetail from "./components/details/MaterialsDetail";
 import PatternLanguage from "./components/PatternLanguage";
 import PatioBeach from "./components/PatioBeach";
 import Superconscious from "./components/Superconscious";
@@ -35,6 +36,7 @@ const VIEW_TO_HASH = {
   patiobeach: "patio-beach",
   superconscious: "share-location",
   canon: "relational-design",
+  materials: "materials-in-relation",
   about: "about",
   colophon: "colophon",
   models: "mental-models",
@@ -48,7 +50,7 @@ const HASH_TO_VIEW = Object.fromEntries(
   Object.entries(VIEW_TO_HASH).map(([view, hash]) => [hash, view])
 );
 const PUBLIC_VIEWS = new Set([
-  "public", "patiobeach", "superconscious", "canon", "about",
+  "public", "patiobeach", "superconscious", "canon", "materials", "about",
   "colophon", "models", "patterns", "hotelnest", "flowers", "galaxy", "resume",
 ]);
 const viewFromHash = () => {
@@ -77,7 +79,7 @@ const pushHashForItem = (item) => {
 };
 
 const WORK_VIEWS = new Set(["public", "superconscious", "patiobeach", "flowers", "galaxy"]);
-const CANON_VIEWS = new Set(["canon"]);
+const CANON_VIEWS = new Set(["canon", "materials"]);
 const INFO_VIEWS = new Set(["about", "colophon"]);
 // Work views honor a visitor-controllable light preference (daylight) over the default dark (threshold).
 const readWorkLight = () =>
@@ -108,6 +110,8 @@ export default function PublicApp() {
   const [activeItem, setActiveItem] = useState(() => findItemByHash(hashItemId()));
   const [closing, setClosing] = useState(false);
   const [transitioning, setTransitioning] = useState(false);
+  const navigationTimer = useRef(null);
+  useEffect(() => () => clearTimeout(navigationTimer.current), []);
   const explorationStore = useExplorationStore();
   const nowState = usePublicSystemCondition();
   useSmoothScroll();
@@ -138,10 +142,12 @@ export default function PublicApp() {
   const togglePatternLens = useCallback(() => setPatternLens(p => !p), []);
 
   const navigateTo = useCallback((target) => {
+    clearTimeout(navigationTimer.current);
     if (target === view && !transitioning) return;
     setTransitioning(true);
     setThemeKey(themeForView(target, workLight));
-    setTimeout(() => {
+    navigationTimer.current = setTimeout(() => {
+      navigationTimer.current = null;
       setView(target);
       scrollTopNow();
       setTransitioning(false);
@@ -159,7 +165,7 @@ export default function PublicApp() {
   const toggleWorkLight = useCallback(() => {
     setWorkLight(prev => {
       const next = !prev;
-      try { localStorage.setItem("foa-work-light", next ? "1" : "0"); } catch (_) { /* ignore */ }
+      try { localStorage.setItem("foa-work-light", next ? "1" : "0"); } catch { /* ignore */ }
       if (WORK_VIEWS.has(view)) setThemeKey(next ? "daylight" : "threshold");
       return next;
     });
@@ -167,8 +173,10 @@ export default function PublicApp() {
 
   useEffect(() => {
     const handler = () => {
+      // Back/Forward and hash links supersede an unfinished menu transition.
+      clearTimeout(navigationTimer.current);
+      setTransitioning(false);
       const target = viewFromHash();
-      if (target === view) return;
       setThemeKey(themeForView(target, workLight));
       setView(target);
       scrollTopNow();
@@ -305,6 +313,7 @@ export default function PublicApp() {
           {view === "about" && <About theme={theme} />}
           {view === "colophon" && <Colophon />}
           {view === "canon" && <Canon />}
+          {view === "materials" && <MaterialsDetail />}
           {view === "patterns" && <PatternLanguage content={publicContent} onOpen={openItem} fg={theme.fg} />}
           {view === "patiobeach" && <PatioBeach />}
           {view === "superconscious" && <Superconscious />}

@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 import { SEED } from "../data/seed";
 import useReveal from "../hooks/useReveal";
+import "../styles/materials.css";
 
 const SECTIONS = [
   { id: "overview", label: "Overview" },
@@ -275,6 +276,13 @@ export default function Canon() {
           {!xrayMode && <><br /><em>X-Ray</em>: field diagnostic overlay. Press <kbd>X</kbd> to activate.</>}
         </div>
       </div>
+
+      <section className="cn-instrument" aria-labelledby="canon-instrument-title">
+        <div className="cn-instrument-label">Put it into practice</div>
+        <h2 id="canon-instrument-title">Materials in Relation</h2>
+        <p>Explore physical, digital, and relational materials together. Use the instrument to compose a situation, try a change, and learn from what happens.</p>
+        <a href="#materials-in-relation">Open the instrument <span aria-hidden="true">↗</span></a>
+      </section>
 
       {/* ── 4. Lineages ── */}
       <div ref={el => sectionRefs.current["lineages"] = el} id="canon-lineages" style={{ scrollMarginTop: 56 }}>

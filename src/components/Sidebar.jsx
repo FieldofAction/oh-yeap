@@ -1,3 +1,5 @@
+import RelationalDesignNav from "./RelationalDesignNav";
+import useNavigationDrawer from "../hooks/useNavigationDrawer";
 import React, { useState, useEffect, useRef } from "react";
 
 // Launch note:
@@ -51,7 +53,7 @@ function isStudioUnlocked() {
 }
 
 export default function Sidebar({ view, navigateTo, filter, setFilter, hiddenCounts = {} }) {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { mobileOpen, setMobileOpen, toggleRef, drawerRef } = useNavigationDrawer();
   const [unlocked, setUnlocked] = useState(() => isStudioUnlocked());
   const [gatePending, setGatePending] = useState(null); // nav item awaiting unlock
   const [gateInput, setGateInput] = useState("");
@@ -134,7 +136,7 @@ export default function Sidebar({ view, navigateTo, filter, setFilter, hiddenCou
   return (
     <>
       <div className="topbar">
-        <button className="sb-toggle" onClick={() => setMobileOpen(p => !p)} aria-label="Menu">
+        <button ref={toggleRef} className="sb-toggle" onClick={() => setMobileOpen(p => !p)} aria-label="Menu" aria-expanded={mobileOpen} aria-controls="site-navigation">
           <span className="sb-toggle-bar" />
           <span className="sb-toggle-bar" />
         </button>
@@ -143,7 +145,8 @@ export default function Sidebar({ view, navigateTo, filter, setFilter, hiddenCou
         </div>
       </div>
 
-      <aside className={`sb${mobileOpen ? " sb-open" : ""}`}>
+      <aside ref={drawerRef} id="site-navigation" role="dialog" aria-label="Site navigation" aria-modal={mobileOpen ? true : undefined} aria-hidden={!mobileOpen} inert={!mobileOpen} className={`sb${mobileOpen ? " sb-open" : ""}`}>
+        <button type="button" className="sb-link" onClick={() => setMobileOpen(false)}>Close menu</button>
         {NAV.map(group => (
           <div key={group.tier} className="sb-tier">
             <div className="sb-tier-h">
@@ -155,6 +158,9 @@ export default function Sidebar({ view, navigateTo, filter, setFilter, hiddenCou
               )}
             </div>
             {group.items.map((item) => {
+              if (item.key === "canon") {
+                return <RelationalDesignNav key={item.key} view={view} onNavigate={handleNav} />;
+              }
               /* Sub-group with children (e.g. STUDIO → Methods, Interfaces) */
               if (item.group) {
                 return (
