@@ -4,7 +4,7 @@ import MaterialsInRelation from '../MaterialsInRelation';
 export default function MaterialsDetail() {
   useEffect(() => {
     const previousTitle = document.title;
-    document.title = 'Materials in Relation — Field of Action';
+    document.title = 'Materials in Relation · Field of Action';
     return () => { document.title = previousTitle; };
   }, []);
 

@@ -128,7 +128,7 @@ export default function MaterialsInRelation() {
     <p>A chair, an interface, and an invitation can shape the same encounter. This instrument brings physical, digital, and relational materials into a shared study while preserving the differences between them.</p>
     <p>Use each chart on its own to explore behavior and resistance. Bring materials together around a situation, propose a connection, and try a small change. Return with an observation that can revise the proposal.</p>
     <details className="mir-about">
-      <summary>What the charts inherit—and what remains open</summary>
+      <summary>What the charts inherit, and what remains open</summary>
       <p>The Bauhaus diagram organized a curriculum: preliminary study, material workshops, and building. Its useful inheritance here is learning through material experiments. Google’s Material Design gives digital surfaces and transitions a consistent behavioral language. The relational chart asks how an encounter changes through attention, timing, permission, and response.</p>
       <p>These are overlapping registers of practice. A digital interface depends on physical infrastructure; a physical room already organizes relationships. No material has a fixed social meaning. Participants, culture, history, power, and ecological costs change what a design does.</p>
       <p>“Relational material” names qualities and conditions we can work with. People participate with their own agency. Trust, belonging, and coherence may emerge; they cannot be set like interface properties.</p>

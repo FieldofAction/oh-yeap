@@ -142,7 +142,7 @@ export function synthesizeMaterials(selected) {
 
 export function synthesisText(synthesis) {
   return [
-    `Working hypothesis — ${synthesis.pairing}`,
+    `Working hypothesis: ${synthesis.pairing}`,
     `${synthesis.title}\n${synthesis.summary}\n${synthesis.emergence}`,
     ...synthesis.relationships.map(pair => `${pair.label}\n${pair.text}`),
     `Tension\n${synthesis.tension}\n${synthesis.materialLimits}`,
