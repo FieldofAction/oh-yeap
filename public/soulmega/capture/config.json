@@ -1,0 +1,249 @@
+{
+  "_about": "Remote runtime config for sm-capture.js. Precedence: built-in defaults < this file < window.SM_CAPTURE_CONFIG. enabled:false is the kill switch. Copy here reaches the live site within five minutes (Cache-Control max-age=300). copy.age, copy.fine, copy.privacy and copy.cta are the consent wording: change any of them only together with a new consentId (email-v2, ...) and archive the new text in SOULMEGA-CAPTURE.md, Consent versions. The script pins api and the mailchimpFallback endpoint (a list-manage.com JSONP URL, hex u and id); mailchimpFallback.enabled:false turns the fallback off.",
+  "enabled": true,
+  "api": "https://www.fieldofaction.org/api",
+  "privacyUrl": "/privacy",
+  "consentId": "email-v1",
+  "dryRun": false,
+  "mailchimpFallback": {
+    "enabled": true,
+    "action": "https://soulmega.us3.list-manage.com/subscribe/post-json",
+    "u": "98da2d6b76edc4cb79c46d8b8",
+    "id": "94b16e1a8e"
+  },
+  "contexts": {
+    "home": {
+      "eyebrow": "Rendezvous",
+      "body": "",
+      "preselect": [],
+      "sms": false
+    },
+    "product": {
+      "eyebrow": "New releases",
+      "body": "First word when a new beer leaves the brewhouse. Releases, collaborations, and where to find them.",
+      "preselect": [
+        "beer"
+      ],
+      "sms": false
+    },
+    "events": {
+      "eyebrow": "Gatherings",
+      "body": "Local nights, invitations, and where we’re pouring next. You’ll hear about it early.",
+      "preselect": [
+        "events"
+      ],
+      "sms": true
+    },
+    "radio": {
+      "eyebrow": "Soul Mega Radio",
+      "body": "New mixes, the selectors behind them, and the culture around the beer.",
+      "preselect": [
+        "music"
+      ],
+      "sms": false
+    },
+    "journal": {
+      "eyebrow": "Journal",
+      "body": "New stories and the people we make things with.",
+      "preselect": [
+        "music"
+      ],
+      "sms": false
+    },
+    "local": {
+      "eyebrow": "Near you",
+      "body": "Tell us your city and we’ll let you know when Soul Mega lands nearby.",
+      "preselect": [],
+      "sms": false
+    },
+    "shop": {
+      "eyebrow": "Merch",
+      "body": "Limited drops and small-run pieces, announced here first.",
+      "preselect": [
+        "merch"
+      ],
+      "sms": false
+    }
+  },
+  "routes": [
+    {
+      "match": "^/beer$|^/collabs$",
+      "context": "product"
+    },
+    {
+      "match": "^/events(/|$)",
+      "context": "events"
+    },
+    {
+      "match": "^/radio(/|$)",
+      "context": "radio"
+    },
+    {
+      "match": "^/journal(/|$)",
+      "context": "journal"
+    },
+    {
+      "match": "^/find-us$",
+      "context": "local"
+    },
+    {
+      "match": "^/(shop|merch|store)(/|$)",
+      "context": "shop"
+    }
+  ],
+  "placements": [
+    {
+      "id": "home-origin",
+      "match": "^/home-enter$",
+      "selector": "div.we-ve-got-soul.home-test",
+      "position": "afterend",
+      "context": "home",
+      "enabled": true
+    },
+    {
+      "id": "beer-list",
+      "match": "^/beer$",
+      "selector": "[data-beer-page] [data-collabs-card], [data-beer-page] .sm-cocard",
+      "position": "beforebegin",
+      "context": "product",
+      "enabled": true
+    },
+    {
+      "id": "collabs-end",
+      "match": "^/collabs$",
+      "selector": "[data-collabs-page]",
+      "position": "beforeend",
+      "context": "product",
+      "enabled": true
+    },
+    {
+      "id": "events-list",
+      "match": "^/events$",
+      "selector": ".sm-events-past, .sm-events-list",
+      "pick": "last",
+      "position": "afterend",
+      "context": "events",
+      "rule": false,
+      "enabled": true
+    },
+    {
+      "id": "journal-index",
+      "match": "^/journal$",
+      "selector": ".sm-jn-inner",
+      "position": "beforeend",
+      "context": "journal",
+      "enabled": true
+    },
+    {
+      "id": "journal-story",
+      "match": "^/journal/[^/]+$",
+      "selector": "footer.sm-art-foot",
+      "position": "beforebegin",
+      "context": "journal",
+      "enabled": true
+    },
+    {
+      "id": "radio-day",
+      "match": "^/radio$",
+      "selector": "section.r-day",
+      "position": "afterend",
+      "context": "radio",
+      "enabled": true
+    },
+    {
+      "id": "find-us-local",
+      "match": "^/find-us$",
+      "selector": ".cta-location",
+      "position": "afterend",
+      "context": "local",
+      "enabled": true
+    }
+  ],
+  "flyout": {
+    "enabled": true,
+    "engagedSeconds": 35,
+    "scrollDepth": 0.5,
+    "scrollMinSeconds": 15,
+    "dismissDays": 30,
+    "maxIgnored": 3,
+    "excludePaths": [
+      "^/$",
+      "^/markus",
+      "^/megafest",
+      "^/contact-us",
+      "^/radio-lab",
+      "^/404"
+    ],
+    "mobileCollapsed": true
+  },
+  "footer": {
+    "enhance": true,
+    "selector": ".footer form#email-form"
+  },
+  "sms": {
+    "enabled": false,
+    "url": null,
+    "contexts": [
+      "events"
+    ]
+  },
+  "interests": [
+    {
+      "id": "events",
+      "label": "Events"
+    },
+    {
+      "id": "beer",
+      "label": "Beer releases"
+    },
+    {
+      "id": "music",
+      "label": "Music & culture"
+    },
+    {
+      "id": "merch",
+      "label": "Merch"
+    }
+  ],
+  "copy": {
+    "headline": "Keep good company.",
+    "body": "A little Soul Mega in your inbox. New releases, gatherings, and good things worth knowing about.",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "Email address",
+    "cta": "Keep me posted",
+    "sending": "Sending",
+    "age": "I’m 21 or older",
+    "fine": "For adults 21+. Unsubscribe anytime.",
+    "privacy": "Privacy Policy",
+    "newTab": "(opens in a new tab)",
+    "errEmail": "That email doesn’t look right. Try again?",
+    "errAge": "Confirm you’re 21 or older to join.",
+    "errGeneric": "Something went sideways. Try again in a minute.",
+    "errBounced": "That address bounced before. Try another one?",
+    "errRejected": "We couldn’t add that address. Try another one?",
+    "prefsHead": "What moves you?",
+    "prefsSub": "Pick any that fit.",
+    "cityLabel": "City",
+    "cityPlaceholder": "Your city",
+    "cities": [
+      "Washington DC",
+      "Baltimore",
+      "Annapolis",
+      "Wilmington",
+      "Richmond"
+    ],
+    "prefsCta": "That’s me",
+    "skip": "Skip",
+    "doneHead": "See you out there.",
+    "done": {
+      "subscribed": "You’re on the list.",
+      "pending": "Check your inbox to confirm and you’re in.",
+      "updated": "Good to see you again. You’re still on the list.",
+      "updatedPicks": "Good to see you again. We’ve got your picks."
+    },
+    "smsLine": "Want a text when something’s happening near you? Texts are for 21+.",
+    "smsCta": "Get texts",
+    "region": "Soul Mega newsletter invitation",
+    "dismiss": "Dismiss"
+  }
+}
