@@ -24,17 +24,38 @@ const targets = [
 ];
 const selectors = '.content-section-h,.ix-title,.ix-sub,.ix-tag,.ix-wr-title,.ix-wr-feat-title,.ix-wr-feat-sub,.rd-title,.rd-body-text,.rd-section-heading,.cs-body,.cs-cap,.ab-h,.ab-body,.ab-sl,.co-h,.co-item-v,.ph-h,.ph-body-heading,.ph-body-text,.mir h1,.mir-lead,.x-title,.x-deck,.x-band-label,.x-prose,.x-sec h3,.x-fact,.x-tag,.sb-brand-logo,.topbar';
 async function fonts(page) {
-  return page.evaluate(async () => {
-    const names = ['Hanken Grotesk', 'Schibsted Grotesk', 'Space Mono'];
-    const loaded = [];
-    for (const name of names) {
-      const faces = await document.fonts.load(`400 18px "${name}"`, 'Field of Action 012345');
-      if (!faces.length || faces.some(f => f.status !== 'loaded')) throw new Error(`Font not loaded: ${name}`);
-      loaded.push(name);
+  const names = ['Hanken Grotesk', 'Schibsted Grotesk', 'Space Mono'];
+  // A failed optional local() face can reject FontFaceSet.load even when the
+  // downloaded face renders correctly. Verify the actual painted glyphs instead.
+  await page.evaluate(async names => {
+    for (const [i, name] of names.entries()) {
+      const el = document.createElement('span');
+      el.id = `foa-font-probe-${i}`;
+      el.textContent = 'Field of Action 012345';
+      Object.assign(el.style, { position: 'fixed', left: '0', top: '0', opacity: '0', pointerEvents: 'none', fontFamily: `"${name}"`, fontSize: '18px', fontWeight: '400' });
+      document.body.appendChild(el);
+      try { await document.fonts.load(`400 18px "${name}"`, el.textContent); } catch {}
     }
     await document.fonts.ready;
-    return loaded;
-  });
+  }, names);
+  const client = await page.createCDPSession();
+  const loaded = [];
+  try {
+    await client.send('DOM.enable');
+    await client.send('CSS.enable');
+    const { root } = await client.send('DOM.getDocument');
+    for (const [i, name] of names.entries()) {
+      const { nodeId } = await client.send('DOM.querySelector', { nodeId: root.nodeId, selector: `#foa-font-probe-${i}` });
+      const { fonts: painted } = await client.send('CSS.getPlatformFontsForNode', { nodeId });
+      const normalize = v => v.toLowerCase().replace(/[^a-z]/g, '');
+      assert.ok(painted.some(f => f.isCustomFont && f.glyphCount > 0 && normalize(f.familyName).includes(normalize(name))), `Expected ${name}, actual painted fonts: ${JSON.stringify(painted)}`);
+      loaded.push({ family: name, painted });
+    }
+  } finally {
+    await page.evaluate(() => document.querySelectorAll('[id^="foa-font-probe-"]').forEach(el => el.remove()));
+    await client.detach();
+  }
+  return loaded;
 }
 async function inspect(page) {
   return page.evaluate(selectors => {
