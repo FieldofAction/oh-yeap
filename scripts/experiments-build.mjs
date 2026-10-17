@@ -16,6 +16,7 @@ import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { CONTENT_DIR, ROOT, loadEntries } from './experiments-lib.mjs';
 import { renderEntryPage, renderIndexPage } from './experiments-render.mjs';
+import { withFieldStandard } from './field-standard-lib.mjs';
 
 const OUT_DIR = resolve(ROOT, 'public/experiments');
 
@@ -32,9 +33,9 @@ if (errors.length) {
 rmSync(OUT_DIR, { recursive: true, force: true });
 mkdirSync(OUT_DIR, { recursive: true });
 
-writeFileSync(join(OUT_DIR, 'index.html'), renderIndexPage(published), 'utf8');
+writeFileSync(join(OUT_DIR, 'index.html'), withFieldStandard(renderIndexPage(published)), 'utf8');
 for (const entry of published) {
-  writeFileSync(join(OUT_DIR, `${entry.slug}.html`), renderEntryPage(entry, byId), 'utf8');
+  writeFileSync(join(OUT_DIR, `${entry.slug}.html`), withFieldStandard(renderEntryPage(entry, byId)), 'utf8');
 }
 
 const drafts = entries.length - published.length;
