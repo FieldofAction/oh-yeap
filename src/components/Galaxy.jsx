@@ -249,6 +249,17 @@ export default function Galaxy(){
   const [vSize, setVSize] = useState(1080);
   const [vidStatus, setVidStatus] = useState("");
 
+  // Mono stays on this instrument. The public page does not load it.
+  useEffect(() => {
+    const id = "foa-galaxy-mono";
+    if (document.getElementById(id)) return;
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = "https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap";
+    document.head.appendChild(link);
+  }, []);
+
   // ---------- imperative canvas setup ----------
   useEffect(() => {
     const cv = canvasRef.current;
@@ -614,7 +625,7 @@ export default function Galaxy(){
       )}
 
       <style>{`
-        .gx-app{display:grid;grid-template-columns:1fr 340px;height:calc(100vh - 72px);width:100%;background:var(--bg);color:var(--fg);font-family:var(--mono);font-size:13px;overflow:hidden;animation:en .4s ease both}
+        .gx-app{display:grid;grid-template-columns:1fr 340px;height:calc(100vh - 72px);width:100%;background:var(--bg);color:var(--fg);font-family:"Space Mono",ui-monospace,monospace;font-size:13px;overflow:hidden;animation:en .4s ease both}
         .gx-stage{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#000}
         .gx-aperture{position:relative;aspect-ratio:1/1;width:min(82vh,86%);max-width:880px}
         .gx-canvas{width:100%;height:100%;display:block;border-radius:2px;cursor:grab;touch-action:none}
