@@ -4,6 +4,7 @@ on:
     branches: [design/field-standard-typography, main]
     paths:
       - 'src/styles/field-standard.css'
+      - 'src/styles/main.css'
       - 'src/main.jsx'
       - 'scripts/field-standard-*.mjs'
       - 'scripts/experiments-build.mjs'

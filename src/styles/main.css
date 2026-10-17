@@ -3010,7 +3010,6 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 
 /* Font fallback declarations for offline / slow network */
 @font-face{font-family:'atlas grotesk';font-style:normal;font-weight:300 700;font-display:swap;src:local('Atlas Grotesk')}
-@font-face{font-family:'Space Mono';font-style:normal;font-weight:400 700;font-display:swap;src:local('Space Mono')}
 
 /* ── Hotel / Nest — single-page edition store ─────────────────── */
 .hn{max-width:720px;margin:0 auto;padding:80px 40px 120px;color:var(--fg)}
