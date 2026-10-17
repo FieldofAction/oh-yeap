@@ -7,6 +7,12 @@
       "runtimeArgs": ["-c", "npx vite --port $PORT --strictPort"],
       "port": 5180,
       "autoPort": true
+    },
+    {
+      "name": "soulmega-capture-lab",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/soulmega-capture-dev.mjs"],
+      "port": 5181
     }
   ]
 }
