@@ -302,8 +302,9 @@ still go through the API.
   a dismissal never suppresses.
 - `flyout.excludePages` lists Webflow page ids (the `data-wf-page` attribute on `<html>`) where the flyout never
   shows, alongside the `flyout.excludePaths` patterns. It ships with `6453ed5461b41bff64488513`, the site's Not Found
-  page: Webflow serves it at any unknown URL (answering 404), so `^/404` alone misses a mistyped link, and `/privacy`
-  is that page until the privacy policy is published. `state().flyout.blocked` reads `"path"` for either.
+  page: Webflow serves it at any unknown URL (answering 404), so `^/404` alone misses a mistyped link. `config.json`
+  also excludes `^/privacy`, so the policy page itself never carries the flyout (the page's own inline links are
+  enough). `state().flyout.blocked` reads `"path"` for either.
 - Beacons are counted per placement only for the ids in `KNOWN_PLACEMENTS` (`api/_lib/soulmega/audience.js`):
   `flyout`, `footer`, `inline` and the eight config placements. Any other id is counted as `other`, so a forged
   beacon cannot create new Redis keys. Add an id there when adding a placement or a `data-sm-cap` slot.
