@@ -5,7 +5,10 @@
  * !important rules cannot reach the controls. It talks to /api/soulmega-* on
  * www.fieldofaction.org and counts what it does with a first-party beacon.
  * Copy, placements and switches live in config.json beside this file, so the
- * words change without a release. Contract and rollout: SOULMEGA-CAPTURE.md.
+ * words change without a release. On a production host it stays dormant
+ * (no UI, no beacons or API calls, no storage) until config.json says
+ * "live": true; a preview (?sm_cap=preview) wakes it for one tab, dry.
+ * Contract and rollout: SOULMEGA-CAPTURE.md.
  */
 (function () {
   "use strict";
@@ -29,8 +32,14 @@
   const DAY = 864e5;
   // Phones in either orientation, and any short window: the docked, collapsed flyout.
   const MOBILE = window.matchMedia ? window.matchMedia("(max-width:767px), (max-height:500px)") : null;
-  // Webflow staging (soulmega.webflow.io) is never live: the module runs dry there too.
-  const STAGE = /\.webflow\.io$/i.test(location.hostname);
+  // Host classes. dev: this machine, and the lab (which says so in SM_CAPTURE_CONFIG).
+  // stage: Webflow staging (*.webflow.io). prod: every other host. dev and stage always
+  // run, and always dry; prod stays dormant until config.json sets "live": true.
+  const HOSTNAME = location.hostname.toLowerCase();
+  const STAGE = /\.webflow\.io$/.test(HOSTNAME);
+  const LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(HOSTNAME);
+  const LAB = !!window.SM_CAPTURE_CONFIG && window.SM_CAPTURE_CONFIG.lab === true;
+  const HOST = LOCAL || LAB ? "dev" : STAGE ? "stage" : "prod";
   const CONSENT = /^[a-z0-9][a-z0-9.-]{0,31}$/;
   // Where the fallback may send an address: Mailchimp's own JSONP endpoint, nothing else.
   const MC_ACTION = /^https:\/\/[a-z0-9-]+\.us\d{1,2}\.list-manage\.com\/subscribe\/post-json$/;
@@ -38,6 +47,8 @@
   /* ---- Defaults. config.json ships the same values; window.SM_CAPTURE_CONFIG wins over both. ---- */
   const DEFAULTS = {
     enabled: true,
+    // Production only runs when this is exactly true. Fail safe: no config.json, no launch.
+    live: false,
     api: "https://www.fieldofaction.org/api",
     configUrl: null,
     privacyUrl: "/privacy",
@@ -76,7 +87,10 @@
     ],
     flyout: {
       enabled: true, engagedSeconds: 35, scrollDepth: 0.5, scrollMinSeconds: 15, dismissDays: 30, maxIgnored: 3,
-      excludePaths: ["^/$", "^/markus", "^/megafest", "^/contact-us", "^/radio-lab", "^/404"], mobileCollapsed: true,
+      excludePaths: ["^/$", "^/markus", "^/megafest", "^/contact-us", "^/radio-lab", "^/404"],
+      // Webflow page ids (<html data-wf-page>). Webflow serves its Not Found page at any
+      // unknown URL, /privacy included until the policy ships, so a path cannot catch it.
+      excludePages: ["6453ed5461b41bff64488513"], mobileCollapsed: true,
     },
     footer: { enhance: true, selector: ".footer form#email-form" },
     sms: { enabled: false, url: null, contexts: ["events"] },
@@ -177,6 +191,8 @@
     s.innerHTML = ICONS[name];
     return s;
   }
+  // A preview's small label, so nobody takes it for the live invitation.
+  const previewMark = () => h("span", { class: "pv", title: "Preview. Signups here are not saved.", text: "Preview" });
   function visibleRatio(el) {
     const r = el.getBoundingClientRect();
     if (!r.height || !r.width) return 0;
@@ -203,8 +219,20 @@
   }
 
   /* ---- Runtime state ---- */
-  let cfg = merge(DEFAULTS, isObj(window.SM_CAPTURE_CONFIG) ? window.SM_CAPTURE_CONFIG : {});
-  let killed = false, booted = false, PREVIEW = false;
+  // Two keys are not window settings: only config.json launches production (live),
+  // and only the lab page, as seen when this script loaded, is the lab. LIVE is
+  // private: it is set once, from the config.json this script fetched itself, and
+  // the page can neither point that fetch elsewhere on production nor edit it.
+  let LIVE = false;
+  const pin = (c) => Object.assign(c, { live: LIVE, lab: LAB });
+  let cfg = pin(merge(DEFAULTS, isObj(window.SM_CAPTURE_CONFIG) ? window.SM_CAPTURE_CONFIG : {}));
+  // PREVIEW: this page is in a preview (dry, labelled). PREVIEW_LOAD: this load carries
+  // ?sm_cap=preview, so suppression is ignored and the flyout comes after 1 s.
+  // DORMANT: why the module is doing nothing at all on this page ("" while it runs):
+  // "not_live", "killed" (the kill switch at load) or "init_failed".
+  let killed = false, booted = false, PREVIEW = false, PREVIEW_LOAD = false, DORMANT = "";
+  // Not running: dormant, or killed (at load, or since by a config.json re-check).
+  const idle = () => killed || !!DORMANT;
   let PATH = location.pathname, CTX = "home", EVENT = "", SRC = "direct";
   let local = { subscribed: 0, dismissedAt: 0, ignored: 0, gate: 0 };
   let sess = { sid: rid(), shown: 0, pv: 0 };
@@ -230,7 +258,7 @@
   }
   const saveLocal = () => { syncLocal(); store("localStorage", "smcap:v1", local); };
   const saveSess = () => { syncSess(); store("sessionStorage", "smcap:s", sess); };
-  const isDry = () => !!(cfg.dryRun || cfg.lab || PREVIEW || STAGE);
+  const isDry = () => !!(cfg.dryRun || cfg.lab || PREVIEW || HOST !== "prod");
   // The API base is pinned: config.json is not covered by the script's SRI hash,
   // so it cannot point signups anywhere else. The lab uses its own origin.
   function apiBase() {
@@ -249,31 +277,38 @@
     };
   }
   const state = () => ({
-    version: VERSION, ready: booted, killed, path: PATH, context: CTX, event: EVENT || null,
+    version: VERSION, ready: booted, killed, dormant: !!DORMANT, reason: DORMANT || null, host: HOST, live: LIVE,
+    path: PATH, context: CTX, event: EVENT || null,
     dryRun: isDry(), lab: !!cfg.lab, preview: PREVIEW, src: SRC, firstTouch: ft,
     subscribed: local.subscribed || 0, dismissedAt: local.dismissedAt || 0, ignored: local.ignored || 0, gate: local.gate || 0,
     sid: sess.sid, shown: sess.shown || 0, pv: sess.pv || 0,
-    flyout: { open: !!F.host, engagedSeconds: F.engaged, blocked: booted ? hardBlock() || softBlock() : "booting" },
+    flyout: { open: !!F.host, engagedSeconds: F.engaged, blocked: !booted ? "booting" : DORMANT ? "dormant" : hardBlock() || softBlock() },
   });
   const emitState = () => emit("smcap:state", state());
 
+  // config.json beside this script. A page may point elsewhere (configUrl) only on
+  // dev and stage hosts, which always run dry; on production the file beside the
+  // script is the only one read, so only it can launch. It is revalidated on every
+  // load (cache: "no-cache", one conditional request), so a launch, a rollback or
+  // the kill switch reaches the next page load and no cached copy outlives it.
   async function loadConfig() {
     const win = isObj(window.SM_CAPTURE_CONFIG) ? window.SM_CAPTURE_CONFIG : {};
-    let url = win.configUrl;
+    let url = HOST === "prod" ? null : win.configUrl;
     if (url == null) try { url = new URL("config.json", SCRIPT_SRC).href; } catch { url = ""; }
     let remote = {};
     if (url) {
       const ctl = new AbortController();
       const t = setTimeout(() => ctl.abort(), 1500);
       try {
-        const r = await fetch(new URL(url, location.href).href, { credentials: "omit", signal: ctl.signal });
+        const r = await fetch(new URL(url, location.href).href, { credentials: "omit", cache: "no-cache", signal: ctl.signal });
         const j = r.ok ? await r.json() : null;
         if (isObj(j)) remote = j;
       } catch { /* slow or offline: built-in defaults */ }
       clearTimeout(t);
     }
+    LIVE = remote.live === true;
     killed = remote.enabled === false || win.enabled === false; // the kill switch wins from any layer
-    cfg = merge(merge(DEFAULTS, remote), win);
+    cfg = pin(merge(merge(DEFAULTS, remote), win));
     cfg.configUrl = url || null;
   }
 
@@ -298,7 +333,7 @@
 
   /* ---- Beacons ---- */
   function track(e, d) {
-    if (killed || !EVENTS.includes(e)) return;
+    if (idle() || !EVENTS.includes(e)) return;
     d = d || {};
     const ev = { e, p: e !== "pv" && SLUG.test(d.p || "") ? d.p : "-", c: CONTEXTS.includes(d.c) ? d.c : CTX, path: PATH, d: innerWidth < 768 ? "m" : "d", src: SRC };
     if (Number.isInteger(d.n) && d.n >= 0 && d.n < 100) ev.n = d.n;
@@ -353,9 +388,11 @@
     return { status, json };
   }
   // Mailchimp's own JSONP endpoint, the path the footer form already uses. Only
-  // reached when our API cannot save the signup, and never sent in dry run or
-  // the lab. It carries the same age, consent and source stamps the API writes
-  // (hidden merge fields), so a fallback member keeps their 21+ record.
+  // reached when our API cannot save the signup. In dry run (the lab, a preview,
+  // staging, this machine) it is never sent: it is described and answered as a
+  // success, so the flow can still be tested end to end. It carries the same
+  // age, consent and source stamps the API writes (hidden merge fields), so a
+  // fallback member keeps their 21+ record.
   // Resolves to "subscribed" | "pending" | "updated", or null when it failed.
   function jsonp(o, mc) {
     const cb = "__smcap_jsonp_" + rid();
@@ -418,7 +455,7 @@
     } else {
       return { kind: "error", code: ERRS.includes(j.error) ? j.error : r.status === 429 ? "rate_limited" : "bad_request" };
     }
-    // A dry run outside the lab (preview, staging) saved nothing, so this browser is not marked as subscribed.
+    // A dry run outside the lab (preview, staging, this machine) saved nothing, so this browser is not marked as subscribed.
     if (cfg.lab || !isDry()) {
       local.subscribed = Date.now();
       saveLocal();
@@ -449,6 +486,9 @@ a{color:inherit}
 .stage{display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"eyebrow" "head" "body" "lead" "rest"}
 .form{display:contents}
 .eyebrow{grid-area:eyebrow;margin-bottom:12px;font:600 13px/16px var(--face);letter-spacing:.2em;text-transform:uppercase;color:var(--brow)}
+.pv{display:inline-block;padding:3px 6px;border-radius:3px;box-shadow:inset 0 0 0 1px var(--stroke);font:500 10px/1 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--fg2);vertical-align:1px;cursor:default}
+.eyebrow>span+.pv{margin-left:12px}
+.fine>.pv{display:table;margin-top:8px}
 .head{grid-area:head;outline:0;text-wrap:balance}
 .body{grid-area:body;margin-top:10px;max-width:46ch;color:var(--fg2);text-wrap:pretty}
 .lead{grid-area:lead;margin-top:20px;min-width:0;container:smc-field/inline-size}
@@ -564,6 +604,7 @@ a{color:inherit}
 }
 @media (forced-colors:active){
 .shell,.cta,.solid,.chip,.line,.box,.go .pill{border:1px solid ButtonText}
+.pv{border:1px solid CanvasText}
 .chip[aria-pressed=true],.check :checked+.box{forced-color-adjust:none;background:Highlight;color:HighlightText;border-color:Highlight}
 .shell,.box{outline-style:none}
 .shell:focus-within,.shell.bad,:focus-visible+.box,.bad .box{outline-style:solid}
@@ -597,10 +638,13 @@ a{color:inherit}
       if (this._imp && this._imp.t) { clearTimeout(this._imp.t); this._imp.t = 0; }
     }
     _build() {
-      if (killed || this.shadowRoot || !this.isConnected) return;
+      // A node the module made while it was still booting (mount() before ready) leaves a
+      // page that did not start (not live, killed at load, or init failed).
+      if (DORMANT && this._own) { this.remove(); return; }
+      if (idle() || this.shadowRoot || !this.isConnected) return;
       const a = (n) => this.getAttribute(n) || "";
       const v = (this._v = VARIANTS.includes(a("variant")) ? a("variant") : "inline");
-      if (v === "inline" && local.subscribed && !PREVIEW) { this.hidden = true; return; }
+      if (v === "inline" && local.subscribed && !PREVIEW_LOAD) { this.hidden = true; return; }
       this._ctx = CONTEXTS.includes(a("context")) ? a("context") : CTX;
       this._p = SLUG.test(a("placement")) ? a("placement") : v === "flyout" || v === "inline" ? v : "footer";
       this._ev = EVENT_SLUG.test(a("event")) ? a("event") : EVENT;
@@ -622,7 +666,9 @@ a{color:inherit}
         this._flyout(root);
       } else if (v === "footer-extras") {
         this._f = { t0: Date.now() };
-        root.append(h("div", { class: "extras" }, this._ageBlock()));
+        const blk = this._ageBlock();
+        if (PREVIEW) blk[blk.length - 1].append(previewMark());
+        root.append(h("div", { class: "extras" }, blk));
       } else {
         root.append(this._stage);
       }
@@ -722,7 +768,8 @@ a{color:inherit}
     }
     _intro(head, body) {
       const brow = this._v !== "continue" && this._cc.eyebrow;
-      return [brow && h("div", { class: "eyebrow", text: brow }), h("h2", { class: "head", tabindex: "-1", text: head }), body && h("div", { class: "body", text: body })].filter(Boolean);
+      const row = (brow || PREVIEW) && h("div", { class: "eyebrow" }, [brow && h("span", { text: brow }), PREVIEW && previewMark()]);
+      return [row, h("h2", { class: "head", tabindex: "-1", text: head }), body && h("div", { class: "body", text: body })].filter(Boolean);
     }
     // The age box, the two message slots and the fine print: shared by step 1 and the footer extras.
     _ageBlock() {
@@ -897,6 +944,8 @@ a{color:inherit}
     if (killed) return "killed";
     if (!fo.enabled) return "disabled";
     if (arr(fo.excludePaths).some((s) => { const r = rx(s); return !!r && r.test(PATH); })) return "path";
+    const wf = document.documentElement.getAttribute("data-wf-page");
+    if (wf && arr(fo.excludePages).includes(wf)) return "path";
     if (local.subscribed) return "subscribed";
     if (local.dismissedAt && Date.now() - local.dismissedAt < nn(fo.dismissDays, 30) * DAY) return "dismissed";
     if ((local.ignored || 0) >= num(fo.maxIgnored, 3)) return "ignored";
@@ -919,7 +968,7 @@ a{color:inherit}
     for (const t of ["scroll", "pointerdown", "pointermove", "keydown", "touchstart", "wheel"]) addEventListener(t, act, { passive: true, capture: true });
     document.addEventListener("keydown", (e) => { if (!(e.target.closest && e.target.closest("sm-capture"))) F.lastType = Date.now(); }, true);
     document.addEventListener("click", (e) => { if (e.target.closest && e.target.closest(OUTBOUND)) F.lastOut = Date.now(); }, true);
-    if (PREVIEW) { setTimeout(showFlyout, 1000); return; }
+    if (PREVIEW_LOAD) { setTimeout(showFlyout, 1000); return; }
     if (hardBlock()) return;
     const fo = cfg.flyout;
     const timer = setInterval(() => {
@@ -937,14 +986,15 @@ a{color:inherit}
     clearTimeout(F.retry);
     if (hardBlock()) return;
     if (softBlock()) { F.retry = setTimeout(attemptShow, 2000); return; }
-    // The flyout can come long after load: honour a kill switch flipped since then.
+    // The flyout can come long after load: honour a kill switch (or, on a live production
+    // page, a rollback to live:false) set since then.
     if (!(await stillEnabled())) { kill(); return; }
     if (hardBlock()) return;
     if (softBlock()) F.retry = setTimeout(attemptShow, 2000);
     else showFlyout();
   }
-  // Re-reads config.json (revalidating, so at most the CDN's five minutes stale).
-  // Anything but an explicit enabled:false counts as still on.
+  // Re-reads config.json (revalidating). Anything but an explicit enabled:false counts
+  // as still on; a production page outside a preview also needs live to be still true.
   let lastCheck = 0;
   async function stillEnabled() {
     const url = cfg.configUrl;
@@ -955,7 +1005,7 @@ a{color:inherit}
     try {
       const r = await fetch(new URL(url, location.href).href, { credentials: "omit", cache: "no-cache", signal: ctl.signal });
       const j = r.ok ? await r.json() : null;
-      return !(isObj(j) && j.enabled === false);
+      return !(isObj(j) && (j.enabled === false || (HOST === "prod" && !PREVIEW && j.live !== true)));
     } catch {
       return true;
     } finally {
@@ -969,7 +1019,7 @@ a{color:inherit}
     emitState();
   }
   function showFlyout() {
-    if (killed || F.host || !document.body) return;
+    if (idle() || F.host || !document.body) return;
     F.host = mk("flyout", "flyout", CTX);
     F.touched = false;
     F.shown = true;
@@ -1035,6 +1085,7 @@ a{color:inherit}
   /* ---- Mounting ---- */
   function mk(variant, placement, context, layout, rule) {
     const el = document.createElement("sm-capture");
+    el._own = true;
     el.setAttribute("variant", variant);
     el.setAttribute("placement", placement);
     el.setAttribute("context", context);
@@ -1072,25 +1123,47 @@ a{color:inherit}
     form._smc = true;
     const extras = mk("footer-extras", "footer", CTX);
     form.insertAdjacentElement("afterend", extras);
-    // Capture phase on the form itself, so Webflow's own handler never sends.
+    // Capture phase on the form itself, so Webflow's own handler never sends. Only
+    // while the age box is actually on the page: without it the form stays Webflow's.
     form.addEventListener("submit", (e) => {
+      if (!extras.isConnected || !extras.shadowRoot) return;
       e.preventDefault();
       e.stopImmediatePropagation();
-      if (extras.isConnected) extras._footer(form);
+      extras._footer(form);
     }, true);
   }
 
   /* ---- Boot ---- */
+  // ?sm_cap=preview previews the module, dry and labelled. On a production host the
+  // preview lasts for the tab (sessionStorage smcap:preview), so a site that is not
+  // live yet can be browsed page to page; ?sm_cap=off ends it. Only the load that
+  // carries the switch ignores suppression and brings the flyout after 1 s.
+  function previewSwitch(v) {
+    PREVIEW_LOAD = v === "preview";
+    if (HOST !== "prod") { PREVIEW = PREVIEW_LOAD; return; }
+    if (PREVIEW_LOAD) store("sessionStorage", "smcap:preview", 1);
+    PREVIEW = PREVIEW_LOAD || !!store("sessionStorage", "smcap:preview");
+  }
   function init() {
-    if (killed) { booted = true; emitState(); return; }
+    const q = new URLSearchParams(location.search);
+    if (q.get("sm_cap") === "off") store("sessionStorage", "smcap:preview", null); // ends a preview, kill switch or not
+    if (killed) { DORMANT = "killed"; booted = true; emitState(); return; } // the kill switch beats a preview too
+    previewSwitch(q.get("sm_cap"));
+    // Production waits for "live": true. Until then nothing renders, listens, sends or
+    // stores (the preview flag aside). A config.json that cannot be read leaves it off.
+    if (HOST === "prod" && !LIVE && !PREVIEW) {
+      DORMANT = "not_live";
+      Q.length = 0;
+      booted = true;
+      emitState();
+      return;
+    }
     PATH = (cfg.lab && /^\//.test(cfg.path || "") ? cfg.path : location.pathname).replace(/(.)\/+$/, "$1").slice(0, 200) || "/";
     const route = arr(cfg.routes).find((r) => r && CONTEXTS.includes(r.context) && rx(r.match) && rx(r.match).test(PATH));
     CTX = route ? route.context : "home";
     const ev = (document.querySelector("[data-sm-event]") || { getAttribute: () => "" }).getAttribute("data-sm-event");
     EVENT = EVENT_SLUG.test(ev || "") ? ev : "";
-    const q = new URLSearchParams(location.search);
     if (q.get("sm_cap") === "reset") resetStore();
-    PREVIEW = q.get("sm_cap") === "preview";
     const l = store("localStorage", "smcap:v1");
     if (isObj(l)) local = Object.assign(local, l);
     const s = store("sessionStorage", "smcap:s");
@@ -1098,8 +1171,11 @@ a{color:inherit}
     sess.pv = (sess.pv | 0) + 1;
     saveSess();
     if (q.get("sm_sub") === "1" || q.has("mc_eid")) {
-      local.subscribed = Date.now();
-      saveLocal();
+      // A production preview leaves no mark that would outlast it: the URL is cleaned, nothing is stored.
+      if (!(PREVIEW && HOST === "prod")) {
+        local.subscribed = Date.now();
+        saveLocal();
+      }
       if (q.has("sm_sub")) {
         // Drop only sm_sub; every other parameter keeps its original bytes.
         const keep = location.search.slice(1).split("&").filter((kv) => {
@@ -1123,7 +1199,7 @@ a{color:inherit}
         if (e.target.closest && e.target.closest('a[href="/home-enter"]')) { local.gate = Date.now(); saveLocal(); }
       }, true);
     } else {
-      if (!local.subscribed || PREVIEW) mountPlacements(false);
+      if (!local.subscribed || PREVIEW_LOAD) mountPlacements(false);
       enhanceFooter();
       startFlyout();
     }
@@ -1134,7 +1210,7 @@ a{color:inherit}
   function recheck() {
     const why = hardBlock();
     const h = F.host, step = h && h._root && h._root.getAttribute("data-step");
-    if (h && !PREVIEW && step === "email" && (why === "subscribed" || why === "dismissed")) closeFlyout();
+    if (h && !PREVIEW_LOAD && step === "email" && (why === "subscribed" || why === "dismissed")) closeFlyout();
     emitState();
   }
   function resetStore() {
@@ -1142,22 +1218,47 @@ a{color:inherit}
     local = { subscribed: 0, dismissedAt: 0, ignored: 0, gate: 0 };
     sess = { sid: rid(), shown: 0, pv: 0 };
   }
+  // SoulMegaCapture.reset(). Until boot the module cannot know whether the page is
+  // dormant, so an early call waits for it; a dormant page keeps its storage.
+  function resetApi() {
+    if (!booted) { ready.then(resetApi); return state(); }
+    if (!idle()) { resetStore(); saveSess(); emitState(); }
+    return state();
+  }
 
   const domReady = new Promise((r) => (document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", r, { once: true }) : r()));
   const ready = Promise.all([loadConfig(), domReady]).then(() => {
-    try { init(); } catch (err) { killed = booted = true; try { console.warn("sm-capture: init failed", err); } catch { /* no console */ } }
+    try { init(); } catch (err) {
+      // Fail closed: stop, drop anything queued, and let the page be as Webflow made it.
+      killed = booted = true;
+      DORMANT = DORMANT || "init_failed";
+      Q.length = 0;
+      try { console.warn("sm-capture: init failed", err); } catch { /* no console */ }
+      emitState();
+    }
   });
   if (window.customElements && document.head.attachShadow && !customElements.get("sm-capture")) customElements.define("sm-capture", SmCapture);
 
+  // A frozen copy: page code can read the config, never change what the module runs on.
+  function frozen(v) {
+    const c = JSON.parse(JSON.stringify(v));
+    (function deep(o) {
+      if (!o || typeof o !== "object") return;
+      Object.freeze(o);
+      for (const k of Object.keys(o)) deep(o[k]);
+    })(c);
+    return c;
+  }
   window.SoulMegaCapture = {
     version: VERSION,
-    get config() { return cfg; },
+    get config() { return frozen(cfg); },
     ready,
     open() { return ready.then(() => { if (PATH !== "/") showFlyout(); return state(); }); },
     close() { closeFlyout(); return state(); },
-    reset() { resetStore(); saveSess(); emitState(); return state(); },
+    reset: resetApi,
     state,
     mount(el, attrs) {
+      if (idle()) return null;
       const a = isObj(attrs) ? attrs : {};
       const node = mk(a.variant || "inline", a.placement || "inline", a.context || CTX, a.layout);
       for (const k of ["register", "event"]) if (typeof a[k] === "string") node.setAttribute(k, a[k]);

@@ -14,8 +14,12 @@ script on soulmega.com and four small functions on this Vercel project (www.fiel
   consent version, tags and interests to audience `94b16e1a8e`. The browser never talks to the Mailchimp API.
 - **First-party measurement.** The script sends small beacons (impressions, submits, dismissals). The signal
   function counts them in Upstash Redis and serves a per-placement report. No third-party analytics.
+- **Dormant on production until launch.** On soulmega.com the script does nothing at all (no UI, no form handling,
+  no beacons, no storage) until `config.json` says `"live": true`. Staging (`*.webflow.io`) and local hosts always
+  run, always dry. See "Host classes and the launch switch".
 
-Nothing here touches the live site until the release steps below are followed.
+Nothing here touches the live site until the release steps below are followed, and the registered script stays
+dormant on soulmega.com until the launch switch is set.
 
 
 ## Architecture
@@ -87,8 +91,8 @@ A request is also dry-run when its body has `dryRun: true` or when `SOULMEGA_CAP
 functions run the same logic, record the Mailchimp calls they would have made, and return them as `plan`. For a
 `prod` origin they also log the plan as one `{"smcap_plan":...}` line with the address, IP and member hash redacted.
 
-The script asks for dry run itself (`dryRun: true` in every body) in the lab, in preview (`?sm_cap=preview`), on any
-`*.webflow.io` host, and when `config.json` sets `dryRun`. A page that did not ask for dry run treats a dry-run
+The script asks for dry run itself (`dryRun: true` in every body) in the lab, in a preview (`?sm_cap=preview`), on
+any `*.webflow.io` host, on `localhost` and `127.0.0.1`, and when `config.json` sets `dryRun`. A page that did not ask for dry run treats a dry-run
 answer as "not saved" and uses the fallback, so a visitor is never told they are on the list when nothing was
 written. A dry-run signup outside the lab does not mark the browser as subscribed.
 
@@ -224,25 +228,68 @@ on screen, since the form sits at the very bottom of the page and cannot scroll 
 the bar to open it again.
 
 
+## Host classes and the launch switch
+
+The script is registered site-wide, so any production publish of soulmega.com (by anyone, for any reason) ships it.
+It decides what to do from the host it finds itself on:
+
+| Class | Hosts | Behaviour |
+|---|---|---|
+| `dev` | `localhost`, `127.0.0.1`, `[::1]`, and the lab (its page sets `window.SM_CAPTURE_CONFIG.lab`) | Always runs, always dry. |
+| `stage` | any `*.webflow.io` host (`soulmega.webflow.io`) | Always runs, whatever `live` says, always dry. The hosted-form fallback is only described, never sent. |
+| `prod` | every other host: `www.soulmega.com`, `soulmega.com`, and anything else | **Dormant** until `config.json` has `"live": true`. |
+
+Dormant means the script fetches `config.json` and then stops. It mounts nothing, leaves the footer form to Webflow,
+sends no beacons and no API or JSONP requests, records no attribution and writes no storage (the preview flag below
+aside). `SoulMegaCapture.state()` answers `dormant: true, reason: "not_live"`; `open()`, `mount()`, `track()` and
+`reset()` do nothing (an element `mount()` made while the page was still booting is removed again). Only a `live`
+that is exactly `true` counts (a string does not), and if `config.json` cannot be read the built-in default
+(`false`) applies, so production fails safe.
+
+Only `config.json` can launch. On a production host the script reads only the `config.json` beside its own URL
+(`https://www.fieldofaction.org/soulmega/capture/config.json` for the hosted file): a `live` or a `configUrl` in
+`window.SM_CAPTURE_CONFIG` is ignored there (`configUrl` works on dev and stage hosts, which always run dry). The
+launch decision is kept inside the script, and `SoulMegaCapture.config` hands page code a frozen copy, so nothing on
+the page can switch production on. The same goes for `lab`, which counts only in the window config the page sets
+before the script loads, so `config.json` cannot turn a production page into the lab.
+
+Going live is one line: set `"live": true` in `config.json` and deploy, after the launch checklist in "Rollout
+order". Each page picks it up on its next load once the deploy is live: the script revalidates `config.json` on every
+load (`cache: "no-cache"`, one conditional request that is usually a 304), and the file is served with
+`Cache-Control: public, max-age=0, must-revalidate`, so no browser or shared cache serves an older copy without
+checking first. Setting it back to `false` makes production dormant again from the next page load, and a page that
+was already open re-reads `config.json` before it shows its flyout and shows none. For anything urgent, use the kill
+switch.
+
+`state()` also reports `host` (`dev`, `stage` or `prod`) and `live`.
+
+
 ## QA switches
 
 | Switch | Where | Effect |
 |---|---|---|
-| `?sm_cap=preview` | any page with the script | Ignores suppression, shows the flyout after 1 s, forces dry-run. Safe on production: a signup made in preview is not saved (and the browser is not marked as subscribed), and its beacons count as `dev`. Do not share preview links with the public. |
-| `?sm_cap=reset` | any page with the script | Clears the module's storage (`smcap:*`), then runs normally. |
-| `?sm_sub=1` | any page with the script | Marks the visitor as subscribed (hides invitations), then removes itself from the URL. An `mc_eid` parameter (from Mailchimp email links) also marks them subscribed. |
+| `?sm_cap=preview` | any page with the script | Starts a preview: forces dry-run and shows a small "Preview" label inside the module (eyebrow row, footer fine print). The page that carries the switch also ignores suppression and shows the flyout after 1 s. On a production host the preview wakes a dormant page and lasts for the tab (sessionStorage `smcap:preview`), so you can browse page to page; later pages follow the normal flyout rules but stay dry and labelled. On staging and local hosts it applies to that page only. Safe on production: a preview signup is not saved, the hosted-form fallback is only described and answered as a success, the browser is not marked as subscribed, and its beacons carry `dryRun` (counted as `dev`). Do not share preview links with the public. |
+| `?sm_cap=off` | production host | Ends the tab's preview, kill switch or not. A production page that is not live goes dormant again. |
+| `?sm_cap=reset` | any page where the module runs | Clears the module's storage (`smcap:*`, the preview flag aside), then runs normally. Ignored on a dormant page. |
+| `?sm_sub=1` | any page where the module runs | Marks the visitor as subscribed (hides invitations), then removes itself from the URL. An `mc_eid` parameter (from Mailchimp email links) also marks them subscribed. Ignored on a dormant page. In a production preview it only cleans the URL: the browser is not marked, so nothing outlasts the preview. |
 | `?path=/beer` | lab | Which page to simulate. Default `/home-enter`. Also `/`, `/collabs`, `/events`, `/journal`, `/journal/a-little-something-for-dc`, `/radio`, `/find-us`, `/contact-us`, `/markus`. Anything else shows the 404 page. |
 | `?fast=1` | lab | Flyout after 6 s engaged, or 3 s plus half a scroll. |
 | `?down=1` | lab | Subscribe answers 503, so the fallback path runs (dry-run, nothing is sent). |
 
-Kill switch: set `"enabled": false` in `config.json` and deploy. Pages loaded after that render nothing (the file
-is cached for up to 300 s). A page that was already open checks `config.json` again before it shows its flyout,
-so no new flyout appears; an inline invitation or flyout already on screen stays until the next page load, and
-signups made from it still go through the API.
+Kill switch: set `"enabled": false` in `config.json` and deploy. It beats everything, `live` and a preview
+included. Pages loaded after the deploy render nothing, leave the footer form to Webflow and write no storage;
+`state()` answers `killed: true, dormant: true, reason: "killed"`, and `open()`, `mount()`, `track()` and `reset()`
+do nothing. A page that was already open checks `config.json` again before it shows its flyout, so no new flyout
+appears; an inline invitation or flyout already on screen stays until the next page load, and signups made from it
+still go through the API.
 
 
 ## Remote config keys worth knowing
 
+- `live` is the launch switch for production hosts (see "Host classes and the launch switch"). It ships as `false`,
+  and only this file can set it (the window config cannot, and on production the script reads no other config
+  file). Staging and local hosts ignore it.
+- `enabled: false` is the kill switch (above). It wins over `live`.
 - `api` and `mailchimpFallback.action`, `.u`, `.id` are pinned by the script: `config.json` is not covered by the
   SRI hash, so it cannot send addresses anywhere else. `api` must be `https://www.fieldofaction.org/api` (or `/api`
   in the lab); the fallback must be a `https://<x>.usN.list-manage.com/subscribe/post-json` URL with hex ids.
@@ -253,6 +300,10 @@ signups made from it still go through the API.
   (`events-list` ships with it).
 - Thresholds take 0 literally: `flyout.engagedSeconds: 0` shows on the first engaged second, `dismissDays: 0` means
   a dismissal never suppresses.
+- `flyout.excludePages` lists Webflow page ids (the `data-wf-page` attribute on `<html>`) where the flyout never
+  shows, alongside the `flyout.excludePaths` patterns. It ships with `6453ed5461b41bff64488513`, the site's Not Found
+  page: Webflow serves it at any unknown URL (answering 404), so `^/404` alone misses a mistyped link, and `/privacy`
+  is that page until the privacy policy is published. `state().flyout.blocked` reads `"path"` for either.
 - Beacons are counted per placement only for the ids in `KNOWN_PLACEMENTS` (`api/_lib/soulmega/audience.js`):
   `flyout`, `footer`, `inline` and the eight config placements. Any other id is counted as `other`, so a forged
   beacon cannot create new Redis keys. Add an id there when adding a placement or a `data-sm-cap` slot.
@@ -332,15 +383,19 @@ A released file never changes. Any change to `sm-capture.js` after a release nee
 5. Apply it with **add_site_script**: the registered script's id, location `footer`, and the same version.
    **Never use set_site_scripts.** It replaces the whole list of applied scripts and would drop
    `footer_reveal_repair` (and anything else already applied).
-6. Publish to the staging domain `soulmega.webflow.io` first. Staging is always dry-run, so test there with
-   `?sm_cap=preview`.
-7. Publish to production. **A Webflow publish ships every change staged in the Designer along with the script.**
-   Check with the Soul Mega team that nothing half-finished is staged before you publish.
+6. Publish to the staging domain `soulmega.webflow.io` only. Staging runs the module whatever `live` says, always
+   dry, so test there directly (and with `?sm_cap=preview` for the 1 s flyout).
+7. Production. Once the script is applied, the next production publish of soulmega.com ships it, whoever makes
+   it. With `"live": false` it ships dormant. **A Webflow publish ships every change staged in the Designer along
+   with the script.** Check with the Soul Mega team that nothing half-finished is staged before you publish.
+   Going live is a separate step, in `config.json` (see "Rollout order").
 
 The script loads `config.json` from the same folder as its own URL, so copy changes ship by deploying
-`config.json` with no new release. Remote config is fetched with a 1.5 s timeout and falls back to built-in defaults.
+`config.json` with no new release. Remote config is revalidated on every page load, fetched with a 1.5 s timeout, and
+falls back to built-in defaults.
 
-To roll back: apply the previous version with add_site_script and publish, or use the kill switch.
+To roll back: set `"live": false` (dormant from the next page load), use the kill switch, or apply the previous
+version with add_site_script and publish.
 
 
 ## Rollout order
@@ -352,23 +407,34 @@ To roll back: apply the previous version with add_site_script and publish, or us
    `SOULMEGA_CAPTURE_DRY_RUN=1`.
 3. **Mailchimp.** Key, setup plan, review, `--apply`, then `MAILCHIMP_INTEREST_IDS` and `MAILCHIMP_API_KEY` in Vercel.
 4. **Upstash.** After approval, provision and redeploy.
-5. **Deploy this branch.** Run the lab on www.fieldofaction.org on desktop and a phone.
-6. **Release and stage.** Release script, register, add_site_script (footer), publish to `soulmega.webflow.io`,
-   test with `?sm_cap=preview`. On `*.webflow.io` the script always runs dry, so nothing is written from staging.
+5. **Deploy this branch.** `config.json` ships with `"live": false`. Run the lab on www.fieldofaction.org on desktop
+   and a phone.
+6. **Release and stage.** Release script, register, add_site_script (footer), publish to `soulmega.webflow.io`
+   only. On `*.webflow.io` the script runs whatever `live` says and always dry, so nothing is written from staging.
+   Test on desktop and a phone, and with `?sm_cap=preview`.
 7. **Check the fallback once, by hand.** From a team address, submit Mailchimp's hosted form directly with the
    hidden fields the fallback sends (`AGE21`, `CONSENT`, `SOURCE`, `CONTEXT`, `SIGNUPPG`; the setup script must have
    created them) and confirm in Mailchimp that they landed on the member. If they did not, set
-   `mailchimpFallback.enabled: false` in `config.json` before step 8: a fallback signup without its age record fails
-   checklist item S1.
-8. **Production, API still dry.** Publish to soulmega.com with `SOULMEGA_CAPTURE_DRY_RUN=1` still set. The API writes
-   nothing and logs each redacted plan (`smcap_plan` lines in the function logs). The script sees the dry-run answer,
-   counts the signup as not saved and sends it through the hosted-form fallback, so no visitor's signup is lost (with
-   the fallback off they see "Something went sideways" instead, so keep this step short). Read the plans and the
-   beacons in Upstash.
-9. **One controlled live signup.** Remove `SOULMEGA_CAPTURE_DRY_RUN`, redeploy, sign up once with a team address,
-   check the member in Mailchimp (merge fields, tags, interests), then unsubscribe it.
-10. **Webhook.** Add the Mailchimp webhook.
-11. **Watch and tune.** Read the report after a week. Tune placements and flyout timing in `config.json`. Copy edits
+   `mailchimpFallback.enabled: false` in `config.json` before going live: a fallback signup without its age record
+   fails checklist item S1.
+8. **Production, dormant.** The next production publish of soulmega.com ships the script, whoever makes it. It stays
+   dormant: a plain visit shows nothing and the footer form works as it does today
+   (`SoulMegaCapture.state()` gives `dormant: true`). Check that, then preview production with `?sm_cap=preview`
+   (dry, labelled "Preview", lasts for the tab) and end it with `?sm_cap=off`.
+9. **Launch checklist.** All of these before `live`: the privacy policy is published at `/privacy`; the Vercel
+   secrets are set and `SOULMEGA_CAPTURE_DRY_RUN=1` is still on; the Mailchimp setup is applied and
+   `MAILCHIMP_INTEREST_IDS` and `MAILCHIMP_API_KEY` are in Vercel; the audience has a postal address; the fallback
+   check (step 7) passed or the fallback is off; staging and the production preview were tested on desktop and a
+   phone; the Soul Mega team has signed off.
+10. **Go live, API still dry.** Set `"live": true` in `config.json` and deploy. Pages pick it up on their next load.
+    With `SOULMEGA_CAPTURE_DRY_RUN=1` still set the API writes nothing and logs each redacted plan (`smcap_plan`
+    lines in the function logs). The script sees the dry-run answer, counts the signup as not saved and sends it
+    through the hosted-form fallback, so no visitor's signup is lost (with the fallback off they see "Something went
+    sideways" instead, so keep this step short). Read the plans and the beacons in Upstash.
+11. **One controlled live signup.** Remove `SOULMEGA_CAPTURE_DRY_RUN`, redeploy, sign up once with a team address,
+    check the member in Mailchimp (merge fields, tags, interests), then unsubscribe it.
+12. **Webhook.** Add the Mailchimp webhook.
+13. **Watch and tune.** Read the report after a week. Tune placements and flyout timing in `config.json`. Copy edits
     to the consent wording need a new `consentId` (see "Consent versions").
 
 
@@ -377,7 +443,9 @@ To roll back: apply the previous version with add_site_script and publish, or us
 This branch adds a `headers` array to `vercel.json`:
 
 - `/soulmega/capture/sm-capture-(.*)\.js`: `Cache-Control: public, max-age=31536000, immutable`
-- `/soulmega/capture/config.json`: `Cache-Control: public, max-age=300, stale-while-revalidate=86400`
+- `/soulmega/capture/config.json`: `Cache-Control: public, max-age=0, must-revalidate` (every cache revalidates, so
+  the launch switch, a rollback and the kill switch reach the next page load; the script also fetches it with
+  `cache: "no-cache"`)
 - `/soulmega/capture/lab.html`: `X-Robots-Tag: noindex, nofollow`
 
 Open PR #127 (Markus voice and live face) also adds a `headers` array, for `/vendor/(.*)`. Whichever merges second
@@ -401,7 +469,7 @@ will conflict in `vercel.json`. Resolve it by hand into one array that keeps all
   {
     "source": "/soulmega/capture/config.json",
     "headers": [
-      { "key": "Cache-Control", "value": "public, max-age=300, stale-while-revalidate=86400" }
+      { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
     ]
   },
   {

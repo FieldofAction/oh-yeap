@@ -4115,6 +4115,8 @@ html[data-smlab-nav="none"] #smlab{top:12px;max-height:calc(100vh - 24px);}
   var root = document.documentElement;
   root.setAttribute('data-smlab-page', page.id);
   root.setAttribute('data-smlab-nav', page.chrome ? 'site' : 'none');
+  /* Webflow serves its Not Found page, with this page id, at any unknown URL. */
+  if (page === NOT_FOUND) { root.setAttribute('data-wf-page', '6453ed5461b41bff64488513'); }
   document.title = 'Soul Mega capture lab · ' + path;
   Array.prototype.forEach.call(document.querySelectorAll('style[data-smlab-css]'), function (s) {
     s.media = page.css.indexOf(s.getAttribute('data-smlab-css')) > -1 ? 'all' : 'not all';

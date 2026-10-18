@@ -115,8 +115,10 @@ console.log("  2. Register it with register_hosted_script using the payload abov
 console.log("  3. Apply it with add_site_script: the registered script id, location \"footer\",");
 console.log(`     version "${version}". Never use set_site_scripts. It replaces the whole list and`);
 console.log("     would drop footer_reveal_repair.");
-console.log("  4. Publishing: a full-site publish also ships any Designer work that is staged");
-console.log("     but unpublished. Check with the Soul Mega team before publishing.");
+console.log("  4. Publish to soulmega.webflow.io only. On soulmega.com the script stays dormant");
+console.log('     until config.json has "live": true, set after the launch checklist.');
+console.log("     A Webflow publish also ships any Designer work that is staged but unpublished.");
+console.log("     Check with the Soul Mega team before publishing.");
 console.log("");
 console.log("Script tag equivalent, for testing outside Webflow:");
 console.log(

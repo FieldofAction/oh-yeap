@@ -1,6 +1,7 @@
 {
-  "_about": "Remote runtime config for sm-capture.js. Precedence: built-in defaults < this file < window.SM_CAPTURE_CONFIG. enabled:false is the kill switch. Copy here reaches the live site within five minutes (Cache-Control max-age=300). copy.age, copy.fine, copy.privacy and copy.cta are the consent wording: change any of them only together with a new consentId (email-v2, ...) and archive the new text in SOULMEGA-CAPTURE.md, Consent versions. The script pins api and the mailchimpFallback endpoint (a list-manage.com JSONP URL, hex u and id); mailchimpFallback.enabled:false turns the fallback off.",
+  "_about": "Remote runtime config for sm-capture.js. Precedence: built-in defaults < this file < window.SM_CAPTURE_CONFIG. live:true is the launch switch, and only this file can set it: on production hosts (soulmega.com and every host that is not *.webflow.io, localhost or the lab) the script reads only the config.json beside its own URL (a configUrl or live in window.SM_CAPTURE_CONFIG is ignored there) and stays dormant (no UI, no beacons or API calls, no storage) until live is exactly true. Set it only after the launch checklist in SOULMEGA-CAPTURE.md (Rollout order); if this file cannot be read, live stays false. Staging (*.webflow.io), localhost and the lab always run, dry. ?sm_cap=preview previews a dormant page for one tab, dry; ?sm_cap=off ends it. enabled:false is the kill switch and beats everything, preview included. The script revalidates this file on every page load, so a change here (launch, rollback, kill switch, copy) reaches each page on its next load once it is deployed. copy.age, copy.fine, copy.privacy and copy.cta are the consent wording: change any of them only together with a new consentId (email-v2, ...) and archive the new text in SOULMEGA-CAPTURE.md, Consent versions. The script pins api and the mailchimpFallback endpoint (a list-manage.com JSONP URL, hex u and id); mailchimpFallback.enabled:false turns the fallback off.",
   "enabled": true,
+  "live": false,
   "api": "https://www.fieldofaction.org/api",
   "privacyUrl": "/privacy",
   "consentId": "email-v1",
@@ -173,6 +174,9 @@
       "^/contact-us",
       "^/radio-lab",
       "^/404"
+    ],
+    "excludePages": [
+      "6453ed5461b41bff64488513"
     ],
     "mobileCollapsed": true
   },
