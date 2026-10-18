@@ -16,7 +16,11 @@
     "experiments:test": "node scripts/experiments-test.mjs",
     "experiments:build": "node scripts/experiments-build.mjs",
     "atlas:validate": "node scripts/atlas-data.validate.mjs",
-    "atlas:matchday": "node scripts/atlas-matchday.mjs"
+    "atlas:matchday": "node scripts/atlas-matchday.mjs",
+    "soulmega:test": "node scripts/soulmega-capture-test.mjs",
+    "soulmega:lab": "node scripts/soulmega-capture-dev.mjs",
+    "soulmega:release": "node scripts/soulmega-capture-release.mjs",
+    "soulmega:setup": "node scripts/soulmega-mailchimp-setup.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
