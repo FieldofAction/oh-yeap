@@ -1,0 +1,239 @@
+/* Field Standard — public typography, v1.
+ * One shared source: imported last by src/main.jsx and inlined by the
+ * experiment builder. Existing fonts, colors, surfaces, imagery, navigation
+ * structure, motion and instrument controls remain owned by their components.
+ * Do not add color, opacity, font-family or decorative declarations here.
+ * All sizes are rem-based; no change to the visitor's root font size.
+ */
+:root {
+  --foa-type-page: clamp(2.375rem, 1.75rem + 3.4vw, 4.25rem);
+  --foa-type-note: clamp(2rem, 1.5rem + 2.4vw, 3.25rem);
+  --foa-type-feature: clamp(1.75rem, 1.375rem + 1.5vw, 2.5rem);
+  --foa-type-section: clamp(1.375rem, 1.25rem + .5vw, 1.625rem);
+  --foa-type-entry: clamp(1.25rem, 1.1rem + .5vw, 1.5rem);
+  --foa-type-subsection: clamp(1.125rem, 1.0625rem + .2vw, 1.1875rem);
+  --foa-type-deck: clamp(1.1875rem, 1.0625rem + .5vw, 1.375rem);
+  --foa-type-body: clamp(1.0625rem, 1rem + .25vw, 1.125rem);
+  --foa-type-support: clamp(1rem, .9375rem + .25vw, 1.0625rem);
+  --foa-type-caption: .8125rem;
+  --foa-type-meta: .75rem;
+  --foa-type-label: .6875rem;
+  --foa-leading-title: 1.1;
+  --foa-leading-reading: 1.65;
+  --foa-tracking-title: -.025em;
+}
+
+/* Home / public index. The work is louder than the category it sits in. */
+.hero-dash-label {
+  font-size: var(--foa-type-label);
+  letter-spacing: .04em;
+  margin-bottom: .5rem;
+}
+.hero-dash-val { font-size: .9375rem; line-height: 1.4; }
+.hero-dash-cell { min-width: 0; overflow-wrap: anywhere; }
+.content-section-h,
+.theme-daylight .content-section-head .content-section-h {
+  font-size: var(--foa-type-section);
+  font-weight: 500;
+  letter-spacing: -.015em;
+  text-transform: none;
+  line-height: 1.2;
+  padding-bottom: 1.25rem;
+}
+.theme-daylight .cs-eyebrow { font-size: var(--foa-type-meta); letter-spacing: .06em; }
+.content-section-gloss,
+.theme-daylight .content-section-gloss {
+  font-size: var(--foa-type-support);
+  font-weight: 400;
+  line-height: 1.55;
+}
+.ix-main { gap: .5rem; }
+.ix-pre { font-size: var(--foa-type-meta); font-weight: 500; letter-spacing: .06em; }
+.ix-title {
+  font-size: var(--foa-type-feature);
+  font-weight: 500;
+  letter-spacing: var(--foa-tracking-title);
+  line-height: var(--foa-leading-title);
+  overflow-wrap: anywhere;
+}
+.ix-sub { font-size: var(--foa-type-support); font-weight: 400; line-height: 1.55; }
+.ix-tag, .ix-year { font-size: var(--foa-type-meta); }
+.ix-tags { min-width: 0; }
+.ix-tag { overflow-wrap: anywhere; }
+.ix-wr-feat-title, .ix-art-title {
+  font-size: var(--foa-type-entry);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  overflow-wrap: anywhere;
+}
+.ix-wr-title {
+  font-size: var(--foa-type-subsection);
+  font-weight: 500;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.ix-wr-feat-sub, .ix-art-desc {
+  font-size: var(--foa-type-support);
+  font-weight: 400;
+  line-height: 1.55;
+}
+.ix-wr-pre, .ix-wr-meta, .ix-art-type { font-size: var(--foa-type-label); }
+.ix-wr-head { flex-wrap: wrap; }
+.ix-wr-feat-body { padding-top: 1rem; }
+.ix-wr-feat-title { margin-bottom: .5rem; }
+.ix-wr-item, .ix-art-item, .ix-wr-feat-card { min-width: 0; }
+.section-header-h {
+  font-size: var(--foa-type-page);
+  font-weight: 500;
+  line-height: var(--foa-leading-title);
+  letter-spacing: var(--foa-tracking-title);
+}
+.section-header-gloss { font-size: var(--foa-type-support); font-weight: 400; line-height: 1.55; }
+
+/* Reading surfaces. No universal h1/p reset: these rules target content roles. */
+.rd-title, .ab-h, .co-h, .ph-h, .mir h1 {
+  font-size: var(--foa-type-page);
+  font-weight: 500;
+  line-height: var(--foa-leading-title);
+  letter-spacing: var(--foa-tracking-title);
+  overflow-wrap: anywhere;
+}
+.rd-title.fn { font-size: var(--foa-type-note); font-weight: 500; letter-spacing: -.02em; }
+.rd-subtitle, .ab-sub, .co-sub, .ph-sub, .mir .mir-lead {
+  font-size: var(--foa-type-deck);
+  font-weight: 400;
+  line-height: 1.5;
+}
+.rd-desc, .rd-desc.fn, .rd-body-text, .rd-body-text.fn,
+.cs-body, .cs-block--inline .cs-block-inline-text,
+.ab-body, .ph-body-text, .ph-intro, .ph-abstract-text,
+.ph-canon-p, .ph-canon-at {
+  font-size: var(--foa-type-body);
+  font-weight: 400;
+  line-height: var(--foa-leading-reading);
+  overflow-wrap: anywhere;
+}
+.rd-section-heading, .ph-body-heading {
+  font-size: var(--foa-type-section);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -.015em;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+}
+.rd-section-heading:first-child { margin-top: 0; }
+.ab-sl, .co-sl, .ph-sl {
+  font-size: var(--foa-type-subsection);
+  font-weight: 500;
+  letter-spacing: -.01em;
+  text-transform: none;
+  line-height: 1.3;
+  margin-bottom: 1rem;
+}
+.co-item-h, .ph-principle-title, .ph-lineage-heading, .cs-intv-h {
+  font-size: var(--foa-type-subsection);
+  font-weight: 500;
+  line-height: 1.3;
+}
+.co-item-v, .ph-principle-desc, .ph-lineage-body,
+.cs-intv-body, .cs-cat-line, .cs-points li, .cn-instrument p {
+  font-size: var(--foa-type-support);
+  font-weight: 400;
+  line-height: var(--foa-leading-reading);
+}
+.cs-cat-name { font-size: var(--foa-type-subsection); }
+/* Keep the case-study section numbers and mono index, just make them legible. */
+.cs-block--section-label, .cs-section-label {
+  font-size: var(--foa-type-caption);
+  line-height: 1.5;
+}
+.rd-caption, .rd-artwork-cap, .rd-diagram-label, .cs-cap, .cs-fig-cap,
+.cn-diagram-caption, .ph-body-caption, .ph-work-item {
+  font-size: var(--foa-type-caption);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.rd-byline-date, .rd-meta, .rd-cite, .ab-pre, .co-pre, .ph-pre,
+.ph-canon-al, .mir-eyebrow, .mir-breadcrumb, .cn-instrument-label {
+  font-size: var(--foa-type-meta);
+  line-height: 1.5;
+}
+/* Materials intro only. Wheel labels, controls and synthesis UI keep their sizes. */
+.mir > p:not(.mir-lead):not(.mir-context):not(.mir-kicker), .mir-about > p {
+  font-size: var(--foa-type-body);
+  line-height: var(--foa-leading-reading);
+}
+/* Navigation geometry, routes, active colors and behavior are untouched. */
+.sb-link { font-size: .875rem; line-height: 1.5; }
+.sb-tier-h { font-size: var(--foa-type-label); }
+.cn-subnav-link { font-size: var(--foa-type-caption); }
+
+/* Material Lab — shared by the generated index and every experiment entry. */
+.x-kicker { font-size: var(--foa-type-meta); letter-spacing: .08em; }
+.x-meta { font-size: var(--foa-type-meta); }
+.x-title {
+  font-size: var(--foa-type-page);
+  line-height: 1.06;
+  letter-spacing: var(--foa-tracking-title);
+  overflow-wrap: anywhere;
+}
+.x-deck { font-size: var(--foa-type-deck); font-weight: 400; line-height: 1.5; }
+.x-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.x-fact { min-width: 0; padding: .75rem .875rem; }
+.x-fact dt { font-size: var(--foa-type-label); letter-spacing: .06em; overflow-wrap: anywhere; }
+.x-fact dd { font-size: var(--foa-type-caption); min-width: 0; overflow-wrap: anywhere; }
+.x-fact:has(.x-tags) { grid-column: 1 / -1; }
+.x-row-id, .x-chip { font-size: var(--foa-type-label); overflow-wrap: anywhere; }
+.x-tags { min-width: 0; max-width: 100%; gap: .375rem; }
+.x-tag {
+  font-size: var(--foa-type-label);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+}
+.x-band-label {
+  font-size: var(--foa-type-section);
+  font-weight: 500;
+  letter-spacing: -.02em;
+  text-transform: none;
+  line-height: 1.2;
+}
+.x-band-note { font-size: .9375rem; font-weight: 400; line-height: 1.55; margin-top: .625rem; }
+.x-sec { margin-top: 2rem; padding-top: 2rem; }
+.x-sec:first-of-type { margin-top: 1.75rem; }
+.x-sec h3 {
+  font-size: var(--foa-type-subsection);
+  font-weight: 500;
+  letter-spacing: -.01em;
+  text-transform: none;
+  line-height: 1.3;
+  margin-bottom: .875rem;
+  overflow-wrap: anywhere;
+}
+.x-prose {
+  font-size: var(--foa-type-body);
+  font-weight: 400;
+  line-height: var(--foa-leading-reading);
+  overflow-wrap: anywhere;
+}
+.x-prose p + p, .x-prose p + ul, .x-prose p + ol,
+.x-prose ul + p, .x-prose ol + p, .x-prose blockquote + p { margin-top: 1.125rem; }
+.x-prose code { font-size: .875em; overflow-wrap: anywhere; }
+.x-row-title { font-size: var(--foa-type-entry); line-height: 1.2; }
+.x-row-sum { font-size: var(--foa-type-support); font-weight: 400; line-height: 1.55; }
+.x-row-date { font-size: var(--foa-type-meta); }
+.x-row > *, .x-related a > *, .x-related span > * { min-width: 0; overflow-wrap: anywhere; }
+.x-related { font-size: var(--foa-type-support); }
+
+@media (min-width: 45rem) {
+  .x-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 48rem) {
+  .hero-dash-val { font-size: .875rem; }
+  .x-meta { gap: .5rem .875rem; }
+  .x-band-note { font-size: .875rem; }
+}
+@media (max-width: 22rem) {
+  .x-facts { grid-template-columns: minmax(0, 1fr); }
+}

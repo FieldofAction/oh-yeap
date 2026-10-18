@@ -1,0 +1,42 @@
+name: Field Standard QA
+on:
+  push:
+    branches: [design/field-standard-typography, main]
+    paths:
+      - 'src/styles/field-standard.css'
+      - 'src/styles/main.css'
+      - 'src/main.jsx'
+      - 'scripts/field-standard-*.mjs'
+      - 'scripts/experiments-build.mjs'
+      - '.github/workflows/field-standard-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: field-standard-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  browser-review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out the exact review commit
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install locked dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts
+      - name: Install the browser used by the existing Puppeteer dependency
+        run: npx puppeteer browsers install chrome
+      - name: Build and run existing experiment tests
+        run: npm run build && npm run experiments:test
+      - name: Review actual pages and fonts
+        run: node scripts/field-standard-browser-test.mjs
+      - name: Preserve review screenshots and machine-readable results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: field-standard-review
+          path: qa-field-standard/
+          retention-days: 7
+          if-no-files-found: warn
