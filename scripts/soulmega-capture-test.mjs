@@ -17,7 +17,7 @@ import { classifyOrigin } from "../api/_lib/soulmega/http.js";
 import {
   metroForCity, metroFromGeo, normalizeEmail, normalizePreferences, validateSignal, validateSubscribe, ymd,
 } from "../api/_lib/soulmega/audience.js";
-import { memberId } from "../api/_lib/soulmega/mailchimp.js";
+import { ALLOWED_CALLS, blockedCall, createApi, memberId } from "../api/_lib/soulmega/mailchimp.js";
 import { peekToken, signToken, verifyToken } from "../api/_lib/soulmega/token.js";
 import { signalCommands, TTL_SECONDS } from "../api/_lib/soulmega/store.js";
 import { runSetup } from "./soulmega-mailchimp-setup.mjs";
@@ -351,6 +351,7 @@ test("new member: GET, PUT with first-touch fields, tags", async () => {
   });
   assert.deepEqual(mc[2].body, {
     tags: ["src-flyout", "ctx-events", "evt-snallygaster-2026", "web-signup"].map((name) => ({ name, status: "active" })),
+    is_syncing: true,
   });
   const auth = calls[0].headers.Authorization;
   assert.equal(auth, `Bearer ${API_KEY}`);
@@ -667,7 +668,7 @@ test("preferences: PATCH interests true/false, city and metro, tags", async () =
       path: `/lists/${AUD}/members/${hash}`,
       body: { interests: { ie1: true, ib2: false, im3: true, ix4: false }, merge_fields: { CITY: "Baltimore", METRO: "Baltimore" } },
     },
-    { method: "POST", path: `/lists/${AUD}/members/${hash}/tags`, body: { tags: [{ name: "prefs-set", status: "active" }] } },
+    { method: "POST", path: `/lists/${AUD}/members/${hash}/tags`, body: { tags: [{ name: "prefs-set", status: "active" }], is_syncing: true } },
   ]);
 });
 
@@ -713,7 +714,7 @@ test("preferences: skipped writes only the prefs-skipped tag", async () => {
   assert.equal(res.statusCode, 200);
   const mc = mcCalls();
   assert.equal(mc.length, 1);
-  assert.deepEqual(mc[0].body, { tags: [{ name: "prefs-skipped", status: "active" }] });
+  assert.deepEqual(mc[0].body, { tags: [{ name: "prefs-skipped", status: "active" }], is_syncing: true });
 });
 
 test("preferences: expired, tampered or missing token is 401", async () => {
@@ -745,7 +746,7 @@ test("preferences: trap token writes nothing; dry-run token stays dry", async ()
   assert.deepEqual(dry.body.plan[0].body.interests, { "dryrun-events": false, "dryrun-beer": false, "dryrun-music": false, "dryrun-merch": true });
   // Without a configured secret a dry-run token verifies with the dev secret.
   reset();
-  const devTok = signToken({ h: "abc", d: 1 }, "soulmega-capture-dev-secret-not-for-live-use");
+  const devTok = signToken({ h: memberId("dev@example.com"), d: 1 }, "soulmega-capture-dev-secret-not-for-live-use");
   const devRes = await hit(preferences, { origin: "http://localhost:5181", body: { token: devTok, skipped: true } });
   assert.equal(devRes.statusCode, 200);
   assert.deepEqual(devRes.body.plan.map((c) => c.method), ["POST"]);
@@ -1093,6 +1094,125 @@ test("setup script: plan is read-only, apply creates only what is missing", asyn
   assert.equal(posts.filter((x) => x.body.name === "Explorer").length, 0, "existing saved segment left alone");
   assert.equal(applied.interestIds.events, "int-ev");
   assert.ok(lines.some((l) => l.startsWith("MAILCHIMP_INTEREST_IDS={")));
+});
+
+// ---------- send guard ----------
+
+test("send guard: only the listed member, tag and setup calls reach Mailchimp", async () => {
+  const AUD = "94b16e1a8e";
+  const H = memberId("person@example.com");
+  const NEW = { email_address: "person@example.com", status_if_new: "subscribed", merge_fields: { SOURCE: "flyout" }, timestamp_signup: "x" };
+  const TAGS = { tags: [{ name: "web-signup", status: "active" }], is_syncing: true };
+  // Everything the capture service and the setup script really send is allowed.
+  for (const [m, p, b] of [
+    ["GET", `/lists/${AUD}/members/${H}?fields=status,merge_fields`],
+    ["PUT", `/lists/${AUD}/members/${H}`, NEW],
+    ["PUT", `/lists/${AUD}/members/${H}`, { ...NEW, status: "pending", status_if_new: "pending" }],
+    ["PATCH", `/lists/${AUD}/members/${H}`, { merge_fields: {} }],
+    ["PATCH", `/lists/${AUD}/members/${H}`, { status: "pending", merge_fields: {}, ip_signup: "1.2.3.4" }],
+    ["PATCH", `/lists/${AUD}/members/${H}`, { interests: { a1: true }, merge_fields: { CITY: "DC" } }],
+    ["POST", `/lists/${AUD}/members/${H}/tags`, TAGS],
+  ]) assert.equal(blockedCall("capture", AUD, m, p, b), "", `${m} ${p}`);
+  for (const [m, p, b] of [
+    ["GET", `/lists/${AUD}?fields=id,name,stats.member_count`],
+    ["POST", `/lists/${AUD}/merge-fields`, { tag: "CITY", name: "City", type: "text" }],
+    ["POST", `/lists/${AUD}/interest-categories`, { title: "What moves you", type: "checkboxes" }],
+    ["POST", `/lists/${AUD}/interest-categories/abc123/interests`, { name: "Events" }],
+    ["GET", `/lists/${AUD}/segments?count=1000&fields=segments.id,segments.name`],
+    ["POST", `/lists/${AUD}/segments`, { name: "ctx-events", static_segment: [] }],
+    ["POST", `/lists/${AUD}/segments`, { name: "Explorer", options: { match: "any", conditions: [] } }],
+  ]) assert.equal(blockedCall("setup", AUD, m, p, b), "", `${m} ${p}`);
+
+  // Bodies are checked: no other statuses, no unknown member fields, tags only
+  // added and never without is_syncing, no bulk static segments, reads bodiless.
+  for (const [scope, m, p, b] of [
+    ["capture", "PUT", `/lists/${AUD}/members/${H}`, undefined],
+    ["capture", "PUT", `/lists/${AUD}/members/${H}`, { ...NEW, status: "unsubscribed" }],
+    ["capture", "PATCH", `/lists/${AUD}/members/${H}`, { status: "cleaned" }],
+    ["capture", "PATCH", `/lists/${AUD}/members/${H}`, { status_if_new: "transactional" }],
+    ["capture", "PATCH", `/lists/${AUD}/members/${H}`, { merge_fields: {}, tags: ["x"] }],
+    ["capture", "PATCH", `/lists/${AUD}/members/${H}`, { merge_fields: {}, marketing_permissions: [] }],
+    ["capture", "PATCH", `/lists/${AUD}/members/${H}`, [{ merge_fields: {} }]],
+    ["capture", "POST", `/lists/${AUD}/members/${H}/tags`, { tags: [{ name: "x", status: "active" }] }],
+    ["capture", "POST", `/lists/${AUD}/members/${H}/tags`, { tags: [{ name: "x", status: "active" }], is_syncing: false }],
+    ["capture", "POST", `/lists/${AUD}/members/${H}/tags`, { tags: [{ name: "x", status: "inactive" }], is_syncing: true }],
+    ["capture", "POST", `/lists/${AUD}/members/${H}/tags`, { ...TAGS, extra: 1 }],
+    ["capture", "GET", `/lists/${AUD}/members/${H}`, { a: 1 }],
+    ["setup", "POST", `/lists/${AUD}/segments`, { name: "x", static_segment: ["someone@example.com"] }],
+    ["setup", "POST", `/lists/${AUD}/merge-fields`, "CITY"],
+    ["capture", "PATCH", `/lists/${AUD}/members/${H}?`, { merge_fields: {} }],
+  ]) assert.notEqual(blockedCall(scope, AUD, m, p, b), "", `${scope} ${m} ${p} ${JSON.stringify(b)}`);
+
+  // Only strings are checked, so the path that passes is the path that is sent.
+  const shifty = { toString: () => `/lists/${AUD}/members/${H}`, valueOf: () => "/campaigns/abc123/actions/send" };
+  assert.notEqual(blockedCall("capture", AUD, "PUT", shifty, NEW), "");
+  assert.notEqual(blockedCall("capture", AUD, { toString: () => "PUT" }, `/lists/${AUD}/members/${H}`, NEW), "");
+  assert.notEqual(blockedCall("__proto__", AUD, "GET", `/lists/${AUD}`), "");
+
+  // The allowlist cannot be widened at runtime by other code.
+  assert.ok(Object.isFrozen(ALLOWED_CALLS) && Object.isFrozen(ALLOWED_CALLS.capture) && Object.isFrozen(ALLOWED_CALLS.capture[0]));
+  assert.throws(() => { "use strict"; ALLOWED_CALLS.capture.push(ALLOWED_CALLS.setup[0]); });
+  assert.throws(() => { "use strict"; ALLOWED_CALLS.capture[0].method = "POST"; });
+
+  // Sending, scheduling, automating, deleting and bulk writes are refused in both scopes.
+  const forbidden = [
+    ["POST", "/campaigns"],
+    ["POST", "/campaigns/abc123/actions/send"],
+    ["POST", "/campaigns/abc123/actions/schedule"],
+    ["POST", "/campaigns/abc123/actions/test"],
+    ["PUT", "/campaigns/abc123/content"],
+    ["POST", "/automations/abc123/actions/start-all-emails"],
+    ["POST", "/automations/abc123/emails/def456/queue"],
+    ["POST", "/customer-journeys/journeys/1/steps/2/actions/trigger"],
+    ["POST", "/batches"],
+    ["POST", `/lists/${AUD}`],
+    ["PATCH", `/lists/${AUD}`],
+    ["DELETE", `/lists/${AUD}`],
+    ["DELETE", `/lists/${AUD}/members/${H}`],
+    ["POST", `/lists/${AUD}/members/${H}/actions/delete-permanent`],
+    ["POST", `/lists/${AUD}/members`],
+    ["POST", `/lists/${AUD}/members/${H}/notes`],
+    ["POST", `/lists/${AUD}/members/${H}/events`],
+    ["POST", `/lists/${AUD}/segments/123/members`],
+    ["POST", `/lists/${AUD}/webhooks`],
+    ["POST", "/ecommerce/stores"],
+    ["POST", "/templates"],
+    ["GET", "/lists"],
+    ["get", `/lists/${AUD}/members/${H}`],
+    ["PUT", `/lists/${AUD}/members/${H}/../../../../campaigns`],
+    ["PUT", `/lists/${AUD}/members/${H}?skip_merge_validation=true`],
+    ["GET", `/lists/${AUD}/members/${H}?fields=%2e%2e`],
+    ["PUT", `/lists/${AUD}/members/not-a-hash`],
+    ["PUT", `/lists/0000000000/members/${H}`],
+  ];
+  for (const scope of ["capture", "setup"]) {
+    for (const [m, p] of forbidden) assert.notEqual(blockedCall(scope, AUD, m, p), "", `${scope} ${m} ${p}`);
+  }
+  // Each scope stays in its lane.
+  assert.notEqual(blockedCall("capture", AUD, "POST", `/lists/${AUD}/merge-fields`), "");
+  assert.notEqual(blockedCall("setup", AUD, "PUT", `/lists/${AUD}/members/${H}`), "");
+  assert.notEqual(blockedCall("other", AUD, "GET", `/lists/${AUD}`), "");
+  // Only one route family per method exists, so the lists cannot quietly grow.
+  assert.deepEqual(Object.keys(ALLOWED_CALLS).sort(), ["capture", "setup"]);
+  assert.equal(ALLOWED_CALLS.capture.length, 4);
+  assert.equal(ALLOWED_CALLS.setup.length, 9);
+});
+
+test("send guard: a refused call never reaches the network, in live mode or dry run", async () => {
+  reset();
+  const live = createApi({ apiKey: "0".repeat(32) + "-us3" });
+  const dry = createApi({ apiKey: "", fetchImpl: async () => { throw new Error("recorder must not be reached"); } });
+  for (const request of [live, dry]) {
+    const logs = await quiet(async () => {
+      await assert.rejects(request("POST", "/campaigns/abc123/actions/send", {}), (e) => e.code === "unavailable" && /blocked/.test(e.message));
+      await assert.rejects(request("POST", "/batches", { operations: [] }), /blocked/);
+      await assert.rejects(request("PUT", "/lists/0000000000/members/" + memberId("a@b.co"), {}), /another audience/);
+      const shifty = { toString: () => "/lists/94b16e1a8e/members/" + memberId("a@b.co"), valueOf: () => "/campaigns/abc123/actions/send" };
+      await assert.rejects(request("PUT", shifty, { merge_fields: {} }), /must be strings/);
+    });
+    assert.equal(logs.error.filter((l) => /soulmega-mailchimp: blocked/.test(l)).length, 4);
+  }
+  assert.equal(calls.length, 0, "no fetch for a blocked call");
 });
 
 // ---------- run ----------
