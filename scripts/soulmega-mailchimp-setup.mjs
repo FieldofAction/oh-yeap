@@ -41,7 +41,7 @@ async function send(request, method, path, body) {
 }
 
 export async function runSetup({ apiKey, audienceId = DEFAULT_AUDIENCE_ID, apply = false, fetchImpl, log = console.log }) {
-  const request = createApi({ apiKey, fetchImpl, timeoutMs: 20000 });
+  const request = createApi({ apiKey, fetchImpl, timeoutMs: 20000, scope: "setup", audienceId });
   const L = `/lists/${audienceId}`;
 
   // ---- read what exists ----

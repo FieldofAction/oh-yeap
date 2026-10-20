@@ -163,12 +163,103 @@ function recorder(plan) {
   };
 }
 
+// A Mailchimp API key can do anything the account can, including sending
+// campaigns to the whole list. Every call goes through createApi, and
+// createApi lets through only the calls listed here, for the one configured
+// audience. Campaigns, automations, journeys, batches, deletes and every
+// other audience are refused before a request is made, in dry run as well.
+// Widening this list is a deliberate decision, never a side effect.
+const SEG = "[A-Za-z0-9]{1,40}";
+const HASH = "[a-f0-9]{32}";
+const isObject = (b) => !!b && typeof b === "object" && !Array.isArray(b);
+
+// Bodies are checked too, so a later code change cannot turn an allowed
+// route into something else (another status, a bulk tag, an automation).
+const MEMBER_KEYS = new Set(["email_address", "status", "status_if_new", "merge_fields", "interests", "ip_signup", "timestamp_signup"]);
+const OPT_IN = new Set(["subscribed", "pending"]);
+function memberBody(b) {
+  if (!isObject(b)) return "member body must be an object";
+  for (const k of Object.keys(b)) if (!MEMBER_KEYS.has(k)) return `member field ${k}`;
+  for (const k of ["status", "status_if_new"]) if (k in b && !OPT_IN.has(b[k])) return `${k} ${b[k]}`;
+  return "";
+}
+// is_syncing:true tells Mailchimp not to start tag-triggered automations, so
+// a signup's tags can never set off a journey for someone else's address.
+function tagsBody(b) {
+  if (!isObject(b) || b.is_syncing !== true || !Array.isArray(b.tags)) return "tags must be sent with is_syncing";
+  if (Object.keys(b).some((k) => k !== "tags" && k !== "is_syncing")) return "unexpected tags field";
+  if (b.tags.some((t) => !isObject(t) || t.status !== "active" || typeof t.name !== "string")) return "tags may only be added";
+  return "";
+}
+// Setup creates saved segments and empty tags; a non-empty static_segment
+// would bulk-tag members, so it is refused.
+function segmentBody(b) {
+  if (!isObject(b)) return "segment body must be an object";
+  if ("static_segment" in b && !(Array.isArray(b.static_segment) && b.static_segment.length === 0)) return "static_segment must be empty";
+  return "";
+}
+const createBody = (b) => (isObject(b) ? "" : "body must be an object");
+
+const rule = (method, pattern, body = null) => Object.freeze({ method, re: new RegExp(pattern), body });
+export const ALLOWED_CALLS = Object.freeze({
+  // The live signup service: one member, and that member's tags.
+  capture: Object.freeze([
+    rule("GET", `^/lists/(${SEG})/members/${HASH}$`),
+    rule("PUT", `^/lists/(${SEG})/members/${HASH}$`, memberBody),
+    rule("PATCH", `^/lists/(${SEG})/members/${HASH}$`, memberBody),
+    rule("POST", `^/lists/(${SEG})/members/${HASH}/tags$`, tagsBody),
+  ]),
+  // The one-time setup script: read the audience, add fields, the interest
+  // group and its interests, tags and saved segments.
+  setup: Object.freeze([
+    rule("GET", `^/lists/(${SEG})$`),
+    rule("GET", `^/lists/(${SEG})/merge-fields$`),
+    rule("POST", `^/lists/(${SEG})/merge-fields$`, createBody),
+    rule("GET", `^/lists/(${SEG})/interest-categories$`),
+    rule("POST", `^/lists/(${SEG})/interest-categories$`, createBody),
+    rule("GET", `^/lists/(${SEG})/interest-categories/${SEG}/interests$`),
+    rule("POST", `^/lists/(${SEG})/interest-categories/${SEG}/interests$`, createBody),
+    rule("GET", `^/lists/(${SEG})/segments$`),
+    rule("POST", `^/lists/(${SEG})/segments$`, segmentBody),
+  ]),
+});
+
+// Why a call is refused, or "" when it is allowed. Only plain strings are
+// checked, so the path that passes is exactly the path that is sent. Query
+// strings are for reads only (fields, count) and hold only plain parameters;
+// reads carry no body.
+export function blockedCall(scope, audienceId, method, path, body) {
+  if (!Object.prototype.hasOwnProperty.call(ALLOWED_CALLS, scope)) return `unknown scope ${scope}`;
+  if (typeof method !== "string" || typeof path !== "string") return "method and path must be strings";
+  const q = path.indexOf("?");
+  const route = q === -1 ? path : path.slice(0, q);
+  const query = q === -1 ? "" : path.slice(q + 1);
+  if (q !== -1 && method !== "GET") return "query string on a write";
+  if (query && !/^[A-Za-z0-9_.,=&]+$/.test(query)) return "unexpected query string";
+  for (const r of ALLOWED_CALLS[scope]) {
+    if (r.method !== method) continue;
+    const hit = r.re.exec(route);
+    if (!hit) continue;
+    if (hit[1] !== audienceId) return "another audience";
+    if (!r.body) return body === undefined ? "" : "a read carries no body";
+    return r.body(body);
+  }
+  return "not on the allowlist";
+}
+
 // request(method, path, body) -> { status, data }. Paths are relative to /3.0.
-// Network failures and timeouts become ProviderError("unavailable").
-export function createApi({ apiKey, fetchImpl, signal = null, timeoutMs = TIMEOUT_MS }) {
+// Network failures and timeouts become ProviderError("unavailable"), and so
+// does a call the allowlist refuses, which is logged and never sent.
+export function createApi({ apiKey, fetchImpl, signal = null, timeoutMs = TIMEOUT_MS, scope = "capture", audienceId = DEFAULT_AUDIENCE_ID }) {
   const base = `https://${datacenter(apiKey) || DEFAULT_DC}.api.mailchimp.com/3.0`;
   const doFetch = fetchImpl || ((url, init) => globalThis.fetch(url, init));
   return async function request(method, path, body) {
+    const refused = blockedCall(scope, audienceId, method, path, body);
+    if (refused) {
+      const shown = typeof path === "string" ? redact(path) : "(non-string path)";
+      console.error(`soulmega-mailchimp: blocked ${String(method).slice(0, 10)} ${shown} (${refused})`);
+      throw new ProviderError("unavailable", `Mailchimp call blocked: ${refused}`);
+    }
     const init = {
       method,
       headers: { Authorization: `Bearer ${apiKey || "dry-run"}`, Accept: "application/json" },
@@ -216,6 +307,8 @@ export function createMailchimp({ dryRun = false, env = process.env, fetchImpl }
     apiKey,
     fetchImpl: dryRun ? recorder(plan) : fetchImpl,
     signal: AbortSignal.timeout(TIMEOUT_MS),
+    scope: "capture",
+    audienceId,
   });
   const memberPath = (id) => `/lists/${audienceId}/members/${id}`;
 
@@ -247,7 +340,8 @@ export function createMailchimp({ dryRun = false, env = process.env, fetchImpl }
   async function addTags(path, names, { required }) {
     if (!names.length) return;
     try {
-      await call("POST", `${path}/tags`, { tags: names.map((name) => ({ name, status: "active" })) }, [200, 204]);
+      // is_syncing: true keeps these tag writes from starting tag-triggered automations.
+      await call("POST", `${path}/tags`, { tags: names.map((name) => ({ name, status: "active" })), is_syncing: true }, [200, 204]);
     } catch (e) {
       if (required) throw e;
       console.error("soulmega-mailchimp: tags not applied:", e.message);

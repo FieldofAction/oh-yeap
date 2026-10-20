@@ -314,6 +314,41 @@ inside it, and never appears while the footer is in view: one invitation at a ti
 reachable. Phones in landscape and any window under 500 px tall get the docked, collapsed flyout.
 
 
+## Send guard: what the code can and cannot do in Mailchimp
+
+A Mailchimp API key can do anything the account can, including sending a campaign to the whole list. So every
+Mailchimp call in this repo goes through `createApi()` in `api/_lib/soulmega/mailchimp.js`, which checks it against
+`ALLOWED_CALLS` before anything is sent:
+
+| Scope | Allowed | Used by |
+|---|---|---|
+| `capture` | `GET`, `PUT`, `PATCH` one member (`/lists/{audience}/members/{md5}`), `POST` that member's tags | the live signup and preferences handlers |
+| `setup` | `GET` the audience, `GET`/`POST` merge fields, interest categories, interests and segments | `scripts/soulmega-mailchimp-setup.mjs` only |
+
+Everything else is refused, and the refusal is logged (`soulmega-mailchimp: blocked ...`). That covers campaigns
+(create, send, schedule, test), automations, customer journeys, batches, deletes, bulk adds, notes, events, webhooks
+and any audience other than the configured one. The same check runs in dry run, so a test fails if code ever tries a
+forbidden call. Widening the list is a deliberate code change, reviewed like any other; the tests pin its size, and
+the list is frozen so nothing can change it at runtime.
+
+Bodies are checked as well:
+- Member writes may only carry the fields this system uses, and only the statuses `subscribed` and `pending`.
+- Tag writes may only add tags, and always carry `is_syncing: true`, which tells Mailchimp not to start
+  tag-triggered automations. A signup's tags can never set off a journey for someone else's address.
+- Setup may create empty tags and saved segments, never a static segment that bulk-tags members.
+- Only plain strings are checked, so the path that passes is exactly the path that is sent.
+
+Allowed calls that can still make **Mailchimp** send an email, so check these settings before launch:
+- Re-subscribing someone who unsubscribed sets them to `pending`, and Mailchimp sends that one person a confirmation
+  email. `SOULMEGA_DOUBLE_OPT_IN=1` does the same for every new signup (off by default).
+- The audience's own settings: "Send a final welcome email", double opt-in for the hosted-form fallback, and the
+  goodbye email.
+- Any Customer Journey triggered by "Signs up", "Joins audience", "Joins group" or a field change. Tag-triggered
+  journeys stay quiet because tag writes carry `is_syncing: true`.
+
+The client's fallback posts to Mailchimp's hosted signup form (`list-manage.com`), which can only subscribe the person
+filling it in.
+
 ## Mailchimp setup
 
 1. In Mailchimp (Profile > Extras > API keys), create a key for this integration. Note its expiry date.
