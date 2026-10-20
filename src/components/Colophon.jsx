@@ -4,10 +4,9 @@ const TECH = [
   { h:"React 19", v:"Functional components, hooks, no class components" },
   { h:"Vite 7", v:"Dev server and production builds" },
   { h:"State Management", v:"Custom hook (useASUStore) backed by localStorage" },
-  { h:"Routing", v:"State-based view switching, no URL routing" },
+  { h:"Routing", v:"Hash routes for notebook views: #about, #relational-design, #hotel/nest, #colophon, #mental-models, #pattern-language, #patio-beach, #share-location, #bloom, #galaxy. Standalone pages at /experiments, /world-cup-atlas, and /oz-index." },
   { h:"Styling", v:"Single CSS file with custom properties for theming" },
-  { h:"AI Integration", v:"Anthropic API (Claude) for synthesis generation" },
-  { h:"Themes", v:"Two themes: Threshold (dark) and Light, switched at runtime" },
+  { h:"Themes", v:"Five. Threshold (dark) is the default for the work views. Daylight is the same views with the light switched on. Light is Models, Pattern Language, and Nest. Canon is Relational Design. Info is About and this page." },
   { h:"Persistence", v:"Client-side localStorage. No database, no server" },
 ];
 
@@ -19,9 +18,9 @@ const FORMS = [
 ];
 
 const PRINCIPLES = [
-  "Two typefaces only: Inter for display and body, Space Mono for code.",
+  "One public typeface: Hanken Grotesk, for display, text, and UI. Playfair Display and IBM Plex Mono stay on the Nest compositor. They are not this page.",
+  "Cobalt #2F5BFF marks the current section. It is not a brand color, and it is not used for links, buttons, or glows.",
   "CSS custom properties drive theming. Every color is a variable.",
-  "Entrance animations with staggered delays create rhythm on load.",
   "Responsive breakpoints at 480px, 600px, 768px, and 900px.",
   "No framework, no utility classes. Hand-written CSS for every component.",
   "Maximum restraint: whitespace, subtle transitions, minimal ornamentation.",
@@ -83,14 +82,13 @@ export default function Colophon() {
         <div className="co-sl">Typography + Color</div>
         <div className="co-type-spec">
           <div className="co-type-row">
-            <div className="co-type-sample">Inter</div>
-            <div className="co-type-label">Display + Body &middot; Titles, headings, body text, UI &middot; 300/400/500/600/700 weights</div>
-          </div>
-          <div className="co-type-row">
-            <div className="co-type-sample sans">Space Mono</div>
-            <div className="co-type-label">Monospace &middot; Code, metadata, system text &middot; 400/700 weights</div>
+            <div className="co-type-sample">Hanken Grotesk</div>
+            <div className="co-type-label">The only public face. Display, text, and UI.</div>
           </div>
         </div>
+        <p className="co-item-v" style={{ marginTop: 16 }}>
+          Cobalt <span style={{ fontVariantNumeric: "tabular-nums" }}>#2F5BFF</span> is the AC2 swatch. It marks the section you are in.
+        </p>
         <div className="co-sl" style={{ marginTop:24 }}>Active Palette</div>
         <div className="co-swatch-row">
           {SWATCHES.map(s => (
