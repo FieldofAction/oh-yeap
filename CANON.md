@@ -123,6 +123,13 @@ Rings: **Operational** Field→WIP→Action→Cache · **Practice** Art Practice
 
 ---
 
+### 2026-10-25 · Signal Surface uses one live evidence bank
+- Context / signal: Daniel wants observations, scanning, readings, and recursive inquiry to continue between visits. The earlier FOA draft stored additions only in the browser.
+- Decision: keep `/signal-surface` as the FOA public research view, connected to the existing hosted instrument. Keep capture, reflections, and reading review in the owner workspace. Source evidence and accepted source-based readings can be public; personal notes and pending proposals remain private.
+- Rejected: publishing a second frozen dataset or silently replacing a reading. Both break provenance and continuity.
+- Principle: observation → evidence → proposed reading → human review → next inquiry. Every save and scan has visible feedback.
+- Agent(s): Action / Cache.
+
 ## 6 · Anomaly register (Anomaly Inquiry Protocol)
 
 > Anything that doesn't fit runs this before it touches §1. Disposition is one of four.

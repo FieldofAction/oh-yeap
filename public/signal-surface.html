@@ -1,30 +1,26 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Signal Surface — Research</title>
-<meta name="description" content="A private field instrument for evidence, latent capability, and reservoirs of possibility." />
-<link rel="icon" href="/favicon.svg" />
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;1,400&family=Roboto+Mono:wght@400&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="/signal-surface/instrument.css" />
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Signal Surface — Field of Action</title>
+<meta name="description" content="A living research instrument for observations, source-grounded evidence, and readings open to revision.">
+<link rel="icon" href="/favicon.svg">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f7f8fc;color:#191e38;font:14px/1.6 Inter,Arial,sans-serif}.field-shell{max-width:1600px;margin:auto}.field-header{display:flex;justify-content:space-between;align-items:center;gap:20px;padding:16px 5vw;border-bottom:1px solid #dce1ef;background:white}.field-header a{color:#191e38;text-decoration:none}.field-header a:last-child{color:#3446b7;text-decoration:underline;text-underline-offset:4px;font-size:12px}.loading{padding:20px 5vw;margin:0;color:#626d84}iframe{display:block;border:0;width:100%;min-height:1100px;height:1600px;background:#f7f8fc}.fallback{padding:20px 5vw;border-top:1px solid #dce1ef;color:#626d84}.fallback a{color:#3446b7}.local-notes{padding:16px 5vw;background:#edf0ff}.local-notes button{background:transparent;border:0;color:#3446b7;text-decoration:underline;cursor:pointer}.field-header a:focus-visible,.fallback a:focus-visible{outline:2px solid #3446b7;outline-offset:4px}@media(max-width:600px){.field-header{padding:15px 20px;align-items:flex-start}.field-header a:last-child{max-width:155px;text-align:right}iframe{height:1900px}}
+</style>
 </head>
 <body>
-<header class="mast">
-  <div class="mast-top">
-    <a class="foa-back" href="/">Field of Action</a>
-    <p class="edition">Instrument 001<span>Pilot · 30 September 2026</span></p>
-  </div>
-  <div class="brand">
-    <h1>Signal Surface</h1>
-    <p>Research arm · private working field</p>
-  </div>
-</header>
-<div class="workspace" id="workspace">
-  <p class="metadata">Loading the field…</p>
+<div class="field-shell">
+<header class="field-header"><a href="/">← Field of Action</a><a href="https://signal-surface-field.alfreddaniel.chatgpt.site/?workspace=1" target="_blank" rel="noopener">Open your research workspace ↗</a></header>
+<p class="loading" id="loading" role="status">Connecting to the live research field…</p>
+<div id="local-notes" class="local-notes" hidden><p>Notes from the earlier browser-only instrument are still saved on this device. Export a copy before moving them into your research workspace.</p><button id="export-notes">Export earlier notes</button></div>
+<iframe id="instrument" title="Signal Surface: readings, evidence, and research activity" src="https://signal-surface-field.alfreddaniel.chatgpt.site/?embed=1&amp;view=public" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+<footer class="fallback">This page shows the shared research field. Personal observations, research questions, reflections, and pending revisions live in your signed-in workspace. <a href="https://signal-surface-field.alfreddaniel.chatgpt.site/" target="_blank" rel="noopener">Open the instrument directly ↗</a></footer>
 </div>
-<script src="/signal-surface/app.js"></script>
+<script>
+const frame=document.getElementById('instrument');
+window.addEventListener('message',event=>{if(event.origin!=='https://signal-surface-field.alfreddaniel.chatgpt.site'||event.source!==frame.contentWindow||event.data?.type!=='signal-surface:size')return;const height=Number(event.data.height);if(!Number.isFinite(height)||height<100||height>50000)return;frame.style.height=Math.max(1100,Math.ceil(height)+12)+'px';document.getElementById('loading').hidden=true;});
+try{const records=JSON.parse(localStorage.getItem('signal-surface-records')||'[]');const calibration=JSON.parse(localStorage.getItem('signal-surface-calibration')||'null');if(records.length||calibration?.history?.length||calibration?.current?.length){document.getElementById('local-notes').hidden=false;document.getElementById('export-notes').addEventListener('click',()=>{const blob=new Blob([JSON.stringify({format:'signal-surface-browser-export-v1',exported_at:new Date().toISOString(),records,calibration},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='signal-surface-earlier-notes.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});}}catch{}
+</script>
 </body>
 </html>
