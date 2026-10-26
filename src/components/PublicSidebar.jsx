@@ -15,6 +15,7 @@ const NAV = [
   { tier: "WORK", items: [
     { group: "sections", children: [
       { key: "public", label: "Practice", filter: "Practice" },
+      { href: "/signal-surface", label: "Signal Surface" },
       { key: "public", label: "Writing", filter: "Writing" },
       // Exploration is empty publicly; keep it dev-only until it has ready work.
       ...(DEV_MODE ? [{ key: "public", label: "Exploration", filter: "Exploration" }] : []),
@@ -28,8 +29,7 @@ const NAV = [
       { key: "superconscious", label: "Share Location" },
       { key: "flowers", label: "Bloom" },
       { key: "galaxy", label: "Galaxy" },
-      // Standalone static pages (public/world-cup-atlas.html, public/oz-index.html) —
-      // full-page loads, not React views.
+      // Standalone static pages (public/*.html) — full-page loads, not React views.
       { href: "/world-cup-atlas", label: "World Cup Atlas" },
       { href: "/oz-index", label: "Oz Index" },
     ]},
