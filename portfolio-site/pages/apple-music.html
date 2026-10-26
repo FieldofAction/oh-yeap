@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apple Music | Daniel Dickson</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-light: #FAFAF8;
+      --text-dark: #1A1A1A;
+      --text-muted: #666666;
+      --text-light-gray: #999999;
+      --border-light: #E8E8E6;
+    }
+
+    html, body {
+      background: var(--bg-light);
+      color: var(--text-dark);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+    }
+
+    body {
+      font-size: 16px;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Lora', 'Georgia', serif;
+      font-weight: 500;
+      line-height: 1.3;
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-dark);
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      line-height: 1.75;
+    }
+
+    a {
+      color: var(--text-dark);
+      text-decoration: underline;
+      transition: color 0.2s;
+    }
+
+    a:hover {
+      color: var(--text-muted);
+    }
+
+    nav {
+      background: var(--bg-light);
+      border-bottom: 1px solid var(--border-light);
+      padding: 1.5rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav .logo {
+      font-family: 'Lora', serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--text-dark);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav a {
+      font-size: 0.9375rem;
+      text-decoration: none;
+      color: var(--text-dark);
+      transition: color 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      color: var(--text-muted);
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* Refined scale */
+    body { font-size: 15px; }
+    .container { max-width: 620px; }
+    nav { padding: 0.875rem 0; }
+    nav .logo { font-size: 0.9375rem; letter-spacing: -0.01em; }
+    nav ul { gap: 1.5rem; }
+    nav a { font-size: 0.8125rem; }
+
+    /* Case study styles */
+    .wide { max-width: none; padding: 0 2rem; }
+    .ph { background: linear-gradient(135deg, var(--border-light) 0%, #F0EFED 100%); display: flex; align-items: flex-end; padding: 0.5rem 0.625rem; color: var(--text-light-gray); font-size: 0.6875rem; width: 100%; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; position: relative; }
+    .ph::after { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.05); opacity: 0; transition: opacity 0.3s ease; }
+    .ph:hover { transform: scale(1.01); }
+    .ph:hover::after { opacity: 1; }
+    .ph.dark { background: linear-gradient(135deg, #2A2A28 0%, #1A1A1A 100%); color: #777; }
+    .ph.warm { background: linear-gradient(135deg, #E9E2D6 0%, #DCD3C3 100%); }
+    .ph.cool { background: linear-gradient(135deg, #DFE3E6 0%, #CFD5DA 100%); }
+    .bleed { width: 100%; aspect-ratio: 16 / 7; min-height: 320px; animation: fadeIn 0.8s ease-out; }
+    .bleed.short { aspect-ratio: 21 / 7; min-height: 240px; }
+
+    .cs-intro { display: grid; grid-template-columns: 1fr 340px; gap: 4rem; align-items: start; padding: 4rem 0 5rem; opacity: 0; animation: fadeInUp 0.8s ease-out 0.2s forwards; }
+    .cs-intro .lead-img .ph { aspect-ratio: 4/3; }
+    .cs-intro h1 { font-size: 1.5rem; line-height: 1.15; margin-bottom: 1rem; }
+    .cs-intro h1 span { color: var(--text-light-gray); font-weight: 400; }
+    .credits { margin-bottom: 1.25rem; }
+    .credits p { font-size: 0.8125rem; line-height: 1.45; margin-bottom: 0.25rem; color: var(--text-muted); }
+    .credits b { color: var(--text-dark); font-weight: 600; }
+    .cs-intro .problem p { font-size: 0.875rem; line-height: 1.5; }
+
+    .story { padding: 2rem 0 5rem; display: grid; grid-template-columns: 160px 1fr; gap: 2rem; }
+    .story .label, .section-label { font-family: 'Inter', sans-serif; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light-gray); }
+    .story p { font-family: 'Lora', serif; font-size: 1.875rem; line-height: 1.2; letter-spacing: -0.015em; color: var(--text-dark); max-width: 760px; margin: 0; }
+
+    .gallery { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; padding-bottom: 5rem; }
+    .gallery .g { display: block; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .gallery .g:hover { transform: translateY(-4px); }
+    .gallery .g .cap { font-size: 0.75rem; color: var(--text-light-gray); margin-top: 0.5rem; }
+
+    .frameworks { padding: 0 0 5rem; display: grid; grid-template-columns: 160px 1fr; gap: 2rem; }
+    .frameworks .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+    .frameworks h3 { font-family: 'Inter', sans-serif; font-size: 0.9375rem; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0; }
+    .frameworks p { font-size: 0.875rem; line-height: 1.5; margin: 0; }
+
+    .impact { padding: 4rem 0 5rem; border-top: 1px solid var(--border-light); display: grid; grid-template-columns: 160px 1fr; gap: 2rem; }
+    .impact .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; }
+    .impact h3 { font-family: 'Lora', serif; font-size: 1.375rem; font-weight: 500; line-height: 1.2; letter-spacing: -0.015em; margin-bottom: 0.625rem; }
+    .impact p { font-size: 0.875rem; line-height: 1.5; margin: 0; }
+
+    .scatter { position: relative; display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; padding: 0 0 5rem; }
+
+    .next { border-top: 1px solid var(--border-light); padding: 2.5rem 0 3rem; display: flex; justify-content: space-between; align-items: baseline; }
+    .next a { text-decoration: none; font-size: 0.875rem; transition: transform 0.2s ease; display: inline-block; }
+    .next a:hover { text-decoration: underline; }
+    .next .label { font-size: 0.6875rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light-gray); margin-right: 0.75rem; }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+      .cs-intro, .story, .frameworks, .impact { grid-template-columns: 1fr; gap: 1.5rem; }
+      .frameworks .grid, .impact .grid { grid-template-columns: 1fr; gap: 1.5rem; }
+      .story p { font-size: 1.375rem; }
+      .gallery .g, .scatter .g { grid-column: 1 / -1 !important; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container wide">
+      <a href="../index.html" class="logo">Daniel Dickson</a>
+      <ul>
+        <li><a href="writing.html">Writing</a></li>
+        <li><a href="cases.html" class="active">Cases</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="https://fieldofaction.org">Field of Action</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="ph dark bleed">[Apple Music hero]</div>
+
+  <div class="container wide">
+    <div class="cs-intro">
+      <div class="lead-img"><div class="ph dark">[Apple Music work sample]</div></div>
+      <div>
+        <h1>Apple Music<span>, [Dates to confirm]</span></h1>
+        <div class="credits"><p><b>Role:</b> [To confirm]</p><p><b>Scope:</b> [To confirm]</p></div>
+        <div class="problem"><p>[To develop]</p></div>
+      </div>
+    </div>
+
+    <div class="story">
+      <p class="label">The challenge</p>
+      <p>[To develop]</p>
+    </div>
+
+    <div class="gallery">
+      <div class="g" style="grid-column: 1 / 8;"><div class="ph dark" style="aspect-ratio:16/10">[Work example 1]</div></div>
+      <div class="g" style="grid-column: 9 / 13; margin-top: 6rem;"><div class="ph" style="aspect-ratio:4/5">[Work example 2]</div></div>
+    </div>
+
+    <div class="frameworks">
+      <p class="section-label">The system</p>
+      <div class="grid"><div><h3>[Component 1]</h3><p>[To develop]</p></div><div><h3>[Component 2]</h3><p>[To develop]</p></div><div><h3>[Component 3]</h3><p>[To develop]</p></div></div>
+    </div>
+  </div>
+
+  <div class="ph dark bleed short">[Visual examples]</div>
+
+  <div class="container wide">
+    <div class="impact">
+      <p class="section-label">What changed</p>
+      <div class="grid"><div><h3>[Impact 1]</h3><p>[To develop]</p></div><div><h3>[Impact 2]</h3><p>[To develop]</p></div><div><h3>[Impact 3]</h3><p>[To develop]</p></div></div>
+    </div>
+
+    <div class="scatter">
+      <div class="g" style="grid-column: 2 / 6;"><div class="ph dark" style="aspect-ratio:1">[Detail]</div></div>
+      <div class="g" style="grid-column: 7 / 12; margin-top: 7rem;"><div class="ph" style="aspect-ratio:16/10">[Context]</div></div>
+    </div>
+
+    <div class="next">
+      <a href="cases.html">← All cases</a>
+      <span><span class="label">Next</span><a href="apple-sports.html">Apple TV Sports →</a></span>
+    </div>
+  </div>
+</body>
+</html>
