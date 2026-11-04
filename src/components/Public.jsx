@@ -1,3 +1,4 @@
+import { eyebrowWord } from "../lib/eyebrow";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { FILTERS } from "../data/playbook-public";
 import { isHidden } from "../data/seed";
@@ -238,7 +239,6 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
               <div className={`content-section${showAll ? " reveal" : ""}`}>
                 {showAll && (
                   <div className="content-section-head">
-                    <span className="cs-eyebrow">Practice</span>
                     <div className="content-section-h">Selected Work<HiddenCountSuffix section="practice" hiddenCounts={hiddenCounts} /></div>
                   </div>
                 )}
@@ -246,7 +246,8 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                   {practice.map((item, i) => (
                     <div key={item.id} data-reveal className={`ix-row${DEV_MODE && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)}>
                       <div className="ix-main">
-                        <div className="ix-pre">{item.role}<HiddenChip item={item} /></div>
+                        {eyebrowWord(item.role) && <div className="eyebrow">{item.role}</div>}
+                        <HiddenChip item={item} />
                         <div className="ix-title">{item.title}</div>
                         <div className="ix-sub">{item.subtitle}</div>
                       </div>
@@ -254,7 +255,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                         <div className="ix-tags">
                           {item.tags?.map(t => <span key={t} className="ix-tag">{t}</span>)}
                         </div>
-                        <div className="ix-year">{item.year}</div>
+                        <div className="ix-year">{!eyebrowWord(item.role) && item.role ? `${item.role} · ` : ""}{item.year}</div>
                       </div>
                       <HoverPreview images={getPreviewImages(item)} fallbackBg={`linear-gradient(135deg, ${theme.ac1}30, ${theme.ac2}20)`} />
                       {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
@@ -273,8 +274,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 <div className={`content-section${showAll ? " reveal" : ""}`}>
                   {showAll && (
                     <div className="content-section-head">
-                      <span className="cs-eyebrow">Field Notes · Memos</span>
-                      <div className="content-section-h">Writing<HiddenCountSuffix section="writing" hiddenCounts={hiddenCounts} /></div>
+                        <div className="content-section-h">Writing<HiddenCountSuffix section="writing" hiddenCounts={hiddenCounts} /></div>
                     </div>
                   )}
                   {showAll && <div className="content-section-gloss">{SECTION_GLOSSES.Writing}</div>}
@@ -338,7 +338,6 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
               <div className={`content-section${showAll ? " reveal" : ""}`}>
                 {showAll && (
                   <div className="content-section-head">
-                    <span className="cs-eyebrow">Experiments</span>
                     <div className="content-section-h">Exploration<HiddenCountSuffix section="exploration" hiddenCounts={hiddenCounts} /></div>
                   </div>
                 )}
@@ -370,7 +369,6 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
               <div className={`content-section${showAll ? " reveal" : ""}`}>
                 {showAll && (
                   <div className="content-section-head">
-                    <span className="cs-eyebrow">Specs · Models · Frameworks</span>
                     <div className="content-section-h">Artifacts<HiddenCountSuffix section="artifacts" hiddenCounts={hiddenCounts} /></div>
                   </div>
                 )}

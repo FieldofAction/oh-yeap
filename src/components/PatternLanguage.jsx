@@ -84,7 +84,7 @@ export default function PatternLanguage({ content, onOpen, fg }) {
     <div className="pa en">
       {/* Header */}
       <div className="pa-header en d1">
-        <div className="pa-pre">Reference</div>
+        <div className="eyebrow">Reference</div>
         <h1 className="pa-h">Pattern Language</h1>
         <p className="pa-sub">
           A numbered index of {totalPatterns} architectural patterns from

@@ -60,7 +60,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         )}
         <div className="sp-head dc dc1">
           <div className="sp-head-left">
-            <div className="sp-badge">{typeLabel}</div>
+            <div className="eyebrow">{typeLabel}</div>
             <h1 className="sp-title">{item.title}</h1>
             <div className="sp-desc">{item.desc}</div>
           </div>

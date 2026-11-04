@@ -34,7 +34,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
           <div className="th-icon">
             <RDIcon color={fg} size={36} />
           </div>
-          <div className="th-badge">Theory</div>
+          <div className="eyebrow">Theory</div>
           <h1 className="th-title">Theory of {item.title}</h1>
           <div className="th-subtitle">{item.subtitle}</div>
           <div className="th-colophon">

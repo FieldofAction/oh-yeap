@@ -122,7 +122,6 @@ export default function MaterialsInRelation() {
   const sameAsLast = last && Object.entries(study).filter(([key]) => key !== 'history').every(([key, value]) => JSON.stringify(value) === JSON.stringify(last[key]));
 
   return <section className="mir" aria-labelledby={`${id}-heading`}>
-    <div className="mir-eyebrow">Instrument · v0.1</div>
     <h1 id={`${id}-heading`}>Materials in Relation</h1>
     <p className="mir-lead">Study what a material makes possible. Compose the conditions. Learn from what happens.</p>
     <p>A chair, an interface, and an invitation can shape the same encounter. This instrument brings physical, digital, and relational materials into a shared study while preserving the differences between them.</p>
@@ -158,7 +157,6 @@ export default function MaterialsInRelation() {
           <div className="mir-synthesis-meta"><span className="mir-kicker">Working synthesis</span><span className="mir-kicker">Hypothesis · updates with your choices</span></div>
           <p className="mir-synthesis-selection" role="status" aria-live="polite">{synthesis.pairing}</p>
           <div className="mir-emergence">
-            <span className="mir-kicker">What could emerge</span>
             <h3 id={`${id}-synthesis`}>{synthesis.title}</h3>
             <p>{synthesis.summary}</p>
             <p>{synthesis.emergence}</p>

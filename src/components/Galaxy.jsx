@@ -587,7 +587,6 @@ export default function Galaxy(){
         <div className="gx-about" role="dialog" aria-modal="true" aria-label="About the Galaxy Instrument" onClick={()=>setShowAbout(false)}>
           <div className="gx-about-card" onClick={e=>e.stopPropagation()}>
             <button className="gx-about-x" onClick={()=>setShowAbout(false)} aria-label="Close">×</button>
-            <div className="gx-about-eyebrow">About</div>
             <div className="gx-about-title">Galaxy Instrument</div>
             <p className="gx-about-body">{ABOUT}</p>
             <p className="gx-about-body gx-about-lineage">{LINEAGE}</p>

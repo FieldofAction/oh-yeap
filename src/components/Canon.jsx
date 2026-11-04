@@ -193,7 +193,7 @@ export default function Canon() {
 
       {/* ── 1. Overview ── */}
       <div ref={el => sectionRefs.current["overview"] = el} id="canon-overview" className="ph-header en d1" style={{ scrollMarginTop: 56 }}>
-        <div className="ph-pre">Canon</div>
+        <div className="eyebrow">Canon</div>
         <div className="ph-h-row">
           <h1 className="ph-h">Relational Design</h1>
           <span className="ph-h-glyph" role="img" aria-label="Relational Design mark" />
@@ -278,7 +278,6 @@ export default function Canon() {
       </div>
 
       <section className="cn-instrument" aria-labelledby="canon-instrument-title">
-        <div className="cn-instrument-label">Put it into practice</div>
         <h2 id="canon-instrument-title">Materials in Relation</h2>
         <p>Explore physical, digital, and relational materials together. Use the instrument to compose a situation, try a change, and learn from what happens.</p>
         <a href="#materials-in-relation">Open the instrument <span aria-hidden="true">↗</span></a>

@@ -1,3 +1,4 @@
+import { eyebrowWord } from "../../lib/eyebrow";
 import React, { useMemo, useCallback, useRef, useEffect, useState } from "react";
 import { VIS } from "../../data/seed";
 import { HiddenStrip } from "../HiddenIndicators";
@@ -11,7 +12,6 @@ function CatalogueBlock({ block, observe }) {
     <div ref={observe} className="cs-block cs-block--catalogue cs-sr cs-sr--rise">
       <button type="button" className="cs-catalogue-toggle" aria-expanded={open} onClick={() => setOpen(o => !o)}>
         <span className="cs-catalogue-toggle-head">
-          {block.label && <span className="cs-block--section-label">{block.label}</span>}
           {block.heading && <span className="cs-catalogue-heading">{block.heading}</span>}
         </span>
         <span className={`cs-catalogue-chev${open ? " is-open" : ""}`} aria-hidden="true" />
@@ -51,8 +51,7 @@ function TriptychBlock({ block, observe }) {
       {block.images?.map((img, i) => (
         <div key={i} className="cs-triptych-card" style={img.bg ? { background: img.bg } : {}}>
           {img.src && <img src={img.src} alt={img.alt || ""} />}
-          {(img.label || img.title) && <div className="cs-triptych-overlay" />}
-          {img.label && <div className="cs-triptych-label">{img.label}</div>}
+          {img.title && <div className="cs-triptych-overlay" />}
           {img.title && <div className="cs-triptych-title">{img.title}</div>}
         </div>
       ))}
@@ -419,7 +418,6 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         return (
           <div key={key} ref={observe} className="cs-block cs-block--sticky cs-sr cs-sr--rise">
             <div className="cs-sticky-text">
-              {block.label && <div className="cs-block--section-label">{block.label}</div>}
               {block.heading && <h2 className="cs-sticky-heading">{block.heading}</h2>}
               {block.body && <div className="cs-sticky-body">{block.body.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>}
             </div>
@@ -441,7 +439,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         return (
           <div key={key} ref={observe} className={`cs-block cs-block--split${block.align === "right" ? " cs-block--split-reversed" : ""} cs-sr cs-sr--rise`}>
             <div className={`cs-split-text${block.tone === "light" ? " cs-split-text--light" : ""}`}>
-              {block.subtitle && <div className="cs-split-subtitle">{block.subtitle}</div>}
+              {eyebrowWord(block.subtitle) && <div className="eyebrow">{block.subtitle}</div>}
               {block.heading && <h2 className="cs-split-heading">{block.heading}</h2>}
               {block.body && <div className="cs-split-body">{block.body.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>}
             </div>
@@ -588,7 +586,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
           return (
             <div key={key} ref={observe} className={`cs-block cs-block--plate-split${block.align === "right" ? " cs-block--plate-split-rev" : ""} cs-sr cs-sr--rise`}>
               <div className="cs-plate-text">
-                {block.label && <div className="cs-split-subtitle">{block.label}</div>}
+                {eyebrowWord(block.label) && <div className="eyebrow">{block.label}</div>}
                 {block.heading && <h2 className="cs-split-heading">{block.heading}</h2>}
                 {block.body && <div className="cs-split-body">{block.body.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>}
               </div>
@@ -666,7 +664,6 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       case "fourfold":
         return (
           <div key={key} ref={observe} className="cs-block cs-block--fourfold cs-sr cs-sr--rise">
-            {block.label && <div className="cs-block--section-label">{block.label}</div>}
             {block.heading && <h2 className="cs-fourfold-heading">{block.heading}</h2>}
             <div className="cs-fourfold-row">
               {block.nodes?.map((n, i) => (

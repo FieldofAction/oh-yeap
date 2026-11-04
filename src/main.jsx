@@ -5,6 +5,8 @@ import './styles/main.css'
 import PublicApp from './PublicApp.jsx'
 // After component CSS (including materials.css); public only, not Studio controls.
 import './styles/field-standard.css'
+// The one label allowed above a headline. Depends on the field-standard tokens.
+import './styles/eyebrow.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

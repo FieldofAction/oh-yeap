@@ -603,7 +603,7 @@ export default function PatioBeach() {
     <div className="pb-wrap en">
       {/* Header */}
       <div className="pb-header">
-        <div className="pb-header-label">Archive</div>
+        <div className="eyebrow">Archive</div>
         <h1 className="pb-title">Nest</h1>
         <p className="pb-subtitle">A photographic archive. 2016 – 2021. 486 sites, mostly Brooklyn and Manhattan.</p>
         <div className="pb-view-toggle">

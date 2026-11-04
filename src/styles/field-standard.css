@@ -40,7 +40,6 @@
   line-height: 1.2;
   padding-bottom: 1.25rem;
 }
-.theme-daylight .cs-eyebrow { font-size: var(--foa-type-meta); letter-spacing: .06em; }
 .content-section-gloss,
 .theme-daylight .content-section-gloss {
   font-size: var(--foa-type-support);
@@ -48,7 +47,6 @@
   line-height: 1.55;
 }
 .ix-main { gap: .5rem; }
-.ix-pre { font-size: var(--foa-type-meta); font-weight: 500; letter-spacing: .06em; }
 .ix-title {
   font-size: var(--foa-type-feature);
   font-weight: 500;
@@ -154,8 +152,7 @@
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
-.rd-byline-date, .rd-meta, .rd-cite, .ab-pre, .co-pre, .ph-pre,
-.ph-canon-al, .mir-eyebrow, .mir-breadcrumb, .cn-instrument-label {
+.rd-byline-date, .rd-meta, .rd-cite, .ph-canon-al, .mir-breadcrumb {
   font-size: var(--foa-type-meta);
   line-height: 1.5;
 }
