@@ -16,12 +16,12 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
       <button className="rd-back" onClick={onClose}>← Back</button>
       <div className="sk-inner">
         <HiddenStrip item={item} />
-        <div className="sk-status dc dc1">
+        <h1 className="sk-title dc dc1">{item.title}</h1>
+        <div className="sk-sub dc dc2">
           <span className={`ex-pin-dot ${item.status}`} />
           {item.status === "wip" ? "In Progress" : item.status}
+          {" · "}{item.subtitle ? `${item.subtitle} · ${item.year}` : item.year}
         </div>
-        <h1 className="sk-title dc dc1">{item.title}</h1>
-        <div className="sk-sub dc dc2">{item.subtitle ? `${item.subtitle} · ${item.year}` : item.year}</div>
         {item.sketch?.hypothesis && (
           <div className="sk-hyp dc dc3">
             <div className="sk-hyp-label">{item.sketch.hypothesisLabel || "Hypothesis"}</div>

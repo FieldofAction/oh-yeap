@@ -1,0 +1,42 @@
+/* Eyebrow — the one label allowed above a headline. v1, Nov 2026.
+ *
+ * Rule: one word or a date, sitting directly on its headline, sized in a
+ * fixed ratio to it (1:3.75, gap 0.45 × headline). No colour of its own:
+ * it takes the headline's ink. Sans only (Hanken Grotesk).
+ *
+ * Pairing: the wrapper that holds eyebrow + headline sets --eh to the
+ * headline's font-size (see the component rules in main.css and
+ * field-standard.css). A heading inside such a wrapper reads var(--eh),
+ * so the pair cannot drift. Loaded last by src/main.jsx.
+ *
+ * Do not add modifiers, tiers or per-page colours here. If a label can't
+ * meet the rule, it isn't an eyebrow — put the word inline beside the
+ * title in the meta style, or leave it out.
+ */
+.eyebrow {
+  --eh-fallback: var(--foa-type-feature);
+  display: block;
+  font-family: var(--sans);
+  font-size: max(10px, calc(var(--eh, var(--eh-fallback)) / 3.75));
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: inherit;
+  margin: 0 0 calc(var(--eh, var(--eh-fallback)) * .45);
+}
+
+/* Pairings whose headline size is a field-standard token. (Component wrappers
+ * whose headline keeps a main.css clamp set --eh there, next to the heading.) */
+.ix-main { --eh: var(--foa-type-feature); }   /* .ix-title */
+.ph-header { --eh: var(--foa-type-page); }    /* .ph-h */
+
+/* Where a paired headline drops under 36px the eyebrow can't keep 1:3.75
+ * without hitting the 10px floor, so it is dropped, not shrunk. Each width
+ * solves that wrapper's --eh for 36px (feature token: 22px + 1.5vw; case
+ * split: 4vw; spec: 4.5vw; pattern language: 5vw). Theory, Nest and Canon
+ * never fall under 36px. Delete this block to allow 10px eyebrows instead. */
+@media (max-width: 933px) { .ix-main > .eyebrow { display: none; } }
+@media (max-width: 899px) { .cs-split-text > .eyebrow, .cs-plate-text > .eyebrow { display: none; } }
+@media (max-width: 799px) { .sp-head-left > .eyebrow { display: none; } }
+@media (max-width: 719px) { .pa-header > .eyebrow { display: none; } }

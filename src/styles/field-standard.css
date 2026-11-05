@@ -31,8 +31,7 @@
 }
 .hero-dash-val { font-size: .9375rem; line-height: 1.4; }
 .hero-dash-cell { min-width: 0; overflow-wrap: anywhere; }
-.content-section-h,
-.theme-daylight .content-section-head .content-section-h {
+.content-section-h {
   font-size: var(--foa-type-section);
   font-weight: 500;
   letter-spacing: -.015em;
@@ -40,15 +39,12 @@
   line-height: 1.2;
   padding-bottom: 1.25rem;
 }
-.theme-daylight .cs-eyebrow { font-size: var(--foa-type-meta); letter-spacing: .06em; }
-.content-section-gloss,
-.theme-daylight .content-section-gloss {
+.content-section-gloss {
   font-size: var(--foa-type-support);
   font-weight: 400;
   line-height: 1.55;
 }
 .ix-main { gap: .5rem; }
-.ix-pre { font-size: var(--foa-type-meta); font-weight: 500; letter-spacing: .06em; }
 .ix-title {
   font-size: var(--foa-type-feature);
   font-weight: 500;
@@ -78,10 +74,10 @@
   font-weight: 400;
   line-height: 1.55;
 }
-.ix-wr-pre, .ix-wr-meta, .ix-art-type { font-size: var(--foa-type-label); }
-.ix-wr-head { flex-wrap: wrap; }
+.ix-wr-meta, .ix-art-meta { font-size: var(--foa-type-meta); }
 .ix-wr-feat-body { padding-top: 1rem; }
 .ix-wr-feat-title { margin-bottom: .5rem; }
+.ix-wr-meta, .ix-art-meta { margin-top: .5rem; }
 .ix-wr-item, .ix-art-item, .ix-wr-feat-card { min-width: 0; }
 .section-header-h {
   font-size: var(--foa-type-page);
@@ -123,7 +119,7 @@
   margin-bottom: 1rem;
 }
 .rd-section-heading:first-child { margin-top: 0; }
-.ab-sl, .co-sl, .ph-sl {
+.ab-sl, .co-sl, .ph-sl, .pa-sl {
   font-size: var(--foa-type-subsection);
   font-weight: 500;
   letter-spacing: -.01em;
@@ -143,6 +139,15 @@
   line-height: var(--foa-leading-reading);
 }
 .cs-cat-name { font-size: var(--foa-type-subsection); }
+/* Heads inside lists and grids: a quiet real heading, not a label. */
+.pb-narr-label, .pb-contribs-h, .pb-contrib-tier-label, .pb-month-label,
+.pa-group-h, .ab-ring-label {
+  font-size: var(--foa-type-caption);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.4;
+}
 /* Keep the case-study section numbers and mono index, just make them legible. */
 .cs-block--section-label, .cs-section-label {
   font-size: var(--foa-type-caption);
@@ -154,8 +159,7 @@
   line-height: 1.6;
   overflow-wrap: anywhere;
 }
-.rd-byline-date, .rd-meta, .rd-cite, .ab-pre, .co-pre, .ph-pre,
-.ph-canon-al, .mir-eyebrow, .mir-breadcrumb, .cn-instrument-label {
+.rd-byline-date, .rd-meta, .rd-cite, .ph-canon-al, .mir-breadcrumb {
   font-size: var(--foa-type-meta);
   line-height: 1.5;
 }

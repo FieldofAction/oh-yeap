@@ -102,7 +102,6 @@ export default function HotelNest() {
     <div className="hn en">
       {/* 1. Page header */}
       <header className="hn-head dc dc1">
-        <div className="hn-crumb">hotel / nest</div>
         <h1 className="hn-title">NEST</h1>
         <div className="hn-sub">First edition from the Patio Beach archive</div>
         <div className="hn-date">Released April 22, 2026 · Earth Day</div>

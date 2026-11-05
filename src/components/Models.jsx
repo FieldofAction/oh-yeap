@@ -66,7 +66,6 @@ export default function Models({ content, onOpen, fg }) {
     <div className="mm en">
       {/* Header */}
       <div className="mm-header en d1">
-        <div className="mm-pre">Pattern Database</div>
         <h2 className="mm-h">Mental Models</h2>
         <p className="mm-sub">
           A numbered index of thinking tools from The Great Mental Models series.

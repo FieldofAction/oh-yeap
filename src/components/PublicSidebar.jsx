@@ -13,18 +13,21 @@ const STUDIO_URL = "https://studio.fieldofaction.org";
 // hidden items are additionally revealed with a HIDDEN indicator for local preview.
 const NAV = [
   { tier: "WORK", items: [
+    // Sections are the home-page index filters only.
     { group: "sections", children: [
       { key: "public", label: "Practice", filter: "Practice" },
-      { href: "/signal-surface", label: "Signal Surface" },
       { key: "public", label: "Writing", filter: "Writing" },
       // Exploration is empty publicly; keep it dev-only until it has ready work.
       ...(DEV_MODE ? [{ key: "public", label: "Exploration", filter: "Exploration" }] : []),
       { key: "public", label: "Artifacts", filter: "Artifacts" },
+    ]},
+    // Spaces are standalone pages and instruments, whether React views or
+    // static full-page loads (public/*.html).
+    { group: "spaces", children: [
+      { href: "/signal-surface", label: "Signal Surface" },
       // Generated static pages (public/experiments/, built from content/experiments/*.md).
       // A full-page load like the Atlas below, not a SPA filter — see EXPERIMENTS-PUBLISHING.md.
       { href: "/experiments", label: "Experiments" },
-    ]},
-    { group: "spaces", children: [
       { key: "patiobeach", label: "Patio Beach" },
       { key: "superconscious", label: "Share Location" },
       { key: "flowers", label: "Bloom" },

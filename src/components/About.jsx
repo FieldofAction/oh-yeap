@@ -10,9 +10,8 @@ export default function About({ theme }) {
   return (
     <div className="ab en">
       <div className="ab-header en d1">
-        <div className="ab-pre">Alfred (Daniel) Dickson II</div>
         <h1 className="ab-h">About</h1>
-        <p className="ab-sub">Position + Practice</p>
+        <p className="ab-sub">Alfred (Daniel) Dickson II · Position + Practice</p>
       </div>
 
       {/* Position */}

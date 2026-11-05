@@ -42,7 +42,6 @@ export default function Colophon() {
   return (
     <div className="co en">
       <div className="co-header en d1">
-        <div className="co-pre">Site</div>
         <h2 className="co-h">Colophon</h2>
         <p className="co-sub">Field of Action is the professional research notebook and digital garden of Alfred (Daniel) Dickson II. A space for individual exploration of systems thinking and Relational Design.</p>
         <p className="co-sub">How this was built. The tools, principles, and decisions behind the surface.</p>

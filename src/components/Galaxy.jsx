@@ -587,11 +587,10 @@ export default function Galaxy(){
         <div className="gx-about" role="dialog" aria-modal="true" aria-label="About the Galaxy Instrument" onClick={()=>setShowAbout(false)}>
           <div className="gx-about-card" onClick={e=>e.stopPropagation()}>
             <button className="gx-about-x" onClick={()=>setShowAbout(false)} aria-label="Close">×</button>
-            <div className="gx-about-eyebrow">About</div>
             <div className="gx-about-title">Galaxy Instrument</div>
             <p className="gx-about-body">{ABOUT}</p>
             <p className="gx-about-body gx-about-lineage">{LINEAGE}</p>
-            <div className="gx-about-eyebrow gx-about-eyebrow--sep">Works cited</div>
+            <div className="gx-about-sl">Works cited</div>
             <ul className="gx-about-src">
               {SOURCES.map((s,i)=>(
                 <li className="gx-about-item" key={i}>
@@ -635,9 +634,8 @@ export default function Galaxy(){
         .gx-about-card{position:relative;width:100%;max-width:520px;max-height:82vh;overflow-y:auto;background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:34px 34px 30px;box-shadow:0 30px 90px rgba(0,0,0,.55)}
         .gx-about-x{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--ff);font-size:22px;line-height:1;cursor:pointer;padding:2px 6px;font-family:var(--sans);transition:color .14s}
         .gx-about-x:hover{color:var(--fg)}
-        .gx-about-eyebrow{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ff)}
-        .gx-about-eyebrow--sep{margin-top:26px;padding-top:22px;border-top:1px solid var(--bd)}
-        .gx-about-title{font-family:var(--display);font-size:22px;font-weight:500;letter-spacing:-.01em;color:var(--fg);margin:9px 0 14px}
+        .gx-about-sl{font-size:13px;font-weight:500;color:var(--fg);margin-top:26px;padding-top:22px;border-top:1px solid var(--bd)}
+        .gx-about-title{font-family:var(--display);font-size:22px;font-weight:500;letter-spacing:-.01em;color:var(--fg);margin:0 0 14px}
         .gx-about-body{font-size:13px;line-height:1.7;color:var(--fm);margin:0}
         .gx-about-lineage{margin-top:14px}
         .gx-about-src{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:13px}
@@ -655,7 +653,7 @@ export default function Galaxy(){
         .gx-body::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px}
         .gx-group{padding:15px 0 4px;border-bottom:1px solid var(--bd)}
         .gx-group:last-child{border-bottom:none}
-        .gx-glabel{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ff);margin-bottom:12px}
+        .gx-glabel{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ff);margin-bottom:12px}
         .gx-ctrl{margin-bottom:14px}
         .gx-ctop{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
         .gx-cname{font-size:11.5px;color:var(--fm);letter-spacing:.02em}
@@ -700,7 +698,7 @@ export default function Galaxy(){
         .gx-seed:focus{outline:none;border-color:var(--fg)}
         .gx-swatches{display:flex;gap:14px}
         .gx-swatch{display:flex;flex-direction:column;gap:5px;align-items:center}
-        .gx-swatch label{font-size:9px;letter-spacing:.1em;color:var(--ff);text-transform:uppercase}
+        .gx-swatch label{font-size:10px;letter-spacing:.1em;color:var(--ff);text-transform:uppercase}
         .gx-color{-webkit-appearance:none;appearance:none;width:38px;height:26px;border:1px solid var(--bd);border-radius:3px;background:none;cursor:pointer;padding:0}
         .gx-color::-webkit-color-swatch-wrapper{padding:2px}
         .gx-color::-webkit-color-swatch{border:none;border-radius:2px}
@@ -720,7 +718,7 @@ export default function Galaxy(){
         .gx-seg button.on{background:var(--fg);color:var(--bg);box-shadow:inset 0 0 12px color-mix(in srgb,#000 14%,transparent)}
         .gx-ta{width:100%;background:var(--cbg);border:1px solid var(--bd);color:var(--fg);font-family:inherit;font-size:11px;line-height:1.5;padding:8px 9px;border-radius:3px;resize:vertical;min-height:46px;letter-spacing:.04em}
         .gx-ta:focus{outline:none;border-color:var(--fg)}
-        .gx-ta-lab{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--ff);margin-bottom:5px}
+        .gx-ta-lab{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ff);margin-bottom:5px}
         .gx-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;margin-bottom:12px}
         .gx-tog-name{font-size:11.5px;color:var(--fm)}
         .gx-tog-sw{width:38px;height:20px;border-radius:11px;background:var(--cbg);border:1px solid var(--bd);position:relative;transition:all .16s}
