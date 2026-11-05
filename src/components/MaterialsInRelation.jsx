@@ -143,7 +143,7 @@ export default function MaterialsInRelation() {
       {domain && <><MaterialWheel domain={domain} selected={study.selected[domain.id]} onSelect={value => selectMaterial(domain.id, value)} /><p className="mir-context">This material is selected in your study. Switch to Connections to see the composition, or add its specific form in the study record.</p></>}
 
       {view === 'connections' && <>
-        <div className="mir-view-title"><h3>Your composition</h3><span className="mir-kicker">Three registers · one situation</span></div>
+        <div className="mir-view-title"><h2>Your composition</h2><span className="mir-kicker">Three registers · one situation</span></div>
         <div className="mir-composition">
           {MATERIAL_DOMAINS.map(d => <div className="mir-domain" key={d.id}>
             <label htmlFor={`${id}-${d.id}`}>{d.name}</label>
@@ -154,7 +154,7 @@ export default function MaterialsInRelation() {
         </div>
         <svg className="mir-joins" viewBox="0 0 600 50" aria-hidden="true"><path d="M100 0V20H300V50M300 0V50M500 0V20H300" /></svg>
         <section className="mir-synthesis" aria-labelledby={`${id}-synthesis`}>
-          <div className="mir-view-title mir-synthesis-meta"><h3 id={`${id}-synthesis`}>Working synthesis</h3><span className="mir-kicker">Hypothesis · updates with your choices</span></div>
+          <div className="mir-view-title mir-synthesis-meta"><h2 id={`${id}-synthesis`}>Working synthesis</h2><span className="mir-kicker">Hypothesis · updates with your choices</span></div>
           <div className="mir-emergence">
             <h3>{synthesis.title}</h3>
             <p className="mir-synthesis-selection" role="status" aria-live="polite">{synthesis.pairing}</p>
@@ -192,7 +192,7 @@ export default function MaterialsInRelation() {
       </>}
 
       {view === 'record' && <div className="mir-record">
-        <div className="mir-view-title"><h3>Working study</h3><span className="mir-kicker">Frame → compose → try → observe → revise</span></div>
+        <div className="mir-view-title"><h2>Working study</h2><span className="mir-kicker">Frame → compose → try → observe → revise</span></div>
         <p className="mir-context">Begin with one situation and one change. The record can stay incomplete while the work is happening. An observation, refusal, or disagreement can change the next move.</p>
         <fieldset><legend>01 · Frame the situation</legend>
           {field('situation', 'What is happening, and where?')}

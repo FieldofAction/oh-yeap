@@ -711,6 +711,8 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 /* Section labels (legacy compat) */
 .cs-section-label{counter-increment:csSec;font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--fm);margin-bottom:20px;line-height:1.4}
 .cs-section-label::before{content:"§" counter(csSec,decimal-leading-zero) "  ";color:var(--ff)}
+.cs-section-label--plain{counter-increment:none}
+.cs-section-label--plain::before{content:none}
 
 /* Narrative sections */
 .cs-narrative{margin-bottom:20px;grid-column:1/2}
