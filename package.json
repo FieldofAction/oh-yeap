@@ -6,7 +6,7 @@
   "scripts": {
     "predev": "node scripts/experiments-build.mjs",
     "dev": "vite",
-    "prebuild": "node --test scripts/field-standard-test.mjs && node scripts/experiments-build.mjs",
+    "prebuild": "node --test scripts/field-standard-test.mjs scripts/text-rule-lib-test.mjs && node scripts/experiments-build.mjs",
     "build": "vite build",
     "build:studio": "BUILD_TARGET=studio vite build && mv dist/studio.html dist/index.html",
     "lint": "eslint .",
@@ -20,7 +20,9 @@
     "soulmega:test": "node scripts/soulmega-capture-test.mjs",
     "soulmega:lab": "node scripts/soulmega-capture-dev.mjs",
     "soulmega:release": "node scripts/soulmega-capture-release.mjs",
-    "soulmega:setup": "node scripts/soulmega-mailchimp-setup.mjs"
+    "soulmega:setup": "node scripts/soulmega-mailchimp-setup.mjs",
+    "text:test": "node scripts/text-rule-test.mjs",
+    "text:baseline": "node scripts/text-rule-test.mjs --update-baseline"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.78.0",
