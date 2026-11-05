@@ -30,3 +30,13 @@
  * whose headline keeps a main.css clamp set --eh there, next to the heading.) */
 .ix-main { --eh: var(--foa-type-feature); }   /* .ix-title */
 .ph-header { --eh: var(--foa-type-page); }    /* .ph-h */
+
+/* Where a paired headline drops under 36px the eyebrow can't keep 1:3.75
+ * without hitting the 10px floor, so it is dropped, not shrunk. Each width
+ * solves that wrapper's --eh for 36px (feature token: 22px + 1.5vw; case
+ * split: 4vw; spec: 4.5vw; pattern language: 5vw). Theory, Nest and Canon
+ * never fall under 36px. Delete this block to allow 10px eyebrows instead. */
+@media (max-width: 933px) { .ix-main > .eyebrow { display: none; } }
+@media (max-width: 899px) { .cs-split-text > .eyebrow, .cs-plate-text > .eyebrow { display: none; } }
+@media (max-width: 799px) { .sp-head-left > .eyebrow { display: none; } }
+@media (max-width: 719px) { .pa-header > .eyebrow { display: none; } }
