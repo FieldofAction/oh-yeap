@@ -824,7 +824,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         {/* ── Credits ── */}
         {cs.credits?.length > 0 && (
           <div ref={observe} className="cs-credits cs-sr cs-sr--rise">
-            <div className="cs-section-label">Credits</div>
+            <div className="cs-section-label cs-section-label--plain">Credits</div>
             <div className="cs-credits-grid">
               {cs.credits.map((c, i) => (
                 <div key={i} className="cs-credit">
@@ -843,7 +843,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         <div ref={observe} className="cs-footer cs-sr cs-sr--rise">
           {item.deliverables?.length > 0 && (
             <div className="cs-deliv">
-              <div className="cs-section-label">Deliverables</div>
+              <div className="cs-section-label cs-section-label--plain">Deliverables</div>
               <div className="cs-deliv-list">
                 {item.deliverables.map(d => <span key={d} className="prow-tag">{d}</span>)}
               </div>

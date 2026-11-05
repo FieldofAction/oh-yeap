@@ -143,7 +143,7 @@ export default function MaterialsInRelation() {
       {domain && <><MaterialWheel domain={domain} selected={study.selected[domain.id]} onSelect={value => selectMaterial(domain.id, value)} /><p className="mir-context">This material is selected in your study. Switch to Connections to see the composition, or add its specific form in the study record.</p></>}
 
       {view === 'connections' && <>
-        <div className="mir-view-title"><h3>Your composition</h3><span className="mir-kicker">Three registers · one situation</span></div>
+        <div className="mir-view-title"><h2>Your composition</h2><span className="mir-kicker">Three registers · one situation</span></div>
         <div className="mir-composition">
           {MATERIAL_DOMAINS.map(d => <div className="mir-domain" key={d.id}>
             <label htmlFor={`${id}-${d.id}`}>{d.name}</label>
@@ -154,10 +154,10 @@ export default function MaterialsInRelation() {
         </div>
         <svg className="mir-joins" viewBox="0 0 600 50" aria-hidden="true"><path d="M100 0V20H300V50M300 0V50M500 0V20H300" /></svg>
         <section className="mir-synthesis" aria-labelledby={`${id}-synthesis`}>
-          <div className="mir-synthesis-meta"><span className="mir-kicker">Working synthesis</span><span className="mir-kicker">Hypothesis · updates with your choices</span></div>
-          <p className="mir-synthesis-selection" role="status" aria-live="polite">{synthesis.pairing}</p>
+          <div className="mir-view-title mir-synthesis-meta"><h2 id={`${id}-synthesis`}>Working synthesis</h2><span className="mir-kicker">Hypothesis · updates with your choices</span></div>
           <div className="mir-emergence">
-            <h3 id={`${id}-synthesis`}>{synthesis.title}</h3>
+            <h3>{synthesis.title}</h3>
+            <p className="mir-synthesis-selection" role="status" aria-live="polite">{synthesis.pairing}</p>
             <p>{synthesis.summary}</p>
             <p>{synthesis.emergence}</p>
           </div>
@@ -167,7 +167,7 @@ export default function MaterialsInRelation() {
             <div><h4>Where it may pull apart</h4><p>{synthesis.tension}</p><details><summary>Material limits</summary><p>{synthesis.materialLimits}</p></details></div>
             <div><h4>A small experiment</h4><p>{synthesis.trial}</p><p><strong>Notice:</strong> {synthesis.observe}</p></div>
           </div>
-          {study.intention && <div className="mir-synthesis-intent"><span className="mir-kicker">Read this against your intention</span><p>{study.intention}</p></div>}
+          {study.intention && <div className="mir-synthesis-intent"><p><strong>Against your intention:</strong> {study.intention}</p></div>}
           <p className="mir-context">This reading starts from the selected material properties. Your situation, participants, and observations can change it.</p>
           <button type="button" className="mir-button" disabled={synthesisKept} onClick={() => save({ ...study, synthesisNote }, 'Synthesis saved with your study. Your own reading is unchanged.')}>{synthesisKept ? 'Synthesis saved' : study.synthesisNote ? 'Replace saved synthesis' : 'Keep this synthesis'}</button>
           <p className="mir-context">Keeps a copy in your study and export. Changing materials updates this view; your saved copy changes only when you replace it.</p>
@@ -192,7 +192,7 @@ export default function MaterialsInRelation() {
       </>}
 
       {view === 'record' && <div className="mir-record">
-        <div className="mir-view-title"><h3>Working study</h3><span className="mir-kicker">Frame → compose → try → observe → revise</span></div>
+        <div className="mir-view-title"><h2>Working study</h2><span className="mir-kicker">Frame → compose → try → observe → revise</span></div>
         <p className="mir-context">Begin with one situation and one change. The record can stay incomplete while the work is happening. An observation, refusal, or disagreement can change the next move.</p>
         <fieldset><legend>01 · Frame the situation</legend>
           {field('situation', 'What is happening, and where?')}

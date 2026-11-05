@@ -65,18 +65,18 @@ a.x-kicker:hover{color:var(--fg)}
 /* ── Masthead ── */
 .x-head{border-top:1px solid var(--fg); margin-top:20px; padding-top:20px}
 .x-meta{
-  display:flex; gap:8px 18px; flex-wrap:wrap; align-items:baseline;
+  display:flex; gap:8px 18px; flex-wrap:wrap; align-items:baseline; margin-top:14px;
   font-family:var(--mono); font-size:11px; letter-spacing:.02em; color:var(--fm);
 }
 .x-meta .x-id{color:var(--fg)}
 .x-title{
   font-family:var(--display); font-weight:500;
   font-size:clamp(34px,6.4vw,62px); line-height:1.02; letter-spacing:-.03em;
-  margin:clamp(18px,3vw,28px) 0 0; text-wrap:balance; max-width:18ch;
+  margin:0; text-wrap:balance; max-width:18ch;
 }
 .x-deck{
   font-size:clamp(17px,2.2vw,21px); font-weight:300; line-height:1.45;
-  letter-spacing:-.01em; color:var(--fm); margin:clamp(16px,2.4vw,22px) 0 0; max-width:46ch;
+  letter-spacing:-.01em; color:var(--fm); margin:clamp(14px,2vw,20px) 0 0; max-width:46ch;
 }
 
 /* ── Key/value strip ── */
@@ -282,13 +282,13 @@ ${entry.related.map((id) => {
   const bodyHtml = `<main class="x-shell">
 ${topBar('entry')}
   <header class="x-head">
+    <h1 class="x-title">${escapeHtml(entry.title)}</h1>
     <div class="x-meta">
       <span class="x-id">${escapeHtml(entry.id)}</span>
       <span>v${escapeHtml(entry.version)}</span>
       <span>${escapeHtml(humanDate(entry.experimentDate))}</span>
       ${entry.status === 'draft' ? '<span class="x-chip" data-draft>draft</span>' : ''}
     </div>
-    <h1 class="x-title">${escapeHtml(entry.title)}</h1>
     <p class="x-deck">${escapeHtml(entry.summary)}</p>
     <dl class="x-facts">
 ${facts.map(([label, value]) => `      <div class="x-fact"><dt>${escapeHtml(label)}</dt><dd>${value}</dd></div>`).join('\n')}
@@ -355,11 +355,11 @@ ${rows}
   const bodyHtml = `<main class="x-shell">
 ${topBar('index')}
   <header class="x-head">
+    <h1 class="x-title">${escapeHtml(SECTION_TITLE)}</h1>
     <div class="x-meta">
       <span class="x-id">FOA Material Experiment Abstracts</span>
       <span>${published.length} published</span>
     </div>
-    <h1 class="x-title">${escapeHtml(SECTION_TITLE)}</h1>
     <p class="x-deck">${escapeHtml(SECTION_DECK)}</p>
   </header>
 ${listing}
