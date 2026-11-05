@@ -40,7 +40,7 @@
   .head-top{display:flex;align-items:center;gap:14px;padding:22px 0 0;}
   .globe{flex:0 0 auto;width:38px;height:38px;}
   .globe svg{width:100%;height:100%;stroke:var(--ink);fill:none;stroke-width:1.4;}
-  .eyebrow{font-size:12px;letter-spacing:.06em;line-height:var(--lh-text);font-weight:500;}
+  .deck{margin-top:18px;font-size:12px;letter-spacing:.06em;line-height:var(--lh-text);font-weight:500;}
   .masthead{margin-top:14px;font-size:clamp(64px,19vw,150px);line-height:.88;
     letter-spacing:.01em;text-transform:uppercase;}
   .working-copy b{color:var(--ink);font-weight:500;}
@@ -70,7 +70,7 @@
   .brand{display:flex;align-items:center;gap:10px;}
   .brand svg{width:20px;height:20px;stroke:var(--ink);fill:none;stroke-width:1.6;flex:0 0 auto;}
   .wordmark{font-family:'Libre Franklin',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;}
-  .statuschip{font-family:'IBM Plex Mono',monospace;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-60);white-space:nowrap;}
+  .statuschip{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-60);white-space:nowrap;}
   .statuschip .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--signal);margin-right:7px;vertical-align:1px;}
   .foa-back{display:inline-flex;align-items:center;gap:5px;flex:0 0 auto;text-decoration:none;
     font-family:'Libre Franklin',sans-serif;font-weight:600;font-size:11px;letter-spacing:.09em;
@@ -170,8 +170,8 @@
     transition:background .2s;}
   .scard:hover{background:var(--paper-2);}
   .scard:focus-visible{outline:2px solid var(--signal);outline-offset:-2px;}
-  .scard .snum{font-size:10px;font-weight:600;letter-spacing:.09em;color:var(--ink-60);}
-  .scard .sname{margin-top:2px;font-family:'Libre Franklin',sans-serif;font-weight:700;
+  .scard .snum{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.09em;color:var(--ink-60);margin-right:8px;}
+  .scard .sname{margin-top:0;font-family:'Libre Franklin',sans-serif;font-weight:700;
     font-size:14.5px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .scard .sflag{margin-top:10px;}
   .snav{width:46px;height:46px;border:1px solid var(--rule-strong);border-radius:50%;
@@ -210,7 +210,7 @@
     color:var(--ink);flex:0 0 auto;}
   .arow .ad{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-60);
     flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .arow .as{font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-40);flex:0 0 auto;}
+  .arow .as{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-40);flex:0 0 auto;}
   .arow .as.alive{color:var(--signal);}
   .arow:focus-visible{outline:2px solid var(--signal);outline-offset:-2px;}
 
@@ -258,7 +258,7 @@
   .fdot.hollow{background:var(--paper);border:2px solid var(--accent);width:11px;height:11px;}
 
   .xrow{display:grid;grid-template-columns:110px 1fr;gap:12px;padding:11px 0;border-bottom:1px solid var(--rule);font-size:12px;line-height:var(--lh-text);}
-  .xrow .xk{font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-40);padding-top:3px;}
+  .xrow .xk{font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-40);padding-top:3px;}
   .xrow:last-child{border-bottom:none;}
   .crow:last-child{border-bottom:none;}
   .mrow:last-child{border-bottom:none;}
@@ -289,10 +289,10 @@
   /* road to the final, as a hero: four ways to be free, one story */
   .road-hero{background:var(--paper-2);
     padding:clamp(24px,5vw,44px) clamp(18px,4vw,32px);margin:2px 0 10px;}
-  .rh-eyebrow{display:flex;justify-content:space-between;gap:12px;font-size:10.5px;font-weight:600;
+  .rh-state{margin-top:14px;display:flex;justify-content:space-between;gap:12px;font-size:10.5px;font-weight:600;
     letter-spacing:.14em;text-transform:uppercase;color:var(--ink-40);
     border-bottom:1px solid var(--rule);padding-bottom:13px;}
-  .rh-head{margin-top:22px;font-size:clamp(36px,10vw,74px);line-height:.94;text-transform:uppercase;letter-spacing:.01em;}
+  .rh-head{margin-top:0;font-size:clamp(36px,10vw,74px);line-height:.94;text-transform:uppercase;letter-spacing:.01em;}
   .rh-lede{margin-top:16px;font-family:'Libre Franklin',sans-serif;font-weight:500;
     font-size:clamp(14px,3.4vw,18px);line-height:1.5;color:var(--ink);max-width:42ch;}
   .rh-four{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);
@@ -364,7 +364,7 @@
     .face .face-rule{background:var(--rule-strong);}
     .face .fb.r{text-align:right;}
     .face .fb.r .f-fam{justify-content:flex-end;}}
-  .face .f-fam{font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-40);}
+  .face .f-fam{margin-top:6px;font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-40);}
   .face .f-decl{margin-top:8px;font-family:'Libre Franklin',sans-serif;font-weight:600;
     font-size:clamp(16px,4.4vw,20px);line-height:1.35;}
   .face .f-mot{margin-top:9px;font-size:11.5px;line-height:var(--lh-text);color:var(--ink-60);}
@@ -403,10 +403,11 @@
   .const-eyebrow{display:flex;justify-content:space-between;align-items:baseline;
     border-bottom:1px solid var(--rule-strong);padding-bottom:8px;
     font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;}
-  .name-row{display:flex;align-items:center;gap:16px;margin-top:16px;flex-wrap:wrap;}
+  .name-row{display:flex;align-items:center;gap:16px;margin-top:0;flex-wrap:wrap;}
+  .c-decl-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;}
   .flagchip svg{display:block;}
   .crow{display:grid;grid-template-columns:108px 1fr;gap:18px;padding:22px 0;border-bottom:1px solid var(--rule);}
-  .crow .ck{font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink);
+  .crow .ck{font-size:10.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink);
     border-right:1px solid var(--rule);padding-right:14px;}
   .crow .ck .cn{display:block;font-family:'Anton',sans-serif;font-weight:400;font-size:42px;line-height:.95;
     color:rgba(20,20,20,.12);letter-spacing:.02em;margin-bottom:6px;}
@@ -637,14 +638,14 @@ function lineageSVG(tm,famId,idSuffix){
   let s='';
   for(let yr=1950;yr<=2030;yr+=10){
     s+=`<line x1="${X(yr).toFixed(1)}" y1="${top-16}" x2="${X(yr).toFixed(1)}" y2="${H-22}" stroke="rgba(20,20,20,.08)" stroke-width="1"/>`;
-    s+=`<text x="${X(yr).toFixed(1)}" y="${H-6}" font-family="IBM Plex Mono,monospace" font-size="8.5" letter-spacing="1" fill="rgba(20,20,20,.35)" text-anchor="middle">${yr}</text>`;
+    s+=`<text x="${X(yr).toFixed(1)}" y="${H-6}" font-family="IBM Plex Mono,monospace" font-size="11" letter-spacing="1" fill="rgba(20,20,20,.35)" text-anchor="middle">${yr}</text>`;
   }
   spans.forEach((sp,i)=>{
     const[name,a,b]=sp;
     const y=top+i*laneH+14;                       /* bar top */
     const yc=y+3;                                  /* bar center */
     const last=i===spans.length-1;
-    s+=`<text x="${X(a).toFixed(1)}" y="${y-8}" font-family="IBM Plex Mono,monospace" font-size="11" font-weight="600" fill="#141414">${name}<tspan dx="9" font-weight="400" font-size="8.5" fill="rgba(20,20,20,.42)">${a}–${String(b).slice(2)}</tspan></text>`;
+    s+=`<text x="${X(a).toFixed(1)}" y="${y-8}" font-family="IBM Plex Mono,monospace" font-size="11" font-weight="600" fill="#141414">${name}<tspan dx="9" font-weight="400" font-size="11" fill="rgba(20,20,20,.42)">${a}–${String(b).slice(2)}</tspan></text>`;
     s+=`<rect x="${X(a).toFixed(1)}" y="${y}" width="${(X(b)-X(a)).toFixed(1)}" height="6" rx="3" fill="${last?tm.accent:'rgba(20,20,20,.82)'}"/>`;
     if(last){
       s+=`<circle cx="${(X(b)+14).toFixed(1)}" cy="${yc}" r="6.5" fill="none" stroke="${tm.accent}" stroke-width="2"/>`;
@@ -1842,11 +1843,11 @@ if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
 const HERO=`<div class="hero">
   <div class="head-top">
     <div class="globe"><svg viewBox="0 0 34 34"><circle cx="17" cy="17" r="14"/><ellipse cx="17" cy="17" rx="6.5" ry="14"/><line x1="3" y1="17" x2="31" y2="17"/><line x1="5" y1="10" x2="29" y2="10"/><line x1="5" y1="24" x2="29" y2="24"/></svg></div>
-    <div class="eyebrow">How Cultures Pursue<br>Independence Through Movement</div>
   </div>
   <div class="hero-sun">${heroBall(TEAMS.bra.palette)}</div>
   <div class="hero-body">
     <h1 class="masthead anton">World<br>Cup<br>Atlas</h1>
+    <div class="deck">How Cultures Pursue<br>Independence Through Movement</div>
   </div>
 </div>`;
 function chev(dir,size){
@@ -1901,8 +1902,7 @@ function viewDeclarations(){
       <div class="strip-scroll" id="strip">${ORDER.map((id,i)=>{
         const tm=TEAMS[id];
         return `<button class="scard" data-id="${id}">
-          <div class="snum">${String(i+1).padStart(2,'0')}</div>
-          <div class="sname">${tm.name}</div>
+          <div class="sname"><span class="snum">${String(i+1).padStart(2,'0')}</span>${tm.name}</div>
           <div class="sflag"><svg viewBox="0 0 100 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${tm.name} flag">${flagSVG(tm.id,1,1,98,62)}</svg></div>
         </button>`;}).join('')}
       </div>
@@ -1967,14 +1967,13 @@ function viewCountry(id){
       <select class="pgsel" id="pgSel" aria-label="Jump to nation">${selOpts}</select>
       <button class="pgbtn" id="pgNext" aria-label="Next nation">${chev('r')}</button>
     </div>
-    <div class="const-eyebrow" style="margin-top:16px"><span>Constitution ${nn}</span><span class="status-tag${alive(tm)?' alive':''}" style="border:none;padding:0">${STATUS_LABEL[tm.status]}</span></div>
-    <div class="const-head">
+    <div class="const-head" style="margin-top:16px">
       <div class="head-left">
         <div class="name-row">
           <h2 class="c-name anton" style="margin-top:0">${tm.name}</h2>
           <span class="flag-plate" id="flagPlate"><svg viewBox="0 0 72 48" style="width:100%;height:100%;display:block">${flagSVG(tm.id,1,1,70,46)}</svg></span>
         </div>
-        <div class="c-decl">Independence through ${tm.decl}.</div>
+        <div class="c-decl-row"><div class="c-decl">Independence through ${tm.decl}.</div><span class="status-tag${alive(tm)?' alive':''}" style="border:none;padding:0">${STATUS_LABEL[tm.status]}</span></div>
       </div>
       <div class="c-glyph head-glyph" id="headGlyph">${glyphArt(tm,'d')}</div>
     </div>
@@ -2128,8 +2127,8 @@ function roadHero(g,third){
       ?`${A.name}'s ${A.decl}, ${B.name}'s ${B.decl}: two opposite answers to how a people stays free, and the market can't separate them. Today one of them takes the last word.`
       :`${WORD} nations remain, each a different expression of sovereignty and ways cultures carry on.`;
   return `<section class="road-hero${isFinal?' rh-final':''}${decided?' rh-done':''}">
-    <div class="rh-eyebrow"><span>${eyeL}</span><span>${eyeR}</span></div>
     <h2 class="rh-head anton">${head}</h2>
+    <div class="rh-state"><span>${eyeL}</span><span>${eyeR}</span></div>
     <p class="rh-lede">${lede}</p>
     <div class="rh-four${n===2?' rh-two':''}">${cards}</div>
     <div class="rh-path"><span class="rh-node${isFinal?'':' on'}">The Four</span><span class="rh-line"></span><span class="rh-node${isFinal?' on':''}">The Final</span><span class="rh-line"></span><span class="rh-node champ">${decided?champ.name:'The Champion'}</span></div>
@@ -2234,7 +2233,6 @@ function viewMatch(m){
     :(m.prob?`WIN PROBABILITY · ${a.name.toUpperCase()} ${m.prob[0]}% / DRAW ${m.prob[1]}% / ${b.name.toUpperCase()} ${m.prob[2]}%${m.note?' · '+m.note:''}`:(m.note||''));
   viewEl.innerHTML=`
     <div class="backbar"><button class="back" id="back">${chev('l',14)} Matches</button></div>
-    <div class="section-title">A choreography of approaches to independence</div>
     <div class="vs-a anton" style="color:${a.accent}">${a.name}
       <span class="vs-flag"><svg width="46" height="31" viewBox="0 0 46 31">${flagSVG(a.id,1,1,44,29)}</svg></span>
     </div>
@@ -2248,18 +2246,19 @@ function viewMatch(m){
       ${b.name}
     </div>
     <div class="duel-score" style="margin-top:16px">${score}</div>
+    <div class="deck" style="margin-top:14px">A choreography of approaches to independence</div>
     <div class="dsec"><div class="dsec-title" style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span>Motion study · two grammars, one page</span>${tempoBtn()}</div>
       <div class="motion-slot"></div></div>
     <div class="dsec" style="border-top:none;padding-top:0"><div class="face" style="margin-top:6px">
       <div class="fb">
-        <div class="f-fam">${FAM_LABEL[a.fam]}</div>
         <div class="f-decl" style="color:${a.accent}">Independence through ${a.decl}.</div>
+        <div class="f-fam">${FAM_LABEL[a.fam]}</div>
         <div class="f-mot">${a.motion}</div>
       </div>
       <div class="face-rule"></div>
       <div class="fb r">
-        <div class="f-fam">${FAM_LABEL[b.fam]}</div>
         <div class="f-decl" style="color:${b.accent}">Independence through ${b.decl}.</div>
+        <div class="f-fam">${FAM_LABEL[b.fam]}</div>
         <div class="f-mot">${b.motion}</div>
       </div>
     </div></div>

@@ -653,7 +653,7 @@ export default function Galaxy(){
         .gx-body::-webkit-scrollbar-thumb{background:var(--bd);border-radius:4px}
         .gx-group{padding:15px 0 4px;border-bottom:1px solid var(--bd)}
         .gx-group:last-child{border-bottom:none}
-        .gx-glabel{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ff);margin-bottom:12px}
+        .gx-glabel{font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ff);margin-bottom:12px}
         .gx-ctrl{margin-bottom:14px}
         .gx-ctop{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
         .gx-cname{font-size:11.5px;color:var(--fm);letter-spacing:.02em}
@@ -698,7 +698,7 @@ export default function Galaxy(){
         .gx-seed:focus{outline:none;border-color:var(--fg)}
         .gx-swatches{display:flex;gap:14px}
         .gx-swatch{display:flex;flex-direction:column;gap:5px;align-items:center}
-        .gx-swatch label{font-size:9px;letter-spacing:.1em;color:var(--ff);text-transform:uppercase}
+        .gx-swatch label{font-size:10px;letter-spacing:.1em;color:var(--ff);text-transform:uppercase}
         .gx-color{-webkit-appearance:none;appearance:none;width:38px;height:26px;border:1px solid var(--bd);border-radius:3px;background:none;cursor:pointer;padding:0}
         .gx-color::-webkit-color-swatch-wrapper{padding:2px}
         .gx-color::-webkit-color-swatch{border:none;border-radius:2px}
@@ -718,7 +718,7 @@ export default function Galaxy(){
         .gx-seg button.on{background:var(--fg);color:var(--bg);box-shadow:inset 0 0 12px color-mix(in srgb,#000 14%,transparent)}
         .gx-ta{width:100%;background:var(--cbg);border:1px solid var(--bd);color:var(--fg);font-family:inherit;font-size:11px;line-height:1.5;padding:8px 9px;border-radius:3px;resize:vertical;min-height:46px;letter-spacing:.04em}
         .gx-ta:focus{outline:none;border-color:var(--fg)}
-        .gx-ta-lab{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--ff);margin-bottom:5px}
+        .gx-ta-lab{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--ff);margin-bottom:5px}
         .gx-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;margin-bottom:12px}
         .gx-tog-name{font-size:11.5px;color:var(--fm)}
         .gx-tog-sw{width:38px;height:20px;border-radius:11px;background:var(--cbg);border:1px solid var(--bd);position:relative;transition:all .16s}
