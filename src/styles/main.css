@@ -1995,7 +1995,8 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 .ph{max-width:720px;margin:0 auto;padding:100px 32px 80px;counter-reset:phSec}
 .ph-header{margin-bottom:56px}
 .ph-h{font-family:var(--display);font-size:clamp(36px,6vw,56px);font-weight:600;letter-spacing:-0.02em;line-height:1.08;margin-bottom:8px}
-.ph-h-row{display:flex;align-items:baseline;gap:24px;margin-bottom:8px}
+.ph-h-row{display:flex;align-items:baseline;gap:24px;margin-bottom:8px;margin-top:calc(var(--foa-type-page) * -.325)}
+@media(max-width:600px){.ph-h-row{margin-top:calc(var(--foa-type-page) * -.56)}}
 .ph-h-row .ph-h{margin-bottom:0}
 .ph-h-glyph{flex:none;width:clamp(60px,8vw,84px);aspect-ratio:1;display:block;transform:translateY(20.5%);background-color:var(--fm);-webkit-mask:url(/images/foa/foa_relational_design_glyph.svg) center/contain no-repeat;mask:url(/images/foa/foa_relational_design_glyph.svg) center/contain no-repeat}
 .ph-sub{font-family:var(--display);font-size:clamp(18px,2.5vw,24px);font-weight:400;color:var(--fm);line-height:1.3}
