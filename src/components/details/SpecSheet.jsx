@@ -53,7 +53,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
 
   return (
     <div ref={overlayRef} data-lenis-prevent className={`sp-overlay ${closing ? "closing" : ""}${item.spec?.specimen ? " sp-specimen" : ""}`}>
-      <button className="rd-back" onClick={onClose}>&larr; Back</button>
+      <button className="rd-back" onClick={onClose}>Back</button>
       <div className="sp-inner">
         <HiddenStrip item={item} />
         {item.spec?.specimen && (
@@ -61,7 +61,6 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         )}
         <div className="sp-head dc dc1">
           <div className="sp-head-left">
-            <div className="eyebrow">{typeLabel}</div>
             <h1 className="sp-title">{item.title}</h1>
             <div className="sp-desc">{item.desc}</div>
           </div>
@@ -289,7 +288,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
               const linked = allItems.find(a => a.title === s.title);
               return (
                 <div key={i} className="sp-source-item" onClick={() => { if(linked && (linked.body || linked.caseStudy || linked.sketch || linked.spec)){onOpen(linked)} }}>
-                  <div className="sp-source-title">{s.title} &rarr;</div>
+                  <div className="sp-source-title">{s.title}</div>
                   <div className="sp-source-why">{s.why}</div>
                 </div>
               );
@@ -300,7 +299,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
         <AlexanderChipsDetail itemTitle={item.title} active={patternLens} />
         <div className="rd-tags dc dc8">
           {item.tags?.map(t => <span key={t} className="card-tg">{t}</span>)}
-          {item.relations?.map(r => <span key={r} className="card-tg rel">&rarr; {r}</span>)}
+          {item.relations?.map(r => <span key={r} className="card-tg rel">{r}</span>)}
         </div>
       </div>
     </div>

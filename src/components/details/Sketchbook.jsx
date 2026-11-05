@@ -13,7 +13,7 @@ export default function SketchbookDetail({ item, allItems, closing, onClose, onO
 
   return (
     <div ref={overlayRef} data-lenis-prevent className={`sk-overlay ${closing ? "closing" : ""}`}>
-      <button className="rd-back" onClick={onClose}>← Back</button>
+      <button className="rd-back" onClick={onClose}>Back</button>
       <div className="sk-inner">
         <HiddenStrip item={item} />
         <h1 className="sk-title dc dc1">{item.title}</h1>

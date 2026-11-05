@@ -1,4 +1,3 @@
-import { eyebrowWord } from "../../lib/eyebrow";
 import React, { useMemo, useCallback, useRef, useEffect, useState } from "react";
 import { VIS } from "../../data/seed";
 import { HiddenStrip } from "../HiddenIndicators";
@@ -439,7 +438,6 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         return (
           <div key={key} ref={observe} className={`cs-block cs-block--split${block.align === "right" ? " cs-block--split-reversed" : ""} cs-sr cs-sr--rise`}>
             <div className={`cs-split-text${block.tone === "light" ? " cs-split-text--light" : ""}`}>
-              {eyebrowWord(block.subtitle) && <div className="eyebrow">{block.subtitle}</div>}
               {block.heading && <h2 className="cs-split-heading">{block.heading}</h2>}
               {block.body && <div className="cs-split-body">{block.body.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>}
             </div>
@@ -586,7 +584,6 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
           return (
             <div key={key} ref={observe} className={`cs-block cs-block--plate-split${block.align === "right" ? " cs-block--plate-split-rev" : ""} cs-sr cs-sr--rise`}>
               <div className="cs-plate-text">
-                {eyebrowWord(block.label) && <div className="eyebrow">{block.label}</div>}
                 {block.heading && <h2 className="cs-split-heading">{block.heading}</h2>}
                 {block.body && <div className="cs-split-body">{block.body.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>}
               </div>
@@ -614,7 +611,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
                 <figure key={i} className="cs-plate-item">
                   <div className="cs-plate-figure"><img src={it.src} alt={it.alt || ""} loading="lazy" /></div>
                   <figcaption>
-                    {it.label && <span className="cs-plate-eyebrow">{it.label}</span>}
+                    {it.label && <span className="cs-plate-label">{it.label}</span>}
                     {it.line && <span className="cs-plate-line">{it.line}</span>}
                   </figcaption>
                 </figure>
@@ -705,7 +702,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
 
   return (
     <div ref={overlayRef} data-lenis-prevent className={`cs-overlay ${closing ? "closing" : ""}`}>
-      <button className="rd-back" onClick={onClose}>&larr; Back</button>
+      <button className="rd-back" onClick={onClose}>Back</button>
       <div className="cs-inner">
         <HiddenStrip item={item} />
 
@@ -851,7 +848,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
           )}
           <div className="cs-tags">
             {item.tags?.map(t => <span key={t} className="card-tg">{t}</span>)}
-            {item.relations?.map(r => <span key={r} className="card-tg rel" style={{ cursor: "pointer" }}>&rarr; {r}</span>)}
+            {item.relations?.map(r => <span key={r} className="card-tg rel" style={{ cursor: "pointer" }}>{r}</span>)}
           </div>
         </div>
 

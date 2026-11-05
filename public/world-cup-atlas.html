@@ -400,7 +400,7 @@
     line-height:1.35;color:var(--ink);text-transform:none;max-width:24ch;margin-bottom:26px;}
 
   /* constitution spread */
-  .const-eyebrow{display:flex;justify-content:space-between;align-items:baseline;
+  .glyph-label{display:flex;justify-content:space-between;align-items:baseline;
     border-bottom:1px solid var(--rule-strong);padding-bottom:8px;
     font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;}
   .name-row{display:flex;align-items:center;gap:16px;margin-top:0;flex-wrap:wrap;}
@@ -876,7 +876,7 @@ function marketHTML(){
   const label=POLY.live?'live':'as of '+POLY.asOf;
   return `<div class="dsec"><div class="dsec-title">The market · to win the tournament</div>
     <div id="polyRows">${polyRowsHTML()}</div>
-    <div class="mkt-att">Polymarket · World Cup Winner · <span id="polyLabel">${label}</span> · <a href="${POLY.url}" target="_blank" rel="noopener">view market ↗</a></div>
+    <div class="mkt-att">Polymarket · World Cup Winner · <span id="polyLabel">${label}</span> · <a href="${POLY.url}" target="_blank" rel="noopener">view market</a></div>
   </div>`;
 }
 
@@ -902,7 +902,7 @@ function marketFixture(a,b,fx){
   const label=fx.live?'live':'as of July 8, 2026';
   return `<div class="dsec"><div class="dsec-title">The market · this fixture</div>
     <div id="fixRows">${fixRows(a,b,fx.snap,fx.live)}</div>
-    <div class="mkt-att">Polymarket · Match winner, regulation · <span id="fixLabel">${label}</span> · <a href="https://polymarket.com/sports/world-cup/${fx.slug}" target="_blank" rel="noopener">view market ↗</a></div>
+    <div class="mkt-att">Polymarket · Match winner, regulation · <span id="fixLabel">${label}</span> · <a href="https://polymarket.com/sports/world-cup/${fx.slug}" target="_blank" rel="noopener">view market</a></div>
   </div>`;
 }
 async function refreshFixture(a,b,fx){
@@ -943,7 +943,7 @@ function marketPair(a,b){
     </div>`;
   return `<div class="dsec"><div class="dsec-title">The market · to win the tournament</div>
     ${row(a,pa)}${row(b,pb)}
-    <div class="mkt-att">Polymarket · World Cup Winner · ${POLY.live?'live':'as of '+POLY.asOf} · <a href="${POLY.url}" target="_blank" rel="noopener">view market ↗</a></div>
+    <div class="mkt-att">Polymarket · World Cup Winner · ${POLY.live?'live':'as of '+POLY.asOf} · <a href="${POLY.url}" target="_blank" rel="noopener">view market</a></div>
   </div>`;
 }
 async function refreshPoly(){
@@ -1996,7 +1996,7 @@ function viewCountry(id){
     </div>
 
     ${ART[tm.id]?`<div class="dsec glyph-panel">
-      <div class="const-eyebrow"><span>Glyph ${nn}</span><span>${tm.name}</span></div>
+      <div class="glyph-label"><span>Glyph ${nn}</span><span>${tm.name}</span></div>
       <div class="g-art">${glyphArt(tm,'p')}</div>
     </div>`:''}
     <div class="dsec">

@@ -84,7 +84,6 @@ export default function PatternLanguage({ content, onOpen, fg }) {
     <div className="pa en">
       {/* Header */}
       <div className="pa-header en d1">
-        <div className="eyebrow">Reference</div>
         <h1 className="pa-h">Pattern Language</h1>
         <p className="pa-sub">
           A numbered index of {totalPatterns} architectural patterns from
@@ -222,7 +221,7 @@ export default function PatternLanguage({ content, onOpen, fg }) {
                                       className={`pa-model-ref${seedItem ? " active" : ""}`}
                                       onClick={(e) => { e.stopPropagation(); if (seedItem) onOpen?.(seedItem); }}
                                     >
-                                      {title}{seedItem && <span className="pa-model-ref-arrow">&rarr;</span>}
+                                      {title}
                                     </span>
                                   );
                                 })}

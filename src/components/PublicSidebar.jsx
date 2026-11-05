@@ -88,7 +88,6 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter, hid
         </button>
         <div className="sb-brand" onClick={() => { navigateTo("public"); setFilter("All"); setMobileOpen(false); window.scrollTo(0, 0); }}>
           <span className="sb-brand-logo" role="img" aria-label="Field of Action" />
-          <span className="sb-brand-tagline">Professional research notebook<br />of Alfred (Daniel) Dickson II</span>
         </div>
       </div>
 
@@ -155,7 +154,7 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter, hid
                     className="sb-link sb-external"
                     style={{ paddingLeft: 20 }}
                   >
-                    {item.label} <span className="sb-ext-arrow">↗</span>
+                    {item.label}
                   </a>
                 );
               }

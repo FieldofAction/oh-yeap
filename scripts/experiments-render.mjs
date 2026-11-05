@@ -55,12 +55,9 @@ a{color:inherit; text-decoration:none}
   display:flex; align-items:baseline; justify-content:space-between; gap:16px;
   flex-wrap:wrap; padding:24px 0 0;
 }
-.x-kicker{
-  font-family:var(--sans); font-size:9px; font-weight:500; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--ff);
-}
-a.x-kicker{transition:color .2s}
-a.x-kicker:hover{color:var(--fg)}
+.x-nav{font-family:var(--sans); font-size:12px; color:var(--fm)}
+a.x-nav{text-decoration:underline; text-underline-offset:4px; transition:color .2s}
+a.x-nav:hover{color:var(--fg)}
 
 /* ── Masthead ── */
 .x-head{border-top:1px solid var(--fg); margin-top:20px; padding-top:20px}
@@ -217,13 +214,13 @@ ${bodyHtml}
 }
 
 const topBar = (here) => `  <nav class="x-bar">
-    <a class="x-kicker" href="/">Field of Action</a>
-    ${here === 'index' ? '<span class="x-kicker">Experiments</span>' : `<a class="x-kicker" href="${SECTION_BASE}">All experiments</a>`}
+    <a class="x-nav" href="/">Field of Action</a>
+    ${here === 'index' ? '<span class="x-nav">Experiments</span>' : `<a class="x-nav" href="${SECTION_BASE}">All experiments</a>`}
   </nav>`;
 
 const footer = (right) => `  <footer class="x-foot">
-    <a class="x-kicker" href="${SECTION_BASE}">← Experiments index</a>
-    <span class="x-kicker">${right}</span>
+    <a class="x-nav" href="${SECTION_BASE}">Experiments index</a>
+    <span class="x-nav">${right}</span>
   </footer>`;
 
 const tagList = (tags) =>
@@ -364,8 +361,7 @@ ${topBar('index')}
   </header>
 ${listing}
   <footer class="x-foot">
-    <a class="x-kicker" href="/">← Field of Action</a>
-    <span class="x-kicker">Observation before interpretation</span>
+    <a class="x-nav" href="/">Field of Action</a>
   </footer>
 </main>`;
 

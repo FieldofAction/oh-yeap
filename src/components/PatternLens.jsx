@@ -241,10 +241,10 @@ export function DualLensBar({ modelActive, patternActive, onToggleModel, onToggl
         <span className="pl-bar-count">{PATTERNS.length} patterns</span>
       )}
       {modelActive && (
-        <button className="pl-bar-link" onClick={onOpenModels}>Models &rarr;</button>
+        <button className="pl-bar-link" onClick={onOpenModels}>Models</button>
       )}
       {patternActive && (
-        <button className="pl-bar-link" onClick={onOpenPatterns}>Patterns &rarr;</button>
+        <button className="pl-bar-link" onClick={onOpenPatterns}>Patterns</button>
       )}
       <button
         className="pl-bar-close"

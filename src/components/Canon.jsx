@@ -72,8 +72,7 @@ function XRayCard({ item, delay }) {
       className={`cn-xr-card cn-xr-card--${item.type}`}
       style={{ "--xr-c": TYPE_COLORS[item.type], animationDelay: `${delay}ms` }}
     >
-      <div className="cn-xr-card-label">{TYPE_LABELS[item.type]}</div>
-      <div className="cn-xr-card-title">{item.title}</div>
+      <div className="cn-xr-card-title"><span className="cn-xr-card-type">{TYPE_LABELS[item.type]}</span> · {item.title}</div>
       <div className="cn-xr-card-body">{item.body}</div>
       {item.tell && <div className="cn-xr-card-tell"><strong>Tell:</strong> {item.tell}</div>}
     </div>
@@ -193,7 +192,6 @@ export default function Canon() {
 
       {/* ── 1. Overview ── */}
       <div ref={el => sectionRefs.current["overview"] = el} id="canon-overview" className="ph-header en d1" style={{ scrollMarginTop: 56 }}>
-        <div className="eyebrow">Canon</div>
         <div className="ph-h-row">
           <h1 className="ph-h">Relational Design</h1>
           <span className="ph-h-glyph" role="img" aria-label="Relational Design mark" />
@@ -280,7 +278,7 @@ export default function Canon() {
       <section className="cn-instrument" aria-labelledby="canon-instrument-title">
         <h2 id="canon-instrument-title">Materials in Relation</h2>
         <p>Explore physical, digital, and relational materials together. Use the instrument to compose a situation, try a change, and learn from what happens.</p>
-        <a href="#materials-in-relation">Open the instrument <span aria-hidden="true">↗</span></a>
+        <a href="#materials-in-relation">Open the instrument</a>
       </section>
 
       {/* ── 4. Lineages ── */}

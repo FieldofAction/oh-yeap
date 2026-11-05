@@ -74,7 +74,7 @@ function Caption({ children }) {
 function SectionHeader({ children, label }) {
   return (
     <header className="hn-sec-head">
-      {label && <div className="hn-sec-eyebrow">{label}</div>}
+      {label && <div className="hn-sec-num">{label}</div>}
       <h2 className="hn-sec-title">{children}</h2>
     </header>
   );
@@ -128,7 +128,7 @@ export default function HotelNest() {
           For five years I photographed what cities couldn't hold: mattresses, shoes, chairs, the small archaeology of what people couldn't keep. The archive is called Patio Beach. NEST is the first edition built from it — three objects: an index poster assembled from 486 sites, a tee, and a tote. Released on Earth Day, 2026.
         </p>
         <a className="hn-essay-link" href={ESSAY_URL} target="_blank" rel="noopener noreferrer">
-          Read the essay →
+          Read the essay
         </a>
       </section>
 
@@ -155,7 +155,7 @@ export default function HotelNest() {
             <li>Signed + numbered · Edition of 100</li>
           </ul>
           <div className="hn-price">$85</div>
-          <ReserveButton href={STRIPE.poster} now={now}>Reserve →</ReserveButton>
+          <ReserveButton href={STRIPE.poster} now={now}>Reserve</ReserveButton>
         </div>
       </section>
 
@@ -203,7 +203,7 @@ export default function HotelNest() {
           <div className="hn-size-note">Stripe will confirm your size at checkout.</div>
 
           <div className="hn-price">$55</div>
-          <ReserveButton href={STRIPE.tee} now={now}>Reserve →</ReserveButton>
+          <ReserveButton href={STRIPE.tee} now={now}>Reserve</ReserveButton>
         </div>
       </section>
 
@@ -233,7 +233,7 @@ export default function HotelNest() {
             <li>Edition of 100</li>
           </ul>
           <div className="hn-price">$45</div>
-          <ReserveButton href={STRIPE.tote} now={now}>Reserve →</ReserveButton>
+          <ReserveButton href={STRIPE.tote} now={now}>Reserve</ReserveButton>
         </div>
       </section>
 
