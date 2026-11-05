@@ -141,7 +141,7 @@
 .cs-cat-name { font-size: var(--foa-type-subsection); }
 /* Heads inside lists and grids: a quiet real heading, not a label. */
 .pb-narr-label, .pb-contribs-h, .pb-contrib-tier-label, .pb-month-label,
-.pa-group-h, .ab-ring-label {
+.pa-group-h, .ab-ring-label, .cs-cat-moment {
   font-size: var(--foa-type-caption);
   font-weight: 500;
   letter-spacing: 0;

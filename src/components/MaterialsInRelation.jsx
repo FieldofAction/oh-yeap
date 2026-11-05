@@ -154,10 +154,10 @@ export default function MaterialsInRelation() {
         </div>
         <svg className="mir-joins" viewBox="0 0 600 50" aria-hidden="true"><path d="M100 0V20H300V50M300 0V50M500 0V20H300" /></svg>
         <section className="mir-synthesis" aria-labelledby={`${id}-synthesis`}>
-          <div className="mir-synthesis-meta"><span className="mir-kicker">Working synthesis</span><span className="mir-kicker">Hypothesis · updates with your choices</span></div>
-          <p className="mir-synthesis-selection" role="status" aria-live="polite">{synthesis.pairing}</p>
+          <div className="mir-view-title mir-synthesis-meta"><h3 id={`${id}-synthesis`}>Working synthesis</h3><span className="mir-kicker">Hypothesis · updates with your choices</span></div>
           <div className="mir-emergence">
-            <h3 id={`${id}-synthesis`}>{synthesis.title}</h3>
+            <h3>{synthesis.title}</h3>
+            <p className="mir-synthesis-selection" role="status" aria-live="polite">{synthesis.pairing}</p>
             <p>{synthesis.summary}</p>
             <p>{synthesis.emergence}</p>
           </div>
@@ -167,7 +167,7 @@ export default function MaterialsInRelation() {
             <div><h4>Where it may pull apart</h4><p>{synthesis.tension}</p><details><summary>Material limits</summary><p>{synthesis.materialLimits}</p></details></div>
             <div><h4>A small experiment</h4><p>{synthesis.trial}</p><p><strong>Notice:</strong> {synthesis.observe}</p></div>
           </div>
-          {study.intention && <div className="mir-synthesis-intent"><span className="mir-kicker">Read this against your intention</span><p>{study.intention}</p></div>}
+          {study.intention && <div className="mir-synthesis-intent"><p><strong>Against your intention:</strong> {study.intention}</p></div>}
           <p className="mir-context">This reading starts from the selected material properties. Your situation, participants, and observations can change it.</p>
           <button type="button" className="mir-button" disabled={synthesisKept} onClick={() => save({ ...study, synthesisNote }, 'Synthesis saved with your study. Your own reading is unchanged.')}>{synthesisKept ? 'Synthesis saved' : study.synthesisNote ? 'Replace saved synthesis' : 'Keep this synthesis'}</button>
           <p className="mir-context">Keeps a copy in your study and export. Changing materials updates this view; your saved copy changes only when you replace it.</p>
