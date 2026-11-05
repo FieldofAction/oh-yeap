@@ -10,9 +10,7 @@ export default function MaterialsDetail() {
 
   return <article className="mir-page">
     <nav className="mir-breadcrumb" aria-label="Back to the Canon">
-      <a href="#relational-design">← Relational Design</a>
-      <span aria-hidden="true">/</span>
-      <span>Instrument</span>
+      <a href="#relational-design">Relational Design</a>
     </nav>
     <MaterialsInRelation />
   </article>;
