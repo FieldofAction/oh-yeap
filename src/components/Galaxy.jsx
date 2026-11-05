@@ -590,7 +590,7 @@ export default function Galaxy(){
             <div className="gx-about-title">Galaxy Instrument</div>
             <p className="gx-about-body">{ABOUT}</p>
             <p className="gx-about-body gx-about-lineage">{LINEAGE}</p>
-            <div className="gx-about-eyebrow gx-about-eyebrow--sep">Works cited</div>
+            <div className="gx-about-sl">Works cited</div>
             <ul className="gx-about-src">
               {SOURCES.map((s,i)=>(
                 <li className="gx-about-item" key={i}>
@@ -634,9 +634,8 @@ export default function Galaxy(){
         .gx-about-card{position:relative;width:100%;max-width:520px;max-height:82vh;overflow-y:auto;background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:34px 34px 30px;box-shadow:0 30px 90px rgba(0,0,0,.55)}
         .gx-about-x{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--ff);font-size:22px;line-height:1;cursor:pointer;padding:2px 6px;font-family:var(--sans);transition:color .14s}
         .gx-about-x:hover{color:var(--fg)}
-        .gx-about-eyebrow{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ff)}
-        .gx-about-eyebrow--sep{margin-top:26px;padding-top:22px;border-top:1px solid var(--bd)}
-        .gx-about-title{font-family:var(--display);font-size:22px;font-weight:500;letter-spacing:-.01em;color:var(--fg);margin:9px 0 14px}
+        .gx-about-sl{font-size:13px;font-weight:500;color:var(--fg);margin-top:26px;padding-top:22px;border-top:1px solid var(--bd)}
+        .gx-about-title{font-family:var(--display);font-size:22px;font-weight:500;letter-spacing:-.01em;color:var(--fg);margin:0 0 14px}
         .gx-about-body{font-size:13px;line-height:1.7;color:var(--fm);margin:0}
         .gx-about-lineage{margin-top:14px}
         .gx-about-src{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:13px}
