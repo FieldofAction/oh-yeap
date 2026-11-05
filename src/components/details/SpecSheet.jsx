@@ -1,3 +1,4 @@
+import { ARTIFACT_TYPE } from "../../lib/artifactType";
 import React, { useState, useCallback, useEffect, useRef } from "react";
 import { VIS } from "../../data/seed";
 import { HiddenStrip } from "../HiddenIndicators";
@@ -29,7 +30,7 @@ export default function SpecSheetDetail({ item, allItems, closing, onClose, onOp
   }, [item.id]);
 
   const artVi = useCallback((i) => VIS[(Math.abs(item.title.charCodeAt(0)) + i) % VIS.length](fg), [item.title, fg]);
-  const typeLabel = {diagram:"Diagram",prompt:"Prompt",framework:"Framework",model:"Model",method:"Method"}[item.artifactType] || "Artifact";
+  const typeLabel = ARTIFACT_TYPE[item.artifactType] || "Artifact";
   const [copied, setCopied] = useState(false);
 
   // Atmosphere gets its own space: a full-bleed editorial image band that carries the

@@ -1,4 +1,5 @@
 import { eyebrowWord } from "../lib/eyebrow";
+import { ARTIFACT_TYPE } from "../lib/artifactType";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { FILTERS } from "../data/playbook-public";
 import { isHidden } from "../data/seed";
@@ -284,10 +285,10 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                         <div key={item.id} className={`ix-wr-feat-card${showAll ? " en" : ""}${DEV_MODE && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.03+i*0.05}s`} : undefined}>
                           <div className="ix-wr-feat-img" style={(item.cardImg || item.coverImg) ? {backgroundImage:`url(${item.cardImg || item.coverImg})`,backgroundSize:"cover",backgroundPosition:"center"} : undefined} />
                           <div className="ix-wr-feat-body">
-                            <div className="ix-wr-pre">{item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}<HiddenChip item={item} /></div>
-                            <div className="ix-wr-feat-title">{item.title}</div>
+                            <div className="ix-wr-feat-title">{item.title}<HiddenChip item={item} /></div>
                             <div className="ix-wr-feat-sub">{item.subtitle}</div>
                             <div className="ix-wr-meta">
+                              <span>{item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}</span>
                               {item.readMin && <span>{item.readMin}m</span>}
                               {item.audioDur && <span>▶</span>}
                             </div>
@@ -302,14 +303,12 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                         const isMemo = item.writeType === "memo";
                         return (
                           <div key={item.id} className={`ix-wr-item${showAll ? " en" : ""}${DEV_MODE && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)} style={showAll ? {animationDelay:`${0.02+i*0.03}s`} : undefined}>
-                            <div className="ix-wr-head">
-                              <span className="ix-wr-pre">{isMemo && item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}<HiddenChip item={item} /></span>
-                              <span className="ix-wr-meta">
-                                {item.readMin && <span>{item.readMin}m</span>}
-                                {item.audioDur && <span>▶</span>}
-                              </span>
+                            <div className="ix-wr-title">{item.title}<HiddenChip item={item} /></div>
+                            <div className="ix-wr-meta">
+                              <span>{isMemo && item.memoNum ? `Memo ${item.memoNum}` : "Field Note"}</span>
+                              {item.readMin && <span>{item.readMin}m</span>}
+                              {item.audioDur && <span>▶</span>}
                             </div>
-                            <div className="ix-wr-title">{item.title}</div>
                           </div>
                         );
                       })}
@@ -345,12 +344,11 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 <div className="ix-art">
                   {exploration.map((item, i) => (
                     <div key={item.id} data-reveal className={`ix-art-item${DEV_MODE && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)}>
-                      <div className="ix-art-head">
-                        <span className="ix-art-type">{item.status === "wip" ? "In Progress" : item.status}</span>
+                      <div className="ix-art-title">{item.title}<HiddenChip item={item} /></div>
+                      <div className="ix-art-meta">
                         <span className={`ix-dot ${item.status}`} />
-                        <HiddenChip item={item} />
+                        <span>{item.status === "wip" ? "In Progress" : item.status}</span>
                       </div>
-                      <div className="ix-art-title">{item.title}</div>
                       <div className="ix-art-desc">{item.desc}</div>
                       <div className="ix-art-tags">
                         {item.tags?.map(t => <span key={t} className="ix-tag">{t}</span>)}
@@ -376,13 +374,12 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                 <div className="ix-art">
                   {artifacts.map((item, i) => (
                     <div key={item.id} data-reveal className={`ix-art-item${DEV_MODE && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)}>
-                      <div className="ix-art-head">
-                        <span className="ix-art-type">{item.artifactType || "Artifact"}</span>
-                        <span className="ix-art-ver">{item.version}</span>
+                      <div className="ix-art-title">{item.title}<HiddenChip item={item} /></div>
+                      <div className="ix-art-meta">
                         <span className={`ix-dot ${item.status}`} />
-                        <HiddenChip item={item} />
+                        <span>{ARTIFACT_TYPE[item.artifactType] || "Artifact"}</span>
+                        {item.version && <span className="ix-art-ver">v{item.version}</span>}
                       </div>
-                      <div className="ix-art-title">{item.title}</div>
                       <div className="ix-art-desc">{item.desc}</div>
                       {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
                       {patternLens && <AlexanderChips itemTitle={item.title} active={patternLens} compact />}

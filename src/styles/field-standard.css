@@ -76,10 +76,10 @@
   font-weight: 400;
   line-height: 1.55;
 }
-.ix-wr-pre, .ix-wr-meta, .ix-art-type { font-size: var(--foa-type-label); }
-.ix-wr-head { flex-wrap: wrap; }
+.ix-wr-meta, .ix-art-meta { font-size: var(--foa-type-meta); }
 .ix-wr-feat-body { padding-top: 1rem; }
 .ix-wr-feat-title { margin-bottom: .5rem; }
+.ix-wr-meta, .ix-art-meta { margin-top: .5rem; }
 .ix-wr-item, .ix-art-item, .ix-wr-feat-card { min-width: 0; }
 .section-header-h {
   font-size: var(--foa-type-page);
