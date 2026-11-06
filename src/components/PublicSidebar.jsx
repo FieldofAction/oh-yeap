@@ -95,12 +95,6 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter, hid
         <button type="button" className="sb-link" onClick={() => setMobileOpen(false)}>Close menu</button>
         {NAV.map(group => (
           <div key={group.tier} className="sb-tier">
-            <div className="sb-tier-h">
-              {group.tier}
-              {group.external && (
-                <span className="sb-lock" aria-label="Workshop is private">●</span>
-              )}
-            </div>
             {group.items.map((item) => {
               if (item.key === "canon") {
                 return <RelationalDesignNav key={item.key} view={view} onNavigate={handleNav} />;
@@ -108,7 +102,6 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter, hid
               if (item.group) {
                 return (
                   <div key={item.group} className="sb-group">
-                    <div className="sb-group-h sb-group-h-lc">{item.group}</div>
                     {item.children.map(child => {
                       // Same-origin static pages (e.g. the World Cup Atlas) load full-page via an anchor,
                       // so middle-click / open-in-new-tab work and no SPA view key is needed.
@@ -152,6 +145,7 @@ export default function PublicSidebar({ view, navigateTo, filter, setFilter, hid
                     target={item.studio ? "_self" : "_blank"}
                     rel={item.studio ? undefined : "noopener noreferrer"}
                     className="sb-link sb-external"
+                    aria-label={item.studio ? "Workshop (private)" : undefined}
                     style={{ paddingLeft: 20 }}
                   >
                     {item.label}

@@ -24,11 +24,6 @@
 }
 
 /* Home / public index. The work is louder than the category it sits in. */
-.hero-dash-label {
-  font-size: var(--foa-type-label);
-  letter-spacing: .04em;
-  margin-bottom: .5rem;
-}
 .hero-dash-val { font-size: .9375rem; line-height: 1.4; }
 .hero-dash-cell { min-width: 0; overflow-wrap: anywhere; }
 .content-section-h {
@@ -148,9 +143,10 @@
   text-transform: none;
   line-height: 1.4;
 }
-/* Keep the case-study section numbers and mono index, just make them legible. */
+/* Real section headings; the reading-order index keeps its own mono face. */
 .cs-block--section-label, .cs-section-label {
-  font-size: var(--foa-type-caption);
+  font-size: var(--foa-type-subsection);
+  font-weight: 500;
   line-height: 1.5;
 }
 .rd-caption, .rd-artwork-cap, .rd-diagram-label, .cs-cap, .cs-fig-cap,
@@ -175,7 +171,6 @@
 
 /* Material Lab — shared by the generated index and every experiment entry. */
 .x-nav { font-size: var(--foa-type-meta); letter-spacing: .02em; }
-.x-meta { font-size: var(--foa-type-meta); }
 .x-title {
   font-size: var(--foa-type-page);
   line-height: 1.06;
@@ -235,7 +230,6 @@
 }
 @media (max-width: 48rem) {
   .hero-dash-val { font-size: .875rem; }
-  .x-meta { gap: .5rem .875rem; }
   .x-band-note { font-size: .875rem; }
 }
 @media (max-width: 22rem) {

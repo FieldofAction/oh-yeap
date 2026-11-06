@@ -218,12 +218,12 @@ export default function Canon() {
       {renderCards(XRAY_DATA.overview)}
 
       <div className="ph-section" data-reveal>
-        <div className="ph-sl">Introduction</div>
+        <h2 className="ph-sl">Introduction</h2>
         <p className="ph-intro">{theory.intro}</p>
       </div>
 
       <div className="ph-abstract" data-reveal>
-        <div className="ph-sl">Abstract</div>
+        <h2 className="ph-sl">Abstract</h2>
         <p className="ph-abstract-text">{theory.abstract}</p>
         <img src="/images/theory/canon-abstract.png" alt="Relational Design abstract diagram" className="cn-diagram" loading="lazy" />
         <div className="cn-diagram-caption">Relational Design Process Diagram</div>
@@ -253,11 +253,11 @@ export default function Canon() {
       {/* ── 3. Principles ── */}
       <div ref={el => sectionRefs.current["principles"] = el} id="canon-principles" style={{ scrollMarginTop: 56 }}>
         <div className="ph-principles" data-reveal>
-          <div className="ph-sl">Principles</div>
+          <h2 className="ph-sl">Principles</h2>
           <div className="ph-principles-grid">
             {theory.principles.map((p, i) => (
               <div key={i} className="ph-principle">
-                <div className="ph-principle-num">{String(i + 1).padStart(2, "0")}</div>
+                <div className="ph-principle-num" data-mono>{String(i + 1).padStart(2, "0")}</div>
                 <div className="ph-principle-title">{p.title}</div>
                 <div className="ph-principle-desc">{p.desc}</div>
               </div>
@@ -284,7 +284,7 @@ export default function Canon() {
       {/* ── 4. Lineages ── */}
       <div ref={el => sectionRefs.current["lineages"] = el} id="canon-lineages" style={{ scrollMarginTop: 56 }}>
         <div className="ph-lineages" data-reveal>
-          <div className="ph-sl">Lineages</div>
+          <h2 className="ph-sl">Lineages</h2>
           <div className="ph-lineages-grid">
             {theory.lineages.map((lin, i) => (
               <div key={i} className={`ph-lineage${lin.heading === "Convergence" ? " convergence" : ""}`}>
@@ -299,7 +299,7 @@ export default function Canon() {
       {/* ── 5. Works Cited ── */}
       <div ref={el => sectionRefs.current["works-cited"] = el} id="canon-works-cited" style={{ scrollMarginTop: 56 }}>
         <div className="ph-works-cited en">
-          <div className="ph-sl">Works Cited</div>
+          <h2 className="ph-sl">Works Cited</h2>
           <div className="ph-works-list">
             {theory.worksCited.map((ref, i) => (
               <div key={i} className="ph-work-item">{ref}</div>

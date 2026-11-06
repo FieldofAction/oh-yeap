@@ -293,8 +293,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       case "section":
         return (
           <div key={key} ref={observe} className="cs-block cs-block--section cs-sr cs-sr--rise">
-            <div className="cs-block--section-label">{block.label}</div>
-            <div className="cs-block--section-rule" />
+            <h2 className="cs-block--section-label">{block.label}</h2>
           </div>
         );
 
@@ -361,28 +360,28 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
             <div className="cs-intervention-grid">
               {cs.intervention.system && (
                 <div className="cs-intv-card">
-                  <div className="cs-intv-num">01</div>
+                  <div className="cs-intv-num" data-mono>01</div>
                   <div className="cs-intv-h">System Design</div>
                   <div className="cs-intv-body">{cs.intervention.system.map((s, i) => <p key={i}>{s}</p>)}</div>
                 </div>
               )}
               {cs.intervention.expression && (
                 <div className="cs-intv-card">
-                  <div className="cs-intv-num">02</div>
+                  <div className="cs-intv-num" data-mono>02</div>
                   <div className="cs-intv-h">Expression</div>
                   <div className="cs-intv-body">{cs.intervention.expression.map((s, i) => <p key={i}>{s}</p>)}</div>
                 </div>
               )}
               {cs.intervention.governance && (
                 <div className="cs-intv-card">
-                  <div className="cs-intv-num">03</div>
+                  <div className="cs-intv-num" data-mono>03</div>
                   <div className="cs-intv-h">Governance</div>
                   <div className="cs-intv-body">{cs.intervention.governance.map((s, i) => <p key={i}>{s}</p>)}</div>
                 </div>
               )}
               {cs.intervention.method && (
                 <div className="cs-intv-card">
-                  <div className="cs-intv-num">04</div>
+                  <div className="cs-intv-num" data-mono>04</div>
                   <div className="cs-intv-h">Method, Made Operable</div>
                   <div className="cs-intv-body">{cs.intervention.method.map((s, i) => <p key={i}>{s}</p>)}</div>
                 </div>
@@ -770,21 +769,21 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
                 <div className="cs-intervention-grid">
                   {cs.intervention.system && (
                     <div className="cs-intv-card">
-                      <div className="cs-intv-num">01</div>
+                      <div className="cs-intv-num" data-mono>01</div>
                       <div className="cs-intv-h">System Design</div>
                       <div className="cs-intv-body">{cs.intervention.system.map((s, i) => <p key={i}>{s}</p>)}</div>
                     </div>
                   )}
                   {cs.intervention.expression && (
                     <div className="cs-intv-card">
-                      <div className="cs-intv-num">02</div>
+                      <div className="cs-intv-num" data-mono>02</div>
                       <div className="cs-intv-h">Expression</div>
                       <div className="cs-intv-body">{cs.intervention.expression.map((s, i) => <p key={i}>{s}</p>)}</div>
                     </div>
                   )}
                   {cs.intervention.governance && (
                     <div className="cs-intv-card">
-                      <div className="cs-intv-num">03</div>
+                      <div className="cs-intv-num" data-mono>03</div>
                       <div className="cs-intv-h">Governance</div>
                       <div className="cs-intv-body">{cs.intervention.governance.map((s, i) => <p key={i}>{s}</p>)}</div>
                     </div>
@@ -821,7 +820,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         {/* ── Credits ── */}
         {cs.credits?.length > 0 && (
           <div ref={observe} className="cs-credits cs-sr cs-sr--rise">
-            <div className="cs-section-label cs-section-label--plain">Credits</div>
+            <h2 className="cs-section-label cs-section-label--plain">Credits</h2>
             <div className="cs-credits-grid">
               {cs.credits.map((c, i) => (
                 <div key={i} className="cs-credit">
@@ -840,7 +839,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         <div ref={observe} className="cs-footer cs-sr cs-sr--rise">
           {item.deliverables?.length > 0 && (
             <div className="cs-deliv">
-              <div className="cs-section-label cs-section-label--plain">Deliverables</div>
+              <h2 className="cs-section-label cs-section-label--plain">Deliverables</h2>
               <div className="cs-deliv-list">
                 {item.deliverables.map(d => <span key={d} className="prow-tag">{d}</span>)}
               </div>

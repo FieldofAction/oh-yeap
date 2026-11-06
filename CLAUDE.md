@@ -59,19 +59,24 @@ Its existing `scripts/text-on-the-page-baseline.json` is legacy CSS debt, not
 permission to add decorative text. Builds never create or rewrite this baseline.
 Retire entries explicitly in review when their CSS is removed.
 
-`npm run text:test` inspects nine built-page scenarios at mobile/desktop widths in
+`npm run text:test` inspects ten built-page scenarios (including the open navigation menu) at mobile/desktop widths in
 both themes. It checks computed small text (12px or smaller) immediately before
 an h1–h3, computed small uppercase, mono labels outside code/indices/form fields,
 and arrow text inside links/buttons. It records every occurrence, so another
-link with the same classes cannot borrow an existing link's allowance. Hidden
+link with the same classes cannot borrow an existing link's allowance. The audit scrolls through content to activate normal reveal behavior. Hidden
 text is not rendered evidence. Do not hide violations to satisfy the audit.
 
-The browser baseline `scripts/fixtures/text-rule-baseline.json` is intentionally
-not bootstrapped by a build or by `npm run text:baseline`. Before this work is
-merged, run the audit, review `qa-text-rule/results.json`, remove decorative text,
-and distinguish legitimate functional text from heuristic false positives. Only
-then commit an initial reviewed baseline (an empty array if there is no debt).
-The missing baseline remains a failing gate until that review is complete.
+The browser baseline `scripts/fixtures/text-rule-baseline.json` is an empty array:
+no browser findings are grandfathered. The first CI audit at `ce9a66e` inspected
+36 scenarios and found 996 occurrences (572 mono, 424 small uppercase). Review
+removed redundant hero and navigation labels, the experiment-index descriptor
+and count, and duplicated experiment masthead metadata. Dates, controls,
+research confidence/provenance, tags, and actual headings remain functional;
+their mono/uppercase treatment was removed. Heading names are now real h2s.
+Existing numbered indices and experiment identifiers alone carry `data-mono`.
+Only cased letters can trigger the uppercase check; symbols still undergo the
+arrow check. The empty baseline passes only when the actual audit finds zero
+violations. Neither builds nor `npm run text:baseline` can bootstrap allowances.
 
 `npm run text:baseline` only retires entries from an existing baseline and refuses
 new findings. On PRs, `scripts/text-rule-baseline-test.mjs` also compares committed

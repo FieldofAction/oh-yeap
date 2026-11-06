@@ -43,7 +43,7 @@ export function findTextRuleViolations(smallTextPx) {
     const small = size <= smallTextPx;
     const next = el.nextElementSibling;
     if (small && next && /^H[1-3]$/.test(next.tagName)) report('eyebrow', el, text);
-    if (small && s.textTransform === 'uppercase') report('small-uppercase', el, text);
+    if (small && s.textTransform === 'uppercase' && text.toUpperCase() !== text.toLowerCase()) report('small-uppercase', el, text);
     if (/mono|courier|consolas|menlo/i.test(s.fontFamily.split(',')[0]) && !el.closest(MONO_ALLOWED)) report('mono-label', el, text);
     const control = el.closest('a, button');
     if (control && ARROWS.test(text)) report('link-arrow', el, text);

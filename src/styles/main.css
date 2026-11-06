@@ -149,7 +149,6 @@ a.hero-dash-cell--link:hover .hero-dash-val{
     0 0 3px color-mix(in srgb,var(--fm) 16%,transparent),
     0 0 1px color-mix(in srgb,var(--fg) 20%,transparent);
 }
-.hero-dash-label{font-size:9px;font-weight:500;letter-spacing:0.06em;color:var(--ff);text-transform:uppercase;font-family:var(--mono);margin-bottom:6px}
 .hero-dash-val{font-size:13px;color:var(--fg);line-height:1.4}
 .hero-dash-h{margin-top:0}
 .hero--dash .hero-links{gap:12px}
@@ -194,7 +193,6 @@ a.hero-dash-cell--link:hover .hero-dash-val{
   /* Re-flush every first-column cell in the 2-col mobile layout */
   .hero-dash-cell:nth-child(2n+1){padding-left:0}
   .hero-dash-cell:nth-child(2n){border-right:none}
-  .hero-dash-label{font-size:8px;margin-bottom:3px}
   .hero-dash-val{font-size:12px;line-height:1.3}
   /* Motion activation pill — shown on iOS when tilt needs permission */
   .hg-motion-cta{position:absolute;bottom:12px;right:12px;z-index:3;font-family:var(--mono);font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding:8px 12px;background:color-mix(in srgb,var(--bg) 60%,transparent);border:1px solid var(--bd);border-radius:999px;color:var(--fm);cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:color .2s,border-color .2s}
@@ -348,7 +346,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .rd-overlay.closing{animation:rdClose .3s ease both}
 .rd-inner{max-width:720px;margin:0 auto;padding:100px 40px 160px}
 @media(max-width:768px){.rd-inner{padding:80px 20px 120px}}
-.rd-back{position:sticky;top:16px;z-index:160;font-size:11px;font-weight:400;letter-spacing:.03em;text-transform:uppercase;color:var(--fm);cursor:pointer;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:8px 16px;border:1px solid var(--bd);transition:all .2s;font-family:var(--sans);display:inline-flex;align-items:center;gap:6px;margin:16px 0 -48px 40px;width:fit-content}
+.rd-back{position:sticky;top:16px;z-index:160;font-size:11px;font-weight:400;color:var(--fm);cursor:pointer;background:color-mix(in srgb,var(--bg) 80%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:8px 16px;border:1px solid var(--bd);transition:all .2s;font-family:var(--sans);display:inline-flex;align-items:center;gap:6px;margin:16px 0 -48px 40px;width:fit-content}
 @media(max-width:768px){.rd-back{margin-left:20px}}
 .rd-back:hover{color:var(--fg);border-color:var(--fm)}
 .rd-byline{display:flex;flex-direction:column;gap:2px;margin-bottom:12px}
@@ -391,7 +389,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .rd-audio-play:hover,.rd-audio-play.on{border-color:var(--fg);color:var(--fg)}
 .rd-audio-track{flex:1;height:3px;background:var(--bd);cursor:pointer;position:relative;border-radius:1px}
 .rd-audio-progress{position:absolute;left:0;top:0;height:100%;background:var(--fm);border-radius:1px;transition:width .1s linear}
-.rd-audio-time{font-size:10px;font-family:var(--mono);color:var(--ff);white-space:nowrap;letter-spacing:.02em}
+.rd-audio-time{font-variant-numeric:tabular-nums;font-size:10px;font-family:var(--sans);color:var(--ff);white-space:nowrap;letter-spacing:.02em}
 .rd-artwork{width:calc(100% + 80px);margin-left:-40px;margin-top:40px;margin-bottom:12px;position:relative}
 .rd-artwork-frame{width:100%;background:var(--sf);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border-radius:12px}
 .rd-artwork-frame img{width:100%;height:auto;display:block;border-radius:12px}
@@ -422,7 +420,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .rd-related-title{font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:-0.01em}
 .rd-related-sub{font-size:11px;color:var(--ff);letter-spacing:.01em}
 .rd-nav{display:flex;justify-content:space-between;margin-top:64px;padding-top:32px;border-top:1px solid var(--bd)}
-.rd-nav-btn{font-size:10px;font-weight:400;letter-spacing:.03em;text-transform:uppercase;color:var(--fm);cursor:pointer;transition:color .2s;background:none;border:none;font-family:var(--sans);padding:8px 0;display:flex;flex-direction:column;gap:4px;max-width:45%}
+.rd-nav-btn{font-size:10px;font-weight:400;color:var(--fm);cursor:pointer;transition:color .2s;background:none;border:none;font-family:var(--sans);padding:8px 0;display:flex;flex-direction:column;gap:4px;max-width:45%}
 .rd-nav-btn:hover{color:var(--fg)}
 .rd-nav-btn.next{text-align:right;align-items:flex-end}
 .rd-nav-label{font-size:9px;letter-spacing:.03em;color:var(--ff)}
@@ -501,7 +499,7 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .ix-right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex-shrink:0;position:relative;z-index:1}
 /* Meta line, not pills: inline mono tags with slash separators. */
 .ix-tags{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;align-items:baseline}
-.ix-tag{font-family:var(--mono);font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--fm);padding:0;border:none;border-radius:0;background:none;transition:color .2s}
+.ix-tag{font-family:var(--sans);font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--fm);padding:0;border:none;border-radius:0;background:none;transition:color .2s}
 .ix-tag + .ix-tag::before{content:"/";color:var(--ff);margin-right:8px}
 .ix-row:hover .ix-tag{color:var(--fg)}
 .ix-tag-rel{cursor:pointer}
@@ -683,12 +681,9 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 /* Section header — editorial */
 .cs-block--section{grid-column:1/2;margin-top:clamp(44px,6vw,80px);margin-bottom:12px;padding-bottom:0;border:none}
 .cs-block--hero + .cs-block--section{margin-top:0}
-/* Re-formed section eyebrow: a mono running index (notebook annotation) rather
-   than the 9px tracked-uppercase micro-cap. Keeps the tag; drops the maker's-mark
-   form and the hairline rule. Auto-numbers in reading order via a counter. */
-.cs-block--section-label{counter-increment:csSec;font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--fm);margin-bottom:0;line-height:1.4}
-.cs-block--section-label::before{content:"§" counter(csSec,decimal-leading-zero) "  ";color:var(--ff)}
-.cs-block--section-rule{display:none}
+/* Section headings keep their existing reading-order index. Only the index is mono. */
+.cs-block--section-label{counter-increment:csSec;font-family:var(--sans);font-size:12px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--fm);margin-bottom:0;line-height:1.4}
+.cs-block--section-label::before{font-family:var(--mono);content:"§" counter(csSec,decimal-leading-zero) "  ";color:var(--ff)}
 
 /* Body — text column */
 .cs-block--body{grid-column:1/2}
@@ -704,8 +699,8 @@ a.hero-dash-cell--link:hover .hero-dash-val{
 .cs-block--pull-quote-attr{font-size:11px;font-weight:400;color:var(--ff);margin-top:20px;letter-spacing:.02em}
 
 /* Section labels (legacy compat) */
-.cs-section-label{counter-increment:csSec;font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--fm);margin-bottom:20px;line-height:1.4}
-.cs-section-label::before{content:"§" counter(csSec,decimal-leading-zero) "  ";color:var(--ff)}
+.cs-section-label{counter-increment:csSec;font-family:var(--sans);font-size:12px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--fm);margin-bottom:20px;line-height:1.4}
+.cs-section-label::before{font-family:var(--mono);content:"§" counter(csSec,decimal-leading-zero) "  ";color:var(--ff)}
 .cs-section-label--plain{counter-increment:none}
 .cs-section-label--plain::before{content:none}
 
@@ -1935,7 +1930,7 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 /* ── Global Site Footer (minimal — nav is in sidebar) ── */
 .ft{max-width:1200px;margin:80px auto 0;padding:0 40px}
 .ft-inner{border-top:1px solid var(--bd)}
-.ft-bar{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:400;letter-spacing:.03em;text-transform:uppercase;color:var(--ff);padding:24px 0 96px}
+.ft-bar{display:flex;justify-content:space-between;align-items:center;font-size:10px;font-weight:400;color:var(--ff);padding:24px 0 96px}
 .ft-left{display:flex;align-items:center;gap:8px}
 .ft-mark{width:24px;height:24px;background-color:var(--ff);-webkit-mask:url(/images/foa/foa_grid_ecology_mark.svg) center/contain no-repeat;mask:url(/images/foa/foa_grid_ecology_mark.svg) center/contain no-repeat;opacity:1;transition:opacity .3s}.ft-mark:hover{opacity:1}
 @media(max-width:768px){.ft{padding:0 20px;margin-top:48px}.ft-bar{padding:20px 0 88px}}
@@ -1997,8 +1992,8 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
 .ph-canon-al{font-size:11px;font-weight:500;letter-spacing:.01em;color:var(--ff);margin-bottom:8px;display:block}
 .ph-canon-at{font-family:var(--display);font-size:18px;line-height:1.55;color:var(--fm);max-width:520px}
 .ph-section{margin-bottom:64px}
-.ph-sl{counter-increment:phSec;font-family:var(--mono);font-size:12px;font-weight:400;letter-spacing:0;color:var(--fm);margin-bottom:16px;line-height:1.4}
-.ph-sl::before{content:"§" counter(phSec,decimal-leading-zero) "  ";color:var(--ff)}
+.ph-sl{counter-increment:phSec;font-family:var(--sans);font-size:12px;font-weight:400;letter-spacing:0;color:var(--fm);margin-bottom:16px;line-height:1.4}
+.ph-sl::before{font-family:var(--mono);content:"§" counter(phSec,decimal-leading-zero) "  ";color:var(--ff)}
 .ph-intro{font-size:15px;font-weight:400;line-height:1.8;color:var(--fm)}
 .ph-abstract{margin-bottom:56px;padding:32px 0;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
 .ph-abstract-text{font-family:var(--display);font-size:18px;font-weight:500;line-height:1.7;color:var(--fm)}

@@ -10,6 +10,7 @@ import { BASELINE_PATH, SMALL_TEXT_PX, compareWithBaseline, findTextRuleViolatio
 const update = process.argv.includes('--update-baseline');
 const targets = [
   { name: 'home', path: '/', ready: '.ix-title' },
+  { name: 'navigation', path: '/', ready: '.sb-toggle', click: '.sb-toggle', final: '.sb-open' },
   { name: 'writing', path: '/', ready: '.ix-wr-feat-card', click: '.ix-wr-feat-card', final: '.rd-title' },
   { name: 'workbench', path: '/#item/workbench', ready: '.cs-body' },
   { name: 'about', path: '/#about', ready: '.ab-h' },
@@ -47,6 +48,23 @@ try {
       await page.waitForSelector(target.ready, { timeout: 15000 });
       if (target.click) { await page.click(target.click); await page.waitForSelector(target.final, { timeout: 15000 }); }
       await page.evaluate(() => document.fonts.ready);
+      await sleep(400);
+      // Visit the content naturally so scroll-revealed text participates in the audit.
+      // Do not force visibility or change page styles to manufacture a passing result.
+      for (const selector of ['html', '.rd-overlay', '.cs-overlay', '.sb-open']) {
+        const geometry = await page.evaluate(selector => {
+          const el = document.querySelector(selector);
+          return el && { height: el.clientHeight, total: el.scrollHeight };
+        }, selector);
+        if (!geometry || geometry.total <= geometry.height) continue;
+        const step = Math.max(200, Math.floor(geometry.height * .8));
+        if (geometry.total / step > 200) throw new Error(`Scroll audit too long: ${selector}`);
+        for (let top = 0; top < geometry.total; top += step) {
+          await page.evaluate(({ selector, top }) => document.querySelector(selector).scrollTo(0, top), { selector, top });
+          await sleep(60);
+        }
+        await page.evaluate(selector => document.querySelector(selector).scrollTo(0, 0), selector);
+      }
       await sleep(400);
       if (pageErrors.length) throw new Error(`Runtime errors: ${pageErrors.join('; ')}`);
       const violations = await page.evaluate(findTextRuleViolations, SMALL_TEXT_PX);

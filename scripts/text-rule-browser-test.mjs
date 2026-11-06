@@ -57,3 +57,9 @@ test('a small label directly above a heading is caught', async () => {
 test('ordinary functional labels, links and body copy remain valid', async () => {
   assert.deepEqual(await inspect('<h1>What changes?</h1><p>The argument.</p><label>Name <input></label><a href="/">Read</a>'), []);
 });
+
+// CSS text-transform can be inherited by a functional symbol or index.
+test('uppercase without cased letters is not a typography violation', async () => {
+  const found = await inspect('<span style="font-size:10px;text-transform:uppercase">● 01</span><a href="/" style="font-size:10px;text-transform:uppercase">→</a>');
+  assert.deepEqual(found.map(v => v.rule), ['link-arrow']);
+});
