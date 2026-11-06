@@ -164,7 +164,7 @@
   line-height: 1.5;
 }
 /* Materials intro only. Wheel labels, controls and synthesis UI keep their sizes. */
-.mir > p:not(.mir-lead):not(.mir-context):not(.mir-kicker), .mir-about > p {
+.mir > p:not(.mir-lead):not(.mir-context), .mir-about > p {
   font-size: var(--foa-type-body);
   line-height: var(--foa-leading-reading);
 }
@@ -174,7 +174,7 @@
 .cn-subnav-link { font-size: var(--foa-type-caption); }
 
 /* Material Lab — shared by the generated index and every experiment entry. */
-.x-kicker { font-size: var(--foa-type-meta); letter-spacing: .08em; }
+.x-nav { font-size: var(--foa-type-meta); letter-spacing: .02em; }
 .x-meta { font-size: var(--foa-type-meta); }
 .x-title {
   font-size: var(--foa-type-page);

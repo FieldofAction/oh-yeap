@@ -1,11 +1,11 @@
 /** Checks the built pages against the page-text rule in CLAUDE.md.
  * Run after `npm run build`. Fails on any finding not already in the baseline.
- * `--update-baseline` rewrites the baseline from what is found now; it should only ever shrink.
+ * `--update-baseline` can only retire entries from an existing reviewed baseline.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { spawn } from 'node:child_process';
+import { preview } from 'vite';
 import puppeteer from 'puppeteer';
-import { BASELINE_PATH, SMALL_TEXT_PX, compareWithBaseline, findTextRuleViolations, formatViolation } from './text-rule-lib.mjs';
+import { BASELINE_PATH, SMALL_TEXT_PX, compareWithBaseline, findTextRuleViolations, formatViolation, shrinkBaseline } from './text-rule-lib.mjs';
 
 const update = process.argv.includes('--update-baseline');
 const targets = [
@@ -20,50 +20,64 @@ const targets = [
   { name: 'experiment-010', path: '/experiments/structural-afterimage.html', ready: '.x-prose' },
 ];
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
-const server = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--host', '127.0.0.1', '--port', '4174'], { stdio: 'inherit' });
+const scenarios = targets.flatMap(target => [390, 1200].flatMap(width => [false, true].map(light => ({
+  ...target, width, light, name: `${target.name}-${width}-${light ? 'light' : 'dark'}`,
+}))));
 const found = [];
 const errors = [];
-let browser;
+const inspected = [];
+let browser, server;
 try {
-  for (let i = 0; i < 60; i++) {
-    try { const r = await fetch('http://127.0.0.1:4174'); if (r.ok) break; } catch {}
-    if (i === 59) throw new Error('Preview server did not start.');
-    await sleep(500);
-  }
+  // Own the server and its port; never accidentally inspect a stale preview.
+  server = await preview({ preview: { host: '127.0.0.1', port: 0, strictPort: true } });
+  const origin = `http://127.0.0.1:${server.httpServer.address().port}`;
   browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-  for (const target of targets) {
+  for (const target of scenarios) {
+    const { name, width, light } = target;
     const context = await browser.createBrowserContext();
     const page = await context.newPage();
+    const pageErrors = [];
+    page.on('pageerror', error => pageErrors.push(error.message));
     try {
-      await page.setViewport({ width: 1200, height: 900, deviceScaleFactor: 1 });
+      await page.setViewport({ width, height: 900, deviceScaleFactor: 1 });
       await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
-      await page.goto(`http://127.0.0.1:4174${target.path}`, { waitUntil: 'networkidle2', timeout: 45000 });
+      await page.evaluateOnNewDocument(light => localStorage.setItem('foa-work-light', light ? '1' : '0'), light);
+      const response = await page.goto(`${origin}${target.path}`, { waitUntil: 'networkidle2', timeout: 45000 });
+      if (!response?.ok()) throw new Error(`Page returned HTTP ${response?.status()}`);
       await page.waitForSelector(target.ready, { timeout: 15000 });
       if (target.click) { await page.click(target.click); await page.waitForSelector(target.final, { timeout: 15000 }); }
+      await page.evaluate(() => document.fonts.ready);
       await sleep(400);
+      if (pageErrors.length) throw new Error(`Runtime errors: ${pageErrors.join('; ')}`);
       const violations = await page.evaluate(findTextRuleViolations, SMALL_TEXT_PX);
-      for (const v of violations) found.push({ page: target.name, ...v });
-      console.log(`${target.name}: ${violations.length} finding(s)`);
+      for (const v of violations) found.push({ page: name, ...v });
+      inspected.push(name);
+      console.log(`${name}: ${violations.length} finding(s)`);
     } catch (error) {
-      errors.push(`${target.name}: ${error.message}`);
+      errors.push(`${name}: ${error.message}`);
     } finally { await context.close(); }
   }
+} catch (error) {
+  errors.push(`suite: ${error.message}`);
 } finally {
   await browser?.close();
-  server.kill('SIGTERM');
+  if (server) await new Promise(resolve => server.httpServer.close(resolve));
+  mkdirSync('qa-text-rule', { recursive: true });
+  writeFileSync('qa-text-rule/results.json', JSON.stringify({ inspected, found, errors }, null, 2) + '\n');
 }
 if (errors.length) {
   console.error(errors.join('\n'));
   process.exit(1);
 }
 if (update) {
-  mkdirSync(new URL('./', BASELINE_PATH), { recursive: true });
-  writeFileSync(BASELINE_PATH, JSON.stringify(found, null, 2) + '\n');
-  console.log(`Baseline written with ${found.length} tolerated finding(s). Commit scripts/fixtures/text-rule-baseline.json.`);
+  const baseline = existsSync(BASELINE_PATH) ? JSON.parse(readFileSync(BASELINE_PATH, 'utf8')) : null;
+  const smaller = shrinkBaseline(found, baseline);
+  writeFileSync(BASELINE_PATH, JSON.stringify(smaller, null, 2) + '\n');
+  console.log(`Baseline retired ${baseline.length - smaller.length} finding(s). No new entries accepted.`);
   process.exit(0);
 }
 if (!existsSync(BASELINE_PATH)) {
-  console.error(`No baseline yet. ${found.length} finding(s):\n${found.map(formatViolation).join('\n')}\nRun \`npm run text:baseline\` and commit the file to accept these as the starting point.`);
+  console.error(`No reviewed baseline. ${found.length} finding(s):\n${found.map(formatViolation).join('\n')}\nReview qa-text-rule/results.json, remove decorative text and correct false positives before committing an initial baseline. text:baseline cannot bootstrap or grow it.`);
   process.exit(1);
 }
 const baseline = JSON.parse(readFileSync(BASELINE_PATH, 'utf8'));

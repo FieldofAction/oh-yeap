@@ -133,7 +133,7 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
 
   return (
     <div ref={overlayRef} data-lenis-prevent className={`rd-overlay ${closing ? "closing" : ""}`}>
-      <button className="rd-back" onClick={onClose}>← Back</button>
+      <button className="rd-back" onClick={onClose}>Back</button>
       <div className="rd-inner">
         <HiddenStrip item={item} />
         <h1 className={`rd-title${fn} dc dc1`}>{item.title}</h1>
@@ -270,13 +270,13 @@ export default function WritingDetail({ item, allItems, closing, onClose, onRela
         <div className="rd-nav dc dc8">
           {prev ? (
             <button className="rd-nav-btn" onClick={() => onOpen(prev)}>
-              <span className="rd-nav-label">← Previous</span>
+              <span className="rd-nav-label">Previous</span>
               <span className="rd-nav-title">{prev.title}</span>
             </button>
           ) : <div />}
           {next ? (
             <button className="rd-nav-btn next" onClick={() => onOpen(next)}>
-              <span className="rd-nav-label">Next →</span>
+              <span className="rd-nav-label">Next</span>
               <span className="rd-nav-title">{next.title}</span>
             </button>
           ) : <div />}

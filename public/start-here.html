@@ -54,8 +54,8 @@
   .wrap{max-width:1080px; margin:0 auto}
 
   .label{
-    font-family:var(--grot); font-size:12px; font-weight:500; letter-spacing:.08em;
-    text-transform:uppercase; color:var(--ink);
+    font-family:var(--grot); font-size:14px; font-weight:500; letter-spacing:0;
+    color:var(--ink);
   }
   .label.dim{color:var(--muted)}
 
@@ -91,7 +91,7 @@
   /* ── Sections ── */
   section{border-top:1px solid var(--rule); padding-top:20px; margin-top:clamp(48px,7vw,88px);
     display:grid; grid-template-columns:minmax(0,1fr); gap:0}
-  .sec-top{display:grid; grid-template-columns:auto 1fr; gap:clamp(16px,4vw,40px); align-items:start}
+  .sec-top{display:block}
   .sec-num{
     font-family:var(--grot); font-weight:500; color:var(--accent);
     font-size:clamp(28px,4vw,44px); line-height:.9; letter-spacing:-.02em;
@@ -151,7 +151,6 @@
   /* ── Prompt set ── */
   .prompts-head{border-top:1px solid var(--hair); margin-top:clamp(40px,6vw,72px); padding-top:clamp(22px,3vw,30px)}
   .prompts-note{color:var(--muted); font-size:18px; line-height:1.42; margin:10px 0 0; max-width:42em}
-  .pn{color:var(--accent); font-variant-numeric:tabular-nums; margin-right:6px}
 
   /* ── What you'll need ── */
   .kit-head .label{display:block; margin-bottom:12px}
@@ -178,10 +177,6 @@
   <div class="wrap">
 
     <div class="masthead">
-      <div class="meta reveal">
-        <span class="label">A Note to a Friend</span>
-        <span class="label accent">Field of Action</span>
-      </div>
       <h1 class="reveal r2">Start Here<span class="dot">.</span></h1>
       <p class="deck reveal r3">How I built my site with Claude, and how you can start yours.</p>
       <p class="lede reveal r4">A few friends have asked me how I made my site. This is the honest answer, written down so I can just hand it over. It is not a tutorial. It is the handful of things I wish someone had told me on day one.</p>
@@ -194,7 +189,6 @@
 
     <section>
       <div class="sec-top">
-        <div class="sec-num">01</div>
         <h2>The only hard part is believing it is hard</h2>
       </div>
       <div class="body">
@@ -207,7 +201,6 @@
 
     <section>
       <div class="sec-top">
-        <div class="sec-num">02</div>
         <h2>Decide what you actually want</h2>
       </div>
       <div class="body">
@@ -228,7 +221,6 @@
 
     <section>
       <div class="sec-top">
-        <div class="sec-num">03</div>
         <h2>Let your medium lead</h2>
       </div>
       <div class="body">
@@ -250,7 +242,6 @@
 
     <section>
       <div class="sec-top">
-        <div class="sec-num">04</div>
         <h2>Bring your taste</h2>
       </div>
       <div class="body">
@@ -262,7 +253,6 @@
 
     <section>
       <div class="sec-top">
-        <div class="sec-num">05</div>
         <h2>A few things that helped</h2>
       </div>
       <div class="tips">
@@ -311,7 +301,7 @@ Anything I know I don't want.</pre>
 
     <div class="block">
       <div class="block-head">
-        <span class="label dim"><span class="pn">01</span>The elegant portfolio</span>
+        <span class="label dim">The elegant portfolio</span>
         <button class="copy" data-copy="prompt1">Copy</button>
       </div>
       <div class="msg" id="prompt1">I want a beautiful portfolio site for my work. Keep the layout calm and confident, with generous space and strong typography doing most of the work. Add elegant micro-motion: smooth transitions between pages, subtle reveals as sections come into view, and refined hover states on links and project cards. Keep it restrained, so the motion feels expensive and hand-tuned. Start with the home page and one project page, and we'll build from there.</div>
@@ -319,7 +309,7 @@ Anything I know I don't want.</pre>
 
     <div class="block">
       <div class="block-head">
-        <span class="label dim"><span class="pn">02</span>The quiet index with one surprise</span>
+        <span class="label dim">The quiet index with one surprise</span>
         <button class="copy" data-copy="prompt2">Copy</button>
       </div>
       <div class="msg" id="prompt2">I want a simple index-style site: a clean, text-forward list of my work and writing, mostly type and space, no big images or cards. Then add one unexpected piece of motion whimsy, something small and surprising that rewards attention and makes people smile, while the reading stays easy. Keep everything else quiet so the one playful moment lands. Show me a few ideas for that moment before we build it.</div>
@@ -327,7 +317,7 @@ Anything I know I don't want.</pre>
 
     <div class="block">
       <div class="block-head">
-        <span class="label dim"><span class="pn">03</span>Expensive through simplicity</span>
+        <span class="label dim">Expensive through simplicity</span>
         <button class="copy" data-copy="prompt3">Copy</button>
       </div>
       <div class="msg" id="prompt3">I'm a senior creative. I want a hybrid site that holds both polished case studies and smaller one-off projects, and still feels calm. I want it to look expensive, and for that to come from simplicity: restraint, precise spacing, a considered type scale, and one confident accent. Make the case studies feel editorial and the one-offs light and quick to browse. Start with a home page that ties the two together.</div>
@@ -335,7 +325,6 @@ Anything I know I don't want.</pre>
 
     <section class="kit">
       <div class="kit-head">
-        <span class="label accent">What you'll need</span>
         <h2>A short kit, and two honest paths</h2>
       </div>
       <div class="body">

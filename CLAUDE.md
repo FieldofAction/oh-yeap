@@ -40,14 +40,57 @@ When editing an existing page, remove what fails this rule; do not
 restyle it. Delete the CSS, don't hide the element. Report what was
 removed and why.
 
-## How the build enforces it
+## How the checks enforce it
 
-`scripts/text-rule-test.mjs` opens the built pages in a headless browser and
-flags: text at 12px or smaller immediately before an h1–h3; uppercase text at
-12px or smaller; a monospace face outside `code`, `pre`, `kbd`, `samp`, form
-fields and elements marked `data-mono`; and ↗ → ← inside a link or button.
-Findings are compared with `scripts/fixtures/text-rule-baseline.json`. A
-finding that is not in the baseline fails the run. The baseline only shrinks:
-when you remove a violation, run `npm run text:baseline` and commit the smaller
-file. Do not add entries to the baseline by hand, and do not mark an element
-`data-mono` to silence the check unless it is genuinely an index or code.
+The function rule above is authoritative. Automation catches recurring concrete
+patterns; a passing check does not establish whether a sentence is useful.
+Review the rendered page and apply the deletion test to text that heuristics miss.
+
+`npm run build` runs the existing typography tests, the static text guard and the
+baseline helper tests before generating experiments and bundling the public app.
+`CLAUDE.md` is an input to those tests, so `.vercelignore` explicitly includes it.
+The separate `build:studio` script does not run the public `prebuild` hook.
+
+`scripts/text-on-the-page-test.mjs` checks public source for label-named classes,
+known labels above headings, literal arrows in simple links/buttons, and new CSS
+rules combining uppercase with a literal font size below 12px. PublicSidebar is
+covered; the deprecated Philosophy component is excluded (Canon owns that route).
+Its existing `scripts/text-on-the-page-baseline.json` is legacy CSS debt, not
+permission to add decorative text. Builds never create or rewrite this baseline.
+Retire entries explicitly in review when their CSS is removed.
+
+`npm run text:test` inspects nine built-page scenarios at mobile/desktop widths in
+both themes. It checks computed small text (12px or smaller) immediately before
+an h1–h3, computed small uppercase, mono labels outside code/indices/form fields,
+and arrow text inside links/buttons. It records every occurrence, so another
+link with the same classes cannot borrow an existing link's allowance. Hidden
+text is not rendered evidence. Do not hide violations to satisfy the audit.
+
+The browser baseline `scripts/fixtures/text-rule-baseline.json` is intentionally
+not bootstrapped by a build or by `npm run text:baseline`. Before this work is
+merged, run the audit, review `qa-text-rule/results.json`, remove decorative text,
+and distinguish legitimate functional text from heuristic false positives. Only
+then commit an initial reviewed baseline (an empty array if there is no debt).
+The missing baseline remains a failing gate until that review is complete.
+
+`npm run text:baseline` only retires entries from an existing baseline and refuses
+new findings. On PRs, `scripts/text-rule-baseline-test.mjs` also compares committed
+allowances against the base commit: inherited baselines cannot grow or disappear.
+The first introduction of an allowance list still needs human review. Never add
+`data-mono` to silence a label; it is only for genuine code or index content.
+Existing case-study § numbers, Materials study legends, and tags/chips that name
+or operate something remain functional. None is a blanket decoration exemption.
+
+The GitHub workflow runs on PRs to main. Browser fixtures, typography review and
+text inspection run independently after a successful build; one failing review
+does not suppress another. The audit writes a report even when browser startup
+or a route fails, and failed/incomplete runs cannot rewrite a baseline.
+
+## Coverage limits
+
+Source regular expressions do not parse arbitrary JSX or the CSS cascade.
+The browser check observes only visited routes/states; its text-node heuristics
+do not catch every nested label, pseudo-element, icon or unhelpful sentence.
+Keep the small fixture suite for known failure modes and extend route/state
+coverage when a public template changes. Avoid adding broad exceptions or
+refreshing baselines wholesale. Neither tool replaces editorial judgment.

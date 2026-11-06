@@ -143,7 +143,7 @@ export default function Models({ content, onOpen, fg }) {
                                 onClick={() => seedItem && onOpen(seedItem)}
                               >
                                 <span>{title}</span>
-                                {seedItem && <span className="mm-card-link-arrow">&rarr;</span>}
+
                               </div>
                             );
                           })}

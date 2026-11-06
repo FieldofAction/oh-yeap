@@ -1,14 +1,24 @@
 name: Field Standard QA
 on:
+  pull_request:
+    branches: [main]
   push:
     branches: [design/field-standard-typography, main]
     paths:
       - 'src/**'
+      - 'public/**'
+      - 'content/experiments/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.js'
+      - '.vercelignore'
+      - '.cursor/rules/text-on-the-page.mdc'
       - 'scripts/field-standard-*.mjs'
       - 'scripts/text-rule-*.mjs'
+      - 'scripts/text-on-the-page-*'
       - 'scripts/fixtures/text-rule-baseline.json'
       - 'CLAUDE.md'
-      - 'scripts/experiments-build.mjs'
+      - 'scripts/experiments-*.mjs'
       - '.github/workflows/field-standard-qa.yml'
   workflow_dispatch:
 permissions:
@@ -25,21 +35,35 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           persist-credentials: false
+          fetch-depth: 0
       - name: Install locked dependencies without lifecycle scripts
         run: npm ci --ignore-scripts
       - name: Install the browser used by the existing Puppeteer dependency
         run: npx puppeteer browsers install chrome
       - name: Build and run existing experiment tests
+        id: build
         run: npm run build && npm run experiments:test
+      - name: Prevent committed baselines from growing
+        if: github.event_name == 'pull_request'
+        env:
+          TEXT_RULE_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: node scripts/text-rule-baseline-test.mjs
+      - name: Test the browser checker with controlled fixtures
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
+        run: npm run text:fixtures
       - name: Review actual pages and fonts
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: node scripts/field-standard-browser-test.mjs
       - name: Check page text against the rule in CLAUDE.md
+        if: ${{ !cancelled() && steps.build.outcome == 'success' }}
         run: node scripts/text-rule-test.mjs
       - name: Preserve review screenshots and machine-readable results
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: field-standard-review
-          path: qa-field-standard/
+          path: |
+            qa-field-standard/
+            qa-text-rule/
           retention-days: 7
           if-no-files-found: warn

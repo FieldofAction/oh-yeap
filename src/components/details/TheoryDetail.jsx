@@ -26,7 +26,7 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
 
   return (
     <div ref={overlayRef} data-lenis-prevent className={`th-overlay ${closing ? "closing" : ""}`}>
-      <button className="rd-back" onClick={onClose}>← Back</button>
+      <button className="rd-back" onClick={onClose}>Back</button>
       <div className="th-inner">
         <HiddenStrip item={item} />
         {/* Title block with icon */}
@@ -34,7 +34,6 @@ export default function TheoryDetail({ item, allItems, closing, onClose, onOpen,
           <div className="th-icon">
             <RDIcon color={fg} size={36} />
           </div>
-          <div className="eyebrow">Theory</div>
           <h1 className="th-title">Theory of {item.title}</h1>
           <div className="th-subtitle">{item.subtitle}</div>
           <div className="th-colophon">

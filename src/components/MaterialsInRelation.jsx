@@ -143,18 +143,18 @@ export default function MaterialsInRelation() {
       {domain && <><MaterialWheel domain={domain} selected={study.selected[domain.id]} onSelect={value => selectMaterial(domain.id, value)} /><p className="mir-context">This material is selected in your study. Switch to Connections to see the composition, or add its specific form in the study record.</p></>}
 
       {view === 'connections' && <>
-        <div className="mir-view-title"><h2>Your composition</h2><span className="mir-kicker">Three registers · one situation</span></div>
+        <div className="mir-view-title"><h2>Your composition</h2></div>
         <div className="mir-composition">
           {MATERIAL_DOMAINS.map(d => <div className="mir-domain" key={d.id}>
             <label htmlFor={`${id}-${d.id}`}>{d.name}</label>
             <select id={`${id}-${d.id}`} value={study.selected[d.id]} onChange={e => selectMaterial(d.id, e.target.value)}>{d.items.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}</select>
             <p>{d.items.find(m => m.id === study.selected[d.id]).question}</p>
-            <button type="button" className="mir-text-button" onClick={() => setView(d.id)}>Explore {d.name.toLowerCase()} chart ↗</button>
+            <button type="button" className="mir-text-button" onClick={() => setView(d.id)}>Explore {d.name.toLowerCase()} chart</button>
           </div>)}
         </div>
         <svg className="mir-joins" viewBox="0 0 600 50" aria-hidden="true"><path d="M100 0V20H300V50M300 0V50M500 0V20H300" /></svg>
         <section className="mir-synthesis" aria-labelledby={`${id}-synthesis`}>
-          <div className="mir-view-title mir-synthesis-meta"><h2 id={`${id}-synthesis`}>Working synthesis</h2><span className="mir-kicker">Hypothesis · updates with your choices</span></div>
+          <div className="mir-view-title mir-synthesis-meta"><h2 id={`${id}-synthesis`}>Working synthesis</h2></div>
           <div className="mir-emergence">
             <h3>{synthesis.title}</h3>
             <p className="mir-synthesis-selection" role="status" aria-live="polite">{synthesis.pairing}</p>
@@ -186,13 +186,12 @@ export default function MaterialsInRelation() {
           <select id={`${id}-example`} value={example} onChange={e => setExample(e.target.value)}>{CONNECTION_STUDIES.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}</select>
           <h4>{guide.question}</h4>
           <p>{guide.connection}</p><p className="mir-context">{guide.limit}</p>
-          <p className="mir-kicker">{guide.status || 'Hypothesis'} · starting point</p>
           <button type="button" className="mir-button" onClick={() => { save({ ...study, selected: { ...guide.selected } }, 'Example materials selected. Your written connection is unchanged.'); }}>Use these material choices</button>
         </details>
       </>}
 
       {view === 'record' && <div className="mir-record">
-        <div className="mir-view-title"><h2>Working study</h2><span className="mir-kicker">Frame → compose → try → observe → revise</span></div>
+        <div className="mir-view-title"><h2>Working study</h2></div>
         <p className="mir-context">Begin with one situation and one change. The record can stay incomplete while the work is happening. An observation, refusal, or disagreement can change the next move.</p>
         <fieldset><legend>01 · Frame the situation</legend>
           {field('situation', 'What is happening, and where?')}
