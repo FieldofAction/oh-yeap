@@ -158,7 +158,7 @@ export default function Resume(){
     <div className="rz-app">
       <div className="rz-toolbar">
         <div className="rz-tb-left">
-          <button className="rz-tb-btn" onClick={exit}>← Exit</button>
+          <button className="rz-tb-btn" onClick={exit}>Exit</button>
           <span className="rz-tb-title">Résumé</span>
         </div>
         <div className="rz-tb-right">

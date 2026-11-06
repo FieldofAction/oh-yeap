@@ -178,7 +178,7 @@ export default function Sidebar({ view, navigateTo, filter, setFilter, hiddenCou
               if (item.href) {
                 return (
                   <a key={item.label} href={item.href} target="_blank" rel="noopener noreferrer" className="sb-link sb-external" style={{ paddingLeft: 20 }}>
-                    {item.label} <span className="sb-ext-arrow">↗</span>
+                    {item.label}
                   </a>
                 );
               }

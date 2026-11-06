@@ -11,6 +11,9 @@ instagram
 /motion
 threads-backup-*.json
 *.md
+# The prebuild documentation test reads this file; it is build input, not a
+# public asset. Keep the test and include its input in Vercel's filtered tree.
+!CLAUDE.md
 
 # Unserved source/cache media (verified: not referenced anywhere in src/).
 # NOTE: keep public/media/drawings (its full/ + thumbs/ web versions ARE served);

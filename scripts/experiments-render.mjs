@@ -55,20 +55,12 @@ a{color:inherit; text-decoration:none}
   display:flex; align-items:baseline; justify-content:space-between; gap:16px;
   flex-wrap:wrap; padding:24px 0 0;
 }
-.x-kicker{
-  font-family:var(--sans); font-size:9px; font-weight:500; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--ff);
-}
-a.x-kicker{transition:color .2s}
-a.x-kicker:hover{color:var(--fg)}
+.x-nav{font-family:var(--sans); font-size:12px; color:var(--fm)}
+a.x-nav{text-decoration:underline; text-underline-offset:4px; transition:color .2s}
+a.x-nav:hover{color:var(--fg)}
 
 /* ── Masthead ── */
 .x-head{border-top:1px solid var(--fg); margin-top:20px; padding-top:20px}
-.x-meta{
-  display:flex; gap:8px 18px; flex-wrap:wrap; align-items:baseline; margin-top:14px;
-  font-family:var(--mono); font-size:11px; letter-spacing:.02em; color:var(--fm);
-}
-.x-meta .x-id{color:var(--fg)}
 .x-title{
   font-family:var(--display); font-weight:500;
   font-size:clamp(34px,6.4vw,62px); line-height:1.02; letter-spacing:-.03em;
@@ -89,15 +81,15 @@ a.x-kicker:hover{color:var(--fg)}
   background:var(--cbg); padding:14px 16px; display:flex; flex-direction:column; gap:6px;
   border-right:1px solid var(--bd); border-bottom:1px solid var(--bd);
 }
-.x-fact dt{font-size:9px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:var(--ff)}
-.x-fact dd{font-family:var(--mono); font-size:12px; color:var(--fg); line-height:1.45}
+.x-fact dt{font-size:9px; font-weight:500; color:var(--ff)}
+.x-fact dd{font-family:var(--sans); font-size:12px; color:var(--fg); line-height:1.45}
 .x-tags{display:flex; flex-wrap:wrap; gap:6px}
 .x-tag{
-  font-family:var(--mono); font-size:10px; letter-spacing:.02em; color:var(--fm);
+  font-family:var(--sans); font-size:10px; letter-spacing:.02em; color:var(--fm);
   border:1px solid var(--bd); padding:3px 7px; white-space:nowrap;
 }
 .x-chip{
-  font-family:var(--mono); font-size:10px; letter-spacing:.06em; text-transform:uppercase;
+  font-family:var(--sans); font-size:10px;
   border:1px solid var(--ff); color:var(--fm); padding:2px 7px;
 }
 .x-chip[data-plain]{text-transform:none; letter-spacing:.02em}
@@ -140,7 +132,7 @@ ul.x-list li::marker,ol.x-list li::marker{color:var(--ff)}
 }
 .x-row:hover{background:var(--sf)}
 .x-row-aside{display:flex; flex-direction:column; gap:6px}
-.x-row-date{font-family:var(--mono); font-size:11px; color:var(--fm)}
+.x-row-date{font-family:var(--sans); font-size:11px; color:var(--fm)}
 .x-row-id{font-family:var(--mono); font-size:10px; color:var(--ff); letter-spacing:.04em}
 .x-row-title{
   font-family:var(--display); font-size:clamp(20px,2.8vw,26px); font-weight:500;
@@ -217,13 +209,13 @@ ${bodyHtml}
 }
 
 const topBar = (here) => `  <nav class="x-bar">
-    <a class="x-kicker" href="/">Field of Action</a>
-    ${here === 'index' ? '<span class="x-kicker">Experiments</span>' : `<a class="x-kicker" href="${SECTION_BASE}">All experiments</a>`}
+    <a class="x-nav" href="/">Field of Action</a>
+    ${here === 'index' ? '<span class="x-nav">Experiments</span>' : `<a class="x-nav" href="${SECTION_BASE}">All experiments</a>`}
   </nav>`;
 
 const footer = (right) => `  <footer class="x-foot">
-    <a class="x-kicker" href="${SECTION_BASE}">← Experiments index</a>
-    <span class="x-kicker">${right}</span>
+    <a class="x-nav" href="${SECTION_BASE}">Experiments index</a>
+    <span class="x-nav">${right}</span>
   </footer>`;
 
 const tagList = (tags) =>
@@ -258,7 +250,7 @@ ${secs}
       <div class="x-related">
 ${entry.related.map((id) => {
     const target = byId.get(id);
-    const label = `<span class="x-row-id">${escapeHtml(id)}</span><span>${escapeHtml(target ? target.title : id)}</span>`;
+    const label = `<span class="x-row-id" data-mono>${escapeHtml(id)}</span><span>${escapeHtml(target ? target.title : id)}</span>`;
     return target && target.status === 'published'
       ? `        <a href="${escapeHtml(target.url)}">${label}</a>`
       : `        <span>${label}<span class="x-chip" data-draft>unpublished</span></span>`;
@@ -268,12 +260,13 @@ ${entry.related.map((id) => {
     : '';
 
   const facts = [
-    ['Experiment ID', `<span class="x-row-id">${escapeHtml(entry.id)}</span>`],
+    ['Experiment ID', `<span class="x-row-id" data-mono>${escapeHtml(entry.id)}</span>`],
     ['Experiment run', timeTag(entry.experimentDate)],
     ['Published', timeTag(entry.published)],
     ['Updated', timeTag(entry.updated)],
     ['Version', escapeHtml(entry.version)],
   ];
+  if (entry.status === 'draft') facts.push(['Publication', 'Draft']);
   if (entry.confidenceLevel) {
     facts.push(['Confidence', `<span class="x-chip" data-level="${escapeHtml(entry.confidenceLevel)}">${escapeHtml(entry.confidenceLevel)}</span>`]);
   }
@@ -283,12 +276,6 @@ ${entry.related.map((id) => {
 ${topBar('entry')}
   <header class="x-head">
     <h1 class="x-title">${escapeHtml(entry.title)}</h1>
-    <div class="x-meta">
-      <span class="x-id">${escapeHtml(entry.id)}</span>
-      <span>v${escapeHtml(entry.version)}</span>
-      <span>${escapeHtml(humanDate(entry.experimentDate))}</span>
-      ${entry.status === 'draft' ? '<span class="x-chip" data-draft>draft</span>' : ''}
-    </div>
     <p class="x-deck">${escapeHtml(entry.summary)}</p>
     <dl class="x-facts">
 ${facts.map(([label, value]) => `      <div class="x-fact"><dt>${escapeHtml(label)}</dt><dd>${value}</dd></div>`).join('\n')}
@@ -329,7 +316,7 @@ export function renderIndexPage(published) {
   const rows = published.map((entry) => `      <a class="x-row" href="${escapeHtml(entry.url)}">
         <div class="x-row-aside">
           ${timeTag(entry.experimentDate, 'x-row-date')}
-          <span class="x-row-id">${escapeHtml(entry.id)}</span>
+          <span class="x-row-id" data-mono>${escapeHtml(entry.id)}</span>
         </div>
         <div>
           <h2 class="x-row-title">${escapeHtml(entry.title)}</h2>
@@ -356,16 +343,11 @@ ${rows}
 ${topBar('index')}
   <header class="x-head">
     <h1 class="x-title">${escapeHtml(SECTION_TITLE)}</h1>
-    <div class="x-meta">
-      <span class="x-id">FOA Material Experiment Abstracts</span>
-      <span>${published.length} published</span>
-    </div>
     <p class="x-deck">${escapeHtml(SECTION_DECK)}</p>
   </header>
 ${listing}
   <footer class="x-foot">
-    <a class="x-kicker" href="/">← Field of Action</a>
-    <span class="x-kicker">Observation before interpretation</span>
+    <a class="x-nav" href="/">Field of Action</a>
   </footer>
 </main>`;
 

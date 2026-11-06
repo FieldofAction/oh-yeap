@@ -51,7 +51,7 @@ export default function VideoEmbed({ url, poster, caption }) {
           {poster && <img className="ve-poster" src={poster} alt="" />}
           {url && (
             <a href={url} target="_blank" rel="noopener noreferrer" className="ve-link">
-              Watch video ↗
+              Watch video
             </a>
           )}
         </div>

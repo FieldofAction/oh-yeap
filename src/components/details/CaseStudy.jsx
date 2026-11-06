@@ -1,4 +1,3 @@
-import { eyebrowWord } from "../../lib/eyebrow";
 import React, { useMemo, useCallback, useRef, useEffect, useState } from "react";
 import { VIS } from "../../data/seed";
 import { HiddenStrip } from "../HiddenIndicators";
@@ -294,8 +293,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
       case "section":
         return (
           <div key={key} ref={observe} className="cs-block cs-block--section cs-sr cs-sr--rise">
-            <div className="cs-block--section-label">{block.label}</div>
-            <div className="cs-block--section-rule" />
+            <h2 className="cs-block--section-label">{block.label}</h2>
           </div>
         );
 
@@ -362,28 +360,28 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
             <div className="cs-intervention-grid">
               {cs.intervention.system && (
                 <div className="cs-intv-card">
-                  <div className="cs-intv-num">01</div>
+                  <div className="cs-intv-num" data-mono>01</div>
                   <div className="cs-intv-h">System Design</div>
                   <div className="cs-intv-body">{cs.intervention.system.map((s, i) => <p key={i}>{s}</p>)}</div>
                 </div>
               )}
               {cs.intervention.expression && (
                 <div className="cs-intv-card">
-                  <div className="cs-intv-num">02</div>
+                  <div className="cs-intv-num" data-mono>02</div>
                   <div className="cs-intv-h">Expression</div>
                   <div className="cs-intv-body">{cs.intervention.expression.map((s, i) => <p key={i}>{s}</p>)}</div>
                 </div>
               )}
               {cs.intervention.governance && (
                 <div className="cs-intv-card">
-                  <div className="cs-intv-num">03</div>
+                  <div className="cs-intv-num" data-mono>03</div>
                   <div className="cs-intv-h">Governance</div>
                   <div className="cs-intv-body">{cs.intervention.governance.map((s, i) => <p key={i}>{s}</p>)}</div>
                 </div>
               )}
               {cs.intervention.method && (
                 <div className="cs-intv-card">
-                  <div className="cs-intv-num">04</div>
+                  <div className="cs-intv-num" data-mono>04</div>
                   <div className="cs-intv-h">Method, Made Operable</div>
                   <div className="cs-intv-body">{cs.intervention.method.map((s, i) => <p key={i}>{s}</p>)}</div>
                 </div>
@@ -439,7 +437,6 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         return (
           <div key={key} ref={observe} className={`cs-block cs-block--split${block.align === "right" ? " cs-block--split-reversed" : ""} cs-sr cs-sr--rise`}>
             <div className={`cs-split-text${block.tone === "light" ? " cs-split-text--light" : ""}`}>
-              {eyebrowWord(block.subtitle) && <div className="eyebrow">{block.subtitle}</div>}
               {block.heading && <h2 className="cs-split-heading">{block.heading}</h2>}
               {block.body && <div className="cs-split-body">{block.body.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>}
             </div>
@@ -586,7 +583,6 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
           return (
             <div key={key} ref={observe} className={`cs-block cs-block--plate-split${block.align === "right" ? " cs-block--plate-split-rev" : ""} cs-sr cs-sr--rise`}>
               <div className="cs-plate-text">
-                {eyebrowWord(block.label) && <div className="eyebrow">{block.label}</div>}
                 {block.heading && <h2 className="cs-split-heading">{block.heading}</h2>}
                 {block.body && <div className="cs-split-body">{block.body.split("\n\n").map((p, i) => <p key={i}>{p}</p>)}</div>}
               </div>
@@ -614,7 +610,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
                 <figure key={i} className="cs-plate-item">
                   <div className="cs-plate-figure"><img src={it.src} alt={it.alt || ""} loading="lazy" /></div>
                   <figcaption>
-                    {it.label && <span className="cs-plate-eyebrow">{it.label}</span>}
+                    {it.label && <span className="cs-plate-label">{it.label}</span>}
                     {it.line && <span className="cs-plate-line">{it.line}</span>}
                   </figcaption>
                 </figure>
@@ -705,7 +701,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
 
   return (
     <div ref={overlayRef} data-lenis-prevent className={`cs-overlay ${closing ? "closing" : ""}`}>
-      <button className="rd-back" onClick={onClose}>&larr; Back</button>
+      <button className="rd-back" onClick={onClose}>Back</button>
       <div className="cs-inner">
         <HiddenStrip item={item} />
 
@@ -773,21 +769,21 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
                 <div className="cs-intervention-grid">
                   {cs.intervention.system && (
                     <div className="cs-intv-card">
-                      <div className="cs-intv-num">01</div>
+                      <div className="cs-intv-num" data-mono>01</div>
                       <div className="cs-intv-h">System Design</div>
                       <div className="cs-intv-body">{cs.intervention.system.map((s, i) => <p key={i}>{s}</p>)}</div>
                     </div>
                   )}
                   {cs.intervention.expression && (
                     <div className="cs-intv-card">
-                      <div className="cs-intv-num">02</div>
+                      <div className="cs-intv-num" data-mono>02</div>
                       <div className="cs-intv-h">Expression</div>
                       <div className="cs-intv-body">{cs.intervention.expression.map((s, i) => <p key={i}>{s}</p>)}</div>
                     </div>
                   )}
                   {cs.intervention.governance && (
                     <div className="cs-intv-card">
-                      <div className="cs-intv-num">03</div>
+                      <div className="cs-intv-num" data-mono>03</div>
                       <div className="cs-intv-h">Governance</div>
                       <div className="cs-intv-body">{cs.intervention.governance.map((s, i) => <p key={i}>{s}</p>)}</div>
                     </div>
@@ -824,7 +820,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         {/* ── Credits ── */}
         {cs.credits?.length > 0 && (
           <div ref={observe} className="cs-credits cs-sr cs-sr--rise">
-            <div className="cs-section-label cs-section-label--plain">Credits</div>
+            <h2 className="cs-section-label cs-section-label--plain">Credits</h2>
             <div className="cs-credits-grid">
               {cs.credits.map((c, i) => (
                 <div key={i} className="cs-credit">
@@ -843,7 +839,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
         <div ref={observe} className="cs-footer cs-sr cs-sr--rise">
           {item.deliverables?.length > 0 && (
             <div className="cs-deliv">
-              <div className="cs-section-label cs-section-label--plain">Deliverables</div>
+              <h2 className="cs-section-label cs-section-label--plain">Deliverables</h2>
               <div className="cs-deliv-list">
                 {item.deliverables.map(d => <span key={d} className="prow-tag">{d}</span>)}
               </div>
@@ -851,7 +847,7 @@ export default function CaseStudyDetail({ item, closing, onClose, fg, lens, patt
           )}
           <div className="cs-tags">
             {item.tags?.map(t => <span key={t} className="card-tg">{t}</span>)}
-            {item.relations?.map(r => <span key={r} className="card-tg rel" style={{ cursor: "pointer" }}>&rarr; {r}</span>)}
+            {item.relations?.map(r => <span key={r} className="card-tg rel" style={{ cursor: "pointer" }}>{r}</span>)}
           </div>
         </div>
 

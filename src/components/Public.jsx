@@ -1,4 +1,3 @@
-import { eyebrowWord } from "../lib/eyebrow";
 import { ARTIFACT_TYPE } from "../lib/artifactType";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { FILTERS } from "../data/playbook-public";
@@ -111,8 +110,8 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                   <span>Building <em>{nowState.building}</em></span>
                 </div>
                 <div className="hero-links">
-                  <a href="https://substack.com/@adickson" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
-                  <a href="https://linkedin.com/in/alfred-daniel-dickson-ii-5803423" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
+                  <a href="https://substack.com/@adickson" target="_blank" rel="noopener noreferrer" className="hero-link">Substack</a>
+                  <a href="https://linkedin.com/in/alfred-daniel-dickson-ii-5803423" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn</a>
                 </div>
               </div>
             </div>
@@ -122,27 +121,21 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
             <div className="hero hero--signal en">
               <div className="hero-dash-grid en d1">
                 <a className="hero-dash-cell hero-dash-cell--link" href="#relational-design">
-                  <div className="hero-dash-label">Practice</div>
                   <div className="hero-dash-val">Relational Design</div>
                 </a>
                 <div className="hero-dash-cell">
-                  <div className="hero-dash-label">Position</div>
                   <div className="hero-dash-val">Design Leader<br/>at Apple TV</div>
                 </div>
                 <div className="hero-dash-cell">
-                  <div className="hero-dash-label">Attention</div>
                   <div className="hero-dash-val">Application → Transmission</div>
                 </div>
                 <div className="hero-dash-cell">
-                  <div className="hero-dash-label">Building</div>
                   <div className="hero-dash-val">Condition Sets</div>
                 </div>
                 <div className="hero-dash-cell">
-                  <div className="hero-dash-label">Writing</div>
                   <div className="hero-dash-val">Authoring Themes</div>
                 </div>
                 <a className="hero-dash-cell hero-dash-cell--link" href="#hotel/nest">
-                  <div className="hero-dash-label">Hosting</div>
                   <div className="hero-dash-val">Nest · First Edition</div>
                 </a>
               </div>
@@ -156,30 +149,24 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
             <div className="hero hero--dash en">
               <div className="hero-dash-grid en d1">
                 <div className="hero-dash-cell">
-                  <div className="hero-dash-label">Practice</div>
                   <div className="hero-dash-val">Relational Design</div>
                 </div>
                 <div className="hero-dash-cell">
-                  <div className="hero-dash-label">Position</div>
                   <div className="hero-dash-val">Design Leader<br/>at Apple TV</div>
                 </div>
                 <div className="hero-dash-cell">
-                  <div className="hero-dash-label">Attention</div>
                   <div className="hero-dash-val">Application → Transmission</div>
                 </div>
                 <div className="hero-dash-cell">
-                  <div className="hero-dash-label">Building</div>
                   <div className="hero-dash-val">Condition Sets</div>
                 </div>
                 <div className="hero-dash-cell">
-                  <div className="hero-dash-label">Writing</div>
                   <div className="hero-dash-val">Authoring Themes</div>
                 </div>
                 <div className="hero-dash-cell">
-                  <div className="hero-dash-label">Links</div>
                   <div className="hero-dash-val hero-links">
-                    <a href="https://substack.com/@adickson" target="_blank" rel="noopener noreferrer" className="hero-link">Substack ↗</a>
-                    <a href="https://linkedin.com/in/alfred-daniel-dickson-ii-5803423" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn ↗</a>
+                    <a href="https://substack.com/@adickson" target="_blank" rel="noopener noreferrer" className="hero-link">Substack</a>
+                    <a href="https://linkedin.com/in/alfred-daniel-dickson-ii-5803423" target="_blank" rel="noopener noreferrer" className="hero-link">LinkedIn</a>
                   </div>
                 </div>
               </div>
@@ -247,7 +234,6 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                   {practice.map((item, i) => (
                     <div key={item.id} data-reveal className={`ix-row${DEV_MODE && isHidden(item) ? " is-hidden-row" : ""}`} onClick={() => onOpen(item)}>
                       <div className="ix-main">
-                        {eyebrowWord(item.role) && <div className="eyebrow">{item.role}</div>}
                         <HiddenChip item={item} />
                         <div className="ix-title">{item.title}</div>
                         <div className="ix-sub">{item.subtitle}</div>
@@ -256,7 +242,7 @@ export default function Public({ items, allItems, filter, setFilter, relFilter, 
                         <div className="ix-tags">
                           {item.tags?.map(t => <span key={t} className="ix-tag">{t}</span>)}
                         </div>
-                        <div className="ix-year">{!eyebrowWord(item.role) && item.role ? `${item.role} · ` : ""}{item.year}</div>
+                        <div className="ix-year">{item.role ? `${item.role} · ` : ""}{item.year}</div>
                       </div>
                       <HoverPreview images={getPreviewImages(item)} fallbackBg={`linear-gradient(135deg, ${theme.ac1}30, ${theme.ac2}20)`} />
                       {lens && <PatternChips itemTitle={item.title} active={lens} compact />}
