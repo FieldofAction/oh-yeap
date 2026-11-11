@@ -1,0 +1,146 @@
+/* Workbench — system type.
+   Two levels of text (headline, body) plus functional labels. One accent,
+   and it means "held". No boxes: structure comes from type, space and
+   hairlines. Colours are fixed here rather than taken from the theme
+   variables so the instrument reads the same wherever it is mounted. */
+
+.wb {
+  --wb-ink: #1D1D1F;
+  --wb-soft: #6E6E73;
+  --wb-line: #D2D2D7;
+  --wb-fill: #F5F5F7;
+  --wb-held: #E63311;
+  --wb-face: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  box-sizing: border-box;
+  min-height: calc(100vh - 72px);
+  padding: 32px clamp(20px, 6vw, 96px) 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  color: var(--wb-ink);
+  font-family: var(--wb-face);
+  -webkit-font-smoothing: antialiased;
+}
+.wb *, .wb *::before, .wb *::after { box-sizing: border-box; }
+.wb p, .wb h1, .wb h2 { margin: 0; }
+
+/* Header */
+.wb-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.wb-title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.wb-segments { display: flex; gap: 2px; padding: 2px; background: var(--wb-fill); border-radius: 12px; }
+.wb-segment { font: inherit; font-size: 15px; color: var(--wb-ink); background: transparent; border: 0; border-radius: 10px; min-height: 44px; padding: 0 20px; cursor: pointer; }
+.wb-segment[aria-pressed="true"] { font-weight: 600; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
+
+/* Text */
+.wb-headline { font-size: clamp(28px, 3.6vw, 44px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; overflow-wrap: anywhere; }
+.wb-reveal { font-size: clamp(28px, 3.6vw, 44px); font-weight: 400; letter-spacing: -0.03em; line-height: 1.1; overflow-wrap: anywhere; }
+.wb-settled-line { font-size: 22px; font-weight: 400; letter-spacing: -0.01em; line-height: 1.25; overflow-wrap: anywhere; }
+.wb-body { font-size: 17px; line-height: 1.45; color: var(--wb-soft); }
+.wb-name { font-size: 17px; font-weight: 600; line-height: 1.45; color: var(--wb-ink); }
+.wb-label { font-size: 15px; color: var(--wb-soft); }
+.wb-measure { max-width: 620px; }
+
+/* Controls */
+.wb-link { font: inherit; font-size: 17px; color: var(--wb-ink); background: transparent; border: 0; padding: 0; min-height: 44px; text-align: left; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.wb-link:hover { color: var(--wb-soft); }
+.wb-link:disabled { color: var(--wb-soft); text-decoration: none; cursor: default; }
+.wb-link-inline { min-height: 0; }
+.wb-button { font: inherit; font-size: 17px; font-weight: 600; color: #FFFFFF; background: var(--wb-ink); border: 0; border-radius: 12px; min-height: 44px; padding: 0 22px; cursor: pointer; }
+.wb-button:disabled { background: var(--wb-soft); cursor: default; }
+.wb-actions { display: flex; align-items: center; column-gap: 28px; row-gap: 0; flex-wrap: wrap; }
+.wb :is(button, input, a):focus-visible { outline: 2px solid var(--wb-ink); outline-offset: 3px; }
+
+/* The signal line */
+.wb-signal { display: flex; flex-direction: column; gap: 10px; max-width: 980px; }
+.wb-signal-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.wb-field { flex: 1 1 260px; min-width: 0; width: 100%; border: 0; border-radius: 14px; background: var(--wb-fill); padding: 0 20px; min-height: 56px; font: inherit; font-size: 19px; color: var(--wb-ink); }
+.wb-field::placeholder { color: var(--wb-soft); opacity: 1; }
+
+/* Before anything is held: only the line, large, in the middle of the page. */
+.wb-empty { gap: 0; }
+.wb-signal-open { flex: 1; justify-content: center; gap: 20px; padding: 80px 0; }
+.wb-signal-open .wb-label { font-size: 17px; }
+.wb-signal-open .wb-signal-row { align-items: flex-end; }
+.wb-signal-open .wb-field { flex-basis: 100%; display: block; resize: none; background: transparent; border-radius: 0; padding: 0; min-height: 0; font-size: clamp(32px, 5vw, 64px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.08; }
+.wb-signal-open .wb-field:focus-visible { outline-offset: 8px; }
+.wb-empty .wb-tools { padding-top: 56px; }
+
+/* Held and settled */
+.wb-list { display: flex; flex-direction: column; gap: 56px; max-width: 980px; }
+.wb-item { display: flex; gap: 20px; align-items: flex-start; }
+.wb-item-body { display: flex; flex-direction: column; gap: 12px; min-width: 0; flex: 1; }
+.wb-mark { flex: none; width: 12px; height: 12px; border-radius: 50%; margin-top: 18px; background: var(--wb-held); }
+.wb-list-settled { gap: 40px; }
+.wb-item-settled { padding-top: 40px; border-top: 1px solid var(--wb-line); }
+.wb-search { display: flex; flex-direction: column; gap: 10px; }
+.wb-search .wb-field { flex: none; }
+.wb-earlier-runs { display: flex; flex-direction: column; gap: 40px; padding-top: 16px; }
+
+/* A reading */
+.wb-reading { display: flex; flex-direction: column; gap: 12px; padding-top: 28px; }
+.wb-grace { display: flex; flex-direction: column; gap: 8px; }
+/* "Not yet" is followed by space on purpose: nothing has been named. */
+.wb-grace-notyet { padding-bottom: 120px; }
+.wb-block { display: flex; flex-direction: column; gap: 4px; padding-top: 8px; }
+.wb-older { display: flex; flex-direction: column; gap: 8px; }
+.wb-older-item { padding: 16px 0 8px; border-top: 1px solid var(--wb-line); }
+.wb-trace { display: flex; flex-direction: column; gap: 24px; padding: 16px 0 8px; border-top: 1px solid var(--wb-line); }
+.wb-trace-step { display: flex; flex-direction: column; gap: 6px; }
+
+/* Tool output inside a full reading (markup from WorkbenchReadingDetail). */
+.wb .atrium-detail-block, .wb .atrium-detail-list { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; font-family: var(--wb-face); font-size: 15px; }
+.wb .atrium-detail-row { display: flex; gap: 16px; align-items: baseline; line-height: 1.45; flex-wrap: wrap; }
+.wb .atrium-detail-key { flex: 0 0 140px; min-width: 0; font-family: var(--wb-face); font-size: 15px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--wb-ink); }
+.wb .atrium-detail-val { flex: 1 1 260px; font-weight: 400; color: var(--wb-soft); }
+.wb .atrium-detail-section-label { margin-top: 8px; font-family: var(--wb-face); font-size: 15px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--wb-ink); }
+.wb .atrium-detail-raw { margin: 0; font-size: 13px; color: var(--wb-soft); white-space: pre-wrap; word-break: break-word; }
+
+/* Choosing what reads a signal */
+.wb-picker { display: flex; flex-direction: column; gap: 12px; padding-top: 16px; }
+.wb-fieldset { display: flex; flex-direction: column; margin: 0; padding: 0; border: 0; min-width: 0; }
+.wb-fieldset legend { padding: 0; }
+.wb-check { display: flex; align-items: center; gap: 12px; min-height: 44px; font-size: 17px; color: var(--wb-ink); cursor: pointer; }
+.wb-check input { flex: none; width: 20px; height: 20px; margin: 0; accent-color: var(--wb-ink); }
+.wb-check-nested { padding-left: 32px; color: var(--wb-soft); }
+
+/* Tools index */
+.wb-tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); column-gap: 48px; }
+.wb-tool { display: flex; flex-direction: column; gap: 4px; padding: 20px 0; min-height: 44px; font: inherit; text-align: left; color: var(--wb-ink); background: transparent; border: 0; border-top: 1px solid var(--wb-line); cursor: pointer; }
+.wb-tool-name { font-size: 17px; font-weight: 600; }
+.wb-tool-line { font-size: 15px; line-height: 1.45; color: var(--wb-soft); }
+.wb-tool:hover .wb-tool-name { text-decoration: underline; text-underline-offset: 4px; }
+
+@media (max-width: 560px) {
+  .wb { gap: 40px; padding-bottom: 72px; }
+  .wb-segments { width: 100%; }
+  .wb-segment { flex: 1; padding: 0 8px; }
+  .wb-field { font-size: 17px; padding: 0 16px; }
+  .wb-signal-open .wb-field { font-size: 32px; padding: 0; }
+  .wb-item { gap: 12px; }
+  .wb-mark { margin-top: 12px; }
+  .wb-grace-notyet { padding-bottom: 72px; }
+  .wb .atrium-detail-key { flex-basis: 100%; }
+}
+
+/* The Workshop tools inherit the system typeface through the site's own font
+   variables. Their layouts are untouched; this is the shared ground only. */
+.workshop-system {
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--sans);
+}
+
+/* Lenses and Signal Surface */
+.wb-text { font-size: 19px; line-height: 1.45; color: var(--wb-ink); overflow-wrap: anywhere; }
+.wb-lens { padding-top: 12px; }
+.wb-lens-picker { gap: 4px; padding-top: 8px; }
+.wb-lens-picker .wb-label { padding-top: 8px; }
+.wb-lens-picker .wb-field { flex: none; max-width: 480px; margin: 6px 0; }
+.wb-lens-result { display: flex; flex-direction: column; gap: 2px; padding: 12px 0; min-height: 44px; max-width: 620px; font: inherit; text-align: left; color: var(--wb-ink); background: transparent; border: 0; border-top: 1px solid var(--wb-line); cursor: pointer; }
+.wb-lens-result:hover .wb-name { text-decoration: underline; text-underline-offset: 4px; }
+.wb-surface { display: flex; flex-direction: column; gap: 16px; max-width: 980px; margin-top: -32px; }
+.wb-surface-list { display: flex; flex-direction: column; gap: 0; }
+.wb-surface-list > .wb-body { padding-bottom: 16px; }
+.wb-surface-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding: 16px 0; border-top: 1px solid var(--wb-line); }
+@media (max-width: 560px) { .wb-surface-item { flex-direction: column; gap: 0; } .wb-surface { margin-top: -20px; } }

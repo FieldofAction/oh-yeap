@@ -1,0 +1,131 @@
+/* Breakground and Desert.
+   Breakground uses the Workbench components (styles/workbench.css) and adds
+   only what is its own: the question card, the saved list, the conversation,
+   and its desert mode. Desert keeps its paper and its spatial scene. */
+
+.wb-page { gap: 48px; }
+.wb-signal > .wb-field { flex: none; }
+.wb-tool-body { display: flex; flex-direction: column; gap: 40px; max-width: 760px; }
+.wb-link[aria-current="page"] { font-weight: 600; text-decoration: none; }
+.bg-modes { align-self: flex-start; margin-top: 6px; }
+
+/* The card */
+.bg-questions { display: flex; flex-direction: column; gap: 48px; }
+.bg-question { display: flex; flex-direction: column; gap: 8px; }
+.bg-question-title { font-size: clamp(22px, 2.6vw, 28px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; color: var(--wb-ink); }
+.bg-question-input { display: block; width: 100%; min-height: 44px; margin-top: 4px; padding: 10px 0; border: 0; border-bottom: 1px solid var(--wb-line); border-radius: 0; background: transparent; font: inherit; font-size: 19px; line-height: 1.45; color: var(--wb-ink); resize: none; overflow: hidden; }
+.bg-question-input::placeholder { color: var(--wb-soft); opacity: 1; }
+.bg-question-input:focus { border-bottom-color: var(--wb-ink); }
+.wb .bg-question-input:focus-visible { outline: 0; }
+
+/* Summary */
+.bg-answers { display: flex; flex-direction: column; gap: 24px; margin: 0; }
+.bg-answer { display: flex; flex-direction: column; gap: 4px; padding-top: 20px; border-top: 1px solid var(--wb-line); }
+.bg-answer dd { margin: 0; }
+.bg-answer-text { font-size: 19px; line-height: 1.45; color: var(--wb-ink); white-space: pre-wrap; overflow-wrap: anywhere; }
+
+/* Saved orientations */
+.bg-saved-list { display: flex; flex-direction: column; }
+.bg-saved { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 14px 0; border-top: 1px solid var(--wb-line); }
+.bg-saved-list .wb-name { padding-bottom: 12px; }
+.bg-saved-open { display: flex; flex-direction: column; gap: 2px; min-width: 0; min-height: 44px; flex: 1; padding: 0; font: inherit; text-align: left; color: var(--wb-ink); background: transparent; border: 0; cursor: pointer; }
+.bg-saved-open .wb-name { padding-bottom: 0; overflow-wrap: anywhere; }
+.bg-saved-open:hover .wb-name { text-decoration: underline; text-underline-offset: 4px; }
+
+/* Conversation */
+.bg-chat-scroll { display: flex; flex-direction: column; gap: 28px; max-height: 60vh; overflow-y: auto; scrollbar-width: thin; }
+.bg-chat-msg { display: flex; flex-direction: column; gap: 4px; max-width: 620px; }
+.bg-chat-text { font-size: 19px; line-height: 1.45; color: var(--wb-ink); white-space: pre-wrap; overflow-wrap: anywhere; }
+.bg-chat-loading { display: flex; gap: 6px; padding: 10px 0; }
+.bg-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--wb-soft); animation: bgPulse 1.4s ease-in-out infinite; }
+.bg-dot:nth-child(2) { animation-delay: .2s; }
+.bg-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes bgPulse { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+.bg-chat-input { padding: 16px 20px; line-height: 1.3; resize: none; }
+
+/* Breakground's desert mode: the fields sharpen as they cohere. */
+.bg-desert { position: relative; min-height: 70vh; max-width: 760px; }
+.bg-desert-fields { display: flex; flex-direction: column; gap: 32px; position: relative; z-index: 1; }
+.bg-desert-field { display: flex; flex-direction: column; gap: 8px; padding: 12px 0; cursor: text; transform-origin: left center; }
+.bg-desert-field--focused { z-index: 2; }
+.bg-desert-field-title { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; color: var(--wb-ink); }
+.bg-desert-field-input { display: block; width: 100%; min-height: 44px; padding: 8px 0; border: 0; border-bottom: 1px solid transparent; background: transparent; font: inherit; font-size: 19px; line-height: 1.45; color: var(--wb-ink); resize: none; overflow: hidden; transition: border-color 1.2s ease; }
+.bg-desert-field--focused .bg-desert-field-input { border-bottom-color: var(--wb-line); }
+.bg-desert-field-input::placeholder { color: var(--wb-soft); opacity: 1; }
+.wb .bg-desert-field-input:focus-visible { outline: 0; }
+.bg-desert-signal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: clamp(17px, 2.5vw, 22px); color: var(--wb-soft); pointer-events: none; z-index: 10; transition: opacity 2s ease; }
+.bg-desert-horizon { position: fixed; bottom: 60px; left: 40px; right: 40px; height: 1px; background: var(--wb-line); z-index: 5; }
+.bg-desert-horizon-line { height: 1px; background: var(--wb-ink); transition: width 2s ease, opacity 2s ease; }
+.bg-desert-threshold { display: flex; padding: 48px 0 24px; min-height: 80px; position: relative; z-index: 1; }
+.bg-desert-held { font-size: 17px; color: var(--wb-soft); min-height: 20px; }
+
+@media (max-width: 560px) {
+  .bg-saved { align-items: flex-start; flex-direction: column; gap: 0; }
+  .bg-desert-horizon { left: 20px; right: 20px; bottom: 40px; }
+}
+
+/* ── Desert Visual — Spatial Field Experience ── */
+.dv-gate{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#f5f0eb;z-index:200}
+.dv-gate-content{text-align:center;max-width:400px;padding:40px}
+
+.dv-container{position:fixed;inset:0;overflow:hidden;cursor:crosshair;z-index:200}
+.dv-backdrop{position:fixed;inset:0;z-index:90;cursor:crosshair}
+
+/* Sky */
+.dv-sky{position:absolute;inset:0;z-index:0}
+
+/* Abstract sand gradations */
+.dv-sand{position:absolute;left:0;right:0;height:55%;z-index:1;pointer-events:none;transition:opacity 3s ease,background 3s ease,transform .3s ease}
+.dv-sand--far{z-index:1}
+.dv-sand--mid{z-index:2}
+.dv-sand--near{z-index:3}
+
+/* Atmospheric haze */
+.dv-haze{position:absolute;inset:0;z-index:6;background:radial-gradient(ellipse 100% 60% at 50% 45%,rgba(245,240,235,.5) 0%,rgba(245,240,235,.15) 50%,transparent 100%);pointer-events:none}
+
+/* Heat shimmer */
+.dv-heat{position:absolute;inset:0;z-index:7;background:linear-gradient(180deg,rgba(255,200,120,.06) 0%,rgba(255,180,100,.1) 40%,rgba(200,160,100,.04) 100%);pointer-events:none;mix-blend-mode:multiply}
+
+/* 3D scene container */
+.dv-scene{position:absolute;inset:0;z-index:10;perspective:800px;transform-style:preserve-3d;transition:transform .3s ease;pointer-events:none}
+
+/* Field nodes */
+.dv-field{position:absolute;max-width:320px;min-width:180px;padding:20px;cursor:pointer;transform-style:preserve-3d;pointer-events:auto}
+.dv-field--active{position:fixed;left:50%!important;top:50%!important;max-width:480px;min-width:320px;background:rgba(245,240,235,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(60,50,40,.1);padding:32px;z-index:100!important}
+
+/* Signal */
+.dv-signal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--display);font-size:clamp(16px,3vw,28px);font-weight:200;letter-spacing:.15em;color:rgba(60,50,40,.35);pointer-events:none;z-index:10;text-transform:lowercase}
+
+/* Coherence bar */
+.dv-coherence-bar{position:fixed;bottom:30px;left:10%;right:10%;height:1px;background:rgba(60,50,40,.08);z-index:10}
+.dv-coherence-fill{height:1px;background:rgba(60,50,40,.4)}
+
+/* Threshold */
+.dv-threshold{position:fixed;bottom:50px;left:50%;transform:translateX(-50%);z-index:20;animation:en .5s ease both}
+
+/* Assessment pulse */
+.dv-pulse{position:fixed;top:20px;right:20px;width:6px;height:6px;border-radius:50%;background:rgba(60,50,40,.2);z-index:20;animation:bgPulse 1.4s ease-in-out infinite}
+
+/* Desert: gate, fields and controls, in system type on its own paper. */
+.dv-gate, .dv-container { --dv-ink: #3A3530; --dv-soft: #6B635B; --dv-paper: #F5F0EB; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+.dv-gate-content { display: flex; flex-direction: column; align-items: center; gap: 20px; }
+.dv-gate-title { margin: 0; font-size: clamp(40px, 7vw, 72px); font-weight: 600; letter-spacing: -0.03em; line-height: 1; color: var(--dv-ink); }
+.dv-gate-sub { margin: 0; font-size: 17px; line-height: 1.45; color: var(--dv-soft); }
+.dv-gate-carried { margin: 0; font-size: 19px; font-weight: 600; line-height: 1.3; color: var(--dv-ink); overflow-wrap: anywhere; }
+.dv-button { font: inherit; font-size: 17px; font-weight: 600; color: var(--dv-paper); background: var(--dv-ink); border: 0; border-radius: 12px; min-height: 44px; padding: 0 28px; cursor: pointer; }
+.dv-leave { position: fixed; top: 20px; left: 24px; z-index: 210; font: inherit; font-size: 17px; color: var(--dv-ink); background: transparent; border: 0; padding: 0; min-height: 44px; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.dv-button:focus-visible, .dv-leave:focus-visible { outline: 2px solid var(--dv-ink); outline-offset: 3px; }
+.dv-field-title { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.3; color: var(--dv-ink); margin-bottom: 6px; }
+.dv-field--active .dv-field-title { font-size: 22px; letter-spacing: -0.02em; margin-bottom: 14px; }
+.dv-field-value { font-size: 15px; line-height: 1.45; color: var(--dv-ink); }
+.dv-field-placeholder { color: var(--dv-soft); }
+.dv-field-input { display: block; width: 100%; min-height: 56px; padding: 10px 0; border: 0; border-bottom: 1px solid rgba(58, 53, 48, .25); background: transparent; font: inherit; font-size: 19px; line-height: 1.45; color: var(--dv-ink); outline: none; resize: none; }
+.dv-field-input::placeholder { color: var(--dv-soft); opacity: 1; }
+.dv-field-input:focus { border-bottom-color: var(--dv-ink); }
+
+@media (max-width: 768px) {
+  .dv-field { min-width: 140px; max-width: 200px; padding: 12px; }
+  .dv-field--active { min-width: 260px; max-width: calc(100vw - 40px); padding: 24px; }
+  .dv-field-title { font-size: 15px; }
+  .dv-signal { font-size: 16px; }
+}
