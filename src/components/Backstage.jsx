@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useCallback, useEffect } from "react";
-import { AGENTS, CORE_CYCLE } from "../data/agents";
+import { AGENTS, CORE_CYCLE, AGENT_ROLES, AGENT_RINGS } from "../data/agents";
 import { THEMES } from "../data/themes";
 import { PILLARS } from "../data/playbook-data";
 import { uid } from "../data/seed";
@@ -70,7 +70,7 @@ function PillarDiagnostic() {
         {PILLARS.map(p => (
           <div key={p.key} className="tl-slider">
             <label htmlFor={`bs-diag-${p.key}`} className="wb-name">{p.label}</label>
-            <input id={`bs-diag-${p.key}`} type="range" className="tl-range" min="0" max="100" value={vals[p.key]} onChange={e => set(p.key, e.target.value)} />
+            <input id={`bs-diag-${p.key}`} type="range" className="tl-range" style={{ "--p": vals[p.key] }} min="0" max="100" value={vals[p.key]} onChange={e => set(p.key, e.target.value)} />
             <output htmlFor={`bs-diag-${p.key}`} className="wb-body">{vals[p.key]}</output>
           </div>
         ))}
@@ -507,7 +507,6 @@ Respond with ONLY the synthesis text, no preamble.`;
     (pbProject.name || pbEmotion) ? `Playbook${pbProject.name ? ` (${pbProject.name})` : ""}${pbEmotion ? `, ${pbEmotion}` : ""}, ${asu.get_dominant_pillar().label} leading` : null,
     aomAnswered > 0 ? `Art of Model${aom.synthesis[aom.activeVersion] ? ", with its synthesis" : ""}` : null,
   ].filter(Boolean);
-  const sequenceNames = pipeMode === "free" ? [] : (activePipe.sequence || []).map(k => AGENTS.find(a => a.key === k)?.name).filter(Boolean);
   const STATUS_WORDS = { live: "Live", wip: "In progress", draft: "Draft", seed: "Seed", archived: "Archived" };
 
   return (
@@ -544,17 +543,43 @@ Respond with ONLY the synthesis text, no preamble.`;
           </div>
 
           {pipeMode === "free" ? (
-            <div className="wb-block">
-              <p className="wb-name">Agents</p>
-              <div className="tl-chips">
-                {AGENTS.map(a => (
-                  <button key={a.key} type="button" className="tl-chip" aria-pressed={!!am[a.key]} onClick={() => asu.set_agent_mask({ ...am, [a.key]: !am[a.key] })}>{a.name}</button>
-                ))}
-              </div>
+            <div className="tl-roster">
+              {AGENT_RINGS.map(r => {
+                const members = AGENTS.filter(a => a.ring === r.ring);
+                const allOn = members.every(a => am[a.key]);
+                return (
+                  <fieldset key={r.ring} className={`tl-ring${members.length > 4 ? " tl-ring-wide" : ""}`}>
+                    <legend className="tl-ring-head">
+                      <span className="wb-name">{r.name}</span>
+                      <span className="wb-body">{r.line}</span>
+                    </legend>
+                    <div className="tl-ring-agents">
+                      {members.map(a => (
+                        <label key={a.key} className="tl-agent">
+                          <input type="checkbox" checked={!!am[a.key]} onChange={() => asu.set_agent_mask({ ...am, [a.key]: !am[a.key] })} />
+                          <span className="tl-agent-name">{a.name}</span>
+                          <span className="tl-agent-role">{AGENT_ROLES[a.key]}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <button type="button" className="wb-link tl-ring-all" onClick={() => asu.set_agent_mask({ ...am, ...Object.fromEntries(members.map(a => [a.key, !allOn])) })}>
+                      {allOn ? `Leave out the ${r.name.toLowerCase()}` : `Use all of the ${r.name.toLowerCase()}`}
+                    </button>
+                  </fieldset>
+                );
+              })}
             </div>
           ) : (
             <div className="wb-block">
-              <p className="wb-body wb-measure">The sequence sets the agents: {sequenceNames.join(", then ")}.</p>
+              <p className="wb-body wb-measure">The sequence sets the agents and the order they speak in.</p>
+              <ol className="tl-roster tl-order">
+                {(activePipe.sequence || []).map(k => AGENTS.find(a => a.key === k)).filter(Boolean).map(a => (
+                  <li key={a.key} className="tl-agent">
+                    <span className="tl-agent-name">{a.name}</span>
+                    <span className="tl-agent-role">{AGENT_ROLES[a.key]}</span>
+                  </li>
+                ))}
+              </ol>
               <div className="wb-actions">
                 <button type="button" className="wb-link" aria-expanded={showPrompt} onClick={() => { setShowPrompt(p => !p); setPromptCopied(false) }}>{showPrompt ? "Hide the prompt" : "Show the prompt"}</button>
                 <button type="button" className="wb-link" onClick={() => { navigator.clipboard?.writeText(SEQ_PROMPTS[pipeMode]); setPromptCopied(true); setTimeout(() => setPromptCopied(false), 2000) }}>{promptCopied ? "Copied" : "Copy the prompt"}</button>
