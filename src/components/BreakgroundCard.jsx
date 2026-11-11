@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
+import { studioGenerate } from "../lib/studio-generate";
 
 /* ── Breakground Card — Field Orientation System ── */
 
@@ -362,18 +363,13 @@ function HybridMode({ onComplete, projectName: initialProject }) {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 1024,
-          system: HYBRID_SYSTEM_PROMPT,
-          messages: conversationMessages.map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
-        }),
+      const response = await studioGenerate({
+        maxTokens: 1024,
+        system: HYBRID_SYSTEM_PROMPT,
+        messages: conversationMessages.map((m) => ({
+          role: m.role,
+          content: m.content,
+        })),
       });
       if (!response.ok) {
         const err = await response.text();
@@ -597,20 +593,15 @@ function DesertMode({ onComplete, projectName: initialProject }) {
 
     try {
       const fieldEntries = QUESTIONS.map((q) => `${q.title}: ${currentCard[q.id] || "(empty)"}`).join("\n");
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 256,
-          system: DESERT_SYSTEM_PROMPT,
-          messages: [
-            {
-              role: "user",
-              content: `Project: ${initialProject || "unnamed"}\n\nCurrent field state:\n${fieldEntries}`,
-            },
-          ],
-        }),
+      const response = await studioGenerate({
+        maxTokens: 256,
+        system: DESERT_SYSTEM_PROMPT,
+        messages: [
+          {
+            role: "user",
+            content: `Project: ${initialProject || "unnamed"}\n\nCurrent field state:\n${fieldEntries}`,
+          },
+        ],
       });
       if (!response.ok) throw new Error("Field assessment failed");
       const data = await response.json();
