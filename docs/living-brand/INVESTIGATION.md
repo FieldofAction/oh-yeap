@@ -2,6 +2,10 @@
 
 November 2026. Working names throughout. All brand data in the build is fictional.
 
+This is the write-up of the first build, kept as it was written. Test counts,
+the connector and the handling of real brands have moved on since; for where
+things stand now, read [STATUS.md](STATUS.md).
+
 ## 1. Interpretation
 
 The incumbents are building **brand enforcement for production at scale**.

@@ -24,7 +24,7 @@ export const brightloop = {
       exposure: 'Confidential', made: { by: 'Maya Chen', date: '2026-09-01' }, rationale: 'Target parents leaving Fernway after its price rise; borrow a handmade paper-cut look.',
       provenance: { source: 'Brightloop shared drive', origin: 'human', confidential: true }, pipeline: 'approved', standing: 'precedent', domain: 'verbal',
       rights: { status: 'cleared', channels: ['internal'] }, approval: { status: 'approved', by: 'maya', date: '2026-09-01' },
-      evidence: [], relations: [], tags: ['paper-cut', 'bedtime', 'moon', 'lapsed', 'conquest', 'small hours', 'lanterns'], visual: { motif: 'papercut', tone: 'lantern' },
+      evidence: [], relations: [], tags: ['paper-cut', 'bedtime', 'moon', 'lapsed', 'conquest', 'small hours', 'lanterns'], visual: { motif: 'papercut', tone: 'amber' },
       text: 'Conquest campaign aimed at Fernway lapsed subscribers. Paper-cut bedtime moon. Free bedtime stories. Launch 1 December.',
     },
     {
@@ -33,7 +33,7 @@ export const brightloop = {
       exposure: 'Confidential', made: { by: 'Brightloop media', date: '2026-10-01' }, rationale: '$4.2M across connected TV and social, heavy in the first two weeks of December.',
       provenance: { source: 'Brightloop shared drive', origin: 'human', confidential: true }, pipeline: 'approved', standing: 'operational', domain: 'product',
       rights: { status: 'cleared', channels: ['internal'] }, approval: { status: 'approved', by: 'maya', date: '2026-10-01' },
-      evidence: [], relations: [], tags: ['media', 'budget', 'december', 'bedtime'], visual: { motif: 'chart', tone: 'lantern' },
+      evidence: [], relations: [], tags: ['media', 'budget', 'december', 'bedtime'], visual: { motif: 'chart', tone: 'amber' },
       text: 'Bedtime media plan. 4.2 million dollars. Connected TV and social. December.',
     },
     {
@@ -42,8 +42,18 @@ export const brightloop = {
       exposure: 'Confidential', made: { by: 'Northbound Studio', date: '2026-10-20' }, rationale: 'Paper-cut lantern moon over rooftops.',
       provenance: { source: 'Northbound Studio, Brightloop workspace', origin: 'human', confidential: true }, pipeline: 'interpreted', standing: 'experiment', domain: 'visual',
       rights: { status: 'cleared', channels: ['paid-media', 'owned-social'] }, approval: { status: 'pending' },
-      evidence: [], relations: [{ type: 'part of', to: 'bl-lanterns-brief' }], tags: ['paper-cut', 'moon', 'bedtime', 'illustration'], visual: { motif: 'papercut', tone: 'lantern' },
+      evidence: [], relations: [{ type: 'part of', to: 'bl-lanterns-brief' }], tags: ['paper-cut', 'moon', 'bedtime', 'illustration'], visual: { motif: 'papercut', tone: 'amber' },
       text: 'Paper-cut lantern moon over rooftops. Bedtime.',
     },
   ],
 };
+
+// The engagement that once opened this brand. It has ended; tests use it to prove it stays closed.
+export const brightloopEngagement = {
+    id: 'eng-brightloop', brandId: 'brightloop', clientLabel: 'Brightloop',
+    practitioner: 'Freelance creative director', role: 'Concept consultant',
+    project: 'Holiday concepts', purpose: 'Concept routes for a holiday campaign.',
+    grant: { brandId: 'brightloop', powers: ['read'], expires: '2026-10-30', revokedAt: '2026-10-30' },
+    workTypes: ['Brand campaign'], channels: ['paid-media'], asOf: '2026-11-11',
+    milestones: [{ date: '2026-12-01', label: 'Launch' }], team: ['Concept consultant'],
+  };

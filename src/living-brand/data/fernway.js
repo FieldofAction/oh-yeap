@@ -52,7 +52,7 @@ export const fernway = {
   ],
   items: [
     {
-      id: 'fw-strategy-2024', title: 'Company strategy 2024 to 2027', kind: 'Strategy document', workType: 'Company strategy', element: 'Narrative and priorities',
+      id: 'fw-strategy-2024', title: 'Company strategy 2024 to 2027', power: 'offer', kind: 'Strategy document', workType: 'Company strategy', element: 'Narrative and priorities',
       canvas: 'Internal document', audience: 'Leadership and board', intendedOutcome: 'Shared direction', level: 'company', period: { from: '2024-01-15' },
       exposure: 'Internal', made: { by: 'Tom Ekwueme', date: '2024-01-15' }, rationale: 'Positions Fernway against high-stimulation children\'s media.',
       provenance: { source: 'Google Drive, Leadership', origin: 'human', confidential: true }, pipeline: 'approved', standing: 'canon',
@@ -237,7 +237,7 @@ export const fernway = {
       text: 'Lapsed parents cite price rise. Still call it the calm one. Miss the bedtime routine. Confused about ads on the free tier.',
     },
     {
-      id: 'fw-pricing-2026', title: 'Pricing and plans 2026', kind: 'Offer record', workType: 'Offer', element: 'Plans and prices',
+      id: 'fw-pricing-2026', title: 'Pricing and plans 2026', power: 'offer', kind: 'Offer record', workType: 'Offer', element: 'Plans and prices',
       canvas: 'Pricing page and app store', audience: 'Subscribers', intendedOutcome: 'Revenue per subscriber', level: 'company', period: { from: '2026-03-01' },
       exposure: 'Public', made: { by: 'Finance and product', date: '2026-02-15' }, rationale: 'Price rise for the standard plan; ad-supported tier added in April.',
       provenance: { source: 'Finance, plans register', origin: 'human' }, pipeline: 'approved', standing: 'operational', domain: 'product',

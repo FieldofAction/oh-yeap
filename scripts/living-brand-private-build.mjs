@@ -46,17 +46,12 @@ const catalog = {
   asOf, homeHref: null, homeLabel: title,
   practitioner: {
     name: first.practitioner || 'Practitioner',
-    methods: ['Read the work before the guidelines.', 'Separate intended impact, observed outcome, contribution and transfer.', 'Ask who can decide before proposing what should change.'],
+    // Methods are the practitioner's own. A page built from packets has none to show until they write some.
+    methods: [],
     preferences: {},
     engagements: open.map(o => ({ id: o.engagement.id, clientLabel: o.brand.name, role: o.engagement.role })),
   },
   open, closed: [], agency: null,
-  connections: [
-    { name: 'Brand packets', state: 'working', note: 'How material enters this page: one plain JSON file per brand, kept outside the public repository.' },
-    { name: 'The connector', state: 'working', note: 'Opens the same packets in conversation, on your own machine.' },
-    { name: 'Frontier model reasoning', state: 'simulated', note: 'Interpretation on this page is deterministic or written by a person. No model is called.' },
-    { name: 'Publishing and distribution', state: 'excluded', note: 'An engagement never publishes.' },
-  ],
 };
 
 // The page's code and the brands' records are kept apart: the code is bundled

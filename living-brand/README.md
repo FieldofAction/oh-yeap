@@ -110,8 +110,8 @@ repository.
 | Tool | Changes anything? |
 |---|---|
 | `list_engagements`, `open_engagement`, `search_material`, `get_item`, `get_interpretation`, `build_brief`, `export_engagement_package`, `get_workbench` | No. They write nothing, not even a log |
-| `add_source_note`, `verify_item`, `record_reuse`, `record_choice`, `propose_standing` | Adds to the record, where the engagement's grant allows writing. Never raises standing |
-| `approve_item`, `decide_proposal`, `retire_item`, `name_authority` | Only where the practitioner has been named by the company. Never in a public-source study |
+| `add_source_note`, `describe_item`, `verify_item`, `record_reuse`, `record_choice`, `withdraw_choice`, `record_answer`, `propose_standing` | Adds to the record, where the engagement's grant allows writing. Never raises standing |
+| `approve_item`, `decide_proposal`, `answer_choice`, `retire_item`, `name_authority` | Only where the practitioner has been named by the company. Never in a public-source study |
 | `issue_context_package`, `revoke_context_package` | Records a read-only package for a partner, or its withdrawal. Needs the power to share |
 | `save_engagement_package` | Writes the handoff package and packet to a file in `exports/` |
 | `import_packet` | Adds one engagement. Never replaces another client's. Replaces the same client's open record only when told to, and never if that would change who may decide |
@@ -120,6 +120,22 @@ repository.
 
 Access that has ended (a grant past its date) cannot be opened, except to
 export the record or end the engagement.
+
+Four rules hold in every tool and on the page. Material that has only been
+found, or that was rejected, can be filed in the archive and nothing else;
+a found piece has to be described first. Material has to be checked against
+its source before it can be approved. Adopting something as canon needs the
+decider to say which kinds of work it covers, and a check if nobody has made
+one; it also records their approval. Those kinds of work are what its rules
+then bind, rules can be held back from it, and a held-back rule is never
+handed to a partner. Turning a proposal down, sending it back, declining a
+choice or retiring material needs a reason, and so does a choice.
+
+In a study from public sources nothing is ever authorized or authoritative,
+whatever has been checked, and every class is named as the study's reading
+("read as current", not "canon"), in both halves of every result. Reuse
+cannot be recorded in one, a choice in one waits for nobody, and a proposal
+in one is filed as a note.
 
 ## Limits
 
@@ -146,8 +162,19 @@ trusting it with anything that matters.
 - **Text in a record reaches the assistant as text.** A packet or a source
   note copied from a web page can contain instructions. The skill tells the
   assistant to treat records as material, not as direction.
-- **Each result has a readable text and a structured form.** They carry the
-  same facts; which one the assistant sees depends on the client.
+- **A naming can be taken back on the page, not yet through the connector.**
+  `name_authority` adds a person; removing one is done on the page's Enter
+  stage, or by editing the packet.
+- **The page saves in the browser only.** Download the packet to keep work or
+  move it. If the records behind a private page are rebuilt, earlier work is
+  set aside and offered as a download; it is not applied to the new records.
+- **On a real brand the page acts as one person**, the one the engagement
+  names. The switch that lets a visitor try other people's seats exists only
+  for the fictional sample.
+- **Each result has a readable account and structured fields.** Which one an
+  assistant is shown depends on the client, so the account travels in both:
+  as the text, and as `account` among the structured fields. The other fields
+  are a subset for programs to read; the account is the whole answer.
 - **Context packages are records only.** Nothing is sent to the partner, and
   nothing outside `packages.json` enforces an end date or a revocation.
 - **Separation between clients is separate folders** and a per-record check,
