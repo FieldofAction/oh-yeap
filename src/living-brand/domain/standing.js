@@ -188,7 +188,7 @@ export function assessStanding(item, purpose = {}, brand = null) {
   reasons.authoritative.push(study
     ? `${STUDY_CLASSES[item.standing]?.name || 'Unclassified'}. That is this study's reading; only ${brand.name} can say what governs.`
     : authoritative
-      ? `Canon since ${record?.date ? longDate(record.date) : 'an unrecorded date'}${record?.scope ? `: ${record.scope}` : ''}.`
+      ? `Canon since ${record?.date ? longDate(record.date) : 'an unrecorded date'}${record?.scope ? `: ${String(record.scope).replace(/[.]+$/, '')}` : ''}.`
       : `${STANDING_CLASSES[item.standing]?.name || 'Unclassified'}${item.standing === 'canon' ? ', but not authorized' : ''}${item.reuse?.length ? `, reused ${times(item.reuse.length)}; reuse confers no authority` : ''}.`);
 
   return { relevant, asked, authorized, reusable, authoritative, reasons };

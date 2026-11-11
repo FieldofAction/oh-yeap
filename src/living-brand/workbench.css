@@ -63,6 +63,9 @@ a { color: inherit; }
 }
 /* Placed away from the control just used: at the top when the action was in the lower half. */
 .lb-notice.is-top { bottom: auto; top: calc(var(--lb-top-h, 4rem) + .5rem); }
+/* A notice never takes a tap meant for what is under it; only its own button does. */
+.lb-notice { pointer-events: none; }
+.lb-notice button { pointer-events: auto; }
 .lb-notice p { margin: 0; overflow-wrap: anywhere; }
 .lb-notice-refused { border-color: var(--lb-no); }
 .lb-notice-refused p { color: var(--lb-no); }
@@ -171,7 +174,7 @@ details[open] > summary { margin-bottom: .5rem; }
   border-left: 1px solid var(--lb-line);
 }
 .lb-drawer > h2 { margin-top: .5rem; }
-.lb-close { float: right; background: none; border: 1px solid var(--lb-field); border-radius: 6px; padding: .3rem .7rem; cursor: pointer; margin-bottom: .75rem; }
+.lb-close { float: right; position: sticky; top: .5rem; z-index: 2; background: var(--lb-bg); border: 1px solid var(--lb-field); border-radius: 6px; padding: .3rem .7rem; cursor: pointer; margin-bottom: .75rem; }
 .lb-ev ul { margin: 0; padding-left: 1.1rem; }
 
 .lb-form { display: grid; gap: .75rem; margin-top: 2rem; }
@@ -204,6 +207,8 @@ details[open] > summary { margin-bottom: .5rem; }
 code { font-family: ui-monospace, Menlo, monospace; font-size: .875rem; }
 
 @media (max-width: 760px) {
+  /* Below the stage strip, which sits under the header at this width. */
+  .lb-notice.is-top { top: calc(var(--lb-top-h, 3.6rem) + 3.5rem); }
   .lb-shell { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .lb-stages { position: sticky; top: var(--lb-top-h, 3.6rem); z-index: 4; margin: 0 calc(-1 * clamp(1rem, 3vw, 2rem)); padding-left: clamp(1rem, 3vw, 2rem) !important; padding-right: clamp(1rem, 3vw, 2rem) !important; flex-direction: row; overflow-x: auto; padding: .5rem 0; background: var(--lb-bg); border-bottom: 1px solid var(--lb-line); }
   .lb-stages button { white-space: nowrap; }

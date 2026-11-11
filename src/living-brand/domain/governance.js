@@ -124,7 +124,16 @@ export function propose(state, { itemId, to, rationale, evidenceIds = [], by, sc
     if (pipelineRank(item.pipeline) < pipelineRank('verified')) warnings.push('Not yet checked against its source. Check it before it governs anything.');
     if (item.provenance?.origin === 'generated') warnings.push('This was written by a model. Its wording is a description, not a decision.');
   }
+  // Whatever is asked for, a piece that carries a claim the record says no longer holds says so to its reviewer.
+  if (promotion) {
+    for (const c of s.brand.claims || []) {
+      const fact = (s.brand.facts || []).find(f => f.id === c.contradictedBy);
+      if ((c.usedIn || []).includes(item.id) && fact?.date && fact.date <= asOf) warnings.push(`It carries a claim the record says is no longer true: "${String(c.statement || '').trim().replace(/[.]+$/, '')}".`);
+    }
+  }
   const reviewer = deciders(s.brand, powerFor(item)).map(p => p.id);
+  // In a study nothing is being asked of anyone, so there is nothing for a reviewer to be warned about.
+  if (isPublicStudy(s.brand)) warnings.length = 0;
   if (!reviewer.length) warnings.push(isPublicStudy(s.brand) ? `A study cannot establish who decides at ${s.brand.name}. This is a note to yourself.` : 'No one is named to decide this. The proposal waits until someone is.');
   s.proposals.push({
     id: nextId(s, 'p', asOf), itemId, from: item.standing, to, rationale, evidenceIds: cited.map(e => e.id), by, scope, date: asOf,
@@ -352,10 +361,14 @@ export function nameAuthority(state, { power, person, by, asOf }) {
   if (!POWERS[power]) throw new Error(`Unknown area ${power}.`);
   if (isPublicStudy(state.brand)) throw new AuthorityError(`Only ${state.brand.name} can name who decides ${POWERS[power]}. A public-source study cannot.`);
   if (!state.engagement.grant?.powers?.includes('steward')) throw new AuthorityError(`Only ${state.brand.name} can name who decides ${POWERS[power]}. This engagement cannot.`);
-  const name = oneLine(person?.name);
+  let name = oneLine(person?.name);
   if (!name) throw new Error('Name the person.');
   const s = clone(state);
   const people = { ...(s.brand.people || {}) };
+  // Someone naming themselves says "me". That is the person recording this, never a new person called "me".
+  const self = people[by];
+  if (self && !person.id && (/^(me|myself|i)$/i.test(name) || name.toLowerCase() === oneLine(self.name).split(' ')[0].toLowerCase())) name = oneLine(self.name);
+  if (!self && !person.id && /^(me|myself|i)$/i.test(name)) throw new Error('Give the name. This record does not know who "me" is.');
   // The same name is the same person; a new name is a new person. An id is
   // never derived from the name, so two people cannot collapse into one.
   const same = k => oneLine(people[k].name).toLowerCase() === name.toLowerCase();

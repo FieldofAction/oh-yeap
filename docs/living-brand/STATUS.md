@@ -56,7 +56,7 @@ Automated, on every build:
 
 | Suite | Tests |
 |---|---|
-| Rules (`scripts/living-brand-test.mjs`) | 75 |
+| Rules (`scripts/living-brand-test.mjs`) | 79 |
 | Connector (`scripts/living-brand-connector-test.mjs`) | 30 |
 | Connector over the protocol, both protocol versions (`npm run living-brand:connector:test`) | 5 |
 | Page text audit, three states of the page at two widths in both themes | 12 scenarios |
@@ -104,9 +104,17 @@ repository and had to prove a finding by running it:
    file yet, because it still recorded most pieces as "published by" the
    company on dates that came from press reports. The public page and the
    connector were each judged close and not ready, on a dozen medium
-   findings between them. Those were then fixed, and the fixes were checked
-   by the automated suites and by scripted browser runs, not yet by a fifth
-   independent round.
+   findings between them. Those were then fixed.
+8. **A fifth round**, same seats. Again nothing serious. The founder's seat:
+   "Yes, I would put this in front of him now." The study: the page and the
+   engagement package are fair to show one person in confidence; the
+   downloaded packet was to be held until a field that named six pairings
+   "contradictedBy" was renamed. The connector: "an assistant following the
+   skill with these tools would keep the record honest", with two faults in
+   what a partner package says. The public page: "not quite ready, mainly at
+   phone width". Seven medium findings in all. They are fixed, and the fixes
+   were checked by the automated suites and by scripted browser runs at both
+   widths, not by a sixth independent round.
 
 The findings that changed the product most:
 
@@ -165,6 +173,21 @@ The findings that changed the product most:
 - A rule held back at adoption was still handed to a partner as a rule to
   follow. It is left out of every package, and every place that lists a
   canon says what it binds and what was held back.
+- A study's downloaded file linked the company's statements to later events
+  under a field called "contradictedBy", which is what the page says the
+  study does not claim. A study's file now says "setBeside", files a note as
+  a note, and says on its face what its fields mean.
+- Typing "me" to name yourself created a stranger called "me", whose
+  decision your own choices then waited for. "Me" is now the person typing.
+- An entry its own decider had decided stayed under "what needs deciding".
+  It now moves to "decided, still to carry out".
+- Moving the notice out of the way of the button put it on the stage strip
+  at phone width, where it swallowed taps. A notice now takes no taps but its
+  own Dismiss, sits below the strip, and goes at the next tap.
+- A partner package gave a canon rule as "(canon)" with no word on what it
+  binds, and adopting for one kind of work silently took the rules out of
+  packages for the rest. A package says what each rule binds, and adopting
+  says what the rules no longer cover.
 
 ## What is real, simulated or missing
 
@@ -191,13 +214,19 @@ The findings that changed the product most:
 - Two choices that contradict each other are both accepted.
 - The connector can name who decides but cannot take a naming back; the page
   can. On the page, standing is decided in Choose; a drawer links there.
-- An answer to an open question is shown with the entry it is about, where
-  the record ties the two. It is a note and settles nothing by itself.
+- An answer to an open question is shown with the entry or suggestion it is
+  about, where the record ties the two. It is a note and settles nothing by
+  itself.
+- Arguments that fail a tool's schema (a missing required one) are refused
+  by the protocol layer, not in the connector's own words.
+- A piece given a standing below canon can read "never approved" beside
+  "adopted by": both are true, and they are separate answers.
+- Cards for reference documents read "reusable here: no"; the drawer says
+  they can be worked from and not published.
 - Interpret and Choose are still long on a brand with many open entries.
   Groups past three entries fold, and notes most proposals share are said
   once, but entries that depart from the same rule still repeat it.
-- A notice placed at the top of the screen can sit over a drawer's Close
-  button until it clears.
+- A notice can still sit over a field it is asking for until the next tap.
 - Someone holding the power to name deciders can name themselves for any
   area. The page says so; it does not stop it.
 - After the records behind a private page are rebuilt, answers and choices

@@ -28,7 +28,10 @@ const stopless = s => String(s || '').replace(/[.]+$/, '');
 const canonReach = (brand, i) => {
   const covers = i.standingRecord?.covers;
   const held = (brand.rules || []).filter(r => r.source === i.id && r.heldBack);
-  return `${covers?.length ? `. It binds: ${covers[0] === 'all' ? 'all work' : covers.join(', ')}` : ''}${held.length ? `. Held back and not in force: ${held.map(r => `"${stopless(r.statement)}" [${r.id}]`).join('; ')}` : ''}`;
+  // Canon that arrived with the record carries no decision of reach. What its own rules name is said instead.
+  const named = [...new Set((brand.rules || []).filter(r => r.source === i.id && !r.heldBack && r.standing !== 'retired').flatMap(r => r.scope || []))];
+  const written = !covers?.length && named.length ? `. Its rules name: ${named.includes('all') ? (named.length > 1 ? `all work, and ${named.filter(k => k !== 'all').join(', ')} in particular` : 'all work') : named.join(', ')}` : '';
+  return `${covers?.length ? `. It binds: ${covers[0] === 'all' ? 'all work' : covers.join(', ')}` : written}${held.length ? `. Held back and not in force: ${held.map(r => `"${stopless(r.statement)}" [${r.id}]`).join('; ')}` : ''}`;
 };
 // In a study a class name is never handed over on its own: wherever a standing
 // would travel in the structured half, it travels as the study's reading.
@@ -101,7 +104,7 @@ export function createTools(store) {
         const state = open(engagement_id);
         const { brand, engagement: e } = state;
         const asOf = today();
-        const o = orientation(brand, e, { asOf, answers: state.answers || [] });
+        const o = orientation(brand, e, { asOf, answers: state.answers || [], choices: state.choices });
         const study = isPublicStudy(brand);
         const areas = Object.entries(POWERS);
         const gaps = unnamedPowers(brand);
@@ -133,6 +136,8 @@ export function createTools(store) {
             ...o.strengths.map(s => `- ${s.statement} [${s.sources.join(', ')}]`),
             urgent.length ? (study ? '\nTo look at first:' : '\nNeeds attention before anything is made:') : null,
             ...urgent.map(t => `- ${t.kind}: ${String(t.title).replace(/[.]+$/, '')}.`),
+            o.decided.length ? '\nDecided by the person named, still to carry out:' : null,
+            ...o.decided.map(t => `- ${String(t.title).replace(/[.]+$/, '')}.`),
             o.unknowns.length ? '\nNot known:' : null,
             ...o.unknowns.map(u => `- ${u}`),
             (state.answers || []).length ? '\nAnswered in this record (each is a note by the person named; it decides nothing):' : null,
@@ -141,7 +146,7 @@ export function createTools(store) {
             `Understanding: ${PIPELINE.filter(p => !study || p !== 'approved').map(p => `${o.stages[p] || 0} ${p}`).join(', ')}. Found is not understood; extracted is not verified${study ? '.' : '; verified is not approved.'}`,
             `${o.tensions.length} tensions in all. Use get_interpretation for the full list.`,
           ]),
-          data: { brand: brand.name, basis: brand.basis, role: e.role, powers: e.grant?.powers, authority: brand.authority, canon: o.canon.map(i => i.id), ...(study ? {} : { canonBinds: o.canon.map(i => ({ id: i.id, covers: i.standingRecord?.covers || null, heldBack: (brand.rules || []).filter(r => r.source === i.id && r.heldBack).map(r => r.id) })) }), unknowns: o.unknowns, answers: state.answers || [], stages: o.stages, tensionCount: o.tensions.length },
+          data: { brand: brand.name, basis: brand.basis, role: e.role, powers: e.grant?.powers, authority: brand.authority, ...(study ? { readAsCurrent: brand.items.filter(i => i.standing === 'canon').map(i => i.id) } : { canon: o.canon.map(i => i.id) }), ...(study ? {} : { canonBinds: o.canon.map(i => ({ id: i.id, covers: i.standingRecord?.covers || null, heldBack: (brand.rules || []).filter(r => r.source === i.id && r.heldBack).map(r => r.id) })) }), unknowns: o.unknowns, answers: state.answers || [], stages: o.stages, tensionCount: o.tensions.length },
         };
       },
     },
@@ -196,7 +201,7 @@ export function createTools(store) {
             `- Reusable here: ${st.reasons.reusable.join(' ')}`,
             `- Authoritative: ${st.reasons.authoritative.join(' ')}`,
             '',
-            `${isPublicStudy(state.brand) ? 'How this study reads it' : 'Standing'}: ${classOf(item.standing, state.brand).name}. ${classOf(item.standing, state.brand).job}${isPublicStudy(state.brand) ? ` Not ${state.brand.name}'s own classification.` : item.retired ? ` Retired by ${person(state.brand, item.retired.by)} on ${item.retired.date}: ${item.retired.reason}` : rec ? ` Set by ${person(state.brand, rec.by)} on ${rec.date}${rec.scope ? `. It covers: ${rec.scope}` : ''}.` : ''}`,
+            `${isPublicStudy(state.brand) ? 'How this study reads it' : 'Standing'}: ${classOf(item.standing, state.brand).name}. ${classOf(item.standing, state.brand).job}${isPublicStudy(state.brand) ? ` Not ${state.brand.name}'s own classification.` : item.retired ? ` Retired by ${person(state.brand, item.retired.by)} on ${item.retired.date}: ${item.retired.reason}` : rec ? ` Set by ${person(state.brand, rec.by)} on ${rec.date}${rec.scope ? `. It covers: ${stopless(rec.scope)}` : ''}.` : ''}`,
             item.standingHistory?.length ? `Before: ${item.standingHistory.map(h => `${classOf(h.standing, state.brand).name} until ${h.until}`).join('; ')}.` : null,
             `Stage: ${item.pipeline}.${item.pipeline === 'discovered' ? ' Only found: nobody has recorded what it is, so it cannot be proposed for a standing yet. describe_item records what it is.' : ''}${item.described ? ` Described by ${person(state.brand, item.described.by)} on ${item.described.date}: ${stopless(item.described.what)}.` : ''}${item.verification ? ` Checked by ${person(state.brand, item.verification.by)} on ${item.verification.date}: ${item.verification.how}` : ''}`,
             study ? `Only ${state.brand.name} can decide its standing. Nothing here can.` : `Standing is decided by ${who(state.brand, deciders(state.brand, powerFor(item)).map(d => d.id))}.`,
@@ -244,7 +249,7 @@ export function createTools(store) {
             ...(cf ? cf.rows.map(r => `- ${r.verdictName}: ${r.item.title} [${r.item.id}]. ${r.why}`) : []),
             cf?.evidenceNote || null,
             !isPublicStudy(brand) && brand.items.some(i => i.standing === 'canon' && !i.retired) ? '\nCanon, and what each binds:' : null,
-            ...(isPublicStudy(brand) ? [] : brand.items.filter(i => i.standing === 'canon' && !i.retired).map(i => `- ${i.title} [${i.id}]${canonReach(brand, i) || '. It binds what its rules say they cover'}.`)),
+            ...(isPublicStudy(brand) ? [] : brand.items.filter(i => i.standing === 'canon' && !i.retired).map(i => `- ${i.title} [${i.id}]${canonReach(brand, i) || '. It states no rule of its own'}.`)),
             tensions.length ? '\nTensions:' : '\nNo tensions found in what has been entered.',
             ...tensions.flatMap(t => [
               `- [${t.id}] ${t.kind}: ${String(t.title).replace(/[.]+$/, '')}. ${t.detail}${t.owners?.length ? ` For ${who(brand, t.owners)} to resolve.` : ''}${t.sources?.length ? ` [${[...new Set(t.sources)].join(', ')}]` : ''}`,
@@ -273,7 +278,7 @@ export function createTools(store) {
           engagement_id: ENG, title: { type: 'string' }, found_in: { type: 'string', description: 'Where it was found: system and path, or the page.' },
           text: { type: 'string', description: 'What it is, in a sentence or two.' }, kind: { type: 'string' }, work_type: { type: 'string' }, canvas: { type: 'string' }, audience: { type: 'string' }, intended_outcome: { type: 'string' },
           level: { type: 'string', enum: ['company', 'brand', 'product', 'campaign', 'execution'] }, from: { type: 'string', description: 'Date it took effect, YYYY-MM-DD if known.' },
-          pipeline: { type: 'string', enum: ['discovered', 'extracted', 'interpreted'] }, standing: { type: 'string', enum: ['precedent', 'contextual', 'experiment', 'operational', 'archive'] },
+          pipeline: { type: 'string', enum: ['discovered', 'extracted', 'interpreted'] }, standing: { type: 'string', enum: ['experiment', 'operational', 'archive'] },
           domain: { type: 'string', enum: ['visual', 'verbal', 'sonic', 'product'] }, origin: { type: 'string', enum: ['human', 'generated'] },
           url: { type: 'string' }, rights_note: { type: 'string' }, tags: { type: 'array', items: { type: 'string' } },
         },
@@ -302,12 +307,12 @@ export function createTools(store) {
     {
       name: 'verify_item', title: 'Mark material as checked against its source',
       description: 'Record that a piece of material was checked against its source, and how. Moves it to "verified". Say who made the check in checked_by: "practitioner" if they did, "assistant" if you did in this conversation. A check you made is recorded as an assistant\'s, never as theirs. This is not approval: approval stays with whoever the company names.',
-      input: { type: 'object', properties: { engagement_id: ENG, item_id: ITEM, how: { type: 'string', description: 'What it was checked against, and when.' }, checked_by: { type: 'string', enum: ['practitioner', 'assistant'], description: 'Who actually compared the record with its source.' } }, required: ['engagement_id', 'item_id', 'how'] },
+      input: { type: 'object', properties: { engagement_id: ENG, item_id: ITEM, how: { type: 'string', description: 'What it was checked against, and when.' }, checked_by: { type: 'string', description: 'Who actually compared the record with its source: "practitioner" or "assistant".' } }, required: ['engagement_id', 'item_id', 'how'] },
       run({ engagement_id, item_id, how, checked_by }) {
         if (!['practitioner', 'assistant'].includes(checked_by)) throw new Error('Say who made the check in checked_by: "practitioner" if they compared the record with its source, "assistant" if you did.');
         const next = change(engagement_id, { action: 'verify', item: item_id }, (state, by) => verifyItem(state, item_id, { by: checked_by === 'assistant' ? 'an assistant session' : by, how, asOf: today() }));
         const item = next.brand.items.find(i => i.id === item_id);
-        return { text: `"${item.title}" is now verified, checked by ${person(next.brand, item.verification.by)}: ${item.verification.how}.${isPublicStudy(next.brand) ? ` That changes what the study knows, not what ${next.brand.name} has allowed.` : ' It is not approved; that stays with whoever is named.'}`, data: { id: item.id, pipeline: item.pipeline, checkedBy: item.verification.by } };
+        return { text: `"${item.title}" is now verified, checked by ${person(next.brand, item.verification.by)}: ${stopless(item.verification.how)}.${isPublicStudy(next.brand) ? ` That changes what the study knows, not what ${next.brand.name} has allowed.` : ' It is not approved; that stays with whoever is named.'}`, data: { id: item.id, pipeline: item.pipeline, checkedBy: item.verification.by } };
       },
     },
     {
@@ -317,7 +322,7 @@ export function createTools(store) {
       run({ engagement_id, item_id, note, acting_as }) {
         const next = change(engagement_id, { action: 'approve', item: item_id }, state => approveItem(state, item_id, { by: onlyAsSelf(state, acting_as), note, asOf: today() }));
         const item = next.brand.items.find(i => i.id === item_id);
-        return { text: `"${item.title}" is approved by ${person(next.brand, item.approval.by)}.${item.verification ? ` The approval rests on a check by ${person(next.brand, item.verification.by)} on ${item.verification.date}: ${stopless(item.verification.how)}.` : ''} It is still ${STANDING_CLASSES[item.standing].name.toLowerCase()}, and its rights are ${item.rights?.status || 'unknown'}.`, data: { id: item.id, approval: item.approval, checkedBy: item.verification?.by || null, standing: item.standing } };
+        return { text: `"${item.title}" is approved by ${person(next.brand, item.approval.by)}.${item.verification ? ` The approval rests on a check by ${person(next.brand, item.verification.by)} on ${item.verification.date}: ${stopless(item.verification.how)}.` : ''} It is still ${STANDING_CLASSES[item.standing].name.toLowerCase()}, and its rights are ${item.rights?.status === 'own' ? 'the brand\'s own' : item.rights?.status || 'unknown'}.`, data: { id: item.id, approval: item.approval, checkedBy: item.verification?.by || null, standing: item.standing } };
       },
     },
     {
@@ -402,15 +407,19 @@ export function createTools(store) {
         const d = next.decisions.at(-1);
         const item = next.brand.items.find(i => i.id === d.itemId);
         const inForce = outcome === 'adopt' && d.to === 'canon' ? effectiveRules(next.brand).filter(r => r.source === item.id && r.standing === 'canon') : [];
+        // The scope the rules were written with stays in the record. Where the decider drew it shorter, that is said, because those rules then leave packages for that work.
+        const writtenFor = [...new Set(next.brand.rules.filter(r => inForce.some(x => x.id === r.id)).flatMap(r => r.scope || []))];
+        const left = d.covers && !d.covers.includes('all') ? (writtenFor.includes('all') ? ['all other work'] : writtenFor.filter(k => !d.covers.includes(k))) : [];
         return { text: outcome === 'adopt'
           ? lines([
             `Adopted. "${item.title}" is now ${STANDING_CLASSES[item.standing].name.toLowerCase()}; it was ${STANDING_CLASSES[d.from].name.toLowerCase()}, and that is kept in its history.`,
             d.to === 'canon' ? `Its rules bind: ${d.covers.includes('all') ? 'all work' : d.covers.join(', ')}.${d.scopeNote ? ` In their words: ${String(d.scopeNote).replace(/[.]+$/, '')}.` : ''} It is approved by ${person(next.brand, item.approval.by)}; its rights are ${item.rights?.status === 'own' ? 'the brand\'s own' : item.rights?.status || 'unknown'}.` : null,
             d.to === 'canon' && item.verification ? `It rests on a check by ${person(next.brand, item.verification.by)} on ${item.verification.date}: ${stopless(item.verification.how)}.` : null,
             inForce.length ? 'Rules now in force:' : null, ...inForce.map(r => `- [${r.id}] ${r.statement}`),
+            left.length && inForce.length ? `As written, these rules also covered ${left.join(', ')}. They do not bind that work now, and are not handed to a partner for it. Where it differs from them, get_interpretation lists it as outside what the canon covers.` : null,
             d.heldBack?.length ? 'Held back, not in force:' : null, ...(d.heldBack || []).map(id => `- ${next.brand.rules.find(r => r.id === id)?.statement || id}`),
           ])
-          : `Proposal ${outcome === 'reject' ? 'turned down' : 'sent back for revision'}: ${d.note} "${item.title}" is unchanged.`, data: d };
+          : `Proposal ${outcome === 'reject' ? 'turned down' : 'sent back for revision'}: ${d.note} "${item.title}" is unchanged.`, data: left.length ? { ...d, noLongerCovers: left } : d };
       },
     },
     {
@@ -429,7 +438,8 @@ export function createTools(store) {
       input: { type: 'object', properties: { engagement_id: ENG, area: { type: 'string', enum: Object.keys(POWERS) }, person_name: { type: 'string' }, person_title: { type: 'string' } }, required: ['engagement_id', 'area', 'person_name'] },
       run({ engagement_id, area, person_name, person_title }) {
         const next = change(engagement_id, { action: 'name-authority', area }, (state, by) => nameAuthority(state, { power: area, person: { name: person_name, title: person_title }, by, asOf: today() }));
-        return { text: `${person_name.trim()} now decides ${POWERS[area]} at ${next.brand.name}. Choices and proposals that were waiting in that area are routed to them.`, data: { authority: next.brand.authority } };
+        const named = next.decisions.at(-1).person;
+        return { text: `${person(next.brand, named)} now decides ${POWERS[area]} at ${next.brand.name}. Choices and proposals that were waiting in that area are routed to them.`, data: { authority: next.brand.authority, person: named } };
       },
     },
     {
@@ -469,7 +479,7 @@ export function createTools(store) {
           text: lines([
             `Package ${pkg.id} issued to ${pkg.partner.name} for "${pkg.assignment}". Read-only, expires ${expires}.`,
             `Included (${pkg.included.length}):`, ...pkg.included.map(i => `- ${i.title}`),
-            `Rules in the package (${pkg.rules.length}):`, ...pkg.rules.map(r => `- ${r.statement} (${r.standing})`),
+            `Rules in the package (${pkg.rules.length}):`, ...pkg.rules.map(r => `- ${r.statement} (${r.standing}${r.covers ? `; ${r.standing === 'canon' ? 'binds' : 'written for'} ${r.covers.join(', ')}` : ''})`),
             `Withheld (${audit.withheld.length}); this list stays with you and is not in the package:`, ...audit.withheld.map(w => `- ${w.title}: ${[...new Set(w.reasons.map(r => String(r).replace(/[.]+$/, '')))].join('; ')}.`),
             pkg.open.length ? 'Unresolved, travelling with the package:' : null, ...pkg.open.map(o => `- ${String(o.title).replace(/[.]+$/, '')}. Ask ${o.ask}.`),
             `Review: ${pkg.review.reviewer ? `outputs return to ${pkg.review.reviewer}` : 'outputs return to the company for review'}. The partner cannot publish or change brand knowledge.`,

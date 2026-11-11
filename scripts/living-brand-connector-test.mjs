@@ -28,6 +28,9 @@ test('what a canon binds and what was held back is said wherever canon is listed
   assert.throws(() => call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: p.data.id, outcome: 'adopt', covers: ['all', 'Nonsense type'] }), /"Nonsense type" is not a kind of work in Moonhouse's material/);
   const d = call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: p.data.id, outcome: 'adopt', covers: ['Campaign'], hold_back_rule_ids: ['mh-r2'] });
   assert.match(d.text, /Its rules bind: Campaign\./);
+  // The rules were written for all work. Drawing the canon shorter is said, because it takes them out of packages for the rest.
+  assert.match(d.text, /As written, these rules also covered all other work\. They do not bind that work now, and are not handed to a partner for it\./);
+  assert.deepEqual(d.data.noLongerCovers, ['all other work']);
   assert.match(d.text, /It rests on a check|It is approved by Founder Person/);
   const reach = /Moon mark \[mh-mark\]\. It binds: Campaign\. Held back and not in force: "The mark never sits on a photograph" \[mh-r2\]\./;
   const opened = call('open_engagement', { engagement_id: 'eng-moonhouse' });
@@ -43,7 +46,14 @@ test('what a canon binds and what was held back is said wherever canon is listed
   assert.deepEqual(brief.data.rules.find(x => x.id === 'mh-r2').heldBack, true);
   // A partner is handed the rule that was adopted, and not the one that was held back.
   const pkg = call('issue_context_package', { engagement_id: 'eng-moonhouse', partner_name: 'Agent', assignment: 'Winter film', channels: ['owned-web'], work_types: ['Campaign'], expires: '2026-12-31' });
-  assert.match(pkg.text, /The mark is silver/);
+  assert.match(pkg.text, /The mark is silver\. \(canon; binds Campaign\)/, 'a partner is told what the rule binds');
+  assert.deepEqual(pkg.data.package.rules.find(x => x.id === 'mh-r1').covers, ['Campaign']);
+  // Naming yourself by saying "me" names you, and the result says who that is.
+  const named = call('name_authority', { engagement_id: 'eng-moonhouse', area: 'claims', person_name: 'me' });
+  assert.match(named.text, /^Founder Person now decides public claims at Moonhouse\./);
+  assert.equal(named.data.person, 'founder');
+  // A check by someone who is neither is refused in the connector's own words.
+  assert.throws(() => call('verify_item', { engagement_id: 'eng-moonhouse', item_id: 'mh-mark', how: 'x', checked_by: 'someone' }), /Say who made the check in checked_by/);
   assert.ok(!/never sits on a photograph/.test(JSON.stringify(pkg)), 'a held-back rule is in neither half');
 });
 

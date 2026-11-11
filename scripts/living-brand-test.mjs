@@ -1033,3 +1033,59 @@ test('an answer on reuse gives every reason, and a clearance with no channels na
   assert.equal(open.reusable, true);
   assert.match(open.reasons.reusable.join(' '), /Cleared, with no channel limits recorded/);
 });
+
+// --- Found by the fifth independent round, and pinned here ---
+
+test('a study\'s file uses a study\'s words, and reads back to the same record', () => {
+  let s = study();
+  s = propose(s, { itemId: 'h-about', to: 'precedent', rationale: 'It reads as earlier work', by: 'practitioner', asOf });
+  assert.deepEqual(s.proposals[0].warnings, ['A study cannot establish who decides at Halden. This is a note to yourself.'], 'a note carries no reviewer\'s warnings');
+  const file = toPacket(s);
+  const text = JSON.stringify(file);
+  assert.ok(!/contradictedBy|tensionNote/.test(text), 'the file never says a statement was contradicted');
+  assert.equal(file.brand.claims.find(c => c.id === 'hc-open').setBeside, 'hf-fee');
+  assert.match(file.note, /"setBeside" on a statement names a later report this study set beside it; it asserts no contradiction\./);
+  assert.deepEqual([file.record.proposals.length, file.record.notes.length, file.record.notes[0].status, file.record.notes[0].warnings], [0, 1, undefined, undefined]);
+  const back = startFromPacket(JSON.parse(text), { asOf });
+  assert.equal(back.brand.claims.find(c => c.id === 'hc-open').contradictedBy, 'hf-fee');
+  assert.deepEqual([back.proposals.length, back.proposals[0].status, back.proposals[0].to], [1, 'open', 'precedent']);
+  assert.ok(findTensions(back.brand, { asOf }).find(t => t.id === 't-stale-hc-open'), 'the pairing is still read as a pairing');
+  // A company's own record keeps its own words.
+  assert.ok(/contradictedBy/.test(JSON.stringify(toPacket(fresh()))));
+});
+
+test('someone naming themselves says "me", and is never turned into a stranger', () => {
+  let s = startEngagement({ halden: founderBrand() }, founderEng());
+  const before = Object.keys(s.brand.people).length;
+  for (const word of ['me', 'Myself', 'founder']) s = nameAuthority(s, { power: 'claims', person: { name: word }, by: 'dd', asOf });
+  assert.deepEqual(s.brand.authority.claims, ['dd']);
+  assert.equal(Object.keys(s.brand.people).length, before, 'nobody new was created');
+  // Where the record does not know who is typing, "me" is refused, not recorded as a name.
+  const visitor = startEngagement({ halden: founderBrand() }, { ...founderEng(), actor: 'practitioner' });
+  assert.throws(() => nameAuthority(visitor, { power: 'claims', person: { name: 'me' }, by: 'practitioner', asOf }), /Give the name\. This record does not know who "me" is\./);
+});
+
+test('an entry its decider has decided leaves the list of what needs attention', () => {
+  const brand = founderBrand({ authority: { 'standing.visual': ['dd'], 'standing.verbal': ['dd'], claims: ['dd'] } });
+  let s = startEngagement({ halden: brand }, founderEng());
+  const entry = findTensions(s.brand, { asOf }).find(t => t.power === 'claims');
+  assert.ok(entry, 'the sample holds an entry about a claim');
+  assert.ok(orientation(s.brand, s.engagement, { asOf, choices: s.choices }).attention.some(t => t.id === entry.id));
+  s = recordChoice(s, { subject: 'The claim', verdict: 'repair', rationale: 'Use the later line', needs: 'claims', about: entry.id, by: 'dd', asOf });
+  const o = orientation(s.brand, s.engagement, { asOf, choices: s.choices });
+  assert.ok(!o.attention.some(t => t.id === entry.id), 'decided is not waiting');
+  assert.deepEqual(o.decided.map(t => t.id), [entry.id], 'and it is still on record as decided, not erased');
+  // A choice by someone not named for it decides nothing.
+  let other = startEngagement({ halden: founderBrand() }, founderEng());
+  other = recordChoice(other, { subject: 'The claim', verdict: 'repair', rationale: 'x', needs: 'claims', about: entry.id, by: 'dd', asOf });
+  assert.ok(orientation(other.brand, other.engagement, { asOf, choices: other.choices }).attention.some(t => t.id === entry.id));
+});
+
+test('a proposal for a piece carrying a claim that no longer holds says so, and a package says what each rule binds', () => {
+  const s = fresh();
+  const p = propose(s, { itemId: 'fw-small-hours-endcard', to: 'canon', rationale: 'x', by: 'practitioner', asOf }).proposals[0];
+  assert.match(p.warnings.join(' '), /It carries a claim the record says is no longer true: "Ad-free, always"\./);
+  const pkg = buildContextPackage({ ...s, engagement: { ...s.engagement, grant: { ...s.engagement.grant, powers: ['read', 'propose', 'share'] } } }, { partner: { id: 'a', name: 'A' }, assignment: 'x', channels: ['owned-web'], workTypes: ['Customer campaign'], expires: '2026-12-31', asOf }).package;
+  assert.deepEqual(pkg.rules.find(r => r.id === 'r-no-screens').covers, ['Brand campaign', 'Customer campaign']);
+  assert.equal(pkg.rules.find(r => r.id === 'r-chime').covers, undefined, 'a rule for all work needs no list');
+});

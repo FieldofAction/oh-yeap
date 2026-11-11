@@ -79,7 +79,7 @@ export const engagements = {
       { subject: 'Copy strategy', verdict: 'evolve', rationale: 'From "Discover the small hours" to returning to a routine the family already had.', sources: ['fw-small-hours-film', 'fw-interviews-2026'] },
       { subject: '"Ad-free, always" and "Screen-free bedtime"', verdict: 'repair', rationale: 'Both are untrue since April and July. Replace with a plain statement of what each plan includes.', sources: ['fw-small-hours-endcard', 'fw-website-home', 'fw-pricing-2026'], needs: 'claims' },
       { subject: 'Reactivation offer before the campaign', verdict: 'invent', rationale: 'Price was the reason most often given for leaving. Test an offer on a held-out group so the campaign\'s effect can be read separately.', sources: ['fw-interviews-2026', 'fw-pricing-2026'], needs: 'offer' },
-      { subject: 'Hero screens in lifecycle email', verdict: 'investigate', rationale: 'Two rules in force disagree for customer campaigns. Ask the owners to scope them before email design starts.', sources: ['fw-guidelines-v3', 'fw-pm-playbook-2025'], needs: 'standing.visual' },
+      { subject: 'Hero screens in lifecycle email', verdict: 'investigate', rationale: 'The guidelines and the playbook disagree about hero screens in customer campaigns. Ask the owners to scope them before email design starts.', sources: ['fw-guidelines-v3', 'fw-pm-playbook-2025'], needs: 'standing.visual' },
     ],
     partner: { id: 'lp-agent', name: 'Landing page agent, external', assignment: 'Return-season landing page', channels: ['owned-web'], workTypes: ['Customer campaign'], expires: '2026-12-31' },
     questions: [

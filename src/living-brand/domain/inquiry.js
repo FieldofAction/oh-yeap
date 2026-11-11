@@ -36,7 +36,7 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
     const values = new Set(rs.map(r => r.value));
     if (values.size > 1) {
       const owners = [...new Set(rs.map(r => r.owner).filter(Boolean))];
-      const from = r => `the ${r.standing} rule from ${items[r.source]?.title || r.source}`;
+      const from = r => `the ${r.standing === 'canon' ? 'canon' : 'written'} rule from ${items[r.source]?.title || r.source}`;
       const whose = owners.length === 1 && rs.every(r => r.owner)
         ? `${brand.people?.[owners[0]]?.name || owners[0]} decides both: ${rs.map(from).join(' and ')}.`
         : `${rs.map(r => `${brand.people?.[r.owner]?.name || 'No named owner'} for ${from(r)}`).join('; ')}.`;
@@ -98,7 +98,7 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
       out.push({
         id: `t-outside-${item.id}`, kind: 'Outside what canon covers', severity: 'decide',
         title: `${item.title} differs from canon that covers other work`,
-        detail: `${outside.length === 1 ? 'This rule is' : 'These rules are'} canon for ${kinds.join(', ').toLowerCase() || 'other work'} only, and this is ${String(item.workType || 'other work').toLowerCase()}. It is not a departure. Whoever adopted the canon decides whether it should reach this work too.`,
+        detail: `${outside.length === 1 ? 'This rule is' : 'These rules are'} canon for ${kinds.join(', ').toLowerCase() || 'other work'} only, and this is ${String(item.workType || 'other work').toLowerCase()}. It is not a departure. Whether the canon should reach this work too is a separate decision.`,
         points: outside.map(d => ({ rule: d.rule.statement, has: d.has, says: d.says, ruleId: d.rule.id })),
         sources: [...new Set([item.id, ...outside.map(d => d.rule.source)])],
         owners: [...new Set(outside.flatMap(d => authority[`standing.${d.rule.domain || 'visual'}`]))], power: `standing.${outside[0].rule.domain || 'visual'}`,
@@ -364,16 +364,23 @@ function flatKeys(o, acc = {}) {
   return acc;
 }
 
-export function orientation(brand, engagement, { asOf, answers = [] }) {
+// An entry is decided when the person named for it has recorded a choice about it,
+// or accepted one. It is then no longer waiting for a decision; carrying the
+// decision out is separate work.
+export const decidedEntries = choices => new Set((choices || []).filter(c => c.about && c.status === 'accepted').map(c => c.about));
+
+export function orientation(brand, engagement, { asOf, answers = [], choices = [] }) {
   const items = byId(brand);
   const canon = brand.items.filter(i => i.standing === 'canon' && assessStanding(i, { asOf }, brand).authoritative);
   const stages = brand.items.reduce((acc, i) => ({ ...acc, [i.pipeline]: (acc[i.pipeline] || 0) + 1 }), {});
   const tensions = findTensions(brand, { asOf, workTypes: engagement.workTypes || [], channels: engagement.channels || [] });
   // What to look at first: one of each kind before a second of any, with
   // disagreements that someone has to settle ahead of the rest.
+  const done = decidedEntries(choices);
+  const waiting = tensions.filter(t => !done.has(t.id));
   const seen = new Set();
-  const first = tensions.filter(t => !seen.has(t.kind) && seen.add(t.kind));
-  const attention = [...first, ...tensions.filter(t => !first.includes(t))];
+  const first = waiting.filter(t => !seen.has(t.kind) && seen.add(t.kind));
+  const attention = [...first, ...waiting.filter(t => !first.includes(t))];
   // Strengths are the practitioner's interpretation, not extracted fact; each must cite sources that exist.
   const strengths = (engagement.strengths || []).filter(st => Array.isArray(st.sources) && st.sources.length && st.sources.every(id => items[id]));
   // What the record cannot answer yet. Kept visible rather than filled in.
@@ -381,5 +388,5 @@ export function orientation(brand, engagement, { asOf, answers = [] }) {
   const unknowns = (brand.unknowns || []).filter(u => !answered.has(u));
   const gaps = isPublicStudy(brand) ? [] : unnamedPowers(brand);
   if (gaps.length) unknowns.push(`Who decides ${gaps.map(p => POWERS[p]).join(', ').replace(/, ([^,]*)$/, ' and $1')}?`);
-  return { intent: brand.intent, canon, stages, strengths, tensions, attention, unknowns, owners: names(brand, brand.intent?.owner ? [brand.intent.owner] : []) };
+  return { intent: brand.intent, canon, stages, strengths, tensions, attention, decided: tensions.filter(t => done.has(t.id)), unknowns, owners: names(brand, brand.intent?.owner ? [brand.intent.owner] : []) };
 }

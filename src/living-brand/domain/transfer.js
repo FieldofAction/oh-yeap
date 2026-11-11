@@ -38,7 +38,7 @@ export function buildContextPackage(state, { partner, assignment, channels = [],
   const rules = rulesInForce(effectiveRules(state.brand), asOf)
     .filter(r => !r.heldBack)
     .filter(r => !r.scope || r.scope.includes('all') || r.scope.some(s => workTypes.includes(s)))
-    .map(r => ({ id: r.id, statement: r.statement, standing: r.standing }));
+    .map(r => ({ id: r.id, statement: r.statement, standing: r.standing, ...(Array.isArray(r.scope) && !r.scope.includes('all') ? { covers: r.scope } : {}) }));
   const open = findTensions(state.brand, { asOf, workTypes, channels }).filter(t => t.kind === 'Conflicting guidance' || t.kind === 'Stale claim')
     .map(t => ({ title: t.title, ask: (t.owners || []).map(o => state.brand.people?.[o]?.name).filter(Boolean).join(' or ') || 'whoever the company names' }));
   const reviewer = state.brand.people?.[state.brand.authority?.publish?.[0]]?.name || null;
@@ -130,13 +130,35 @@ export function toPacket(state) {
   const brand = JSON.parse(JSON.stringify(state.brand));
   brand.items = brand.items.map(strip);
   brand.rules = (brand.rules || []).map(strip);
+  const record = { choices: state.choices, proposals: state.proposals, decisions: state.decisions, answers: state.answers || [], seq: state.seq || 0 };
+  if (!isPublicStudy(brand)) return { format: PACKET_FORMAT, brand, engagement: JSON.parse(JSON.stringify(state.engagement)), record };
+  // A study's file uses a study's words, for whoever opens it without the page.
+  // Where the study set a statement beside a later report, the file says "set
+  // beside", and what was proposed is a note with nothing waiting on it.
+  brand.claims = (brand.claims || []).map(({ contradictedBy, tensionNote, ...c }) => ({ ...c, ...(contradictedBy ? { setBeside: contradictedBy } : {}), ...(tensionNote ? { pairingNote: tensionNote } : {}) }));
   return {
     format: PACKET_FORMAT,
-    // A study's file says on its face what its standings are, for whoever opens it without the page.
-    ...(isPublicStudy(brand) ? { note: `Every standing in this file is this study's reading of public material. None of it is ${brand.name}'s own classification, approval or decision. "origin" on a record says how the work itself was made, not who drafted the record; the engagement's modeNote says that.` } : {}),
+    note: `Every standing in this file is this study's reading of public material. None of it is ${brand.name}'s own classification, approval or decision. "setBeside" on a statement names a later report this study set beside it; it asserts no contradiction. "origin" on a record says how the work itself was made, not who drafted the record; the engagement's modeNote says that.`,
     brand, engagement: JSON.parse(JSON.stringify(state.engagement)),
-    record: { choices: state.choices, proposals: state.proposals, decisions: state.decisions, answers: state.answers || [], seq: state.seq || 0 },
+    record: { ...record, proposals: [], notes: state.proposals.map(p => ({ id: p.id, itemId: p.itemId, from: p.from, to: p.to, rationale: p.rationale, by: p.by, date: p.date })) },
   };
+}
+
+// The study's words are read back into the names the rules use.
+function fromStudyWords(packet) {
+  const copy = JSON.parse(JSON.stringify(packet));
+  for (const c of Array.isArray(copy.brand?.claims) ? copy.brand.claims : []) {
+    if (!c || typeof c !== 'object') continue;
+    if (c.setBeside !== undefined) { if (c.contradictedBy === undefined) c.contradictedBy = c.setBeside; delete c.setBeside; }
+    if (c.pairingNote !== undefined) { if (c.tensionNote === undefined) c.tensionNote = c.pairingNote; delete c.pairingNote; }
+  }
+  if (copy.record && typeof copy.record === 'object' && Array.isArray(copy.record.notes)) {
+    const name = copy.brand?.name || 'the company';
+    const notes = copy.record.notes.filter(n => n && typeof n === 'object').map(n => ({ id: n.id, itemId: n.itemId, from: n.from, to: n.to, rationale: n.rationale, evidenceIds: [], by: n.by, scope: '', date: n.date, status: 'open', warnings: [`A study cannot establish who decides at ${name}. This is a note to yourself.`], reviewer: [] }));
+    copy.record.proposals = [...(Array.isArray(copy.record.proposals) ? copy.record.proposals : []), ...notes];
+    delete copy.record.notes;
+  }
+  return copy;
 }
 
 // A packet is read as its author's statement, and it is checked before it is
@@ -154,6 +176,7 @@ export function readPacket(packet) {
   const problems = [];
   const bad = message => { if (problems.length < 12) problems.push(message); };
   if (!packet || typeof packet !== 'object' || isList(packet)) throw new Error('Not a packet.');
+  if (packet.brand?.basis === 'public-source') packet = fromStudyWords(packet);
   if (packet.format !== PACKET_FORMAT) bad(`Format is ${isText(packet.format) ? String(packet.format).slice(0, 40) : 'missing'}; expected ${PACKET_FORMAT}.`);
   const { brand, engagement } = packet;
   if (!brand || typeof brand !== 'object') throw new Error('Packet refused: it holds no brand.');
