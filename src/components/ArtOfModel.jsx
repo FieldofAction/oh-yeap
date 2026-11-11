@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { AOM_VERSIONS } from "../data/aom-versions";
 import { PILLARS } from "../data/playbook-data";
+import { useSignalSession, downloadText, slug, sessionOutput } from "../lib/signal-session";
+import SessionActions from "./SessionActions";
 import "../styles/workbench.css";
 import "../styles/workshop-tools.css";
 
@@ -73,17 +75,22 @@ Respond with ONLY the synthesis text, no preamble.`;
     v2: "Field-focused. Sustainable signal. Become something.",
     v3: "Identity-focused. Recursive system. Run something.",
   };
-  const download = () => {
-    const b = new Blob([exportText], { type: "text/plain" });
-    const u = URL.createObjectURL(b);
-    const a = document.createElement("a");
-    a.href = u;
-    a.download = `art-of-model-${ver}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(u);
-  };
+  // A signal carried in from the Workbench is what is being modeled; the
+  // answers and synthesis go back onto it only if banked.
+  const session = useSignalSession(asu, "model", "Art of Model");
+  const answered = model.steps.filter((st) => r[st.n]?.trim());
+  const sessionTitle = session.carried?.text || `Art of Model, ${VERSION_NAMES[ver] || ver}`;
+  const bankSession = () => session.bank({
+    title: sessionTitle,
+    key: `model:${ver}:${session.carried?.signalId || "own"}`,
+    output: sessionOutput({
+      title: sessionTitle,
+      fields: answered.map((st) => ({ label: st.title, value: r[st.n] })),
+      synthesis,
+      extra: { version: ver },
+    }),
+  });
+  const download = () => downloadText(`art-of-model-${slug(ver)}.txt`, exportText, "text/plain");
 
   return (
     <section className="wb wb-page">
@@ -98,6 +105,7 @@ Respond with ONLY the synthesis text, no preamble.`;
         <div className="wb-block">
           <h2 className="wb-headline">{model.subtitle}</h2>
           {model.shift ? <p className="wb-body">{model.shift.replace(/\s*→\s*/g, " to ")}</p> : null}
+          {session.carried?.text ? <p className="wb-text wb-measure">Modeling: {session.carried.text}</p> : null}
         </div>
 
         <div className="wb-block">
@@ -140,10 +148,9 @@ Respond with ONLY the synthesis text, no preamble.`;
           </div>
         ) : null}
 
-        <div className="wb-actions">
+        <SessionActions onBank={answered.length > 0 ? bankSession : null} onDownload={download} downloadLabel="Download as text" bankedTo={session.bankedTo} navigateTo={navigateTo}>
           <button type="button" className="wb-link" onClick={() => navigator.clipboard?.writeText(exportText)}>Copy as text</button>
-          <button type="button" className="wb-link" onClick={download}>Download as text</button>
-        </div>
+        </SessionActions>
       </div>
     </section>
   );

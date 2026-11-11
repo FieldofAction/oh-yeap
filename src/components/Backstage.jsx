@@ -1,8 +1,10 @@
-import React, { useState, useRef, useMemo, useCallback } from "react";
+import React, { useState, useRef, useMemo, useCallback, useEffect } from "react";
 import { AGENTS, CORE_CYCLE } from "../data/agents";
 import { THEMES } from "../data/themes";
 import { PILLARS } from "../data/playbook-data";
 import { uid } from "../data/seed";
+import { useSignalSession, sessionOutput } from "../lib/signal-session";
+import SessionActions from "./SessionActions";
 import "../styles/workbench.css";
 import "../styles/workshop-tools.css";
 
@@ -352,6 +354,16 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
     const n = asu.add_idea(t, d, tg); setAid(n.id);
   }, [asu]);
 
+  // A signal carried in from the Workbench becomes the idea being run, and a
+  // banked run goes back onto it.
+  const session = useSignalSession(asu, "backstage", "Backstage");
+  useEffect(() => {
+    const text = session.carried?.text;
+    if (!text) return;
+    const existing = ideas.find(i => i.title === text);
+    if (existing) setAid(existing.id); else addIdea(text, "", []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const callAgent = useCallback(async (agent, data, seqCtx) => {
     const liveAsu = asuRef.current;
     const pbCtx = liveAsu.build_agent_context();
@@ -476,6 +488,19 @@ Respond with ONLY the synthesis text, no preamble.`;
     document.body.removeChild(a);
     URL.revokeObjectURL(u);
   };
+  const sessionTitle = idea?.title || "Backstage run";
+  const bankSession = () => session.bank({
+    title: session.carried?.text || sessionTitle,
+    key: `backstage:${session.carried?.signalId || "own"}:${idea?.id}`,
+    output: sessionOutput({
+      title: sessionTitle,
+      fields: [
+        { label: "Idea", value: [idea?.title, idea?.desc].filter(Boolean).join(". ") },
+        ...lastRun.selection.map((ak) => ({ label: AGENTS.find(a => a.key === ak)?.name || ak, value: lastRun.outputs[ak]?.expansion })),
+      ],
+      synthesis: bsSynthesis && !bsSynthesis.startsWith("Synthesis unavailable") ? bsSynthesis : "",
+    }),
+  });
   const aom = asu.get_art_of_model();
   const aomAnswered = Object.values(aom.responses[aom.activeVersion] || {}).filter(v => v?.trim()).length;
   const shapedBy = [
@@ -592,10 +617,9 @@ Respond with ONLY the synthesis text, no preamble.`;
                 </>
               ) : null}
             </div>
-            <div className="wb-actions">
+            <SessionActions onBank={bankSession} onDownload={downloadMarkdown} bankedTo={session.bankedTo} navigateTo={navigateTo}>
               <button type="button" className="wb-link" onClick={() => navigator.clipboard?.writeText(mkMd(idea, lastRun))}>Copy the run as Markdown</button>
-              <button type="button" className="wb-link" onClick={downloadMarkdown}>Download the run as Markdown</button>
-            </div>
+            </SessionActions>
           </div>
         ) : null}
 

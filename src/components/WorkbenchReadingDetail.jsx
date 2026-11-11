@@ -22,6 +22,13 @@ export default function SubstepDetail({ kind, detail }) {
           {detail.question ? <Row k="Question" v={detail.question} /> : null}
         </div>
       );
+    case "session":
+      return (
+        <div className="atrium-detail-block">
+          {(detail.fields || []).map((f, i) => <Row key={i} k={f.label} v={f.value} />)}
+          {detail.synthesis ? <Row k="Synthesis" v={detail.synthesis} /> : null}
+        </div>
+      );
     case "orientation":
       return (
         <div className="atrium-detail-block">

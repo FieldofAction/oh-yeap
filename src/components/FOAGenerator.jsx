@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import html2canvas from "html2canvas";
 import { studioGenerate } from "../lib/studio-generate";
+import { useSignalSession, slug, sessionOutput } from "../lib/signal-session";
+import SessionActions from "./SessionActions";
 import "../styles/workbench.css";
 import "../styles/workshop-tools.css";
 
@@ -152,8 +154,10 @@ function ArtifactCard({ artifact, index, isNew }) {
   );
 }
 
-export default function FOAGenerator({ navigateTo }) {
-  const [idea, setIdea] = useState("");
+export default function FOAGenerator({ navigateTo, asu }) {
+  // A signal carried in from the Workbench becomes the idea.
+  const session = useSignalSession(asu, "foa", "FOA Generator");
+  const [idea, setIdea] = useState(session.carried?.text || "");
   const [artifacts, setArtifacts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -204,6 +208,19 @@ export default function FOAGenerator({ navigateTo }) {
     if ((e.metaKey || e.ctrlKey) && e.key === "Enter") generate();
   };
 
+  const sessionTitle = idea.trim().split(/\n/)[0].slice(0, 120) || "FOA Generator session";
+  const bankSession = () => session.bank({
+    title: sessionTitle,
+    key: `foa:${session.carried?.signalId || "own"}:${slug(idea)}`,
+    output: sessionOutput({
+      title: sessionTitle,
+      fields: [
+        { label: "Idea", value: idea },
+        ...artifacts.map((a, i) => ({ label: a.label || `Artifact ${i + 1}`, value: [a.thesis, a.signal, a.orientation].filter(Boolean).join(" ") })),
+      ],
+    }),
+  });
+
   return (
     <section className="wb wb-page">
       <header className="wb-header">
@@ -237,9 +254,7 @@ export default function FOAGenerator({ navigateTo }) {
 
       {artifacts.length > 0 && (
         <div className="fg-output">
-          <div className="wb-actions">
-            <button type="button" className="wb-link" onClick={() => downloadAllAsJson(artifacts, idea)}>Download all as JSON</button>
-          </div>
+          <SessionActions onBank={bankSession} onDownload={() => downloadAllAsJson(artifacts, idea)} downloadLabel="Download all as JSON" bankedTo={session.bankedTo} navigateTo={navigateTo} />
           <div className="fg-grid">
             {artifacts.map((artifact, i) => (
               <ArtifactCard key={i} artifact={artifact} index={i} isNew={isNew} />

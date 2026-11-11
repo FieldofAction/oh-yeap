@@ -204,6 +204,11 @@ function compactDetail(output) {
       return d.unread
         ? `  Lens laid beside the signal, unread: ${d.lens} — ${d.text}`
         : [`  Lens: ${d.lens}${d.fits === false ? " (did not fit)" : ""}`, d.reading && `  ${d.reading}`, d.question && `  Question raised: ${d.question}`].filter(Boolean).join("\n");
+    case "session":
+      return [
+        ...(d.fields?.map((f) => `  ${f.label}: ${f.value}`) || []),
+        d.synthesis ? `  Synthesis: ${d.synthesis}` : null,
+      ].filter(Boolean).join("\n");
     case "orientation":
       return d.fields?.map((f) => `  ${f.label}: ${f.value}`).join("\n") || "";
     case "breakground":

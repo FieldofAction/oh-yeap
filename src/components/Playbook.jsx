@@ -1,5 +1,7 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { PILLARS, EMOTIONS, REFS, STEPS, EMO_MAP } from "../data/playbook-data";
+import { useSignalSession, downloadText, slug, sessionOutput } from "../lib/signal-session";
+import SessionActions from "./SessionActions";
 import "../styles/workbench.css";
 import "../styles/workshop-tools.css";
 
@@ -48,17 +50,32 @@ export default function Playbook({ asu, navigateTo }) {
     return lines.join("\n");
   }, [project, pillars, emotion, app, steps, dominant]);
 
-  const download = () => {
-    const b = new Blob([exportText], { type: "text/plain" });
-    const u = URL.createObjectURL(b);
-    const a = document.createElement("a");
-    a.href = u;
-    a.download = `${(project.name||"project").toLowerCase().replace(/[^a-z0-9]+/g,"-")}-brief.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(u);
-  };
+  // A signal carried in from the Workbench is what this brief is for.
+  const session = useSignalSession(asu, "playbook", "Playbook");
+  const carriedText = session.carried?.text || "";
+  useEffect(() => {
+    // Seed the brief with the signal, but never over something already written.
+    if (carriedText && !project.brief?.trim()) asu.set_project_brief({ brief: carriedText });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const sessionTitle = project.name?.trim() || carriedText || "Playbook brief";
+  const hasBrief = !!(project.name?.trim() || project.brief?.trim());
+  const bankSession = () => session.bank({
+    title: sessionTitle,
+    key: `playbook:${session.carried?.signalId || "own"}:${slug(project.name, "brief")}`,
+    output: sessionOutput({
+      title: sessionTitle,
+      fields: [
+        { label: "Client", value: project.client },
+        { label: "Brief", value: project.brief },
+        { label: "Pillars", value: PILLARS.map(p => `${p.label} ${pillars[p.key]}`).join(", ") + `. ${dominant.label} leads.` },
+        { label: "Emotional register", value: emotion },
+        { label: "The big move", value: app.bigMove },
+        { label: "The whimsy detail", value: app.whimsy },
+        { label: "How it fosters connection", value: app.connection },
+      ],
+    }),
+  });
+  const download = () => downloadText(`${slug(project.name, "project")}-brief.txt`, exportText, "text/plain");
   const APPLICATION_FIELDS = {
     3: ["bigMove", "The big move"],
     4: ["whimsy", "The whimsy detail"],
@@ -163,9 +180,9 @@ export default function Playbook({ asu, navigateTo }) {
           <div className="wb-actions">
             <button type="button" className="wb-link" aria-expanded={showExport} onClick={()=>setShowExport(p=>!p)}>{showExport ? "Hide the summary" : "Show the summary"}</button>
             <button type="button" className="wb-link" onClick={()=>navigator.clipboard?.writeText(exportText)}>Copy the summary</button>
-            <button type="button" className="wb-link" onClick={download}>Download as text</button>
           </div>
           {showExport ? <pre className="tl-code">{exportText}</pre> : null}
+          <SessionActions onBank={hasBrief ? bankSession : null} onDownload={download} downloadLabel="Download as text" bankedTo={session.bankedTo} navigateTo={navigateTo} />
         </div>
 
         <div className="tl-section">
