@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { runMock, synthesizeRun } from "../data/atrium-mocks";
-import { runModuleLLM, RUNNABLE_KEYS, buildContextString } from "../lib/atrium-runners";
+import { runModuleLLM, runLensLLM, RUNNABLE_KEYS, buildContextString } from "../lib/atrium-runners";
+import { isLensKey, lensFor, lensCard, searchLenses, randomLens } from "../data/lenses";
+import { SURFACE_BRIEF, SURFACE_QUESTIONS } from "../data/signal-surface";
 import { buildBundle, bundleToMarkdown } from "../lib/atrium-bundle";
 import SubstepDetail from "./WorkbenchReadingDetail";
 import "../styles/workbench.css";
@@ -36,6 +38,8 @@ const READER_LABEL = {
   ...Object.fromEntries(READERS.map((r) => [r.key, r.label])),
 };
 
+const labelFor = (key) => (isLensKey(key) ? lensFor(key)?.name : READER_LABEL[key]) || key;
+
 const SAMPLE_STEP_MS = 1400;
 const EARLIER_READINGS_LIMIT = 5;
 const EARLIER_READING_CHARS = 1500;
@@ -59,7 +63,7 @@ function joinNames(names) {
 function readersOf(readings) {
   const seen = [];
   readings.forEach((r) => (r.payload?.steps || []).forEach((s) => {
-    const label = READER_LABEL[s.moduleKey] || s.moduleKey;
+    const label = labelFor(s.moduleKey);
     if (!seen.includes(label)) seen.push(label);
   }));
   return seen;
@@ -69,13 +73,43 @@ function isSample(reading) {
   return (reading.payload?.steps || []).some((s) => s.output?.mock);
 }
 
+// A named reading, rewritten in Signal Surface's own grammar so it can be
+// pasted there. Its evidence is one private reading, and it says so.
+function surfaceEntry(reading, synth, signal) {
+  const steps = reading.payload?.steps || [];
+  const readers = joinNames(steps.map((s) => labelFor(s.moduleKey)));
+  const text = signal?.text || reading.label;
+  return [
+    `## ${text}`,
+    "",
+    `**Observed:** Held in the Workbench${signal?.ts ? ` since ${new Date(signal.ts).toLocaleDateString()}` : ""}. Read by ${readers} on ${new Date(reading.ts).toLocaleDateString()}.`,
+    `**Relationship — inference:** ${synth.condition}`,
+    `**Possible condition:** ${synth.reveal}`,
+    "**Evidence strength:** Thin. One private reading; no outside sources.",
+    synth.failureMode?.length ? `**Challenge:** ${synth.failureMode.join(" ")}` : null,
+    text.trim().endsWith("?") ? `**Watch question:** ${text}` : null,
+    synth.nextAgent ? `**Next test proposal:** ${synth.nextAgent}` : null,
+  ].filter((l) => l !== null).join("\n");
+}
+
 // One reading, set as text. Grace's take leads when Grace was part of it.
-function Reading({ reading, asu, onCopy, copied }) {
+function Reading({ reading, asu, onCopy, copied, signal }) {
   const [open, setOpen] = useState(false);
+  const [surfaceCopied, setSurfaceCopied] = useState(false);
   const steps = reading.payload?.steps || [];
   const synth = synthesizeRun(steps, reading.label);
   const hasGrace = synth.source === "grace";
-  const names = joinNames(steps.map((s) => READER_LABEL[s.moduleKey] || s.moduleKey));
+  const names = joinNames(steps.map((s) => labelFor(s.moduleKey)));
+  const lensSteps = steps.filter((s) => s.output?.kind === "lens");
+  const copyForSurface = async () => {
+    try {
+      await navigator.clipboard?.writeText?.(surfaceEntry(reading, synth, signal));
+      setSurfaceCopied(true);
+      setTimeout(() => setSurfaceCopied(false), 1800);
+    } catch {
+      // Clipboard can be unavailable in restricted contexts.
+    }
+  };
 
   return (
     <div className="wb-reading">
@@ -87,7 +121,19 @@ function Reading({ reading, asu, onCopy, copied }) {
       ) : null}
 
       {hasGrace && synth.condition ? <p className="wb-body wb-measure">{synth.condition}</p> : null}
-      {!hasGrace ? <p className="wb-body wb-measure">Read by {names}. Grace was not part of this reading, so nothing has been named.</p> : null}
+      {lensSteps.map((s, i) => {
+        const d = s.output.detail;
+        return (
+          <div key={i} className="wb-block wb-lens">
+            <p className="wb-name">{d.lens}</p>
+            <p className="wb-body wb-measure">{d.text}</p>
+            {d.unread ? <p className="wb-body wb-measure">Laid beside the signal, unread. Add a key in Backstage and it will read it.</p> : null}
+            {d.reading ? <p className="wb-text wb-measure">{d.fits === false ? `It does not fit. ${d.reading}` : d.reading}</p> : null}
+            {d.question ? <p className="wb-text wb-measure">{d.question}</p> : null}
+          </div>
+        );
+      })}
+      {!hasGrace && lensSteps.length === 0 ? <p className="wb-body wb-measure">Read by {names}. Grace was not part of this reading, so nothing has been named.</p> : null}
 
       {hasGrace && !synth.notYet && synth.failureMode?.length > 0 ? (
         <div className="wb-block">
@@ -118,6 +164,9 @@ function Reading({ reading, asu, onCopy, copied }) {
         {reading.canonical ? (
           <button type="button" className="wb-link" onClick={() => asu.revert_canon(reading.id)}>Remove from canon</button>
         ) : null}
+        {hasGrace && !synth.notYet && !isSample(reading) ? (
+          <button type="button" className="wb-link" onClick={copyForSurface}>{surfaceCopied ? "Copied" : "Copy for Signal Surface"}</button>
+        ) : null}
         {!reading.canonical ? (
           <button type="button" className="wb-link" onClick={() => asu.clear_flow_artifact(reading.id)}>Remove this reading</button>
         ) : null}
@@ -127,7 +176,7 @@ function Reading({ reading, asu, onCopy, copied }) {
         <div className="wb-trace">
           {steps.map((s, i) => (
             <div key={i} className="wb-trace-step">
-              <p className="wb-name">{READER_LABEL[s.moduleKey] || s.moduleKey}</p>
+              <p className="wb-name">{labelFor(s.moduleKey)}</p>
               {s.status === "error" ? <p className="wb-body">This tool failed: {s.error}</p> : null}
               {s.output?.detail ? <SubstepDetail kind={s.output.kind} detail={s.output.detail} /> : null}
             </div>
@@ -164,6 +213,9 @@ export default function Studio({ navigateTo, asu }) {
   const [excludedCanonIds, setExcludedCanonIds] = useState(() => new Set());
   const [earlierOpen, setEarlierOpen] = useState(() => new Set());
   const [search, setSearch] = useState("");
+  const [pickedLenses, setPickedLenses] = useState([]);
+  const [lensQuery, setLensQuery] = useState("");
+  const [surfaceOpen, setSurfaceOpen] = useState(false);
   const [copied, setCopied] = useState(null);
 
   const held = signals.filter((s) => !s.settledAt);
@@ -197,7 +249,8 @@ export default function Studio({ navigateTo, asu }) {
       const step = currentRun.steps[runningIdx];
       const priorSteps = currentRun.steps.slice(0, runningIdx).filter((s) => s.status === "done");
       const settings = asu.get_settings?.() || {};
-      const useReal = !!settings.apiKey && RUNNABLE_KEYS.has(step.moduleKey);
+      const lens = isLensKey(step.moduleKey) ? lensFor(step.moduleKey) : null;
+      const useReal = !!settings.apiKey && (!!lens || RUNNABLE_KEYS.has(step.moduleKey));
       let cancelled = false;
       const controller = useReal ? new AbortController() : null;
       const stepCanonContext = currentRun.canonContext || [];
@@ -205,7 +258,12 @@ export default function Studio({ navigateTo, asu }) {
       (async () => {
         try {
           let output;
-          if (useReal) {
+          if (lens && useReal) {
+            output = await runLensLLM(lens, currentRun.signal, priorSteps, settings, { abortSignal: controller.signal });
+          } else if (lens) {
+            // No key: the lens is laid beside the signal as it is written.
+            output = lensCard(lens);
+          } else if (useReal) {
             output = await runModuleLLM(step.moduleKey, currentRun.signal, priorSteps, settings, {
               abortSignal: controller.signal,
               canonContext: stepCanonContext,
@@ -216,7 +274,7 @@ export default function Studio({ navigateTo, asu }) {
             output = runMock(step.moduleKey, currentRun.signal, priorSteps, stepCanonContext);
           }
           if (cancelled) return;
-          asu.update_run_step(runningIdx, { status: "done", completedAt: Date.now(), output: { ...output, mock: !useReal } });
+          asu.update_run_step(runningIdx, { status: "done", completedAt: Date.now(), output: { ...output, mock: !useReal && !lens } });
         } catch (err) {
           if (cancelled || err?.name === "AbortError") return;
           asu.update_run_step(runningIdx, { status: "error", completedAt: Date.now(), error: err?.message || String(err) });
@@ -247,6 +305,9 @@ export default function Studio({ navigateTo, asu }) {
     if (next.has(key)) next.delete(key); else next.add(key);
     return next;
   });
+  const toggleLens = (key, addOnly = false) => setPickedLenses((prev) => (
+    prev.includes(key) ? (addOnly ? prev : prev.filter((k) => k !== key)) : [...prev, key]
+  ));
   const toggleCanonExclusion = (id) => setExcludedCanonIds((prev) => {
     const next = new Set(prev);
     if (next.has(id)) next.delete(id); else next.add(id);
@@ -259,7 +320,8 @@ export default function Studio({ navigateTo, asu }) {
   });
 
   const onRead = (signal) => {
-    const sequence = READERS.map((r) => r.key).filter((k) => picked.has(k));
+    // Lenses first, then the tools, with Grace last so it reads all of them.
+    const sequence = [...pickedLenses, ...READERS.map((r) => r.key).filter((k) => picked.has(k))];
     if (!sequence.length || isRunning) return;
     // Oldest first, so the model can see what has and has not repeated.
     const earlierReadings = readingsFor(signal.id)
@@ -268,6 +330,8 @@ export default function Studio({ navigateTo, asu }) {
       .map((r) => `Reading from ${new Date(r.ts).toLocaleDateString()}:\n${buildContextString(r.payload.steps).slice(0, EARLIER_READING_CHARS)}`);
     asu.start_run(canonContext, { signalId: signal.id, signal: signal.text, sequence, earlierReadings });
     setPickerFor(null);
+    setPickedLenses([]);
+    setLensQuery("");
   };
 
   // Breakground and Desert have their own pages. The signal goes with you,
@@ -361,6 +425,26 @@ export default function Studio({ navigateTo, asu }) {
         ))}
       </fieldset>
       <p className="wb-body wb-measure">Grace reads the others and this signal's earlier readings. It can answer "Not yet."</p>
+      <fieldset className="wb-fieldset wb-lens-picker">
+        <legend className="wb-name">Or through a lens</legend>
+        {pickedLenses.map((key) => (
+          <label key={key} className="wb-check">
+            <input type="checkbox" checked onChange={() => toggleLens(key)} />
+            <span>{lensFor(key)?.name}</span>
+          </label>
+        ))}
+        <label htmlFor="wb-lens-search" className="wb-label">Find a mental model, a pattern or a law pairing</label>
+        <input id="wb-lens-search" className="wb-field" type="search" value={lensQuery} onChange={(e) => setLensQuery(e.target.value)} autoComplete="off" />
+        {searchLenses(lensQuery).filter((l) => !pickedLenses.includes(l.key)).map((l) => (
+          <button key={l.key} type="button" className="wb-lens-result" onClick={() => toggleLens(l.key)}>
+            <span className="wb-name">{l.name}</span>
+            <span className="wb-body">{l.text}</span>
+          </button>
+        ))}
+        <div className="wb-actions">
+          <button type="button" className="wb-link" onClick={() => toggleLens(randomLens().key, true)}>Draw one at random</button>
+        </div>
+      </fieldset>
       {canonicalRuns.length > 0 ? (
         <fieldset className="wb-fieldset">
           <label className="wb-check">
@@ -382,7 +466,7 @@ export default function Studio({ navigateTo, asu }) {
         </p>
       ) : null}
       <div className="wb-actions">
-        <button type="button" className="wb-button" onClick={() => onRead(signal)} disabled={picked.size === 0 || isRunning}>Read</button>
+        <button type="button" className="wb-button" onClick={() => onRead(signal)} disabled={(picked.size === 0 && pickedLenses.length === 0) || isRunning}>Read</button>
         <button type="button" className="wb-link" onClick={() => setPickerFor(null)}>Cancel</button>
       </div>
       <div className="wb-block">
@@ -408,17 +492,18 @@ export default function Studio({ navigateTo, asu }) {
         <div className="wb-item-body">
           <h2 className="wb-headline">{signal.text}</h2>
           <p className="wb-body">
-            Held since {dayLabel(signal.ts)}.{readers.length ? ` Read by ${joinNames(readers)}.` : ""}
+            Held since {dayLabel(signal.ts)}.{signal.origin?.source ? ` From ${signal.origin.source}.` : ""}{readers.length ? ` Read by ${joinNames(readers)}.` : ""}
           </p>
 
           {running ? (
             <div className="wb-actions" role="status">
-              <p className="wb-body">Reading with {READER_LABEL[runningStep?.moduleKey] || "the tools"}.</p>
+              <p className="wb-body">Reading with {runningStep ? labelFor(runningStep.moduleKey) : "the tools"}.</p>
               <button type="button" className="wb-link" onClick={() => asu.abort_run()}>Stop</button>
             </div>
           ) : null}
 
-          {latest ? <Reading reading={latest} asu={asu} onCopy={onCopy} copied={copied} /> : null}
+          {signal.origin?.note && !latest ? <p className="wb-body wb-measure">{signal.origin.note}</p> : null}
+          {latest ? <Reading reading={latest} asu={asu} onCopy={onCopy} copied={copied} signal={signal} /> : null}
 
           {older.length > 0 ? (
             <div className="wb-older">
@@ -428,7 +513,7 @@ export default function Studio({ navigateTo, asu }) {
               {showOlder ? older.map((r) => (
                 <div key={r.id} className="wb-older-item">
                   <p className="wb-body">Read {dayLabel(r.ts)}</p>
-                  <Reading reading={r} asu={asu} onCopy={onCopy} copied={copied} />
+                  <Reading reading={r} asu={asu} onCopy={onCopy} copied={copied} signal={signal} />
                 </div>
               )) : null}
             </div>
@@ -462,7 +547,7 @@ export default function Studio({ navigateTo, asu }) {
               {showOlder ? readings.map((r) => (
                 <div key={r.id} className="wb-older-item">
                   <p className="wb-body">Read {dayLabel(r.ts)}</p>
-                  <Reading reading={r} asu={asu} onCopy={onCopy} copied={copied} />
+                  <Reading reading={r} asu={asu} onCopy={onCopy} copied={copied} signal={signal} />
                 </div>
               )) : null}
             </div>
@@ -505,6 +590,38 @@ export default function Studio({ navigateTo, asu }) {
       </header>
 
       {tab === "held" ? signalForm : null}
+
+      {tab === "held" ? (
+        <div className="wb-surface">
+          <button type="button" className="wb-link" aria-expanded={surfaceOpen} onClick={() => setSurfaceOpen((v) => !v)}>
+            {surfaceOpen ? "Close Signal Surface" : "Bring a question in from Signal Surface"}
+          </button>
+          {surfaceOpen ? (
+            <div className="wb-surface-list">
+              <p className="wb-body wb-measure">
+                The open questions from {SURFACE_BRIEF.title}, {new Date(`${SURFACE_BRIEF.date}T12:00:00`).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}.
+              </p>
+              {SURFACE_QUESTIONS.map((sq) => {
+                const already = signals.some((s) => s.origin?.ref === sq.ref);
+                return (
+                  <div key={sq.ref} className="wb-surface-item">
+                    <div className="wb-block">
+                      <p className="wb-name">{sq.question}</p>
+                      <p className="wb-body wb-measure">It would be supported by: {sq.support} It would be weakened by: {sq.weaken}</p>
+                    </div>
+                    <button
+                      type="button"
+                      className="wb-link"
+                      disabled={already}
+                      onClick={() => asu.hold_signal(sq.question, { source: "Signal Surface", ref: sq.ref, note: `It would be supported by: ${sq.support} It would be weakened by: ${sq.weaken}` })}
+                    >{already ? "Held" : "Hold"}</button>
+                  </div>
+                );
+              })}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
 
       {tab === "held" ? (
         <section className="wb-list" aria-label="Held">

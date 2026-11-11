@@ -14,6 +14,14 @@ function Row({ k, v }) {
 export default function SubstepDetail({ kind, detail }) {
   if (!detail) return null;
   switch (kind) {
+    case "lens":
+      return (
+        <div className="atrium-detail-block">
+          <Row k={detail.lensKind} v={detail.text} />
+          {detail.reading ? <Row k={detail.fits === false ? "Did not fit" : "Reading"} v={detail.reading} /> : null}
+          {detail.question ? <Row k="Question" v={detail.question} /> : null}
+        </div>
+      );
     case "orientation":
       return (
         <div className="atrium-detail-block">

@@ -175,10 +175,12 @@ function useASUStore() {
 
     // ── Held signals ──
     get_signals: () => store.atrium?.signals || [],
-    hold_signal: (text) => {
+    hold_signal: (text, origin = null) => {
       const clean = String(text || "").trim();
       if (!clean) return null;
-      const signal = { id: uid(), text: clean, ts: Date.now(), settledAt: null };
+      // origin: where the signal came from when it was not typed here, e.g.
+      // { source: "Signal Surface", ref: "W01", note: "..." }.
+      const signal = { id: uid(), text: clean, ts: Date.now(), settledAt: null, ...(origin ? { origin } : {}) };
       setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), signals: [signal, ...((s.atrium?.signals)||[])]}}));
       return signal;
     },

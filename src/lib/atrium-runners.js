@@ -198,6 +198,10 @@ function compactDetail(output) {
       ].filter(Boolean).join("\n");
     case "exploration-editor":
       return d.title ? `  ${d.title}: ${d.body || ""}` : "";
+    case "lens":
+      return d.unread
+        ? `  Lens laid beside the signal, unread: ${d.lens} — ${d.text}`
+        : [`  Lens: ${d.lens}${d.fits === false ? " (did not fit)" : ""}`, d.reading && `  ${d.reading}`, d.question && `  Question raised: ${d.question}`].filter(Boolean).join("\n");
     case "orientation":
       return d.fields?.map((f) => `  ${f.label}: ${f.value}`).join("\n") || "";
     case "breakground":
@@ -232,6 +236,45 @@ function buildCanonContextString(canonContext) {
       return `Canonical run ${i + 1} ${fieldLabel}: ${reveal}${condition}${sig}`;
     })
     .join("\n\n");
+}
+
+// ── Lens runner — any mental model, pattern or law pairing reads the signal ──
+export async function runLensLLM(lens, signal, priorSteps, settings, options = {}) {
+  const system = `You read a signal through one lens and nothing else.
+
+The lens is "${lens.name}" (${lens.kind}): ${lens.text}
+
+Apply it to the operator's signal as it stands. Do not summarize the signal, do not resolve it, and do not give advice. A lens that does not fit is a correct, expected result: if it does not illuminate this signal, set fits to false and say plainly why in one sentence. Never stretch the lens to make it fit.
+
+Return ONLY this JSON object (no preamble, no fence):
+{"fits":true,"reading":"two or three sentences: what this lens makes visible in the signal","question":"one question the lens raises that the operator has not asked"}`;
+  const ctx = buildContextString(priorSteps);
+  const parts = [`Operator signal:\n${signal || "(empty)"}`];
+  if (ctx) parts.push(`Other readings in this run:\n${ctx}`);
+  const { text } = await callAtriumLLM({
+    system,
+    user: parts.join("\n\n"),
+    apiKey: settings.apiKey,
+    model: settings.model,
+    anthropicVersion: settings.anthropicVersion,
+    maxTokens: 600,
+    signal: options.abortSignal,
+  });
+  const parsed = extractJSON(text);
+  if (!parsed) throw new AtriumLLMError(`${lens.name} returned malformed JSON. Raw output starts with: ${text.slice(0, 120)}…`);
+  return {
+    kind: "lens",
+    summary: lens.name,
+    detail: {
+      lens: lens.name,
+      lensKind: lens.kind,
+      text: lens.text,
+      unread: false,
+      fits: parsed.fits !== false,
+      reading: typeof parsed.reading === "string" ? parsed.reading : "",
+      question: parsed.fits === false ? "" : (typeof parsed.question === "string" ? parsed.question : ""),
+    },
+  };
 }
 
 // ── Main runner ──────────────────────────────────────────────────────

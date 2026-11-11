@@ -1,39 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import useASUStore from "../store/useASUStore";
-
-const LAWS = [
-  { id:"origin",     number:"I",   name:"Origin",     source:"Mentalism",      axiom:"The field begins in mind",           glyph:"◎", angle:-90,     color:"#C9A84C", description:"Every condition in the field traces back to a mental state. Consciousness is not inside the situation. It generates it." },
-  { id:"scale",      number:"II",  name:"Scale",      source:"Correspondence", axiom:"The pattern holds at every level",    glyph:"⟡", angle:-38.57,  color:"#8B7EC8", description:"What is true in the small is true in the large. Navigate one level well and you are navigating all levels simultaneously." },
-  { id:"frequency",  number:"III", name:"Frequency",  source:"Vibration",      axiom:"Everything is signal",                glyph:"〜", angle:12.86,   color:"#5BA8A0", description:"Every action, thought, and state broadcasts a signal. The frequency you hold determines what you can receive and what you attract." },
-  { id:"axis",       number:"IV",  name:"Axis",       source:"Polarity",       axiom:"Every force has its complement",      glyph:"⊕", angle:64.29,   color:"#E07B5A", description:"Opposing forces are not enemies. They are the same spectrum. Mastery is moving fluidly between poles rather than being fixed at either end." },
-  { id:"cycle",      number:"V",   name:"Cycle",      source:"Rhythm",         axiom:"Everything moves in season",          glyph:"≋", angle:115.71,  color:"#7AB8D4", description:"Expansion follows contraction. Rest follows output. The practitioner who knows the cycle is never caught off-guard by either phase." },
-  { id:"vector",     number:"VI",  name:"Vector",     source:"Cause & Effect", axiom:"Every action carries direction",      glyph:"→", angle:167.14,  color:"#B5CC8E", description:"Nothing is neutral. Every move you make has magnitude and direction, and produces a corresponding effect downstream. Awareness is the instrument." },
-  { id:"generation", number:"VII", name:"Generation", source:"Gender",         axiom:"Creation requires two",               glyph:"⚭", angle:218.57,  color:"#D4A0C8", description:"Structure and flow. Initiative and receptivity. Every act of creation requires both principles operating in conscious relation to each other." },
-];
-
-const PAIR_MECHANICS = {
-  "origin+scale":      { name:"The Fractal Mind",       mechanic:"Your mental state isn't influencing the pattern at other scales. It IS the pattern. Change the interior condition and the exterior structure reorganizes to match." },
-  "origin+frequency":  { name:"The Broadcast",          mechanic:"Thought is the transmitter. What you dwell in mentally becomes the signal you broadcast. The field around you responds to frequency, not intention alone." },
-  "origin+axis":       { name:"The Chooser",            mechanic:"You cannot dissolve the poles, but you can choose which end your mind inhabits. That choice is the only leverage that matters. Everything else follows from it." },
-  "origin+cycle":      { name:"The Witness",            mechanic:"Mind is what watches cycles without being carried by them. When you locate yourself as the observer, the oscillation can no longer use you as its instrument." },
-  "origin+vector":     { name:"The First Move",         mechanic:"Conscious thought is first cause. Every downstream effect in your field traces back to a mental state held with enough clarity and conviction to become directive." },
-  "origin+generation": { name:"The Inner Studio",       mechanic:"Structure and flow begin as inner orientations before they become outer realities. The creative act starts when both principles are active and conscious simultaneously." },
-  "scale+frequency":   { name:"The Signal at Every Level", mechanic:"Frequency doesn't stay on one level. It propagates across all corresponding scales at once. Shift your signal and the shift appears everywhere the pattern repeats." },
-  "scale+axis":        { name:"The Mirror Field",       mechanic:"Every polarity you're navigating externally reflects one operating internally at a corresponding scale. The same dynamic, different resolution. Navigate one, you navigate both." },
-  "scale+cycle":       { name:"The Nested Season",      mechanic:"Your personal cycle mirrors team cycles mirrors market cycles mirrors longer arcs. You are always inside multiple rhythms simultaneously. Locate which one is dominant." },
-  "scale+vector":      { name:"The Ripple Architecture", mechanic:"A single directed action produces effects at every corresponding scale simultaneously. The leverage isn't in the size of the move. It's in how precisely it's aimed." },
-  "scale+generation":  { name:"The Universal Template",  mechanic:"Structure and flow operate at every scale of existence. The same creative dynamic inside a single decision as inside an organizational system. Master the template once." },
-  "frequency+axis":    { name:"The Spectrum",            mechanic:"Opposing poles aren't fixed positions. They are different frequencies on the same continuum. You don't fight the pole you don't want. You raise the frequency and the field transmutes." },
-  "frequency+cycle":   { name:"The Standing Wave",       mechanic:"Signal and cycle interact. Where your frequency aligns with the current phase of the cycle, power concentrates. Where they're out of phase, release is indicated, not force." },
-  "frequency+vector":  { name:"The Directed Signal",     mechanic:"Frequency is the carrier. Vector is the aim. A strong signal without direction diffuses. A clear direction without frequency has no force. Together they become decisive." },
-  "frequency+generation":{ name:"The Creative Field",    mechanic:"Structure holds a frequency. Flow holds a frequency. When both are broadcasting simultaneously and in relation, the space between them becomes generative." },
-  "axis+cycle":        { name:"The Pendulum",            mechanic:"Every swing between poles follows the cycle law. The wider the arc, the more extreme the return. The practitioner's advantage is staying near center as the field oscillates around them." },
-  "axis+vector":       { name:"The Corrective Loop",     mechanic:"Push too hard in one direction and the field self-corrects via the opposite pole. Vector without axis awareness creates its own resistance. Balance isn't passive. It's the most efficient path." },
-  "axis+generation":   { name:"The Primal Pair",         mechanic:"Structure and flow are the fundamental axis, not as a binary but as complementary forces. Every creative act is a navigation between them. The tension is the engine." },
-  "cycle+vector":      { name:"The Timing Law",          mechanic:"The same action lands differently depending on where in the cycle you execute it. Vector without cycle awareness produces effort. Vector with it produces results that seem effortless." },
-  "cycle+generation":  { name:"The Alternating Current",  mechanic:"Structure initiates in the expansion phase. Flow receives and develops in the contraction. Forcing structure during a contraction burns the system. Learning the current changes everything." },
-  "vector+generation": { name:"The Seed and Field",       mechanic:"Initiative is the vector: it provides direction and force. Receptivity is the field that receives it and generates form from it. Neither is sufficient alone. The question is which you're undersupplying." },
-};
+import { LAWS, PAIR_MECHANICS } from "../data/field-laws";
 
 const getPairKey = (id1, id2) => {
   const order = LAWS.map(l => l.id);

@@ -130,3 +130,17 @@
   --display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-family: var(--sans);
 }
+
+/* Lenses and Signal Surface */
+.wb-text { font-size: 19px; line-height: 1.45; color: var(--wb-ink); overflow-wrap: anywhere; }
+.wb-lens { padding-top: 12px; }
+.wb-lens-picker { gap: 4px; padding-top: 8px; }
+.wb-lens-picker .wb-label { padding-top: 8px; }
+.wb-lens-picker .wb-field { flex: none; max-width: 480px; margin: 6px 0; }
+.wb-lens-result { display: flex; flex-direction: column; gap: 2px; padding: 12px 0; min-height: 44px; max-width: 620px; font: inherit; text-align: left; color: var(--wb-ink); background: transparent; border: 0; border-top: 1px solid var(--wb-line); cursor: pointer; }
+.wb-lens-result:hover .wb-name { text-decoration: underline; text-underline-offset: 4px; }
+.wb-surface { display: flex; flex-direction: column; gap: 16px; max-width: 980px; margin-top: -32px; }
+.wb-surface-list { display: flex; flex-direction: column; gap: 0; }
+.wb-surface-list > .wb-body { padding-bottom: 16px; }
+.wb-surface-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding: 16px 0; border-top: 1px solid var(--wb-line); }
+@media (max-width: 560px) { .wb-surface-item { flex-direction: column; gap: 0; } .wb-surface { margin-top: -20px; } }
