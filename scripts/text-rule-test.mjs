@@ -21,6 +21,11 @@ const targets = [
   { name: 'living-brand', path: '/living-brand.html', ready: '.lb-main h1' },
   { name: 'living-brand-interpret', path: '/living-brand.html', ready: '.lb-stages', click: '.lb-stages button:nth-child(4)', final: '.lb-carry-rows' },
   { name: 'living-brand-investigate', path: '/living-brand.html', ready: '.lb-stages', click: '.lb-stages button:nth-child(3)', final: '.lb-grid' },
+  // Entries on the workbench open in place. What a reader sees after opening them is rendered text too.
+  { name: 'living-brand-interpret-open', path: '/living-brand.html', ready: '.lb-stages', click: '.lb-stages button:nth-child(4)', final: '.lb-carry-rows', open: '.lb-main details:not([open]) > summary' },
+  { name: 'living-brand-choose-open', path: '/living-brand.html', ready: '.lb-stages', click: '.lb-stages button:nth-child(5)', final: '.lb-row', open: '.lb-main details:not([open]) > summary' },
+  { name: 'living-brand-organize-open', path: '/living-brand.html', ready: '.lb-stages', click: '.lb-stages button:nth-child(6)', final: '.lb-row', open: '.lb-main details:not([open]) > summary' },
+  { name: 'living-brand-piece', path: '/living-brand.html', ready: '.lb-stages', click: ['.lb-stages button:nth-child(3)', '.lb-card'], final: '.lb-drawer' },
   { name: 'experiment-010', path: '/experiments/structural-afterimage.html', ready: '.x-prose' },
 ];
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -49,7 +54,18 @@ try {
       const response = await page.goto(`${origin}${target.path}`, { waitUntil: 'networkidle2', timeout: 45000 });
       if (!response?.ok()) throw new Error(`Page returned HTTP ${response?.status()}`);
       await page.waitForSelector(target.ready, { timeout: 15000 });
-      if (target.click) { await page.click(target.click); await page.waitForSelector(target.final, { timeout: 15000 }); }
+      if (target.click) {
+        for (const selector of [].concat(target.click)) { await page.waitForSelector(selector, { timeout: 15000 }); await page.click(selector); }
+        await page.waitForSelector(target.final, { timeout: 15000 });
+      }
+      // Open what a reader would open, by clicking it. Nothing is forced visible.
+      if (target.open) {
+        for (let pass = 0; pass < 3; pass += 1) {
+          const closed = await page.$$(target.open);
+          if (!closed.length) break;
+          for (const handle of closed) { await handle.click().catch(() => {}); await sleep(30); }
+        }
+      }
       await page.evaluate(() => document.fonts.ready);
       await sleep(400);
       // Visit the content naturally so scroll-revealed text participates in the audit.

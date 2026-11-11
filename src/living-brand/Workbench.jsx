@@ -126,7 +126,6 @@ export default function Workbench({ catalog }) {
   const [unsaved, setUnsaved] = useState(() => { const ok = write(`${STORE}:probe`, 1); drop(`${STORE}:probe`); return !ok; });
   const [setAside, setSetAside] = useState(0);
   const [file, setFile] = useState(null);
-  const [draft, setDraft] = useState(null);
   const [discarding, setDiscarding] = useState(false);
   const topRef = useRef(null);
   const navRef = useRef(null);
@@ -217,11 +216,11 @@ export default function Workbench({ catalog }) {
     } catch (e) { setNotice({ kind: 'refused', text: e.message }); }
   };
   const reset = () => { setAll(begin(entry, asOf)); setNotice({ kind: 'ok', text: 'Reset to the starting material.' }); };
-  const switchTo = id => { setEngId(id); setOpenId(null); setNotice(null); setFile(null); setDraft(null); setViewer('practitioner'); setStage('enter'); window.scrollTo(0, 0); };
+  const switchTo = id => { setEngId(id); setOpenId(null); setNotice(null); setFile(null); setViewer('practitioner'); setStage('enter'); window.scrollTo(0, 0); };
 
   const open = openId ? items[openId] : null;
   const go = k => { setStage(k); setNotice(null); window.scrollTo(0, 0); };
-  const ctx = { catalog, asOf, state, brand, items, tensions, act, actor, me: actor, setOpenId, go, pkg, pkgs: all.pkgs || [], setPkg, setNotice, switchTo, stance, demo, draft, setDraft };
+  const ctx = { catalog, asOf, state, brand, items, tensions, act, actor, me: actor, setOpenId, go, pkg, pkgs: all.pkgs || [], setPkg, setNotice, switchTo, stance, demo };
 
   return (
     <div className="lb">
@@ -323,11 +322,21 @@ function Cite({ id, items, setOpenId }) {
 const Cites = ({ ids, ...p }) => <span className="lb-cites">{[...new Set(ids)].map(id => <Cite key={id} id={id} {...p} />)}</span>;
 
 /* Enter ------------------------------------------------------------------ */
+// A section a first reading does not need. Its heading is the control that opens it.
+function Closed({ title, children }) {
+  return (
+    <details className="lb-section lb-closed">
+      <summary><h2>{title}</h2></summary>
+      <div className="lb-closed-body">{children}</div>
+    </details>
+  );
+}
+
 function Enter({ catalog, asOf, state, brand, items, act, actor, setOpenId, go, setNotice, switchTo, reset, stance }) {
   const e = state.engagement;
   const study = stance === 'study';
   const canName = !study && e.grant?.powers?.includes('steward');
-  const [naming, setNaming] = useState({ power: '', name: '' });
+  const [naming, setNaming] = useState({ open: false, power: '', name: '' });
   const [resetting, setResetting] = useState(false);
   const [removing, setRemoving] = useState(null);
   const tryOpen = closed => {
@@ -349,38 +358,27 @@ function Enter({ catalog, asOf, state, brand, items, act, actor, setOpenId, go, 
       <h1>{e.project}</h1>
       <p className="lb-deck">{e.purpose}</p>
 
-      {stance === 'visitor' && (
-        <section className="lb-section">
-          <h2>Where this engagement sits</h2>
-          <Nesting catalog={catalog} brand={brand} engagement={e} />
-        </section>
-      )}
-
-      <section className="lb-section lb-two">
-        <div>
-          <h2>Role and authority</h2>
-          <dl className="lb-facts">
-            <dt>Role</dt><dd>{e.role}{e.invitedBy ? `, invited by ${person(brand, e.invitedBy)}` : ''}</dd>
-            <dt>Basis</dt><dd>{BASES[brand.basis || 'company-record'].name}. {basisNote({ ...brand, basis: brand.basis || 'company-record' })}</dd>
-            {study ? (<>
-              <dt>May</dt><dd>Read public material and record a reading of it</dd>
-              <dt>May not</dt><dd>Speak for {brand.name}, adopt or retire anything, or use its marks and artwork</dd>
-              <dt>Access</dt><dd>None granted. Public sources, read on {fmt(e.started || asOf)}</dd>
-            </>) : (<>
-              <dt>May</dt><dd>{may}</dd>
-              <dt>May not</dt><dd>{mayNot}</dd>
-              {e.grant.expires && (<><dt>Access ends</dt><dd>{fmt(e.grant.expires)}</dd></>)}
-            </>)}
-            {e.scope && (<><dt>Scope</dt><dd>{e.scope}</dd></>)}
-          </dl>
-        </div>
-        <div>
-          {e.constraints?.length > 0 && (<><h2>Constraints</h2><ul className="lb-list">{e.constraints.map(c => <li key={c}>{c}</li>)}</ul></>)}
-          {e.materials?.length > 0 && (<><h3>Material to start from</h3><Cites ids={e.materials} items={items} setOpenId={setOpenId} /></>)}
-          <h3>Kind of work</h3>
-          <p>{e.modeNote || `This is ${e.mode === 'audit' ? 'a brand audit' : e.mode === 'planning' ? 'execution planning' : e.mode === 'orientation' ? 'a rapid orientation' : 'a creative investigation'}. ${done.length ? `${cap(done.join(' and '))} is done. ` : ''}Finishing this does not finish the other kinds of work.`}</p>
-          {catalog.note && <p>{catalog.note}</p>}
-        </div>
+      {/* What the reader may do here comes first: it is what every later stage depends on. */}
+      <section className="lb-section">
+        <h2>Role and authority</h2>
+        <dl className="lb-facts">
+          <dt>Role</dt><dd>{e.role}{e.invitedBy ? `, invited by ${person(brand, e.invitedBy)}` : ''}</dd>
+          <dt>Basis</dt><dd>{BASES[brand.basis || 'company-record'].name}. {basisNote({ ...brand, basis: brand.basis || 'company-record' })}</dd>
+          {study ? (<>
+            <dt>May</dt><dd>Read public material and record a reading of it</dd>
+            <dt>May not</dt><dd>Speak for {brand.name}, adopt or retire anything, or use its marks and artwork</dd>
+            <dt>Access</dt><dd>None granted. Public sources, read on {fmt(e.started || asOf)}</dd>
+          </>) : (<>
+            <dt>May</dt><dd>{may}</dd>
+            <dt>May not</dt><dd>{mayNot}</dd>
+            {e.grant.expires && (<><dt>Access ends</dt><dd>{fmt(e.grant.expires)}</dd></>)}
+          </>)}
+          {e.scope && (<><dt>Scope</dt><dd>{e.scope}</dd></>)}
+          {e.constraints?.length > 0 && (<><dt>Constraints</dt><dd>{e.constraints.map(c => stop(c)).join('. ')}.</dd></>)}
+        </dl>
+        <p className="lb-body">{e.modeNote || `This is ${e.mode === 'audit' ? 'a brand audit' : e.mode === 'planning' ? 'execution planning' : e.mode === 'orientation' ? 'a rapid orientation' : 'a creative investigation'}. ${done.length ? `${cap(done.join(' and '))} is done. ` : ''}Finishing this does not finish the other kinds of work.`}</p>
+        {catalog.note && <p className="lb-body">{catalog.note}</p>}
+        {e.materials?.length > 0 && (<><h3>Material to start from</h3><Cites ids={e.materials} items={items} setOpenId={setOpenId} /></>)}
       </section>
 
       <section className="lb-section">
@@ -404,55 +402,57 @@ function Enter({ catalog, asOf, state, brand, items, act, actor, setOpenId, go, 
                         </>)}
                       </span>
                     );
-                  }) : 'no one named'}
+                  }) : 'No one named'}
                 </td></tr>
               );
             })}</tbody>
           </table>
         )}
-        {canName && unnamed.length > 0 && (
+        {canName && unnamed.length > 0 && !naming.open && <div className="lb-actions"><button onClick={() => setNaming({ ...naming, open: true })}>Name who decides</button></div>}
+        {canName && unnamed.length > 0 && naming.open && (
           <form className="lb-form lb-inline" onSubmit={ev => {
             ev.preventDefault();
             const name = naming.name.trim(); const power = naming.power || unnamed[0][0];
             if (!name) { setNotice({ kind: 'refused', text: 'Name the person.' }); return; }
-            if (act(s => nameAuthority(s, { power, person: { name }, by: actor, asOf }), next => (next.brand.authority[power].includes(actor) ? `You now decide ${POWERS[power]}.` : `${name} now decides ${POWERS[power]}.`))) setNaming({ power: '', name: '' });
+            if (act(s => nameAuthority(s, { power, person: { name }, by: actor, asOf }), next => (next.brand.authority[power].includes(actor) ? `You now decide ${POWERS[power]}.` : `${next.brand.people[next.brand.authority[power].at(-1)].name} now decides ${POWERS[power]}.`))) setNaming({ open: false, power: '', name: '' });
           }}>
-            <h3>Name who decides</h3>
-            <p className="lb-body">You hold the power to name who decides each area, yourself included. A naming is recorded with the date and can be taken back.</p>
+            <p className="lb-body">You hold the power to name who decides each area, yourself included: for yourself, write "me". A naming is recorded with the date and can be taken back.</p>
             <label>Decision<select value={naming.power || unnamed[0][0]} onChange={ev => setNaming({ ...naming, power: ev.target.value })}>{unnamed.map(([power, label]) => <option key={power} value={power}>{cap(label)}</option>)}</select></label>
-            <label>Person<input value={naming.name} onChange={ev => setNaming({ ...naming, name: ev.target.value })} /></label>
-            <div className="lb-actions"><button className="lb-primary" type="submit">Name them</button></div>
+            <label>Person<input autoFocus value={naming.name} onChange={ev => setNaming({ ...naming, name: ev.target.value })} /></label>
+            <div className="lb-actions"><button className="lb-primary" type="submit">Name them</button><button type="button" onClick={() => setNaming({ open: false, power: '', name: '' })}>Cancel</button></div>
           </form>
         )}
       </section>
 
+      <NextStep stage="enter" go={go} />
+
       {stance === 'visitor' && (
-        <section className="lb-section">
-          <h2>Your engagements</h2>
-          <table className="lb-table">
+        <Closed title="Where this engagement sits">
+          <Nesting catalog={catalog} brand={brand} engagement={e} />
+        </Closed>
+      )}
+
+      {stance === 'visitor' && (
+        <Closed title="Your engagements">
+          <table className="lb-table lb-table-stack">
             <thead><tr><th>Client</th><th>Role</th><th>Access</th><th>Open</th></tr></thead>
             <tbody>
               {catalog.open.map(o => (
-                <tr key={o.engagement.id}><td>{o.brand.name}</td><td>{o.engagement.role}</td>
-                  <td>{isPublicStudy(o.brand) ? 'Public sources only' : o.engagement.grant.expires ? `Until ${fmt(o.engagement.grant.expires)}` : 'Open'}</td>
+                <tr key={o.engagement.id}><td>{o.brand.name}</td><td data-th="Role">{o.engagement.role}</td>
+                  <td data-th="Access">{isPublicStudy(o.brand) ? 'Public sources only' : o.engagement.grant.expires ? `Until ${fmt(o.engagement.grant.expires)}` : 'Open'}</td>
                   <td>{o.engagement.id === e.id ? 'Open now' : <button className="lb-link" onClick={() => switchTo(o.engagement.id)}>Open {o.brand.name}</button>}</td></tr>
               ))}
               {(catalog.closed || []).map(c => (
-                <tr key={c.id}><td>{c.clientLabel}</td><td>{c.role}</td><td>Ended {fmt(c.grant.revokedAt)}</td>
+                <tr key={c.id}><td>{c.clientLabel}</td><td data-th="Role">{c.role}</td><td data-th="Access">Ended {fmt(c.grant.revokedAt)}</td>
                   <td><button className="lb-link" onClick={() => tryOpen(c)}>Try to open {c.clientLabel}</button></td></tr>
               ))}
             </tbody>
           </table>
           <p className="lb-body">Each engagement opens its own partition. Searching one never reaches another, even where two clients use the same words. Your methods travel with you; their material does not.</p>
-        </section>
+        </Closed>
       )}
 
-      <div className="lb-actions">
-        <button className="lb-primary" onClick={() => go('orient')}>Begin orientation</button>
-      </div>
-
-      <section className="lb-section">
-        <h2>Start over</h2>
+      <Closed title="Start over">
         <p className="lb-body">Resetting removes every {study ? 'choice, note and answer' : 'choice, proposal, decision and answer'} recorded on this page and returns to the starting material. Download the packet in Transfer first if you want to keep them.</p>
         <div className="lb-actions">
           {!resetting && <button onClick={() => setResetting(true)}>Reset this engagement</button>}
@@ -461,7 +461,7 @@ function Enter({ catalog, asOf, state, brand, items, act, actor, setOpenId, go, 
             <button onClick={() => setResetting(false)}>Keep it</button>
           </>)}
         </div>
-      </section>
+      </Closed>
     </article>
   );
 }
@@ -513,15 +513,23 @@ function Orient({ asOf, state, brand, items, setOpenId, go, stance }) {
       {o.intent?.statement && reading.deck && (
         <section className="lb-section">
           <h2>Stated intent</h2>
-          <p className="lb-body">{o.intent.statement}</p>
+          <p className="lb-lead">{o.intent.statement}</p>
           {o.intent.source && <Cite id={o.intent.source} items={items} setOpenId={setOpenId} />}
+        </section>
+      )}
+      {/* What has to be looked at before anything is made comes before what is settled. */}
+      {urgent.length > 0 && (
+        <section className="lb-section">
+          <h2>{study ? 'What to look at first' : 'What needs attention before anything is made'}</h2>
+          <ul className="lb-findings">{urgent.map(t => <li key={t.id}><p><strong>{stop(t.title)}.</strong></p><Cites ids={t.sources} items={items} setOpenId={setOpenId} /></li>)}</ul>
+          <div className="lb-actions"><button onClick={() => go('interpret')}>Read each one in Interpret</button></div>
         </section>
       )}
       {o.strengths.length > 0 && (
         <section className="lb-section">
           <h2>{study ? 'What this study reads as holding' : 'What holds'}</h2>
           <ul className="lb-findings">
-            {o.strengths.map(s => <li key={s.statement}><p>{s.statement}</p><Cites ids={s.sources} items={items} setOpenId={setOpenId} /></li>)}
+            {o.strengths.map(s => <li key={s.statement}><p><strong>{s.statement}</strong></p><Cites ids={s.sources} items={items} setOpenId={setOpenId} /></li>)}
           </ul>
         </section>
       )}
@@ -537,19 +545,12 @@ function Orient({ asOf, state, brand, items, setOpenId, go, stance }) {
           <RuleGroups rules={otherRules} brand={brand} items={items} setOpenId={setOpenId} study={study} />
         </section>
       )}
-      {urgent.length > 0 && (
-        <section className="lb-section">
-          <h2>{study ? 'What to look at first' : 'What needs attention before anything is made'}</h2>
-          <ul className="lb-findings">{urgent.map(t => <li key={t.id}><p>{stop(t.title)}.</p><Cites ids={t.sources} items={items} setOpenId={setOpenId} /></li>)}</ul>
-          <div className="lb-actions"><button onClick={() => go('interpret')}>Read each one in Interpret</button></div>
-        </section>
-      )}
       {o.unknowns.length > 0 && (
         <section className="lb-section">
           <h2>{stance === 'owner' ? 'What these files do not say' : 'What is not known'}</h2>
-          <ul className="lb-list">{o.unknowns.slice(0, 8).map(u => <li key={u}>{u}</li>)}</ul>
-          {o.unknowns.length > 8 && (
-            <details><summary>The rest of the list</summary><ul className="lb-list">{o.unknowns.slice(8).map(u => <li key={u}>{u}</li>)}</ul></details>
+          <ul className="lb-list">{o.unknowns.slice(0, 5).map(u => <li key={u}>{u}</li>)}</ul>
+          {o.unknowns.length > 5 && (
+            <details className="lb-more"><summary>The rest of the list</summary><ul className="lb-list">{o.unknowns.slice(5).map(u => <li key={u}>{u}</li>)}</ul></details>
           )}
           {stance !== 'visitor' && <div className="lb-actions"><button onClick={() => go('organize')}>{stance === 'owner' ? 'Answer them in Organize' : 'Record what you find in Organize'}</button></div>}
         </section>
@@ -560,6 +561,7 @@ function Orient({ asOf, state, brand, items, setOpenId, go, stance }) {
           ? `${unchecked.length === brand.items.length ? (brand.items.length === 1 ? 'The one piece here has' : `None of the ${brand.items.length} pieces here has`) : `${unchecked.length} of the ${brand.items.length} pieces here ${unchecked.length === 1 ? 'has' : 'have'} not`} been checked against ${unchecked.length === 1 || unchecked.length === brand.items.length ? 'its' : 'their'} source${found.length ? `, and ${found.length === 1 ? 'one has' : `${found.length} have`} only been found` : ''}.`
           : `All ${brand.items.length} pieces here have been checked against their source.`} A record counts as checked only once someone has compared it with its source{study ? '.' : ', and as approved only once someone with authority has said so.'}</p>
       </section>
+      <NextStep stage="orient" go={go} />
     </article>
   );
 }
@@ -567,7 +569,8 @@ function Orient({ asOf, state, brand, items, setOpenId, go, stance }) {
 // Rules grouped under the material that states them, so forty rules read as a handful of sources.
 function RuleGroups({ rules, bare = [], brand, items, setOpenId, canon = false, study = false }) {
   const bySource = rules.reduce((a, r) => ({ ...a, [r.source]: [...(a[r.source] || []), r] }), {});
-  const many = rules.length > 12;
+  // A long rulebook, or one written in long sentences, reads as its sources first.
+  const many = rules.length > 6 || rules.some(r => String(r.statement || '').length > 140);
   const about = (source, list) => {
     const item = items[source];
     if (canon) {
@@ -586,25 +589,22 @@ function RuleGroups({ rules, bare = [], brand, items, setOpenId, canon = false, 
         const meta = about(source, list);
         // A long rulebook reads as its sources first; each opens to its rules.
         if (many) return (
-          <li key={source}>
-            <details>
-              <summary><strong>{items[source]?.title || source}</strong>, {list.length === 1 ? 'one rule' : `${list.length} rules`}</summary>
-              {meta && <p className="lb-meta">{meta}.</p>}
-              <ul className="lb-list">{list.map(r => <li key={r.id}>{r.statement}</li>)}</ul>
-              <Cite id={source} items={items} setOpenId={setOpenId} />
-            </details>
-          </li>
+          <Entry key={source} title={items[source]?.title || source} who={list.length === 1 ? 'One rule' : `${list.length} rules`}>
+            {meta && <p>{meta}.</p>}
+            <ul className="lb-list">{list.map(r => <li key={r.id}>{r.statement}</li>)}</ul>
+            <div><Cite id={source} items={items} setOpenId={setOpenId} /></div>
+          </Entry>
         );
         return (
           <li key={source}>
-            <p><strong><Cite id={source} items={items} setOpenId={setOpenId} /></strong>{meta && <span className="lb-meta"> {meta}</span>}</p>
+            <p><strong><Cite id={source} items={items} setOpenId={setOpenId} /></strong>{meta && <> {meta}.</>}</p>
             <ul className="lb-list">{list.map(r => <li key={r.id}>{r.statement}</li>)}</ul>
           </li>
         );
       })}
       {bare.map(item => (
         <li key={item.id}>
-          <p><strong><Cite id={item.id} items={items} setOpenId={setOpenId} /></strong> <span className="lb-meta">{about(item.id, [])}</span></p>
+          <p><strong><Cite id={item.id} items={items} setOpenId={setOpenId} /></strong> {about(item.id, [])}.</p>
           {!rulesStatedBy(brand, item.id).length && !(brand.rules || []).some(r => r.source === item.id) && <p>It states no written rule of its own.</p>}
         </li>
       ))}
@@ -613,11 +613,15 @@ function RuleGroups({ rules, bare = [], brand, items, setOpenId, canon = false, 
 }
 
 /* Investigate ------------------------------------------------------------ */
-function Investigate({ asOf, state, brand, setOpenId, stance }) {
+function Investigate({ asOf, state, brand, setOpenId, go, stance }) {
   const [q, setQ] = useState('');
-  const results = useMemo(() => search(state, q, { channels: state.engagement.channels || [], asOf }), [state, q, asOf]);
+  const [only, setOnly] = useState('');
+  const found = useMemo(() => search(state, q, { channels: state.engagement.channels || [], asOf }), [state, q, asOf]);
   const hint = state.engagement.searchHint;
   const study = stance === 'study';
+  // The classes present are the filter: one tap narrows twenty pieces to the handful that govern, or to what is only on file.
+  const classes = Object.keys(STANDING_CLASSES).filter(k => found.some(r => r.item.standing === k));
+  const results = only ? found.filter(r => r.item.standing === only) : found;
   // When every piece gives the same three answers, saying it once is the information.
   const same = results.length > 1 && results.every(r => ['authorized', 'reusable', 'authoritative'].every(k => r.standing[k] === results[0].standing[k]));
   const none = same && !results[0].standing.authorized && !results[0].standing.reusable && !results[0].standing.authoritative;
@@ -627,11 +631,19 @@ function Investigate({ asOf, state, brand, setOpenId, stance }) {
       <p className="lb-deck">{study
         ? `Every piece keeps what it was for, when it appeared and what it rests on. ${brand.name} has authorized nothing here and nothing here is its own classification. The pictures are drawn stand-ins, not the work.`
         : 'Every piece keeps its purpose, audience, canvas, dates, rights and standing. Each answers separately whether it is authorized, reusable and authoritative. The pictures are drawn stand-ins, not the work.'}</p>
-      <label className="lb-search">
-        <span>Search {brand.name}'s material</span>
-        <input type="search" value={q} onChange={e => setQ(e.target.value)} placeholder={hint ? `Try ${hint}` : ''} />
-      </label>
-      {q.trim() && !results.length && <p className="lb-body">Nothing in {brand.name}'s material matches.{stance === 'visitor' ? ' Other clients\' material is not searched.' : ''}</p>}
+      <div className="lb-find">
+        <label className="lb-search">
+          <span>Search {brand.name}'s material</span>
+          <input type="search" value={q} onChange={e => setQ(e.target.value)} placeholder={hint ? `Try ${hint}` : ''} />
+        </label>
+        {classes.length > 1 && (
+          <div className="lb-chips" role="group" aria-label={study ? 'Show by how this study reads it' : 'Show by standing'}>
+            <button aria-pressed={!only} onClick={() => setOnly('')}>All</button>
+            {classes.map(k => <button key={k} aria-pressed={only === k} onClick={() => setOnly(only === k ? '' : k)}>{classOf(k, brand).name}</button>)}
+          </div>
+        )}
+      </div>
+      {q.trim() && !found.length && <p className="lb-body">Nothing in {brand.name}'s material matches.{stance === 'visitor' ? ' Other clients\' material is not searched.' : ''}</p>}
       {!study && results.length > 0 && (none || results.some(r => !r.standing.authorized && !r.standing.reusable && !r.standing.authoritative)) && <p className="lb-body">{none ? 'Nothing here is authorized, reusable or authoritative yet.' : 'A piece with no answers under it is not authorized, reusable or authoritative yet.'}</p>}
       <ul className="lb-grid">
         {results.map(({ item, standing }) => (
@@ -646,6 +658,7 @@ function Investigate({ asOf, state, brand, setOpenId, stance }) {
           </li>
         ))}
       </ul>
+      <NextStep stage="investigate" go={go} />
     </article>
   );
 }
@@ -716,6 +729,7 @@ function Drawer({ asOf, item, state, brand, items, tensions, act, actor, me, set
   // Found or rejected material can be archived and nothing else; the drawer says why instead of offering a form that would fail.
   const noStanding = study ? '' : whyNoStanding(item);
   const [what, setWhat] = useState('');
+  const [doing, setDoing] = useState(null);
   useEffect(() => {
     const opener = document.activeElement;
     closeRef.current?.focus();
@@ -743,14 +757,15 @@ function Drawer({ asOf, item, state, brand, items, tensions, act, actor, me, set
         else if (!k.shiftKey && document.activeElement === f.at(-1)) { k.preventDefault(); f[0].focus(); }
       }}>
         <button className="lb-close" ref={closeRef} onClick={() => setOpenId(null)}>Close</button>
-        <figure className="lb-figure">
-          <Plate item={item} large />
-          <figcaption className="lb-meta">A drawn stand-in, not the work itself.</figcaption>
-        </figure>
-        <h2>{item.title}</h2>
+        <div className="lb-piece">
+          <figure className="lb-figure">
+            <Plate item={item} />
+            <figcaption>A drawn stand-in, not the work itself.</figcaption>
+          </figure>
+          <h2>{item.title}</h2>
+        </div>
         {study && <p className="lb-body">From an independent study of public sources. This is not {brand.name}'s own record.</p>}
         <p className="lb-body">{item.rationale || item.text || 'No rationale recorded.'}</p>
-        <dl className="lb-facts">{facts.map(([k, v]) => <div key={k} className="lb-fact"><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
 
         <h3>{study ? 'For this study' : 'For this project'}</h3>
         <Answers st={st} />
@@ -777,13 +792,6 @@ function Drawer({ asOf, item, state, brand, items, tensions, act, actor, me, set
           <div className="lb-actions"><button onClick={() => { setOpenId(null); go('choose'); }}>Decide it in Choose</button></div>
         )}
 
-        {item.sources?.length > 0 && (<>
-          <h3>Sources</h3>
-          <ul className="lb-list">{item.sources.map(s => (
-            <li key={s.url}>{/^https?:/.test(s.url) ? <a href={s.url} target="_blank" rel="noreferrer noopener">{s.publisher || s.url}</a> : (s.publisher || s.url)}{s.date ? `, ${fmt(s.date)}` : ''} <span className="lb-meta">{SOURCE_BASIS[s.basis] || s.basis}</span></li>
-          ))}</ul>
-        </>)}
-
         {canVerify && (
           <form className="lb-form" onSubmit={x => { x.preventDefault(); if (act(s => verifyItem(s, item.id, { by: actor, how, asOf }), study ? 'Marked as checked against its source. That changes what you know, not what the company has allowed.' : 'Marked as checked against its source. That is not approval.')) setHow(''); }}>
             <label>What you checked it against
@@ -804,21 +812,8 @@ function Drawer({ asOf, item, state, brand, items, tensions, act, actor, me, set
           </div>
         )}
 
-        <h3>Evidence</h3>
-        {evidenceTypes.length === 0 && <p className="lb-missing">None recorded.</p>}
-        {evidenceTypes.map(([n, list]) => (
-          <div key={n} className="lb-ev"><h4>{n}</h4><ul>{list.map(x => <li key={x.id}>{x.statement} <span className="lb-meta">{EVIDENCE_BASIS[x.basis] || String(x.basis).replace(/_/g, ' ')}</span>{/^https?:/.test(x.url || '') && <> <a href={x.url} target="_blank" rel="noreferrer noopener">source</a></>}</li>)}</ul></div>
-        ))}
-
         <h3>Rights</h3>
         <p className="lb-body"><strong>{item.rights?.status === 'own' ? 'The brand\'s own' : study && item.rights?.status === 'cleared' ? 'Open licence' : `${cap(item.rights?.status || 'unknown')}${item.rights?.status === 'cleared' && item.rights.channels?.length && !item.rights.channels.includes('all') ? ` for ${item.rights.channels.map(c => c.replace('-', ' ')).join(', ')}` : ''}`}.</strong> {item.rights?.note || ''} {item.rights?.holder ? `Holder: ${item.rights.holder}.` : ''}</p>
-
-        {item.relations?.length > 0 && (<><h3>Related</h3>
-          <ul className="lb-list">{item.relations.map(r => <li key={r.type + r.to}>{cap(r.type)} <Cite id={r.to} items={items} setOpenId={setOpenId} /></li>)}</ul></>)}
-        {item.supersededBy && <p className="lb-body">Replaced by <Cite id={item.supersededBy} items={items} setOpenId={setOpenId} />.</p>}
-
-        {item.reuse?.length > 0 && (<><h3>Reused</h3>
-          <ul className="lb-list">{item.reuse.map((r, k) => <li key={k}>{r.where}, {fmt(r.date)}</li>)}</ul></>)}
 
         {canWork && noStanding && (
           <div className="lb-form">
@@ -835,8 +830,16 @@ function Drawer({ asOf, item, state, brand, items, tensions, act, actor, me, set
           </div>
         )}
 
-        {canWork && !noStanding && (
-          <form className="lb-form" onSubmit={x => { x.preventDefault(); if (act(s => propose(s, { itemId: item.id, to, rationale: why, evidenceIds: ev, by: actor, scope, asOf }), next => { const p = next.proposals.at(-1); return study ? `Noted for yourself. Nothing about ${brand.name}'s material has changed.` : `Proposal recorded${p.reviewer.length ? `. It waits for ${whoFor(brand, p.reviewer, me)}` : ''}. Nothing has changed yet.${p.warnings.length ? ` Noted: ${p.warnings.join(' ')}` : ''}`; })) { setWhy(''); setScope(''); setEv([]); } }}>
+        {/* Each form opens from the button that names it, under the facts it rests on. */}
+        {canWork && !doing && (!noStanding || !study) && (
+          <div className="lb-actions">
+            {!noStanding && <button onClick={() => setDoing('propose')}>{study ? 'Note a different reading' : 'Propose a change of standing'}</button>}
+            {!study && <button onClick={() => setDoing('reuse')}>Record a reuse</button>}
+          </div>
+        )}
+
+        {canWork && !noStanding && doing === 'propose' && (
+          <form className="lb-form" onSubmit={x => { x.preventDefault(); if (act(s => propose(s, { itemId: item.id, to, rationale: why, evidenceIds: ev, by: actor, scope, asOf }), next => { const p = next.proposals.at(-1); return study ? `Noted for yourself. Nothing about ${brand.name}'s material has changed.` : `Proposal recorded${p.reviewer.length ? `. It waits for ${whoFor(brand, p.reviewer, me)}` : ''}. Nothing has changed yet.${p.warnings.length ? ` Noted: ${p.warnings.join(' ')}` : ''}`; })) { setWhy(''); setScope(''); setEv([]); setDoing(null); } }}>
             <h3>{study ? 'Note a different reading' : 'Propose a change of standing'}</h3>
             <p className="lb-body">{study ? `This is a note to yourself. Only ${brand.name} can decide what its material is.` : reviewers.length ? (reviewers.includes(me) ? 'This is yours to decide. A proposal puts it in front of you in Choose, with what adopting it would change.' : `Decided by ${who(brand, reviewers)}.`) : `No one is named to decide this at ${brand.name}. A proposal will wait.`}</p>
             <label>{study ? 'Your reading' : 'New standing'}
@@ -855,19 +858,42 @@ function Drawer({ asOf, item, state, brand, items, tensions, act, actor, me, set
                 ))}
               </fieldset>
             )}
-            <div className="lb-actions"><button className="lb-primary" type="submit">{study ? 'Record the note' : 'Record proposal'}</button></div>
+            <div className="lb-actions"><button className="lb-primary" type="submit">{study ? 'Record the note' : 'Record proposal'}</button><button type="button" onClick={() => setDoing(null)}>Cancel</button></div>
           </form>
         )}
 
-        {canWork && !study && (
-          <form className="lb-form" onSubmit={x => { x.preventDefault(); if (act(s => recordReuse(s, item.id, { where, asOf }), 'Reuse recorded. Standing is unchanged: reuse does not confer authority.')) setWhere(''); }}>
+        {canWork && !study && doing === 'reuse' && (
+          <form className="lb-form" onSubmit={x => { x.preventDefault(); if (act(s => recordReuse(s, item.id, { where, asOf }), 'Reuse recorded. Standing is unchanged: reuse does not confer authority.')) { setWhere(''); setDoing(null); } }}>
             <h3>Record a reuse</h3>
             <label>Where it was reused
               <input value={where} onChange={x => setWhere(x.target.value)} />
             </label>
-            <div className="lb-actions"><button type="submit">Record the reuse</button></div>
+            <div className="lb-actions"><button className="lb-primary" type="submit">Record the reuse</button><button type="button" onClick={() => setDoing(null)}>Cancel</button></div>
           </form>
         )}
+        <h3>What it was for</h3>
+        <dl className="lb-facts">{facts.map(([k, v]) => <div key={k} className="lb-fact"><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
+
+        <h3>Evidence</h3>
+        {evidenceTypes.length === 0 && <p className="lb-missing">None recorded.</p>}
+        {evidenceTypes.map(([n, list]) => (
+          <div key={n} className="lb-ev"><h4>{n}</h4><ul>{list.map(x => <li key={x.id}>{x.statement} <span className="lb-meta">{EVIDENCE_BASIS[x.basis] || String(x.basis).replace(/_/g, ' ')}</span>{/^https?:/.test(x.url || '') && <> <a href={x.url} target="_blank" rel="noreferrer noopener">source</a></>}</li>)}</ul></div>
+        ))}
+
+        {item.sources?.length > 0 && (<>
+          <h3>Sources</h3>
+          <ul className="lb-list">{item.sources.map(s => (
+            <li key={s.url}>{/^https?:/.test(s.url) ? <a href={s.url} target="_blank" rel="noreferrer noopener">{s.publisher || s.url}</a> : (s.publisher || s.url)}{s.date ? `, ${fmt(s.date)}` : ''} <span className="lb-meta">{SOURCE_BASIS[s.basis] || s.basis}</span></li>
+          ))}</ul>
+        </>)}
+
+        {item.relations?.length > 0 && (<><h3>Related</h3>
+          <ul className="lb-list">{item.relations.map(r => <li key={r.type + r.to}>{cap(r.type)} <Cite id={r.to} items={items} setOpenId={setOpenId} /></li>)}</ul></>)}
+        {item.supersededBy && <p className="lb-body">Replaced by <Cite id={item.supersededBy} items={items} setOpenId={setOpenId} />.</p>}
+
+        {item.reuse?.length > 0 && (<><h3>Reused</h3>
+          <ul className="lb-list">{item.reuse.map((r, k) => <li key={k}>{r.where}, {fmt(r.date)}</li>)}</ul></>)}
+
       </aside>
     </div>
   );
@@ -885,36 +911,98 @@ const choiceStatus = (c, brand, me) => {
   return 'Recorded';
 };
 
-function Tension({ t, state, brand, items, me, setOpenId, shared, onChoose, onName }) {
+// What recording a choice did, in a sentence.
+const choiceSaid = (brand, me) => next => {
+  const made = next.choices.at(-1);
+  if (made.status === 'accepted') return 'Recorded. It is yours to decide, so it is decided.';
+  if (!made.needs) return 'Recorded.';
+  return made.owner ? `Recorded. It waits for ${nameFor(brand, made.owner, me)}.` : `Recorded. It needs a decision on ${POWERS[made.needs]}, and no one is named for that yet.`;
+};
+
+// An entry in a list. Closed, it is its own sentence and, where someone has to
+// act, who. It opens in place, so what it says stays beside what is done about it.
+function Entry({ title, who, open, decides = false, children }) {
+  return (
+    <li className={decides ? 'lb-row lb-decides' : 'lb-row'}>
+      <details open={open || undefined}>
+        <summary><span className="lb-row-title">{title}</span>{who ? <span className="lb-row-who">{who}</span> : null}</summary>
+        <div className="lb-row-body">{children}</div>
+      </details>
+    </li>
+  );
+}
+
+// A choice is recorded where the reader is, with what it rests on still in
+// view. The reason is the last thing before the button, and is never filled in for them.
+function ChoiceForm({ start, fixedSubject = false, brand, act, actor, me, asOf, study, onDone, onCancel }) {
+  const from = start || {};
+  const blank = { subject: from.subject || '', verdict: from.verdict || 'investigate', rationale: '', needs: from.needs || '' };
+  const [form, setForm] = useState(blank);
+  return (
+    <form className="lb-form" onSubmit={x => {
+      x.preventDefault();
+      const ok = act(s => {
+        if (!form.subject.trim()) throw new Error('A choice needs a subject.');
+        return recordChoice(s, { subject: form.subject, verdict: form.verdict, rationale: form.rationale, sources: from.sources || [], about: from.about || '', needs: form.needs || undefined, by: actor, asOf });
+      }, choiceSaid(brand, me));
+      if (ok) { setForm({ ...blank, subject: fixedSubject ? blank.subject : '' }); onDone?.(); }
+    }}>
+      {from.hint && <p className="lb-body">The reading suggested: {from.hint} Say it in your own words, or say something else.</p>}
+      {!fixedSubject && <label>Subject<input value={form.subject} onChange={x => setForm({ ...form, subject: x.target.value })} /></label>}
+      <label>Choice<select value={form.verdict} onChange={x => setForm({ ...form, verdict: x.target.value })}>{Object.entries(CHOICES).map(([k, n]) => <option key={k} value={k}>{n}</option>)}</select></label>
+      {!study && <label>Whose decision it needs<select value={form.needs} onChange={x => setForm({ ...form, needs: x.target.value })}><option value="">No one else's</option>{Object.entries(POWERS).map(([k, n]) => <option key={k} value={k}>{cap(n)}{canDecide(brand, actor, k) ? ' (yours)' : ''}</option>)}</select></label>}
+      <label>Your reason<textarea rows={2} autoFocus={fixedSubject} value={form.rationale} onChange={x => setForm({ ...form, rationale: x.target.value })} /></label>
+      <div className="lb-actions"><button className="lb-primary" type="submit">Record</button>{onCancel && <button type="button" onClick={onCancel}>Cancel</button>}</div>
+    </form>
+  );
+}
+
+// The step after this stage, said once at its foot.
+function NextStep({ stage, go }) {
+  const at = STAGES.findIndex(s => s[0] === stage);
+  const next = STAGES[at + 1];
+  if (!next) return null;
+  return <div className="lb-actions lb-next"><button className="lb-primary" onClick={() => go(next[0])}>{stage === 'enter' ? 'Begin orientation' : `Continue to ${next[1]}`}</button></div>;
+}
+
+function Tension({ t, state, brand, items, me, actor, act, asOf, study, setOpenId, canWrite, onName }) {
+  const [choosing, setChoosing] = useState(false);
   // A choice recorded about this entry is shown with it, so the entry and its answer are read together.
   const chosen = state.choices.filter(c => c.about === t.id && c.status !== 'withdrawn');
   // An answer to a question the record ties to this entry is read with it. It is a note; the entry stays until it is decided.
   const about = state.engagement.questionAbout || {};
   const answered = (state.answers || []).filter(a => about[a.question] === t.id);
-  const others = (t.owners || []).filter(id => id !== me);
+  const owners = t.owners || [];
+  const last = chosen.at(-1);
+  // The closed line says who has to act: what was last recorded about it, or who it waits for.
+  const who = last ? `${last.by === me ? 'Your choice' : 'Choice'}: ${lower(CHOICES[last.verdict])}. ${choiceStatus(last, brand, me)}`
+    : t.unnamed ? 'No one is named'
+      : study ? ''
+        : owners.length ? (owners.every(id => id === me) ? 'Yours to decide' : `For ${whoFor(brand, owners, me)} to resolve`)
+          : t.power ? 'No one is named to decide this' : '';
   return (
-    <li>
-      <p><strong>{stop(t.title)}.</strong>{shared ? '' : ` ${t.detail}`}</p>
-      {t.points?.length > 0 && <ul className="lb-list">{t.points.map(pt => <li key={pt.ruleId}>{pt.rule} <span className="lb-meta">{pt.says || `It has ${pt.has}.`}</span></li>)}</ul>}
-      <Cites ids={t.sources} items={items} setOpenId={setOpenId} />{others.length > 0 && <span className="lb-meta"> For {who(brand, others)} to resolve</span>}
+    <Entry title={`${stop(t.title)}.`} who={who}>
+      <p>{t.detail}</p>
+      {t.points?.length > 0 && <ul className="lb-list">{t.points.map(pt => <li key={pt.ruleId}>{pt.rule} {pt.says || `It has ${pt.has}.`}</li>)}</ul>}
+      <Cites ids={t.sources} items={items} setOpenId={setOpenId} />
       {answered.map(a => <p key={a.id}><strong>{a.by === me ? 'Your answer' : `Answered by ${nameFor(brand, a.by, me)}`}, {fmt(a.date)}.</strong> {a.answer}</p>)}
-      {chosen.map(c => <p key={c.id}><strong>{c.by === me ? 'Your choice' : 'Choice recorded'}: {lower(CHOICES[c.verdict])}.</strong> {c.rationale} <span className="lb-meta">{choiceStatus(c, brand, me)}.</span></p>)}
-      {onChoose && <div className="lb-actions"><button onClick={onChoose}>{chosen.length ? 'Record another choice about this' : 'Record a choice about this'}</button></div>}
+      {chosen.map(c => <p key={c.id}><strong>{c.by === me ? 'Your choice' : 'Choice recorded'}: {lower(CHOICES[c.verdict])}.</strong> {c.rationale} {choiceStatus(c, brand, me)}.</p>)}
+      {canWrite && !t.unnamed && !choosing && <div className="lb-actions"><button onClick={() => setChoosing(true)}>{chosen.length ? 'Record another choice about this' : 'Record a choice about this'}</button></div>}
+      {choosing && <ChoiceForm start={{ subject: stop(t.title), sources: t.sources || [], about: t.id, needs: !study && t.power ? t.power : '' }} fixedSubject brand={brand} act={act} actor={actor} me={me} asOf={asOf} study={study} onDone={() => setChoosing(false)} onCancel={() => setChoosing(false)} />}
       {onName && <div className="lb-actions"><button onClick={onName}>Name them in Enter</button></div>}
-    </li>
+    </Entry>
   );
 }
 
 function Timeline({ events, items, setOpenId }) {
   return (
     <ol className="lb-timeline">
-      {events.map(f => (
-        <li key={f.id}>
+      {events.map((f, k) => (
+        <li key={k}>
           <time>{f.date ? fmt(f.date) : 'Undated'}</time>
           <div>
-            <p>{f.statement}{f.ahead ? ' This is still ahead.' : ''}</p>
+            <p>{f.statement}</p>
             {f.source && <Cite id={f.source} items={items} setOpenId={setOpenId} />}
-            {f.links.filter(u => /^https?:/.test(u)).slice(0, 2).map(u => <a key={u} className="lb-cite" href={u} target="_blank" rel="noreferrer noopener">{u.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}</a>)}
           </div>
         </li>
       ))}
@@ -922,7 +1010,7 @@ function Timeline({ events, items, setOpenId }) {
   );
 }
 
-function Interpret({ asOf, state, brand, items, me, setOpenId, tensions, go, setDraft, stance }) {
+function Interpret({ asOf, state, brand, items, me, actor, act, setOpenId, tensions, go, stance }) {
   const e = state.engagement;
   const study = stance === 'study';
   const reading = e.reading?.interpret || {};
@@ -932,13 +1020,13 @@ function Interpret({ asOf, state, brand, items, me, setOpenId, tensions, go, set
   const hyps = organizationalHypotheses(brand, e);
   // What its decider has decided is no longer waiting for a decision. It is kept in sight until it is carried out.
   const done = decidedEntries(state.choices);
+  const waiting = tensions.filter(t => !done.has(t.id));
   const decided = tensions.filter(t => done.has(t.id));
-  const groups = Object.entries(tensions.filter(t => !done.has(t.id)).reduce((a, t) => ({ ...a, [t.kind]: [...(a[t.kind] || []), t] }), {}));
   const canWrite = e.grant?.powers?.includes('propose');
-  // A gap in who decides is closed by naming someone, not by recording a choice about it.
-  const onChoose = t => (canWrite && !t.unnamed ? () => { setDraft({ subject: stop(t.title), sources: t.sources || [], about: t.id, needs: !study && t.power ? t.power : '' }); go('choose'); } : null);
   const canName = !study && e.grant?.powers?.includes('steward');
   const dated = events.filter(f => f.date);
+  // Each entry's own sentence says what kind of thing it is; they are read as one list, the ones someone has to settle first.
+  const entry = t => <Tension key={t.id} t={t} state={state} brand={brand} items={items} me={me} actor={actor} act={act} asOf={asOf} study={study} setOpenId={setOpenId} canWrite={canWrite} onName={t.unnamed && canName ? () => go('enter') : null} />;
   return (
     <article>
       <h1>{reading.headline || (study ? `What changed at ${brand.name}, as far as public sources show` : `What changed at ${brand.name}, and what it left unresolved`)}</h1>
@@ -947,10 +1035,6 @@ function Interpret({ asOf, state, brand, items, me, setOpenId, tensions, go, set
       {cf && (
         <section className="lb-section">
           <h2>{reading.carryHeading || 'What carries forward'}</h2>
-          <table className="lb-table lb-carry">
-            <thead><tr><th>Brief</th><th>{reading.carryColumns?.[0] || 'Before'}</th><th>{reading.carryColumns?.[1] || 'Now'}</th></tr></thead>
-            <tbody>{cf.changes.map(c => <tr key={c.field}><td>{FIELD_NAMES[c.field] || c.field}</td><td>{show(c.before)}</td><td>{show(c.after)}</td></tr>)}</tbody>
-          </table>
           <ul className="lb-carry-rows">
             {cf.rows.map(r => (
               <li key={r.item.id} className={`lb-verdict-${r.verdict}`}>
@@ -963,35 +1047,26 @@ function Interpret({ asOf, state, brand, items, me, setOpenId, tensions, go, set
             ))}
           </ul>
           {cf.evidenceNote && <p className="lb-body">{cf.evidenceNote}</p>}
+          <details className="lb-more">
+            <summary>How the brief changed</summary>
+            <table className="lb-table lb-carry">
+              <thead><tr><th>Brief</th><th>{reading.carryColumns?.[0] || 'Before'}</th><th>{reading.carryColumns?.[1] || 'Now'}</th></tr></thead>
+              <tbody>{cf.changes.map(c => <tr key={c.field}><td>{FIELD_NAMES[c.field] || c.field}</td><td>{show(c.before)}</td><td>{show(c.after)}</td></tr>)}</tbody>
+            </table>
+          </details>
         </section>
       )}
 
       <section className="lb-section">
         <h2>{stance === 'owner' ? 'What needs deciding' : study ? 'What this study sets side by side' : 'Tensions in the material'}</h2>
         {!tensions.length && <p className="lb-missing">None found in what has been entered.</p>}
-        {tensions.length > 0 && !groups.length && <p className="lb-missing">Nothing is waiting for a decision.</p>}
-        {groups.map(([kind, list]) => {
-          // One entry of a kind says what it is in its own first sentence. Several get a heading,
-          // and a caveat every entry shares is said once under it.
-          const shared = list.length > 1 && list.every(t => t.detail === list[0].detail) ? list[0].detail : null;
-          const entry = t => <Tension key={t.id} t={t} state={state} brand={brand} items={items} me={me} setOpenId={setOpenId} shared={Boolean(shared)} onChoose={onChoose(t)} onName={t.unnamed && canName ? () => go('enter') : null} />;
-          // Past the third entry of one kind the pattern is clear; the rest open on request.
-          const first = list.length > 4 ? list.slice(0, 3) : list;
-          const rest = list.length > 4 ? list.slice(3) : [];
-          return (
-            <div key={kind} className="lb-tension-group">
-              {(list.length > 1 || groups.length > 1) && <h3>{kind}</h3>}
-              {shared && <p className="lb-body">{shared}</p>}
-              <ul className="lb-findings">{first.map(entry)}</ul>
-              {rest.length > 0 && <details><summary>{plural(rest.length, 'One more', '% more')}: {[...new Set(rest.map(t => items[t.sources?.[0]]?.title || stop(t.title)))].join('; ')}</summary><ul className="lb-findings">{rest.map(entry)}</ul></details>}
-            </div>
-          );
-        })}
+        {tensions.length > 0 && !waiting.length && <p className="lb-missing">Nothing is waiting for a decision.</p>}
+        {waiting.length > 0 && <ul className="lb-findings">{waiting.map(entry)}</ul>}
         {decided.length > 0 && (
           <div className="lb-tension-group">
             <h3>Decided, still to carry out</h3>
             <p className="lb-body">{plural(decided.length, 'This has', 'These have')} been decided by the person named for {plural(decided.length, 'it', 'them')}. The material still says what it said until someone changes it.</p>
-            <ul className="lb-findings">{decided.map(t => <Tension key={t.id} t={t} state={state} brand={brand} items={items} me={me} setOpenId={setOpenId} shared={false} onChoose={onChoose(t)} onName={null} />)}</ul>
+            <ul className="lb-findings">{decided.map(entry)}</ul>
           </div>
         )}
       </section>
@@ -999,16 +1074,16 @@ function Interpret({ asOf, state, brand, items, me, setOpenId, tensions, go, set
       {hyps.length > 0 && (
         <section className="lb-section">
           <h2>{study ? 'Hypotheses from this study' : 'Hypotheses beyond the creative work'}</h2>
-          {hyps.map(h => (
-            <div key={h.id} className="lb-hyp">
-              <h3>{h.title}</h3>
-              <p>{h.statement}</p>
-              <ul className="lb-list">{h.evidence.map(x => <li key={x.id}>{x.statement} <Cite id={x.item} items={items} setOpenId={setOpenId} /></li>)}</ul>
-              <p><strong>Why it is uncertain.</strong> {h.uncertainty}</p>
-              {h.test && <p><strong>How it could be tested.</strong> {h.test}</p>}
-              {!study && <p><strong>Decided by</strong> {h.owner ? nameFor(brand, h.owner, me) : `no one named yet at ${brand.name}`}.</p>}
-            </div>
-          ))}
+          <ul className="lb-findings">
+            {hyps.map(h => (
+              <Entry key={h.id} title={h.title} who={study ? '' : h.owner ? `Decided by ${nameFor(brand, h.owner, me)}` : `No one named yet at ${brand.name}`}>
+                <p>{h.statement}</p>
+                <p><strong>Why it is uncertain.</strong> {h.uncertainty}</p>
+                <ul className="lb-list">{h.evidence.map(x => <li key={x.id}>{x.statement} <Cite id={x.item} items={items} setOpenId={setOpenId} /></li>)}</ul>
+                {h.test && <p><strong>How it could be tested.</strong> {h.test}</p>}
+              </Entry>
+            ))}
+          </ul>
         </section>
       )}
 
@@ -1036,35 +1111,26 @@ function Interpret({ asOf, state, brand, items, me, setOpenId, tensions, go, set
         <section className="lb-section">
           <h2>What happened, in order</h2>
           {/* A long record opens on request, so the reading above it stays within reach. */}
-          {events.length > 12
-            ? <details><summary>The full record{dated.length ? `, ${fmt(dated[0].date)} to ${fmt(dated.at(-1).date)}` : ''}</summary><Timeline events={events} items={items} setOpenId={setOpenId} /></details>
+          {events.length > 6
+            ? <details className="lb-more"><summary>The full record{dated.length ? `, ${fmt(dated[0].date)} to ${fmt(dated.at(-1).date)}` : ''}</summary><Timeline events={events} items={items} setOpenId={setOpenId} /></details>
             : <Timeline events={events} items={items} setOpenId={setOpenId} />}
         </section>
       )}
+      <NextStep stage="interpret" go={go} />
     </article>
   );
 }
 
 /* Choose ----------------------------------------------------------------- */
-function Choose({ asOf, state, brand, items, act, actor, me, setOpenId, setNotice, stance, draft, setDraft }) {
-  const blank = { subject: '', verdict: 'investigate', rationale: '', needs: '', sources: [], about: '', hint: '' };
-  const [form, setForm] = useState(draft ? { ...blank, ...draft } : blank);
+function Choose({ asOf, state, brand, items, act, actor, me, setOpenId, go, stance }) {
   const [declining, setDeclining] = useState({ id: null, note: '' });
   const [withdrawing, setWithdrawing] = useState(null);
-  const formRef = useRef(null);
+  const [starting, setStarting] = useState(null);
   const study = stance === 'study';
-  useEffect(() => { if (draft) { formRef.current?.scrollIntoView?.({ block: 'center' }); formRef.current?.querySelector('textarea')?.focus(); setDraft(null); } }, [draft, setDraft]);
   const recorded = new Set(state.choices.filter(c => c.status !== 'withdrawn').map(c => c.subject));
   const suggested = state.engagement.suggestedChoices || [];
-  const said = next => {
-    const made = next.choices.at(-1);
-    if (made.status === 'accepted') return 'Recorded. It is yours to decide, so it is decided.';
-    if (!made.needs) return 'Recorded.';
-    if (study) return `Recorded. It would need ${POWERS[made.needs]} decided at ${brand.name}, which a study cannot ask for.`;
-    return made.owner ? `Recorded. It waits for ${nameFor(brand, made.owner, me)}.` : `Recorded. It needs a decision on ${POWERS[made.needs]}, and no one is named for that yet.`;
-  };
-  // A suggestion is a place to start. The verdict and the reason are the reader's to give.
-  const start = c => { setForm({ ...blank, subject: c.subject, verdict: c.verdict, needs: c.needs || '', sources: c.sources || [], about: c.about || '', hint: c.rationale || '' }); formRef.current?.scrollIntoView?.({ block: 'center' }); formRef.current?.querySelector('textarea')?.focus(); };
+  const about = state.engagement.questionAbout || {};
+  const form = { brand, act, actor, me, asOf, study };
   return (
     <article>
       <h1>Choose what to keep, repair, change and invent</h1>
@@ -1074,45 +1140,39 @@ function Choose({ asOf, state, brand, items, act, actor, me, setOpenId, setNotic
           ? 'A choice is your judgment, on record, in your words. Where it falls in an area you decide, recording it decides it. Anything else waits for whoever is named.'
           : 'A choice is a record of this engagement\'s judgment. Where it needs someone else\'s authority, it is routed to them and waits.'}</p>
 
-      <section className="lb-section">
-        <h2>{study ? 'Notes on how to read the material' : 'Proposals to the brand'}</h2>
-        <Proposals asOf={asOf} state={state} brand={brand} items={items} setOpenId={setOpenId} act={act} decider={actor} me={me} study={study} />
-        <p className="lb-body">{study ? 'Open any piece to note a different reading of it.' : 'Open any piece of work to propose a change to its standing.'}</p>
-      </section>
+      {/* What waits for a decision comes first. With nothing proposed, the stage opens on what the reading suggests. */}
+      {state.proposals.length > 0 && (
+        <section className="lb-section">
+          <h2>{study ? 'Notes on how to read the material' : 'Proposals to the brand'}</h2>
+          <Proposals asOf={asOf} state={state} brand={brand} items={items} setOpenId={setOpenId} act={act} decider={actor} me={me} study={study} />
+        </section>
+      )}
 
       {suggested.length > 0 && (
         <section className="lb-section">
           <h2>Drawn from the interpretation</h2>
           <ul className="lb-findings">
-            {suggested.map(c => (
-              <li key={c.subject}>
-                <p><strong>{CHOICES[c.verdict]}: {stop(c.subject)}.</strong> {c.rationale}</p>
-                {(state.answers || []).filter(a => { const on = (state.engagement.questionAbout || {})[a.question]; return on && (on === c.subject || on === c.about); }).map(a => <p key={a.id}><strong>{a.by === me ? 'Your answer' : `Answered by ${nameFor(brand, a.by, me)}`}, {fmt(a.date)}.</strong> {a.answer}</p>)}
-                <Cites ids={c.sources || []} items={items} setOpenId={setOpenId} />
-                <div className="lb-actions">
-                  {recorded.has(c.subject)
-                    ? <span className="lb-meta">You have recorded a choice on this</span>
-                    : <button onClick={() => start(c)}>Start from this</button>}
-                </div>
-              </li>
-            ))}
+            {suggested.map(c => {
+              const answers = (state.answers || []).filter(a => about[a.question] && (about[a.question] === c.subject || about[a.question] === c.about));
+              return (
+                <Entry key={c.subject} title={`${CHOICES[c.verdict]}: ${stop(c.subject)}.`} who={recorded.has(c.subject) ? 'You have recorded a choice on this' : ''}>
+                  <p>{c.rationale}</p>
+                  {answers.map(a => <p key={a.id}><strong>{a.by === me ? 'Your answer' : `Answered by ${nameFor(brand, a.by, me)}`}, {fmt(a.date)}.</strong> {a.answer}</p>)}
+                  <Cites ids={c.sources || []} items={items} setOpenId={setOpenId} />
+                  {/* A suggestion is a place to start. The verdict and the reason are the reader's to give. */}
+                  {!recorded.has(c.subject) && starting !== c.subject && <div className="lb-actions"><button onClick={() => setStarting(c.subject)}>Start from this</button></div>}
+                  {starting === c.subject && <ChoiceForm {...form} fixedSubject start={{ subject: c.subject, verdict: c.verdict, needs: c.needs || '', sources: c.sources || [], about: c.about || '' }} onDone={() => setStarting(null)} onCancel={() => setStarting(null)} />}
+                </Entry>
+              );
+            })}
           </ul>
         </section>
       )}
 
-      <form ref={formRef} className="lb-form lb-section" onSubmit={x => {
-        x.preventDefault();
-        if (!form.subject.trim()) { setNotice({ kind: 'refused', text: 'A choice needs a subject.' }); return; }
-        if (act(s => recordChoice(s, { subject: form.subject, verdict: form.verdict, rationale: form.rationale, sources: form.sources, about: form.about, needs: form.needs || undefined, by: actor, asOf }), said)) setForm(blank);
-      }}>
-        <h2>Record a choice</h2>
-        {form.hint && <p className="lb-body">The reading suggested: {form.hint} Say it in your own words, or say something else.</p>}
-        <label>Subject<input value={form.subject} onChange={x => setForm({ ...form, subject: x.target.value })} /></label>
-        <label>Choice<select value={form.verdict} onChange={x => setForm({ ...form, verdict: x.target.value })}>{Object.entries(CHOICES).map(([k, n]) => <option key={k} value={k}>{n}</option>)}</select></label>
-        <label>Your reason<textarea rows={2} value={form.rationale} onChange={x => setForm({ ...form, rationale: x.target.value })} /></label>
-        {!study && <label>Whose decision it needs<select value={form.needs} onChange={x => setForm({ ...form, needs: x.target.value })}><option value="">No one else's</option>{Object.entries(POWERS).map(([k, n]) => <option key={k} value={k}>{cap(n)}{canDecide(brand, actor, k) ? ' (yours)' : ''}</option>)}</select></label>}
-        <div className="lb-actions"><button className="lb-primary" type="submit">Record</button></div>
-      </form>
+      <section className="lb-section">
+        <h2>{suggested.length ? 'A choice of your own' : 'Record a choice'}</h2>
+        <ChoiceForm {...form} />
+      </section>
 
       <section className="lb-section">
         <h2>Choices recorded</h2>
@@ -1121,9 +1181,9 @@ function Choose({ asOf, state, brand, items, act, actor, me, setOpenId, setNotic
             {state.choices.map(c => {
               const mine = c.status === 'awaiting decision' && c.needs && canDecide(brand, actor, c.needs);
               return (
-                <li key={c.id}>
+                <li key={c.id} className={mine ? 'lb-decision' : undefined}>
                   <p><strong>{CHOICES[c.verdict]}: {stop(c.subject)}.</strong> {c.rationale}</p>
-                  <p className="lb-meta">{choiceStatus(c, brand, me)}.</p>
+                  <p>{choiceStatus(c, brand, me)}.</p>
                   {mine && declining.id !== c.id && (
                     <div className="lb-actions">
                       <button className="lb-primary" onClick={() => act(s => answerChoice(s, c.id, { by: actor, outcome: 'accept', asOf }), 'Accepted.')}>Accept</button>
@@ -1148,7 +1208,9 @@ function Choose({ asOf, state, brand, items, act, actor, me, setOpenId, setNotic
             })}
           </ul>
         ) : <p className="lb-missing">None yet.</p>}
+        {!state.proposals.length && <p className="lb-body">{study ? 'Open any piece to note a different reading of it.' : 'Open any piece of work to propose a change to its standing.'}</p>}
       </section>
+      <NextStep stage="choose" go={go} />
     </article>
   );
 }
@@ -1163,24 +1225,25 @@ const proposalOutcome = (p, brand, me) => {
   return `${cap(p.status)}.`;
 };
 
+const proposalShort = (p, brand, me) => {
+  const by = p.decided ? ` by ${nameFor(brand, p.decided.by, me)} on ${fmt(p.decided.date)}` : '';
+  if (p.status === 'adopted') return `Adopted${by}`;
+  if (p.status === 'rejected') return `Turned down${by}`;
+  if (p.status === 'revise') return `Sent back${by}`;
+  if (p.status === 'superseded') return 'Closed when its standing changed';
+  return cap(p.status);
+};
+
 function Proposals({ asOf, state, brand, items, setOpenId, act, decider, me, only, study = false }) {
   const none = { id: null, outcome: null, scope: '', covers: null, hold: [], checked: '', note: '' };
   const [doing, setDoing] = useState(none);
   const list = state.proposals.filter(p => !only || only(p));
   if (!list.length) return <p className="lb-missing">{study ? 'No notes yet.' : 'No proposals.'}</p>;
-  // A note every waiting proposal carries is said once, above them.
-  const waiting = list.filter(p => p.status === 'open');
-  // A note that most waiting proposals carry is said once, above them, with the exceptions named.
-  const carriedBy = w => waiting.filter(p => p.warnings.includes(w));
-  const common = !study && waiting.length > 1 ? [...new Set(waiting.flatMap(p => p.warnings))].filter(w => carriedBy(w).length === waiting.length || (carriedBy(w).length >= 3 && carriedBy(w).length * 2 > waiting.length)) : [];
-  const except = w => waiting.filter(p => !p.warnings.includes(w)).map(p => items[p.itemId]?.title || p.itemId);
-  const listed = names => names.join(', ').replace(/, ([^,]*)$/, ' or $1');
   const kinds = kindsOfWork(brand, state.engagement);
-  return (<>
-    {common.length > 0 && (<>
-      <p className="lb-body">Said once for the proposals waiting here:</p>
-      <ul className="lb-warnings lb-warnings-common">{common.map(w => <li key={w}>{w}{except(w).length ? ` This does not apply to ${listed(except(w))}.` : ''}</li>)}</ul>
-    </>)}
+  // One or two decisions stand open. More than that read first as a list of what is waiting,
+  // and each opens to the same card: nothing can be decided without its notes in view.
+  const waitingHere = list.filter(p => p.status === 'open' && !study && decider && items[p.itemId] && canDecide(brand, decider, powerFor(items[p.itemId]))).length;
+  return (
     <ul className="lb-findings">
       {list.map(p => {
         const item = items[p.itemId];
@@ -1190,6 +1253,24 @@ function Proposals({ asOf, state, brand, items, setOpenId, act, decider, me, onl
         const open = p.status === 'open';
         const here = doing.id === p.id;
         const decision = state.decisions.find(d => d.proposalId === p.id);
+        const change = `${item?.title || p.itemId}: ${classOf(p.from, brand).name} to ${classOf(p.to, brand).name}.`;
+        const evidence = p.evidenceIds.length > 0 && <ul className="lb-list">{brand.items.flatMap(i => i.evidence || []).filter(x => p.evidenceIds.includes(x.id)).map(x => <li key={x.id}>{x.statement} ({EVIDENCE_BASIS[x.basis] || String(x.basis).replace(/_/g, ' ')})</li>)}</ul>;
+        const warnings = p.warnings.length > 0 && <ul className="lb-warnings">{p.warnings.map(w => <li key={w}>{w}</li>)}</ul>;
+
+        // Anything the reader cannot decide here is a row: what was asked, and who it waits for or how it ended.
+        if (!(open && mine)) return (
+          <Entry key={p.id} title={change} who={open ? (study ? 'A note to yourself' : `Waiting for ${whoFor(brand, p.reviewer, me)}`) : proposalShort(p, brand, me)}>
+            {open && <p>{p.rationale}</p>}
+            {open && <p>{p.by !== 'intake' ? `${study ? 'Noted' : 'Proposed'} by ${nameFor(brand, p.by, me)} on ${fmt(p.date)}. ` : ''}{study ? `Only ${brand.name} could decide it.` : ''}{p.scope && !study ? `It would cover: ${stop(p.scope)}.` : ''}</p>}
+            {!open && <p>{proposalOutcome(p, brand, me)}{p.status === 'adopted' && decision?.scope ? ` It covers: ${stop(decision.scope)}.` : ''}{decision?.checked ? ` Checked against: ${stop(decision.checked)}.` : ''}{decision?.heldBack?.length ? ` ${plural(decision.heldBack.length, 'One rule was', '% rules were')} held back.` : ''}</p>}
+            {!open && <p>The proposal read: {p.rationale}</p>}
+            {evidence}
+            {open && !study && warnings}
+            {open && stated.length > 0 && (<><p>The rules adopting it would put in force:</p><ul className="lb-list">{stated.map(r => <li key={r.id}>{r.statement}</li>)}</ul></>)}
+            <div><Cite id={p.itemId} items={items} setOpenId={setOpenId} /></div>
+          </Entry>
+        );
+
         // The decider names the kinds of work themselves. What the rules were written for is said beside the list, not ticked for them.
         const written = [...new Set(stated.flatMap(r => (r.scope || []).filter(x => x !== 'all')))].filter(k => kinds.includes(k));
         const covers = doing.covers ?? [];
@@ -1198,7 +1279,7 @@ function Proposals({ asOf, state, brand, items, setOpenId, act, decider, me, onl
         let adds = [];
         let ends = [];
         let turns = [];
-        if (open && mine && here && doing.outcome === 'adopt' && p.to === 'canon' && covers.length) {
+        if (here && doing.outcome === 'adopt' && p.to === 'canon' && covers.length) {
           try {
             const preview = decide(state, p.id, { by: decider, outcome: 'adopt', scope: doing.scope, covers, holdBack: doing.hold, checked: doing.checked.trim() || 'preview', asOf });
             const opts = { asOf, workTypes: state.engagement.workTypes || [], channels: state.engagement.channels || [] };
@@ -1210,34 +1291,37 @@ function Proposals({ asOf, state, brand, items, setOpenId, act, decider, me, onl
             turns = after.filter(t => before.some(x => x.id === t.id && x.title !== t.title));
           } catch { adds = []; ends = []; turns = []; }
         }
+        const adopting = here && doing.outcome === 'adopt';
+        // A decision that is the reader's to make: what it rests on, and every note about it, stay above its buttons.
         return (
-          <li key={p.id}>
-            <p><strong><Cite id={p.itemId} items={items} setOpenId={setOpenId} />: {classOf(p.from, brand).name} to {classOf(p.to, brand).name}.</strong>{open ? ` ${p.rationale}` : ''}</p>
-            {open && <p className="lb-meta">{p.by !== 'intake' ? `${study ? 'Noted' : 'Proposed'} by ${nameFor(brand, p.by, me)} on ${fmt(p.date)}. ` : ''}{study ? `A note to yourself. Only ${brand.name} could decide it.` : mine ? 'Yours to decide.' : `Waiting for ${whoFor(brand, p.reviewer, me)}.`}{p.scope && !study ? ` It would cover: ${stop(p.scope)}.` : ''}</p>}
-            {!open && <p className="lb-body">{proposalOutcome(p, brand, me)}{p.status === 'adopted' && decision?.scope ? ` It covers: ${stop(decision.scope)}.` : ''}{decision?.checked ? ` Checked against: ${stop(decision.checked)}.` : ''}{decision?.heldBack?.length ? ` ${plural(decision.heldBack.length, 'One rule was', '% rules were')} held back.` : ''}</p>}
-            {!open && <p className="lb-meta">The proposal read: {p.rationale}</p>}
-            {p.evidenceIds.length > 0 && <ul className="lb-list">{brand.items.flatMap(i => i.evidence || []).filter(x => p.evidenceIds.includes(x.id)).map(x => <li key={x.id}>{x.statement} <span className="lb-meta">{EVIDENCE_BASIS[x.basis] || String(x.basis).replace(/_/g, ' ')}</span></li>)}</ul>}
-            {open && !study && p.warnings.some(w => !common.includes(w)) && <ul className="lb-warnings">{p.warnings.filter(w => !common.includes(w)).map(w => <li key={w}>{w}</li>)}</ul>}
-            {open && !here && stated.length > 0 && (
-              <details><summary>The rules adopting it would put in force</summary><ul className="lb-list">{stated.map(r => <li key={r.id}>{r.statement}</li>)}</ul></details>
+          <Entry key={p.id} decides open={waitingHere <= 2 || here} title={change} who="Yours to decide">
+            <p>{p.rationale}</p>
+            <p>{p.by !== 'intake' ? `Proposed by ${nameFor(brand, p.by, me)} on ${fmt(p.date)}.` : ''}{p.scope ? ` It would cover: ${stop(p.scope)}.` : ''}</p>
+            {evidence}
+            {!adopting && warnings}
+            {!here && stated.length > 0 && (
+              <details className="lb-more"><summary>The rules adopting it would put in force</summary><ul className="lb-list">{stated.map(r => <li key={r.id}>{r.statement}</li>)}</ul></details>
             )}
-            {open && mine && blocked && <p className="lb-body">{blocked}</p>}
-            {open && mine && blocked && item.pipeline === 'discovered' && <div className="lb-actions"><button onClick={() => setOpenId(item.id)}>Say what it is</button></div>}
-            {open && mine && !here && (
+            {blocked && <p>{blocked}</p>}
+            <div><Cite id={p.itemId} items={items} setOpenId={setOpenId} /></div>
+            {blocked && item.pipeline === 'discovered' && !here && <div className="lb-actions"><button onClick={() => setOpenId(item.id)}>Say what it is</button></div>}
+            {!here && (
               <div className="lb-actions">
                 {!blocked && <button className="lb-primary" onClick={() => setDoing({ ...none, id: p.id, outcome: 'adopt', hold: stated.filter(r => r.disputed).map(r => r.id) })}>Adopt</button>}
                 <button onClick={() => setDoing({ ...none, id: p.id, outcome: 'revise' })}>Ask for revision</button>
                 <button onClick={() => setDoing({ ...none, id: p.id, outcome: 'reject' })}>Reject</button>
               </div>
             )}
-            {open && mine && here && doing.outcome === 'adopt' && (
+            {adopting && (
               <form className="lb-form" onSubmit={x => { x.preventDefault(); if (act(s => { if (p.to === 'canon' && !covers.length) throw new Error('Tick at least one kind of work.'); return decide(s, p.id, { by: decider, outcome: 'adopt', scope: doing.scope, covers, holdBack: doing.hold, checked: doing.checked, asOf }); }, 'Adopted. The previous standing is kept in the record.')) setDoing(none); }}>
                 {p.to === 'canon' && (
                   <fieldset><legend>The kinds of work this canon covers</legend>
-                    <label className="lb-check"><input type="checkbox" autoFocus checked={covers.includes('all')} onChange={c => setDoing({ ...doing, covers: c.target.checked ? ['all'] : [] })} />All work</label>
-                    {kinds.map(k => (
-                      <label key={k} className="lb-check"><input type="checkbox" disabled={covers.includes('all')} checked={covers.includes('all') || covers.includes(k)} onChange={c => setDoing({ ...doing, covers: c.target.checked ? [...covers.filter(x => x !== 'all'), k] : covers.filter(x => x !== k) })} />{k}</label>
-                    ))}
+                    <div className="lb-options">
+                      <label className="lb-check"><input type="checkbox" autoFocus checked={covers.includes('all')} onChange={c => setDoing({ ...doing, covers: c.target.checked ? ['all'] : [] })} />All work</label>
+                      {kinds.map(k => (
+                        <label key={k} className="lb-check"><input type="checkbox" disabled={covers.includes('all')} checked={covers.includes('all') || covers.includes(k)} onChange={c => setDoing({ ...doing, covers: c.target.checked ? [...covers.filter(x => x !== 'all'), k] : covers.filter(x => x !== k) })} />{k}</label>
+                      ))}
+                    </div>
                   </fieldset>
                 )}
                 {p.to === 'canon' && !covers.length && <p className="lb-body">Tick at least one. The kinds of work ticked are what its rules are then held to; nothing else is.{written.length ? ` As written, its rules are for ${written.join(', ').toLowerCase()}.` : ''}</p>}
@@ -1263,20 +1347,22 @@ function Proposals({ asOf, state, brand, items, setOpenId, act, decider, me, onl
                 </>)}
                 {p.to === 'canon' && unchecked && <label>What you checked this record against<input value={doing.checked} onChange={x => setDoing({ ...doing, checked: x.target.value })} placeholder="The live site, today" /></label>}
                 {p.to === 'canon' && <p className="lb-body">Adopting it as canon also records your approval of it.</p>}
+                {/* The notes about the proposal are the last thing read before it is adopted. */}
+                {warnings}
                 <div className="lb-actions"><button className="lb-primary" type="submit">Adopt it</button><button type="button" onClick={() => setDoing(none)}>Cancel</button></div>
               </form>
             )}
-            {open && mine && here && doing.outcome !== 'adopt' && (
+            {here && doing.outcome !== 'adopt' && (
               <form className="lb-form" onSubmit={x => { x.preventDefault(); if (act(s => decide(s, p.id, { by: decider, outcome: doing.outcome, note: doing.note, asOf }), doing.outcome === 'revise' ? 'Sent back for revision.' : 'Turned down. The proposal stays on record.')) setDoing(none); }}>
                 <label>{doing.outcome === 'revise' ? 'What needs to change' : 'Why it is turned down'}<input autoFocus value={doing.note} onChange={x => setDoing({ ...doing, note: x.target.value })} /></label>
-                <div className="lb-actions"><button type="submit">{doing.outcome === 'revise' ? 'Send it back' : 'Turn it down'}</button><button type="button" onClick={() => setDoing(none)}>Cancel</button></div>
+                <div className="lb-actions"><button className="lb-primary" type="submit">{doing.outcome === 'revise' ? 'Send it back' : 'Turn it down'}</button><button type="button" onClick={() => setDoing(none)}>Cancel</button></div>
               </form>
             )}
-          </li>
+          </Entry>
         );
       })}
     </ul>
-  </>);
+  );
 }
 
 /* Organize --------------------------------------------------------------- */
@@ -1293,34 +1379,33 @@ function Questions({ asOf, state, brand, act, actor, me, stance }) {
   const cut = answeredFirst.length > 8 ? Math.max(6, answeredFirst.indexOf(open.q) + 1) : answeredFirst.length;
   const shown = answeredFirst.slice(0, cut);
   const more = answeredFirst.slice(cut);
+  const study = stance === 'study';
+  const one = q => {
+    const given = answers.filter(a => a.question === q);
+    const last = given.at(-1);
+    const text = open.q === q ? open.text : '';
+    return (
+      <Entry key={q} title={q} who={last ? `${study ? 'Found' : 'Answered'} by ${nameFor(brand, last.by, me)} on ${fmt(last.date)}` : ''}>
+        {given.map(a => <p key={a.id}><strong>{cap(nameFor(brand, a.by, me))}, {fmt(a.date)}.</strong> {a.answer}</p>)}
+        {canWrite && (
+          <form className="lb-form" onSubmit={x => { x.preventDefault(); if (act(s => recordAnswer(s, { question: q, answer: text, by: actor, asOf }), study ? 'Recorded.' : 'Answer recorded.')) setOpen({ q: null, text: '' }); }}>
+            <label>{study ? 'What you found, and where' : given.length ? 'Add to it' : 'Your answer'}<textarea rows={2} value={text} onChange={x => setOpen({ q, text: x.target.value })} /></label>
+            <div className="lb-actions"><button className="lb-primary" type="submit">{study ? 'Record it' : 'Record the answer'}</button></div>
+          </form>
+        )}
+      </Entry>
+    );
+  };
   return (
     <section className="lb-section">
-      <h2>{stance === 'owner' ? 'Questions only you can answer' : stance === 'study' ? 'Questions this study leaves open' : `Questions for ${brand.name}`}</h2>
-      <ul className="lb-findings">
-        {shown.map(one)}
-      </ul>
-      {more.length > 0 && <details><summary>{more.length} more questions</summary><ul className="lb-findings">{more.map(one)}</ul></details>}
+      <h2>{stance === 'owner' ? 'Questions only you can answer' : study ? 'Questions this study leaves open' : `Questions for ${brand.name}`}</h2>
+      <ul className="lb-findings">{shown.map(one)}</ul>
+      {more.length > 0 && <details className="lb-more"><summary>{more.length} more questions</summary><ul className="lb-findings">{more.map(one)}</ul></details>}
     </section>
   );
-  function one(q) {
-          const given = answers.filter(a => a.question === q);
-          return (
-            <li key={q}>
-              <p>{q}</p>
-              {given.map(a => <p key={a.id}><strong>{stance === 'study' ? 'Found' : 'Answered'} by {nameFor(brand, a.by, me)} on {fmt(a.date)}.</strong> {a.answer}</p>)}
-              {canWrite && open.q !== q && <div className="lb-actions"><button onClick={() => setOpen({ q, text: '' })}>{given.length ? 'Add to it' : stance === 'study' ? 'Record what you found' : 'Answer'}</button></div>}
-              {canWrite && open.q === q && (
-                <form className="lb-form" onSubmit={x => { x.preventDefault(); if (act(s => recordAnswer(s, { question: q, answer: open.text, by: actor, asOf }), stance === 'study' ? 'Recorded.' : 'Answer recorded.')) setOpen({ q: null, text: '' }); }}>
-                  <label>{stance === 'study' ? 'What you found, and where' : 'Your answer'}<textarea autoFocus rows={2} value={open.text} onChange={x => setOpen({ ...open, text: x.target.value })} /></label>
-                  <div className="lb-actions"><button className="lb-primary" type="submit">{stance === 'study' ? 'Record it' : 'Record the answer'}</button><button type="button" onClick={() => setOpen({ q: null, text: '' })}>Cancel</button></div>
-                </form>
-              )}
-            </li>
-          );
-  }
 }
 
-function Organize({ asOf, state, brand, items, act, actor, me, setOpenId, pkg, pkgs, setPkg, setNotice, stance }) {
+function Organize({ asOf, state, brand, items, act, actor, me, setOpenId, pkg, pkgs, setPkg, setNotice, go, stance }) {
   const e = state.engagement;
   const brief = buildBrief(brand, e, state.choices, { asOf });
   const study = stance === 'study';
@@ -1350,41 +1435,18 @@ function Organize({ asOf, state, brand, items, act, actor, me, setOpenId, pkg, p
 
       <Questions asOf={asOf} state={state} brand={brand} act={act} actor={actor} me={me} stance={stance} />
 
-      {brief.evaluation.length > 0 && (
-        <section className="lb-section">
-          <h2>How it will be judged, decided now</h2>
-          <table className="lb-table">
-            <thead><tr><th>Outcome</th><th>Measure</th><th>Compared with</th><th>Limit</th></tr></thead>
-            <tbody>{brief.evaluation.map(x => <tr key={x.outcome}><td>{x.outcome}</td><td>{x.measure}</td><td>{x.baseline}</td><td>{x.limit}</td></tr>)}</tbody>
-          </table>
-        </section>
-      )}
-
       <section className="lb-section">
         <h2>Choices it carries</h2>
-        {live.length ? <ul className="lb-list">{live.map(c => <li key={c.id}><strong>{CHOICES[c.verdict]}: {stop(c.subject)}.</strong> {c.rationale} {c.status !== 'recorded' && <em>({lower(choiceStatus(c, brand, me))})</em>}</li>)}</ul>
+        {live.length ? <ul className="lb-findings">{live.map(c => <li key={c.id}><p><strong>{CHOICES[c.verdict]}: {stop(c.subject)}.</strong> {c.rationale}</p>{c.status !== 'recorded' && <p>{choiceStatus(c, brand, me)}.</p>}</li>)}</ul>
           : <p className="lb-missing">{state.choices.some(c => c.status === 'withdrawn') ? `${plural(state.choices.filter(c => c.status === 'withdrawn').length, 'One choice was recorded and withdrawn', '% choices were recorded and withdrawn')}. None stands.` : 'No choices recorded yet. Record them in Choose.'}</p>}
       </section>
 
-      {canonRules.length > 0 && (
+      {brief.evaluation.length > 0 && (
         <section className="lb-section">
-          <h2>{study ? 'What this study reads as current' : 'Rules in force'}</h2>
-          <RuleGroups rules={canonRules} brand={brand} items={items} setOpenId={setOpenId} canon study={study} />
-        </section>
-      )}
-      {otherRules.length > 0 && (
-        <section className="lb-section">
-          <h2>{study ? 'Also on the public record' : 'Rules as written, not adopted'}</h2>
-          <RuleGroups rules={otherRules} brand={brand} items={items} setOpenId={setOpenId} study={study} />
-        </section>
-      )}
-
-      {brief.snapshot.length > 0 && (
-        <section className="lb-section">
-          <h2>Sources, as they stood on {fmt(brief.frozenAt)}</h2>
-          <table className="lb-table">
-            <thead><tr><th>Source</th><th>{study ? 'Read here as' : 'Standing'}</th><th>How far it has been checked</th></tr></thead>
-            <tbody>{brief.snapshot.map(s => <tr key={s.id}><td><Cite id={s.id} items={items} setOpenId={setOpenId} /></td><td>{classOf(s.standing, brand).name}</td><td>{{ discovered: 'Only found', extracted: 'Read from its source, not checked', interpreted: 'Read and described, not checked', verified: 'Checked against its source', approved: 'Checked and approved' }[s.pipeline] || cap(s.pipeline)}</td></tr>)}</tbody>
+          <h2>How it will be judged, decided now</h2>
+          <table className="lb-table lb-table-stack">
+            <thead><tr><th>Outcome</th><th>Measure</th><th>Compared with</th><th>Limit</th></tr></thead>
+            <tbody>{brief.evaluation.map(x => <tr key={x.outcome}><td>{x.outcome}</td><td data-th="Measure">{x.measure}</td><td data-th="Compared with">{x.baseline}</td><td data-th="Limit">{x.limit}</td></tr>)}</tbody>
           </table>
         </section>
       )}
@@ -1397,7 +1459,7 @@ function Organize({ asOf, state, brand, items, act, actor, me, setOpenId, pkg, p
           {lapsed && <p className="lb-body">The package issued earlier ended on {fmt(pkg.package.expires)}. {partner.name} can no longer read it.</p>}
           {gone.length > 0 && <p className="lb-body">Since the package was issued, {gone.map(i => i.title).join(', ')} {gone.length === 1 ? 'is' : 'are'} no longer cleared to share, and {partner.name} has been told so. Revoke the package and issue a new one.</p>}
           <div className="lb-actions">
-            {!pkg && <button className="lb-primary" onClick={issue}>Issue a context package</button>}
+            {!pkg && <button onClick={issue}>Issue a context package</button>}
             {pkg && !revoked && !lapsed && <button onClick={() => { setPkg({ ...pkg, package: revokePackage(pkg.package, asOf) }); setNotice({ kind: 'ok', text: 'Package revoked.' }); }}>Revoke the package</button>}
             {(revoked || lapsed) && <button onClick={issue}>Issue a new package</button>}
           </div>
@@ -1413,6 +1475,27 @@ function Organize({ asOf, state, brand, items, act, actor, me, setOpenId, pkg, p
           </>)}
         </section>
       )}
+
+      {/* The rules are read in Orient. Here they are the brief's reference, one step away. */}
+      {canonRules.length > 0 && (
+        <Closed title={study ? 'What this study reads as current' : 'Rules in force'}>
+          <RuleGroups rules={canonRules} brand={brand} items={items} setOpenId={setOpenId} canon study={study} />
+        </Closed>
+      )}
+      {otherRules.length > 0 && (
+        <Closed title={study ? 'Also on the public record' : 'Rules as written, not adopted'}>
+          <RuleGroups rules={otherRules} brand={brand} items={items} setOpenId={setOpenId} study={study} />
+        </Closed>
+      )}
+      {brief.snapshot.length > 0 && (
+        <Closed title={`Sources, as they stood on ${fmt(brief.frozenAt)}`}>
+          <table className="lb-table lb-table-stack">
+            <thead><tr><th>Source</th><th>{study ? 'Read here as' : 'Standing'}</th><th>How far it has been checked</th></tr></thead>
+            <tbody>{brief.snapshot.map(s => <tr key={s.id}><td><Cite id={s.id} items={items} setOpenId={setOpenId} /></td><td data-th={study ? 'Read here as' : 'Standing'}>{classOf(s.standing, brand).name}</td><td data-th="Checked">{{ discovered: 'Only found', extracted: 'Read from its source, not checked', interpreted: 'Read and described, not checked', verified: 'Checked against its source', approved: 'Checked and approved' }[s.pipeline] || cap(s.pipeline)}</td></tr>)}</tbody>
+          </table>
+        </Closed>
+      )}
+      <NextStep stage="organize" go={go} />
     </article>
   );
 }
@@ -1436,34 +1519,34 @@ function Transfer({ catalog, asOf, state, brand, pkgs, stance }) {
         : owner
           ? `Everything here is ${brand.name}'s, and yours to keep: where each record came from, what you decided and why, what you answered, and what is still open.`
           : `The engagement package belongs to ${brand.name}. It keeps the sources with their provenance, the interpretation, every choice, proposal and decision, and the questions still open.`)}</p>
-      <section className="lb-section lb-two">
-        <div>
-          <h2>{study ? 'The study holds' : owner ? 'What is in it' : `${brand.name} keeps`}</h2>
-          <ul className="lb-list">
-            <li>Every source, with where it came from{study ? ' and what it rests on' : ', its stage and its rights'}</li>
-            <li>{study ? 'Your reading, your choices, your notes and what you found' : owner ? 'Every decision, choice and answer, with the date and your reason' : 'Every choice, proposal, decision and answer, with who made it'}</li>
-            <li>{study ? `The questions only ${brand.name} can answer` : 'What is not yet resolved, and the questions still open'}</li>
-            {!study && <li>The interpretation{brief.evaluation.length ? ', and the brief with its evaluation set before the work' : ''}</li>}
-          </ul>
-          {handoff.notCompleted.length > 0 && (<>
-            <h3>Not done here</h3>
-            <p className="lb-body">{cap(handoff.notCompleted.join(', '))}. {handoff.completed.length ? `This was ${/^[aeiou]/.test(handoff.completed[0]) ? 'an' : 'a'} ${handoff.completed.join(' and ')}; the rest are separate pieces of work.` : 'Each is a separate piece of work.'}</p>
-          </>)}
-          <div className="lb-actions">
-            <button className="lb-primary" onClick={() => offer(`${slug}.packet.json`, toPacket(state))}>Download the packet</button>
-            <button onClick={() => offer(`${slug}-engagement-package.json`, handoff)}>Download the engagement package</button>
-          </div>
-          <p className="lb-body">What you record on this page is saved in this browser only. The packet is the whole record in one file: download it to keep your work, to move it, or to open it with an assistant that has Living Brand connected. The engagement package is the same record arranged for handing over. Both are data files, not documents to read.</p>
+      <section className="lb-section">
+        <h2>{study ? 'The study holds' : owner ? 'What is in it' : `${brand.name} keeps`}</h2>
+        {/* What is lost by not downloading is said before the buttons, not after them. */}
+        <p className="lb-body">What you record on this page is saved in this browser only. Download the packet to keep your work, to move it, or to open it with an assistant that has Living Brand connected.</p>
+        <div className="lb-actions">
+          <button className="lb-primary" onClick={() => offer(`${slug}.packet.json`, toPacket(state))}>Download the packet</button>
+          <button onClick={() => offer(`${slug}-engagement-package.json`, handoff)}>Download the engagement package</button>
         </div>
-        {stance === 'visitor' && (
-          <div>
-            <h2>You keep</h2>
-            <ul className="lb-list">{bench.methods.map(m => <li key={m}>{m}</li>)}</ul>
-            <p className="lb-body">Your methods and preferences, and a record that the engagements happened. No {brand.name} material leaves with you.</p>
-            <div className="lb-actions"><button onClick={() => offer('workbench.json', bench)}>Download your workbench</button></div>
-          </div>
-        )}
+        <p className="lb-body">The packet is the whole record in one file. The engagement package is the same record arranged for handing over. Both are data files, not documents to read.</p>
+        <ul className="lb-list">
+          <li>Every source, with where it came from{study ? ' and what it rests on' : ', its stage and its rights'}</li>
+          <li>{study ? 'Your reading, your choices, your notes and what you found' : owner ? 'Every decision, choice and answer, with the date and your reason' : 'Every choice, proposal, decision and answer, with who made it'}</li>
+          <li>{study ? `The questions only ${brand.name} can answer` : 'What is not yet resolved, and the questions still open'}</li>
+          {!study && <li>The interpretation{brief.evaluation.length ? ', and the brief with its evaluation set before the work' : ''}</li>}
+        </ul>
+        {handoff.notCompleted.length > 0 && (<>
+          <h3>Not done here</h3>
+          <p className="lb-body">{cap(handoff.notCompleted.join(', '))}. {handoff.completed.length ? `This was ${/^[aeiou]/.test(handoff.completed[0]) ? 'an' : 'a'} ${handoff.completed.join(' and ')}; the rest are separate pieces of work.` : 'Each is a separate piece of work.'}</p>
+        </>)}
       </section>
+      {stance === 'visitor' && (
+        <section className="lb-section">
+          <h2>You keep</h2>
+          <ul className="lb-list">{bench.methods.map(m => <li key={m}>{m}</li>)}</ul>
+          <p className="lb-body">Your methods and preferences, and a record that the engagements happened. No {brand.name} material leaves with you.</p>
+          <div className="lb-actions"><button onClick={() => offer('workbench.json', bench)}>Download your workbench</button></div>
+        </section>
+      )}
       {shown && <Export file={shown} />}
     </article>
   );

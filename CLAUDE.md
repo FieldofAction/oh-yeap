@@ -59,7 +59,7 @@ Its existing `scripts/text-on-the-page-baseline.json` is legacy CSS debt, not
 permission to add decorative text. Builds never create or rewrite this baseline.
 Retire entries explicitly in review when their CSS is removed.
 
-`npm run text:test` inspects thirteen built-page scenarios (including the open navigation menu and three Living Brand workbench states) at mobile/desktop widths in
+`npm run text:test` inspects seventeen built-page scenarios (including the open navigation menu and seven Living Brand workbench states: three with their entries opened by clicking, and one with a piece's sheet open) at mobile/desktop widths in
 both themes. It checks computed small text (12px or smaller) immediately before
 an h1–h3, computed small uppercase, mono labels outside code/indices/form fields,
 and arrow text inside links/buttons. It records every occurrence, so another
