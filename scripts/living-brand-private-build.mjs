@@ -30,8 +30,8 @@ const files = readdirSync(packetsDir).filter(f => f.endsWith('.packet.json')).so
 if (!files.length) { console.error(`No *.packet.json files in ${packetsDir}.`); process.exit(1); }
 const open = files.map(f => {
   const packet = JSON.parse(readFileSync(join(packetsDir, f), 'utf8'));
-  const { brand, engagement } = readPacket(packet); // refuses anything inconsistent
-  return { brand, engagement };
+  const { brand, engagement, record } = readPacket(packet); // refuses anything inconsistent
+  return { brand, engagement, record };
 });
 const ids = open.map(o => o.brand.id);
 if (new Set(ids).size !== ids.length) { console.error('Two packets hold the same brand.'); process.exit(1); }

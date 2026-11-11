@@ -33,7 +33,8 @@ const who = (brand, ids) => (ids?.length ? ids.map(id => person(brand, id)).join
 const read = key => { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } };
 const write = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* storage unavailable */ } };
 
-const begin = entry => ({ state: startEngagement({ [entry.brand.id]: entry.brand }, entry.engagement), pkg: null });
+// A packet may arrive with a record already in it (proposals waiting, choices made).
+const begin = entry => ({ state: startEngagement({ [entry.brand.id]: entry.brand }, entry.engagement, entry.record), pkg: null });
 
 export default function Workbench({ catalog }) {
   const asOf = catalog.asOf;
@@ -41,7 +42,7 @@ export default function Workbench({ catalog }) {
   const [engId, setEngId] = useState(catalog.open.some(e => e.engagement.id === place.engagement) ? place.engagement : catalog.open[0].engagement.id);
   const entry = catalog.open.find(e => e.engagement.id === engId);
   // Saved work is tied to the exact data it was made from, so corrected records never hide behind stale state.
-  const storeKey = `${STORE}:${engId}:${fingerprint({ b: entry.brand, e: entry.engagement })}`;
+  const storeKey = `${STORE}:${engId}:${fingerprint({ b: entry.brand, e: entry.engagement, r: entry.record || null })}`;
   const [all, setAll] = useState(() => { const saved = read(storeKey); return saved?.state ? saved : begin(entry); });
   const [loadedKey, setLoadedKey] = useState(storeKey);
   if (loadedKey !== storeKey) { const saved = read(storeKey); setAll(saved?.state ? saved : begin(entry)); setLoadedKey(storeKey); }

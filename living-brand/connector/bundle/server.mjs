@@ -25746,13 +25746,13 @@ function createTools(store2) {
         const urgent = o.tensions.filter((t) => t.severity !== "investigate" || t.kind === "Unknown rights").slice(0, 6);
         return {
           text: lines([
-            `${e.project} for ${brand.name}. ${e.purpose || ""}`,
+            `${e.project}${e.project.includes(brand.name) ? "" : ` for ${brand.name}`}. ${e.purpose || ""}`,
             basisLine(brand),
             isPublicStudy(brand) && `This is an independent study. ${brand.name} did not take part. Never present any of it as ${brand.name}'s own record.`,
             "",
             `Role: ${e.role}. May ${(e.grant?.powers || []).join(", ")}.${e.grant?.expires ? ` Access ends ${e.grant.expires}.` : ""}`,
             e.scope && `Scope: ${e.scope}`,
-            e.constraints?.length && `Constraints: ${e.constraints.join("; ")}.`,
+            e.constraints?.length ? `Constraints: ${e.constraints.join("; ")}.` : null,
             "",
             o.intent?.statement && `Stated intent: ${o.intent.statement}`,
             "",
@@ -25760,7 +25760,7 @@ function createTools(store2) {
             ...areas.length ? areas.map(([p, label]) => `- ${label}: ${who(brand, brand.authority[p])}`) : ["- Nothing recorded."],
             "",
             `Canon in force (${o.canon.length}):`,
-            ...o.canon.map((i) => `- ${i.title} [${i.id}]`),
+            ...o.canon.length ? o.canon.map((i) => `- ${i.title} [${i.id}]`) : ["- Nothing has been adopted as canon yet."],
             o.strengths.length ? "\nWhat holds (the practitioner's reading, with sources):" : null,
             ...o.strengths.map((s) => `- ${s.statement} [${s.sources.join(", ")}]`),
             urgent.length ? "\nNeeds attention before anything is made:" : null,
