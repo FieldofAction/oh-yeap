@@ -1,24 +1,19 @@
 import { useState, useCallback } from "react";
 import useExplorationStore from "../store/useExplorationStore";
+import "../styles/workbench.css";
+import "../styles/workshop-tools.css";
 
-/* ── Status badge ── */
-const STATUS_COLORS = { seed: "#8b8b8b", wip: "#c9a227", live: "#4a9e6e", archived: "#6b6b6b" };
-function StatusBadge({ status }) {
-  return (
-    <span className="ee-badge" style={{ background: STATUS_COLORS[status] || "#666" }}>
-      {status}
-    </span>
-  );
-}
+const STATUS_WORDS = { seed: "Seed", wip: "In progress", live: "Live", archived: "Archived" };
+const RESOLUTION_WORDS = { resolved: "Resolved", reframed: "Reframed", absorbed: "Absorbed" };
 
-/* ── New Exploration Form ── */
 function NewExplorationForm({ onCreate, onCancel }) {
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [hypothesis, setHypothesis] = useState("");
   const [tags, setTags] = useState("");
 
-  const handleCreate = () => {
+  const handleCreate = (e) => {
+    e.preventDefault();
     if (!title.trim()) return;
     onCreate({
       title: title.trim(),
@@ -29,26 +24,37 @@ function NewExplorationForm({ onCreate, onCancel }) {
   };
 
   return (
-    <div className="ee-new-form">
-      <div className="ee-new-title">New Exploration</div>
-      <input className="ee-input" value={title} onChange={e => setTitle(e.target.value)} placeholder="Title" autoFocus />
-      <input className="ee-input" value={subtitle} onChange={e => setSubtitle(e.target.value)} placeholder="Subtitle (optional)" />
-      <textarea className="ee-textarea" value={hypothesis} onChange={e => setHypothesis(e.target.value)} placeholder="Hypothesis: the driving question" rows={3} />
-      <input className="ee-input" value={tags} onChange={e => setTags(e.target.value)} placeholder="Tags (comma separated)" />
-      <div className="ee-new-actions">
-        <button className="ee-btn ee-btn--ghost" onClick={onCancel}>Cancel</button>
-        <button className="ee-btn ee-btn--primary" onClick={handleCreate} disabled={!title.trim()}>Create</button>
+    <form className="tl-section" onSubmit={handleCreate}>
+      <div className="wb-signal">
+        <label htmlFor="ee-new-title" className="wb-label">Title</label>
+        <input id="ee-new-title" className="wb-field" value={title} onChange={e => setTitle(e.target.value)} autoFocus autoComplete="off" />
       </div>
-    </div>
+      <div className="wb-signal">
+        <label htmlFor="ee-new-subtitle" className="wb-label">Subtitle, if it has one</label>
+        <input id="ee-new-subtitle" className="wb-field" value={subtitle} onChange={e => setSubtitle(e.target.value)} autoComplete="off" />
+      </div>
+      <div className="wb-signal">
+        <label htmlFor="ee-new-hypothesis" className="wb-label">The driving question</label>
+        <textarea id="ee-new-hypothesis" className="wb-field tl-area" value={hypothesis} onChange={e => setHypothesis(e.target.value)} rows={3} />
+      </div>
+      <div className="wb-signal">
+        <label htmlFor="ee-new-tags" className="wb-label">Tags, separated by commas</label>
+        <input id="ee-new-tags" className="wb-field" value={tags} onChange={e => setTags(e.target.value)} autoComplete="off" />
+      </div>
+      <div className="wb-actions">
+        <button type="submit" className="wb-button" disabled={!title.trim()}>Create</button>
+        <button type="button" className="wb-link" onClick={onCancel}>Cancel</button>
+      </div>
+    </form>
   );
 }
 
-/* ── Add Fragment Form ── */
 function AddFragmentForm({ onAdd, onCancel }) {
   const [type, setType] = useState("note");
   const [content, setContent] = useState("");
 
-  const handleAdd = () => {
+  const handleAdd = (e) => {
+    e.preventDefault();
     if (!content.trim()) return;
     if (type === "note") {
       onAdd({ type: "note", content: content.trim() });
@@ -59,45 +65,53 @@ function AddFragmentForm({ onAdd, onCancel }) {
   };
 
   return (
-    <div className="ee-add-form">
-      <div className="ee-add-row">
-        <select className="ee-select" value={type} onChange={e => setType(e.target.value)}>
+    <form className="tl-inline-form" onSubmit={handleAdd}>
+      <div className="wb-signal">
+        <label htmlFor="ee-frag-type" className="wb-label">Kind</label>
+        <select id="ee-frag-type" className="tl-select" value={type} onChange={e => setType(e.target.value)}>
           <option value="note">Note</option>
           <option value="visual">Visual</option>
         </select>
-        <textarea className="ee-textarea ee-textarea--sm" value={content} onChange={e => setContent(e.target.value)} placeholder={type === "note" ? "What did you observe or learn?" : "Visual caption / description"} rows={2} autoFocus />
       </div>
-      <div className="ee-add-actions">
-        <button className="ee-btn ee-btn--ghost ee-btn--sm" onClick={onCancel}>Cancel</button>
-        <button className="ee-btn ee-btn--primary ee-btn--sm" onClick={handleAdd} disabled={!content.trim()}>Add</button>
+      <div className="wb-signal">
+        <label htmlFor="ee-frag-text" className="wb-label">{type === "note" ? "What did you observe or learn?" : "Describe the visual"}</label>
+        <textarea id="ee-frag-text" className="wb-field tl-area" value={content} onChange={e => setContent(e.target.value)} rows={3} autoFocus />
       </div>
-    </div>
+      <div className="wb-actions">
+        <button type="submit" className="wb-button" disabled={!content.trim()}>Add</button>
+        <button type="button" className="wb-link" onClick={onCancel}>Cancel</button>
+      </div>
+    </form>
   );
 }
 
-/* ── Resolve Question Form ── */
 function ResolveForm({ onResolve, onCancel }) {
   const [status, setStatus] = useState("resolved");
   const [note, setNote] = useState("");
 
   return (
-    <div className="ee-resolve-form">
-      <select className="ee-select" value={status} onChange={e => setStatus(e.target.value)}>
-        <option value="resolved">Resolved</option>
-        <option value="reframed">Reframed</option>
-        <option value="absorbed">Absorbed</option>
-      </select>
-      <input className="ee-input ee-input--sm" value={note} onChange={e => setNote(e.target.value)} placeholder="Note (optional)" autoFocus />
-      <div className="ee-add-actions">
-        <button className="ee-btn ee-btn--ghost ee-btn--sm" onClick={onCancel}>Cancel</button>
-        <button className="ee-btn ee-btn--primary ee-btn--sm" onClick={() => onResolve({ status, note: note.trim() })}>Confirm</button>
+    <form className="tl-inline-form" onSubmit={(e) => { e.preventDefault(); onResolve({ status, note: note.trim() }); }}>
+      <div className="wb-signal">
+        <label htmlFor="ee-res-status" className="wb-label">What happened to it</label>
+        <select id="ee-res-status" className="tl-select" value={status} onChange={e => setStatus(e.target.value)}>
+          <option value="resolved">Resolved</option>
+          <option value="reframed">Reframed</option>
+          <option value="absorbed">Absorbed</option>
+        </select>
       </div>
-    </div>
+      <div className="wb-signal">
+        <label htmlFor="ee-res-note" className="wb-label">A note, if you want one</label>
+        <input id="ee-res-note" className="wb-field" value={note} onChange={e => setNote(e.target.value)} autoFocus autoComplete="off" />
+      </div>
+      <div className="wb-actions">
+        <button type="submit" className="wb-button">Confirm</button>
+        <button type="button" className="wb-link" onClick={onCancel}>Cancel</button>
+      </div>
+    </form>
   );
 }
 
-/* ── Exploration Detail View ── */
-function ExplorationDetail({ exploration, store, onBack }) {
+function ExplorationDetail({ exploration, store }) {
   const [showAddFragment, setShowAddFragment] = useState(false);
   const [showAddQuestion, setShowAddQuestion] = useState(false);
   const [showAddConnection, setShowAddConnection] = useState(false);
@@ -115,19 +129,22 @@ function ExplorationDetail({ exploration, store, onBack }) {
     typeof q === "string" ? { text: q, status: "open" } : q
   );
 
-  const handleSaveHypothesis = () => {
+  const handleSaveHypothesis = (e) => {
+    e.preventDefault();
     store.updateHypothesis(exploration.title, hypothesisText);
     setEditingHypothesis(false);
   };
 
-  const handleAddQuestion = () => {
+  const handleAddQuestion = (e) => {
+    e.preventDefault();
     if (!newQuestion.trim()) return;
     store.addQuestion(exploration.title, newQuestion.trim());
     setNewQuestion("");
     setShowAddQuestion(false);
   };
 
-  const handleAddConnection = () => {
+  const handleAddConnection = (e) => {
+    e.preventDefault();
     if (!connTitle.trim()) return;
     store.addConnection(exploration.title, { title: connTitle.trim(), why: connWhy.trim() });
     setConnTitle("");
@@ -136,148 +153,130 @@ function ExplorationDetail({ exploration, store, onBack }) {
   };
 
   return (
-    <div className="ee-detail">
-      <button className="ee-btn ee-btn--ghost" onClick={onBack}>&larr; Back</button>
-
-      <div className="ee-detail-header">
-        <h2 className="ee-detail-title">{exploration.title}</h2>
-        <div className="ee-detail-sub">{exploration.subtitle}</div>
-        <div className="ee-detail-meta">
-          <select
-            className="ee-select ee-select--status"
-            value={exploration.status}
-            onChange={e => store.updateStatus(exploration.title, e.target.value)}
-          >
-            <option value="seed">seed</option>
-            <option value="wip">wip</option>
-            <option value="live">live</option>
-            <option value="archived">archived</option>
-          </select>
-          <div className="ee-detail-tags">
-            {exploration.tags?.map(t => <span key={t} className="ee-tag">{t}</span>)}
-          </div>
-        </div>
+    <div className="wb-tool-body">
+      <div className="wb-block">
+        <h2 className="wb-headline">{exploration.title}</h2>
+        {exploration.subtitle ? <p className="wb-body">{exploration.subtitle}</p> : null}
+        {exploration.tags?.length > 0 ? <p className="wb-body">{exploration.tags.join(", ")}</p> : null}
       </div>
 
-      {/* Hypothesis */}
-      <div className="ee-section">
-        <div className="ee-section-h">
-          <span>Hypothesis</span>
-          {!editingHypothesis && (
-            <button className="ee-btn ee-btn--ghost ee-btn--sm" onClick={() => setEditingHypothesis(true)}>Edit</button>
-          )}
-        </div>
+      <div className="wb-signal tl-narrow">
+        <label htmlFor="ee-status" className="wb-label">Status</label>
+        <select id="ee-status" className="tl-select" value={exploration.status} onChange={e => store.updateStatus(exploration.title, e.target.value)}>
+          {Object.entries(STATUS_WORDS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+        </select>
+      </div>
+
+      <div className="tl-section">
+        <h3 className="bg-question-title">Hypothesis</h3>
         {editingHypothesis ? (
-          <div>
-            <textarea
-              className="ee-textarea"
-              value={hypothesisText}
-              onChange={e => setHypothesisText(e.target.value)}
-              rows={3}
-            />
-            <div className="ee-add-actions">
-              <button className="ee-btn ee-btn--ghost ee-btn--sm" onClick={() => { setEditingHypothesis(false); setHypothesisText(sk.hypothesis); }}>Cancel</button>
-              <button className="ee-btn ee-btn--primary ee-btn--sm" onClick={handleSaveHypothesis}>Save</button>
+          <form className="tl-inline-form" onSubmit={handleSaveHypothesis}>
+            <textarea className="wb-field tl-area" aria-label="Hypothesis" value={hypothesisText} onChange={e => setHypothesisText(e.target.value)} rows={3} />
+            <div className="wb-actions">
+              <button type="submit" className="wb-button">Save</button>
+              <button type="button" className="wb-link" onClick={() => { setEditingHypothesis(false); setHypothesisText(sk.hypothesis); }}>Cancel</button>
             </div>
-          </div>
+          </form>
         ) : (
-          <div className="ee-hypothesis">{sk.hypothesis}</div>
+          <>
+            <p className="wb-text wb-measure">{sk.hypothesis}</p>
+            <div className="wb-actions">
+              <button type="button" className="wb-link" onClick={() => setEditingHypothesis(true)}>Edit the hypothesis</button>
+            </div>
+          </>
         )}
       </div>
 
-      {/* Fragments */}
-      <div className="ee-section">
-        <div className="ee-section-h">
-          <span>Fragments ({sk.fragments.length})</span>
-          {!showAddFragment && (
-            <button className="ee-btn ee-btn--ghost ee-btn--sm" onClick={() => setShowAddFragment(true)}>+ Add</button>
-          )}
-        </div>
-        {showAddFragment && (
+      <div className="tl-section">
+        <h3 className="bg-question-title">Fragments</h3>
+        {showAddFragment ? (
           <AddFragmentForm
             onAdd={f => { store.addFragment(exploration.title, f); setShowAddFragment(false); }}
             onCancel={() => setShowAddFragment(false)}
           />
+        ) : (
+          <div className="wb-actions">
+            <button type="button" className="wb-link" onClick={() => setShowAddFragment(true)}>Add a fragment</button>
+          </div>
         )}
-        <div className="ee-fragments">
+        <div className="tl-list">
           {[...sk.fragments].reverse().map((f, i) => (
-            <div key={i} className={`ee-frag ee-frag--${f.type}`}>
-              <div className="ee-frag-type">{f.type === "note" ? "Note" : "Visual"}</div>
-              {f.date && <div className="ee-frag-date">{f.date}</div>}
-              <div className="ee-frag-content">{f.type === "note" ? f.content : f.caption}</div>
+            <div key={i} className="tl-row">
+              <p className="wb-text wb-measure">{f.type === "note" ? f.content : f.caption}</p>
+              <p className="wb-body">{f.type === "note" ? "Note" : "Visual"}{f.date ? `, ${f.date}` : ""}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Open Questions */}
-      <div className="ee-section">
-        <div className="ee-section-h">
-          <span>Questions ({questions.length})</span>
-          {!showAddQuestion && (
-            <button className="ee-btn ee-btn--ghost ee-btn--sm" onClick={() => setShowAddQuestion(true)}>+ Add</button>
-          )}
-        </div>
-        {showAddQuestion && (
-          <div className="ee-add-form">
-            <textarea className="ee-textarea ee-textarea--sm" value={newQuestion} onChange={e => setNewQuestion(e.target.value)} placeholder="What remains unresolved?" rows={2} autoFocus />
-            <div className="ee-add-actions">
-              <button className="ee-btn ee-btn--ghost ee-btn--sm" onClick={() => setShowAddQuestion(false)}>Cancel</button>
-              <button className="ee-btn ee-btn--primary ee-btn--sm" onClick={handleAddQuestion} disabled={!newQuestion.trim()}>Add</button>
+      <div className="tl-section">
+        <h3 className="bg-question-title">Questions</h3>
+        {showAddQuestion ? (
+          <form className="tl-inline-form" onSubmit={handleAddQuestion}>
+            <div className="wb-signal">
+              <label htmlFor="ee-new-q" className="wb-label">What remains unresolved?</label>
+              <textarea id="ee-new-q" className="wb-field tl-area" value={newQuestion} onChange={e => setNewQuestion(e.target.value)} rows={2} autoFocus />
             </div>
+            <div className="wb-actions">
+              <button type="submit" className="wb-button" disabled={!newQuestion.trim()}>Add</button>
+              <button type="button" className="wb-link" onClick={() => setShowAddQuestion(false)}>Cancel</button>
+            </div>
+          </form>
+        ) : (
+          <div className="wb-actions">
+            <button type="button" className="wb-link" onClick={() => setShowAddQuestion(true)}>Add a question</button>
           </div>
         )}
-        <div className="ee-questions">
+        <div className="tl-list">
           {questions.map((q, i) => (
-            <div key={i} className={`ee-q ee-q--${q.status}`}>
-              <div className="ee-q-icon">{q.status === "open" ? "○" : "●"}</div>
-              <div className="ee-q-body">
-                <div className="ee-q-text">{q.text}</div>
-                {q.status !== "open" && (
-                  <div className="ee-q-resolution">
-                    <span className="ee-q-status">{q.status}</span>
-                    {q.note && <span className="ee-q-note">: {q.note}</span>}
-                    {q.date && <span className="ee-q-date"> ({q.date})</span>}
-                  </div>
-                )}
-                {q.status === "open" && resolvingIdx === i && (
-                  <ResolveForm
-                    onResolve={r => { store.resolveQuestion(exploration.title, i, r); setResolvingIdx(null); }}
-                    onCancel={() => setResolvingIdx(null)}
-                  />
-                )}
-              </div>
-              {q.status === "open" && resolvingIdx !== i && (
-                <button className="ee-btn ee-btn--ghost ee-btn--sm" onClick={() => setResolvingIdx(i)}>Resolve</button>
-              )}
+            <div key={i} className="tl-row">
+              <p className={q.status === "open" ? "wb-text wb-measure" : "wb-body wb-measure"}>{q.text}</p>
+              {q.status !== "open" ? (
+                <p className="wb-body">{RESOLUTION_WORDS[q.status] || q.status}{q.note ? `: ${q.note}` : ""}{q.date ? ` (${q.date})` : ""}</p>
+              ) : null}
+              {q.status === "open" && resolvingIdx === i ? (
+                <ResolveForm
+                  onResolve={r => { store.resolveQuestion(exploration.title, i, r); setResolvingIdx(null); }}
+                  onCancel={() => setResolvingIdx(null)}
+                />
+              ) : null}
+              {q.status === "open" && resolvingIdx !== i ? (
+                <div className="wb-actions">
+                  <button type="button" className="wb-link" onClick={() => setResolvingIdx(i)}>Resolve</button>
+                </div>
+              ) : null}
             </div>
           ))}
         </div>
       </div>
 
-      {/* Connections */}
-      <div className="ee-section">
-        <div className="ee-section-h">
-          <span>Connections ({sk.connections.length})</span>
-          {!showAddConnection && (
-            <button className="ee-btn ee-btn--ghost ee-btn--sm" onClick={() => setShowAddConnection(true)}>+ Add</button>
-          )}
-        </div>
-        {showAddConnection && (
-          <div className="ee-add-form">
-            <input className="ee-input ee-input--sm" value={connTitle} onChange={e => setConnTitle(e.target.value)} placeholder="Connected to..." autoFocus />
-            <input className="ee-input ee-input--sm" value={connWhy} onChange={e => setConnWhy(e.target.value)} placeholder="Why this connection matters" />
-            <div className="ee-add-actions">
-              <button className="ee-btn ee-btn--ghost ee-btn--sm" onClick={() => setShowAddConnection(false)}>Cancel</button>
-              <button className="ee-btn ee-btn--primary ee-btn--sm" onClick={handleAddConnection} disabled={!connTitle.trim()}>Add</button>
+      <div className="tl-section">
+        <h3 className="bg-question-title">Connections</h3>
+        {showAddConnection ? (
+          <form className="tl-inline-form" onSubmit={handleAddConnection}>
+            <div className="wb-signal">
+              <label htmlFor="ee-conn-title" className="wb-label">Connected to</label>
+              <input id="ee-conn-title" className="wb-field" value={connTitle} onChange={e => setConnTitle(e.target.value)} autoFocus autoComplete="off" />
             </div>
+            <div className="wb-signal">
+              <label htmlFor="ee-conn-why" className="wb-label">Why this connection matters</label>
+              <input id="ee-conn-why" className="wb-field" value={connWhy} onChange={e => setConnWhy(e.target.value)} autoComplete="off" />
+            </div>
+            <div className="wb-actions">
+              <button type="submit" className="wb-button" disabled={!connTitle.trim()}>Add</button>
+              <button type="button" className="wb-link" onClick={() => setShowAddConnection(false)}>Cancel</button>
+            </div>
+          </form>
+        ) : (
+          <div className="wb-actions">
+            <button type="button" className="wb-link" onClick={() => setShowAddConnection(true)}>Add a connection</button>
           </div>
         )}
-        <div className="ee-connections">
+        <div className="tl-list">
           {sk.connections.map((c, i) => (
-            <div key={i} className="ee-conn">
-              <div className="ee-conn-title">&rarr; {c.title}</div>
-              {c.why && <div className="ee-conn-why">{c.why}</div>}
+            <div key={i} className="tl-row">
+              <p className="wb-name">{c.title}</p>
+              {c.why ? <p className="wb-body wb-measure">{c.why}</p> : null}
             </div>
           ))}
         </div>
@@ -286,8 +285,7 @@ function ExplorationDetail({ exploration, store, onBack }) {
   );
 }
 
-/* ── Main Editor ── */
-export default function ExplorationEditor() {
+export default function ExplorationEditor({ navigateTo }) {
   const store = useExplorationStore();
   const [activeTitle, setActiveTitle] = useState(null);
   const [showNew, setShowNew] = useState(false);
@@ -300,56 +298,41 @@ export default function ExplorationEditor() {
     setActiveTitle(data.title);
   }, [store]);
 
-  if (active) {
-    return (
-      <div className="ee-wrap">
-        <ExplorationDetail
-          exploration={active}
-          store={store}
-          onBack={() => setActiveTitle(null)}
-        />
-      </div>
-    );
-  }
-
   return (
-    <div className="ee-wrap">
-      <div className="ee-header">
-        <div>
-          <h1 className="ee-title">Exploration Editor</h1>
-          <div className="ee-subtitle">Research journal: add fragments, track questions, export data</div>
-        </div>
-        <div className="ee-header-actions">
-          <button className="ee-btn ee-btn--ghost" onClick={store.downloadJSON}>Export JSON</button>
-          <button className="ee-btn ee-btn--primary" onClick={() => setShowNew(true)}>+ New</button>
-        </div>
-      </div>
+    <section className="wb wb-page">
+      <header className="wb-header">
+        <h1 className="wb-title">Exploration Editor</h1>
+        <nav className="wb-actions" aria-label="Exploration Editor">
+          <button type="button" className="wb-link" onClick={() => navigateTo?.("studio")}>Workbench</button>
+          {active ? <button type="button" className="wb-link" onClick={() => setActiveTitle(null)}>All explorations</button> : null}
+          <button type="button" className="wb-link" onClick={store.downloadJSON}>Download as JSON</button>
+        </nav>
+      </header>
 
-      {showNew && (
-        <NewExplorationForm
-          onCreate={handleCreate}
-          onCancel={() => setShowNew(false)}
-        />
-      )}
+      {active ? (
+        <ExplorationDetail key={active.title} exploration={active} store={store} />
+      ) : (
+        <div className="wb-tool-body">
+          {showNew ? (
+            <NewExplorationForm onCreate={handleCreate} onCancel={() => setShowNew(false)} />
+          ) : (
+            <div className="wb-actions">
+              <button type="button" className="wb-button" onClick={() => setShowNew(true)}>New exploration</button>
+            </div>
+          )}
 
-      <div className="ee-list">
-        {store.explorations.map(exp => (
-          <div key={exp.title} className="ee-list-item" onClick={() => setActiveTitle(exp.title)}>
-            <div className="ee-list-main">
-              <div className="ee-list-title">{exp.title}</div>
-              <div className="ee-list-sub">{exp.subtitle}</div>
-              <div className="ee-list-desc">{exp.desc}</div>
-            </div>
-            <div className="ee-list-right">
-              <StatusBadge status={exp.status} />
-              <div className="ee-list-count">
-                {exp.sketch?.fragments?.length || 0} fragments
-              </div>
-            </div>
-            <span className="ee-list-arrow">&rarr;</span>
+          <div className="tl-list">
+            {store.explorations.map(exp => (
+              <button key={exp.title} type="button" className="tl-row tl-row-open" onClick={() => setActiveTitle(exp.title)}>
+                <span className="bg-question-title">{exp.title}</span>
+                {exp.subtitle ? <span className="wb-body">{exp.subtitle}</span> : null}
+                {exp.desc ? <span className="wb-body">{exp.desc}</span> : null}
+                <span className="wb-body">{STATUS_WORDS[exp.status] || exp.status}</span>
+              </button>
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
+        </div>
+      )}
+    </section>
   );
 }

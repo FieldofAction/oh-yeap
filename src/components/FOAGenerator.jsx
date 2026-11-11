@@ -1,6 +1,8 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef } from "react";
 import html2canvas from "html2canvas";
 import { studioGenerate } from "../lib/studio-generate";
+import "../styles/workbench.css";
+import "../styles/workshop-tools.css";
 
 const SYSTEM_PROMPT = `You are generating Field of Action (FOA) typographic artifacts.
 These artifacts behave like system signals, research posters, or engineering stamps, not marketing graphics.
@@ -100,7 +102,7 @@ function downloadAllAsJson(artifacts, idea) {
   URL.revokeObjectURL(link.href);
 }
 
-function ArtifactCard({ artifact, index, isNew, onDownload }) {
+function ArtifactCard({ artifact, index, isNew }) {
   const cardRef = useRef(null);
   const thesis = artifact.thesis?.split("\\n") || [];
   const orientation = artifact.orientation?.split("\\n") || [];
@@ -150,7 +152,7 @@ function ArtifactCard({ artifact, index, isNew, onDownload }) {
   );
 }
 
-export default function FOAGenerator() {
+export default function FOAGenerator({ navigateTo }) {
   const [idea, setIdea] = useState("");
   const [artifacts, setArtifacts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -203,55 +205,40 @@ export default function FOAGenerator() {
   };
 
   return (
-    <div className="fg en">
-      {/* Header */}
-      <div className="fg-header">
-        <div>
-          <div className="fg-header-label">Artifact Generator</div>
-          <div className="fg-header-sub">Field of Action: Relational Design Practice</div>
-        </div>
-        <div className="fg-header-ver">V.02 / 2026</div>
-      </div>
+    <section className="wb wb-page">
+      <header className="wb-header">
+        <h1 className="wb-title">FOA Generator</h1>
+        <nav className="wb-actions" aria-label="FOA Generator">
+          <button type="button" className="wb-link" onClick={() => navigateTo?.("studio")}>Workbench</button>
+        </nav>
+      </header>
 
-      {/* Input Zone */}
-      <div className="fg-input-zone">
-        <div className="fg-input-label">Input Idea</div>
-        <textarea
-          ref={textareaRef}
-          className="fg-textarea"
-          value={idea}
-          onChange={(e) => setIdea(e.target.value)}
-          onKeyDown={handleKey}
-          placeholder="Enter your idea here..."
-          rows={3}
-        />
-        <div className="fg-input-actions">
-          <button
-            className={`fg-btn${loading ? " fg-btn-loading" : ""}`}
-            onClick={generate}
-            disabled={loading || !idea.trim()}
-          >
-            {loading ? "Generating..." : "Generate Artifacts"}
+      <form className="wb-tool-body" onSubmit={(e) => { e.preventDefault(); generate(); }}>
+        <div className="wb-signal">
+          <label htmlFor="fg-idea" className="wb-label">The idea</label>
+          <textarea
+            id="fg-idea"
+            ref={textareaRef}
+            className="wb-field tl-area"
+            value={idea}
+            onChange={(e) => setIdea(e.target.value)}
+            onKeyDown={handleKey}
+            placeholder="One idea, in a sentence or two"
+            rows={3}
+          />
+        </div>
+        <div className="wb-actions">
+          <button type="submit" className="wb-button" disabled={loading || !idea.trim()}>
+            {loading ? "Generating" : "Generate eight artifacts"}
           </button>
-          <span className="fg-shortcut">⌘ + Enter</span>
+          {error ? <p className="wb-body" role="alert">It did not work: {error}</p> : null}
         </div>
-        {loading && (
-          <div className="fg-status">
-            <div className="fg-status-dot" />
-            <span>Field activation in progress</span>
-          </div>
-        )}
-        {error && (
-          <div className="fg-error">Error: {error}</div>
-        )}
-      </div>
+      </form>
 
-      {/* Artifacts Grid */}
       {artifacts.length > 0 && (
         <div className="fg-output">
-          <div className="fg-output-label">
-            <span>Artifact Output: {artifacts.length} signals generated</span>
-            <button className="fg-dl-all" onClick={() => downloadAllAsJson(artifacts, idea)}>↓ Download JSON</button>
+          <div className="wb-actions">
+            <button type="button" className="wb-link" onClick={() => downloadAllAsJson(artifacts, idea)}>Download all as JSON</button>
           </div>
           <div className="fg-grid">
             {artifacts.map((artifact, i) => (
@@ -260,14 +247,6 @@ export default function FOAGenerator() {
           </div>
         </div>
       )}
-
-      {/* Empty state */}
-      {artifacts.length === 0 && !loading && (
-        <div className="fg-empty">
-          <div className="fg-empty-glyph">✺</div>
-          <div className="fg-empty-text">Enter an idea to begin</div>
-        </div>
-      )}
-    </div>
+    </section>
   );
 }

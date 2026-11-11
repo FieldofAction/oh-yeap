@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from "react";
 import { PILLARS, EMOTIONS, REFS, STEPS, EMO_MAP } from "../data/playbook-data";
+import "../styles/workbench.css";
+import "../styles/workshop-tools.css";
 
-export default function Playbook({ asu }) {
+export default function Playbook({ asu, navigateTo }) {
   const project = asu.get_project_brief();
   const pillars = asu.get_pillar_targets();
   const emotion = asu.get_emotional_system().emotion;
@@ -46,181 +48,169 @@ export default function Playbook({ asu }) {
     return lines.join("\n");
   }, [project, pillars, emotion, app, steps, dominant]);
 
+  const download = () => {
+    const b = new Blob([exportText], { type: "text/plain" });
+    const u = URL.createObjectURL(b);
+    const a = document.createElement("a");
+    a.href = u;
+    a.download = `${(project.name||"project").toLowerCase().replace(/[^a-z0-9]+/g,"-")}-brief.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(u);
+  };
+  const APPLICATION_FIELDS = {
+    3: ["bigMove", "The big move"],
+    4: ["whimsy", "The whimsy detail"],
+    5: ["connection", "How it fosters connection"],
+  };
+  const RINGS = [
+    { name: "Operational cycle", agents: [
+      {name:"Field",input:"Phenomena, signals, patterns",action:"Senses signals in the environment and translates into frameworks"},
+      {name:"Works in Progress",input:"Emerging ideas, raw material",action:"Investigates, prototypes, and structures into working models"},
+      {name:"Action",input:"Structured ideas, briefs",action:"Produces concrete artifacts: systems, interfaces, objects"},
+      {name:"Cache",input:"Completed artifacts, narrative",action:"Preserves as durable, portable, stand-alone forms"},
+      {name:"Atlas",input:"Archive, accumulated work",action:"Maps relationships, lineages, and recurring patterns"},
+      {name:"Grace",input:"Artifacts ready for release",action:"Determines placement: audience, timing, channel, conditions"},
+      {name:"Open",input:"Unresolved questions, tensions",action:"Holds what has not yet taken form, emergence space"},
+    ], cycle: "Field senses, then Works in Progress structures. Action produces, then Cache preserves. Atlas maps, then Grace places. Open holds emergence, and the cycle begins again." },
+    { name: "Practice layer", agents: [
+      {name:"Art Practice",input:"Concepts, aesthetic material",action:"Sustains experimentation and personal mastery"},
+      {name:"Hotel",input:"Lifestyle cues, objects",action:"Produces lifestyle artifacts and experiential environments"},
+    ], cycle: "Art Practice experiments, then Hotel materializes." },
+    { name: "Governance layer", agents: [
+      {name:"CLSSM",input:"Deep patterns, axioms",action:"Generates conceptual primitives and structural source"},
+      {name:"Freedom Embassy",input:"System proposals, direction",action:"Establishes governance and system boundaries"},
+    ], cycle: "CLSSM generates primitives, then Freedom Embassy governs." },
+  ];
+
   return (
-    <div className="pb en">
-      <div className="pb-h">Playbook</div>
-      <div className="pb-sub">Field of Action Method: a living framework for designing worlds through systematic clarity, scenographic spectacle, soulful atmosphere, and relational design.</div>
+    <section className="wb wb-page">
+      <header className="wb-header">
+        <h1 className="wb-title">Playbook</h1>
+        <nav className="wb-actions" aria-label="Playbook">
+          <button type="button" className="wb-link" onClick={() => navigateTo?.("studio")}>Workbench</button>
+        </nav>
+      </header>
 
-      {/* Field of Action Method */}
-      <div className="pb-method">
-        <div className="pb-method-h">Field of Action Method</div>
-        <div className="pb-method-d">A framework for designing worlds through System, Scenography, Soul, and Relational Design. Each part acts like a pavilion in a world expo, distinct but unified by shared vision.</div>
-        <div className="pb-mpillars">
-          <div className="pb-mpill"><div className="pb-mpill-bar" style={{background:"#6b8fa3"}} /><div className="pb-mpill-n">System</div><div className="pb-mpill-d">Clarity of structure, proportion, and function.</div></div>
-          <div className="pb-mpill"><div className="pb-mpill-bar" style={{background:"#a3896b"}} /><div className="pb-mpill-n">Scenography</div><div className="pb-mpill-d">Immersive staging and monumental spectacle.</div></div>
-          <div className="pb-mpill"><div className="pb-mpill-bar" style={{background:"#8c6ba3"}} /><div className="pb-mpill-n">Soul</div><div className="pb-mpill-d">Emotional registers that create atmosphere and resonance.</div></div>
-          <div className="pb-mpill"><div className="pb-mpill-bar" style={{background:"#6ba37a"}} /><div className="pb-mpill-n">Relational</div><div className="pb-mpill-d">Choreography of connection: how people, agents, and environments interact.</div></div>
-        </div>
-        <div className="pb-method-sentence">"Field of Action Method is my approach to design: blending systematic clarity, scenographic spectacle, soulful atmosphere, and relational design to build worlds that are both disciplined and alive."</div>
-      </div>
+      <div className="wb-tool-body">
+        <p className="wb-text wb-measure">Field of Action Method is my approach to design: blending systematic clarity, scenographic spectacle, soulful atmosphere, and relational design to build worlds that are both disciplined and alive.</p>
 
-      {/* Agents as Action Systems */}
-      <div className="pb-section">
-        <div className="pb-sl">Agents as Action Systems</div>
-        <div className="pb-card">
-          <div style={{fontSize:11,color:"var(--fm)",lineHeight:1.6,marginBottom:16}}>Each agent is a pavilion inside the larger ecosystem. They don't just hold an identity. They act on inputs and expand them. Inputs are never static. They are constantly acted upon, reframed, and elevated.</div>
-          <div className="pb-agents-h">Ring 1: Operational Cycle</div>
-          {[
-            {name:"Field",input:"Phenomena, signals, patterns",action:"Senses signals in the environment and translates into frameworks"},
-            {name:"Works in Progress",input:"Emerging ideas, raw material",action:"Investigates, prototypes, and structures into working models"},
-            {name:"Action",input:"Structured ideas, briefs",action:"Produces concrete artifacts: systems, interfaces, objects"},
-            {name:"Cache",input:"Completed artifacts, narrative",action:"Preserves as durable, portable, stand-alone forms"},
-            {name:"Atlas",input:"Archive, accumulated work",action:"Maps relationships, lineages, and recurring patterns"},
-            {name:"Grace",input:"Artifacts ready for release",action:"Determines placement: audience, timing, channel, conditions"},
-            {name:"Open",input:"Unresolved questions, tensions",action:"Holds what has not yet taken form, emergence space"},
-          ].map((a,i) => (
-            <div key={i} className="pb-agent-row">
-              <div className="pb-agent-name">{a.name}</div>
-              <div className="pb-agent-io">{a.input}</div>
-              <div className="pb-agent-arrow">→</div>
-              <div className="pb-agent-io">{a.action}</div>
+        <div className="tl-section">
+          <h2 className="bg-question-title">Project brief</h2>
+          <div className="tl-form">
+            <div className="wb-signal">
+              <label htmlFor="pb-name" className="wb-label">Project name</label>
+              <input id="pb-name" className="wb-field" value={project.name} onChange={e=>asu.set_project_brief({name:e.target.value})} autoComplete="off" />
             </div>
-          ))}
-          <div className="pb-agents-h">Ring 2: Practice Layer</div>
-          {[
-            {name:"Art Practice",input:"Concepts, aesthetic material",action:"Sustains experimentation and personal mastery"},
-            {name:"Hotel",input:"Lifestyle cues, objects",action:"Produces lifestyle artifacts and experiential environments"},
-          ].map((a,i) => (
-            <div key={`r2-${i}`} className="pb-agent-row">
-              <div className="pb-agent-name">{a.name}</div>
-              <div className="pb-agent-io">{a.input}</div>
-              <div className="pb-agent-arrow">→</div>
-              <div className="pb-agent-io">{a.action}</div>
+            <div className="wb-signal">
+              <label htmlFor="pb-client" className="wb-label">Client</label>
+              <input id="pb-client" className="wb-field" value={project.client} onChange={e=>asu.set_project_brief({client:e.target.value})} autoComplete="off" />
             </div>
-          ))}
-          <div className="pb-agents-h">Ring 3: Governance Layer</div>
-          {[
-            {name:"CLSSM",input:"Deep patterns, axioms",action:"Generates conceptual primitives and structural source"},
-            {name:"Freedom Embassy",input:"System proposals, direction",action:"Establishes governance and system boundaries"},
-          ].map((a,i) => (
-            <div key={`r3-${i}`} className="pb-agent-row">
-              <div className="pb-agent-name">{a.name}</div>
-              <div className="pb-agent-io">{a.input}</div>
-              <div className="pb-agent-arrow">→</div>
-              <div className="pb-agent-io">{a.action}</div>
-            </div>
-          ))}
-          <div className="pb-loops">
-            <div className="pb-agents-h" style={{marginTop:0}}>Operational Cycle</div>
-            <div className="pb-loop"><span>Field</span> senses → <span>Works in Progress</span> structures</div>
-            <div className="pb-loop"><span>Action</span> produces → <span>Cache</span> preserves</div>
-            <div className="pb-loop"><span>Atlas</span> maps → <span>Grace</span> places</div>
-            <div className="pb-loop"><span>Open</span> holds emergence → the cycle begins again</div>
           </div>
-          <div className="pb-loops" style={{marginTop:12}}>
-            <div className="pb-agents-h" style={{marginTop:0}}>Practice Layer</div>
-            <div className="pb-loop"><span>Art Practice</span> experiments → <span>Hotel</span> materializes</div>
-          </div>
-          <div className="pb-loops" style={{marginTop:12}}>
-            <div className="pb-agents-h" style={{marginTop:0}}>Governance Layer</div>
-            <div className="pb-loop"><span>CLSSM</span> generates primitives → <span>Freedom Embassy</span> governs</div>
+          <div className="wb-signal">
+            <label htmlFor="pb-brief" className="wb-label">The ask, the constraints, and what success looks like</label>
+            <textarea id="pb-brief" className="wb-field tl-area" rows={4} value={project.brief} onChange={e=>asu.set_project_brief({brief:e.target.value})} />
           </div>
         </div>
-      </div>
 
-      {/* Project Brief */}
-      <div className="pb-section">
-        <div className="pb-sl">Project Brief</div>
-        <div className="pb-card">
-          <div className="pb-row" style={{marginBottom:6}}>
-            <input className="pb-input" placeholder="Project name" value={project.name} onChange={e=>asu.set_project_brief({name:e.target.value})} />
-            <input className="pb-input" placeholder="Client" value={project.client} onChange={e=>asu.set_project_brief({client:e.target.value})} />
-          </div>
-          <textarea className="pb-input pb-ta" placeholder="Brief: what's the ask, what are the constraints, what does success look like?" value={project.brief} onChange={e=>asu.set_project_brief({brief:e.target.value})} />
-        </div>
-      </div>
-
-      {/* Four-Pillar Targets */}
-      <div className="pb-section">
-        <div className="pb-sl">Pillar Targets</div>
-        <div className="pb-card">
-          <div style={{fontSize:10,color:"var(--fm)",marginBottom:12,lineHeight:1.5}}>Set where this project should sit across the four pillars.</div>
-          <div className="diag">
+        <div className="tl-section">
+          <h2 className="bg-question-title">Where should this project sit across the four pillars?</h2>
+          <div className="tl-sliders">
             {PILLARS.map(p => (
-              <div key={p.key} className="diag-pill">
-                <div className="diag-pill-label">{p.label}</div>
-                <div className="diag-pill-bar"><div className="diag-pill-fill" style={{width:`${pillars[p.key]}%`,background:p.color}} /></div>
-                <input type="range" className="diag-range" min="0" max="100" value={pillars[p.key]} onChange={e=>asu.set_pillar_targets({[p.key]:parseInt(e.target.value)})} />
-                <div className="diag-pill-val">{pillars[p.key]}</div>
+              <div key={p.key} className="tl-slider">
+                <label htmlFor={`pb-pillar-${p.key}`} className="wb-name">{p.label}</label>
+                <input id={`pb-pillar-${p.key}`} type="range" className="tl-range" min="0" max="100" value={pillars[p.key]} onChange={e=>asu.set_pillar_targets({[p.key]:parseInt(e.target.value)})} />
+                <output htmlFor={`pb-pillar-${p.key}`} className="wb-body">{pillars[p.key]}</output>
               </div>
             ))}
           </div>
-          <div style={{marginTop:10,fontSize:10,color:"var(--ff)"}}>
-            Dominant: <strong style={{color:dominant.color}}>{dominant.label}</strong>. {dominant.desc}
-          </div>
+          <p className="wb-body wb-measure">{dominant.label} leads. {dominant.desc}</p>
         </div>
-      </div>
 
-      {/* Emotional System */}
-      <div className="pb-section">
-        <div className="pb-sl">Emotional System</div>
-        <div className="pb-card">
-          <div style={{fontSize:10,color:"var(--fm)",marginBottom:10}}>What emotional register should this project carry?</div>
-          <div className="pb-emo">
+        <div className="tl-section">
+          <h2 className="bg-question-title">What emotional register should it carry?</h2>
+          <div className="wb-segments tl-segments tl-segments-wrap" role="group" aria-label="Emotional register">
             {EMOTIONS.map(e => (
-              <button key={e} className={`pb-emo-btn ${emotion===e?"on":""}`} onClick={()=>asu.set_emotional_system(emotion===e?"":e)}>{e}</button>
+              <button key={e} type="button" className="wb-segment" aria-pressed={emotion===e} onClick={()=>asu.set_emotional_system(emotion===e?"":e)}>{e}</button>
             ))}
           </div>
-          {emotion && <div style={{marginTop:10,fontSize:11,color:"var(--fm)",fontWeight:300}}>
-            {EMO_MAP[emotion]}
-          </div>}
+          {emotion ? <p className="wb-body wb-measure">{EMO_MAP[emotion]}</p> : null}
         </div>
-      </div>
 
-      {/* Seven-Step Application Guide */}
-      <div className="pb-section">
-        <div className="pb-sl">Application Guide</div>
-        <div className="pb-card">
-          {STEPS.map((s,i) => (
-            <div key={i} className="pb-step">
-              <div className={`pb-step-check ${steps[i]?"done":""}`} onClick={()=>setSteps(p=>{const n=[...p];n[i]=!n[i];return n})}>{steps[i]?"✓":""}</div>
-              <div className="pb-step-n">{i+1}</div>
-              <div className="pb-step-content">
-                <div className="pb-step-title">{s.title}</div>
-                <div className="pb-step-desc">{s.desc}</div>
-                {i===3 && <input className="pb-input" placeholder="What's the big move?" value={app.bigMove} onChange={e=>asu.set_application({bigMove:e.target.value})} style={{marginTop:6}} />}
-                {i===4 && <input className="pb-input" placeholder="What's the whimsy detail?" value={app.whimsy} onChange={e=>asu.set_application({whimsy:e.target.value})} style={{marginTop:6}} />}
-                {i===5 && <input className="pb-input" placeholder="How does this foster connection?" value={app.connection} onChange={e=>asu.set_application({connection:e.target.value})} style={{marginTop:6}} />}
+        <div className="tl-section">
+          <h2 className="bg-question-title">Applying it</h2>
+          <div className="tl-list">
+            {STEPS.map((s,i) => (
+              <div key={i} className="tl-row">
+                <label className="wb-check">
+                  <input type="checkbox" checked={!!steps[i]} onChange={()=>setSteps(p=>{const n=[...p];n[i]=!n[i];return n})} />
+                  <span className="wb-name">{s.title}</span>
+                </label>
+                <p className="wb-body tl-indent">{s.desc}</p>
+                {APPLICATION_FIELDS[i] ? (
+                  <div className="wb-signal tl-indent">
+                    <label htmlFor={`pb-app-${i}`} className="wb-label">{APPLICATION_FIELDS[i][1]}</label>
+                    <input id={`pb-app-${i}`} className="wb-field" value={app[APPLICATION_FIELDS[i][0]]} onChange={e=>asu.set_application({[APPLICATION_FIELDS[i][0]]:e.target.value})} autoComplete="off" />
+                  </div>
+                ) : null}
               </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="tl-section">
+          <div className="wb-actions">
+            <button type="button" className="wb-link" aria-expanded={showExport} onClick={()=>setShowExport(p=>!p)}>{showExport ? "Hide the summary" : "Show the summary"}</button>
+            <button type="button" className="wb-link" onClick={()=>navigator.clipboard?.writeText(exportText)}>Copy the summary</button>
+            <button type="button" className="wb-link" onClick={download}>Download as text</button>
+          </div>
+          {showExport ? <pre className="tl-code">{exportText}</pre> : null}
+        </div>
+
+        <div className="tl-section">
+          <h2 className="bg-question-title">The four pillars</h2>
+          <div className="tl-list">
+            <div className="tl-pair"><span className="wb-name">System</span><span className="wb-body">Clarity of structure, proportion, and function.</span></div>
+            <div className="tl-pair"><span className="wb-name">Scenography</span><span className="wb-body">Immersive staging and monumental spectacle.</span></div>
+            <div className="tl-pair"><span className="wb-name">Soul</span><span className="wb-body">Emotional registers that create atmosphere and resonance.</span></div>
+            <div className="tl-pair"><span className="wb-name">Relational</span><span className="wb-body">Choreography of connection: how people, agents, and environments interact.</span></div>
+          </div>
+        </div>
+
+        <div className="tl-section">
+          <h2 className="bg-question-title">Agents as action systems</h2>
+          <p className="wb-body wb-measure">Each agent is a pavilion inside the larger ecosystem. They don't just hold an identity. They act on inputs and expand them. Inputs are never static. They are constantly acted upon, reframed, and elevated.</p>
+          {RINGS.map((ring) => (
+            <div key={ring.name} className="wb-block">
+              <h3 className="wb-name tl-subhead">{ring.name}</h3>
+              <div className="tl-list">
+                {ring.agents.map((a) => (
+                  <div key={a.name} className="tl-triple">
+                    <span className="wb-name">{a.name}</span>
+                    <span className="wb-body">{a.input}</span>
+                    <span className="wb-body">{a.action}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="wb-body wb-measure">{ring.cycle}</p>
             </div>
           ))}
         </div>
-      </div>
 
-      {/* Reference Matrix */}
-      <div className="pb-section">
-        <div className="pb-sl">Reference Matrix</div>
-        <div className="pb-ref">
-          {REFS.map((r,i) => (
-            <div key={i} className="pb-ref-item">
-              <div className="pb-ref-name">{r.name}</div>
-              <div className="pb-ref-principle">{r.principle}</div>
-              <div className="pb-ref-tactic">{r.tactic}</div>
-            </div>
-          ))}
+        <div className="tl-section">
+          <h2 className="bg-question-title">References</h2>
+          <div className="tl-list">
+            {REFS.map((r,i) => (
+              <div key={i} className="tl-triple">
+                <span className="wb-name">{r.name}</span>
+                <span className="wb-body">{r.principle}</span>
+                <span className="wb-body">{r.tactic}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-
-      {/* Export */}
-      <div className="pb-section">
-        <div className="pb-sl">Export</div>
-        <div style={{display:"flex",gap:6,marginBottom:12}}>
-          <button className="btn" onClick={()=>setShowExport(p=>!p)}>{showExport?"Hide":"Preview"} Summary</button>
-          <button className="btn gh" onClick={()=>navigator.clipboard?.writeText(exportText)}>Copy to Clipboard</button>
-          <button className="btn gh" onClick={()=>{const b=new Blob([exportText],{type:"text/plain"});const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download=`${(project.name||"project").toLowerCase().replace(/[^a-z0-9]+/g,"-")}-brief.txt`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u)}}>Download .txt</button>
-        </div>
-        {showExport && <div className="pb-export">{exportText}</div>}
-      </div>
-    </div>
+    </section>
   );
 }

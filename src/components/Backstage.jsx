@@ -3,6 +3,8 @@ import { AGENTS, CORE_CYCLE } from "../data/agents";
 import { THEMES } from "../data/themes";
 import { PILLARS } from "../data/playbook-data";
 import { uid } from "../data/seed";
+import "../styles/workbench.css";
+import "../styles/workshop-tools.css";
 
 function mkMd(idea, run) {
   const l = [`# ${idea.title}`, ""];
@@ -21,21 +23,30 @@ function Composer({ onAdd }) {
   const [t, setT] = useState(""); const [d, setD] = useState("");
   const [ti, setTi] = useState(""); const [tags, setTags] = useState([]);
   const addT = () => { const v = ti.trim(); if (v && !tags.includes(v)) setTags(p => [...p, v]); setTi("") };
-  const go = () => { if (!t.trim()) return; onAdd(t.trim(), d.trim(), tags); setT(""); setD(""); setTags([]) };
+  const go = (e) => { e.preventDefault(); if (!t.trim()) return; onAdd(t.trim(), d.trim(), tags); setT(""); setD(""); setTags([]) };
   return (
-    <div style={{ display: "grid", gap: 6 }}>
-      <input className="bsi" placeholder="Title" value={t} onChange={e => setT(e.target.value)} />
-      <textarea className="bsi bsta" placeholder="Intention…" value={d} onChange={e => setD(e.target.value)} />
-      <div style={{ display: "flex", gap: 4 }}>
-        <input className="bsi" placeholder="Tag ↵" value={ti} onChange={e => setTi(e.target.value)} onKeyDown={e => e.key === "Enter" && addT()} style={{ flex: 1 }} />
-        <button className="btn gh" onClick={addT}>+</button>
+    <form className="tl-inline-form" onSubmit={go}>
+      <div className="wb-signal">
+        <label htmlFor="bs-idea-title" className="wb-label">Title</label>
+        <input id="bs-idea-title" className="wb-field" value={t} onChange={e => setT(e.target.value)} autoComplete="off" />
       </div>
-      {tags.length > 0 && <div style={{ display: "flex", gap: 3, flexWrap: "wrap" }}>{tags.map(t => <span key={t} className="chip">{t}</span>)}</div>}
-      <div style={{ display: "flex", justifyContent: "flex-end", gap: 4 }}>
-        <button className="btn gh" onClick={() => { setT(""); setD(""); setTags([]) }}>Clear</button>
-        <button className="btn" onClick={go}>Add</button>
+      <div className="wb-signal">
+        <label htmlFor="bs-idea-intention" className="wb-label">Intention</label>
+        <textarea id="bs-idea-intention" className="wb-field tl-area" rows={2} value={d} onChange={e => setD(e.target.value)} />
       </div>
-    </div>
+      <div className="wb-signal">
+        <label htmlFor="bs-idea-tag" className="wb-label">Tags</label>
+        <div className="wb-signal-row">
+          <input id="bs-idea-tag" className="wb-field" value={ti} onChange={e => setTi(e.target.value)} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); addT(); } }} autoComplete="off" />
+          <button type="button" className="wb-link" onClick={addT}>Add the tag</button>
+        </div>
+        {tags.length > 0 ? <p className="wb-body">{tags.join(", ")}</p> : null}
+      </div>
+      <div className="wb-actions">
+        <button type="submit" className="wb-button" disabled={!t.trim()}>Add the idea</button>
+        <button type="button" className="wb-link" onClick={() => { setT(""); setD(""); setTags([]) }}>Clear</button>
+      </div>
+    </form>
   );
 }
 
@@ -43,37 +54,26 @@ function PillarDiagnostic() {
   const [vals, setVals] = useState({ system: 70, scenography: 30, soul: 50, relational: 80 });
   const set = (k, v) => setVals(p => ({ ...p, [k]: parseInt(v) }));
   const dominant = PILLARS.reduce((a, b) => vals[a.key] >= vals[b.key] ? a : b, PILLARS[0]);
+  const combination =
+    (vals.system > 60 && vals.soul > 60 && "High System and Soul: infrastructure with atmosphere.") ||
+    (vals.scenography > 60 && vals.relational > 60 && "High Scenography and Relational: choreographed spectacle.") ||
+    (vals.system > 60 && vals.relational > 60 && vals.scenography < 40 && "System and Relational without Scenography: quiet coherence.") ||
+    (vals.soul > 60 && vals.scenography > 60 && vals.system < 40 && "Soul and Scenography without System: expressive but fragile.") ||
+    "";
 
   return (
-    <div className="bsc">
-      <h4>Aesthetic Diagnostic</h4>
-      <div style={{ fontSize: 10, color: "var(--fm)", marginBottom: 10, lineHeight: 1.5 }}>
-        Evaluate current work against the four pillars. Adjust sliders to map where a piece sits.
-      </div>
-      <div className="diag">
+    <div className="tl-section">
+      <h2 className="bg-question-title">Where does a piece of work sit across the four pillars?</h2>
+      <div className="tl-sliders">
         {PILLARS.map(p => (
-          <div key={p.key} className="diag-pill">
-            <div className="diag-pill-label">{p.label}</div>
-            <div className="diag-pill-bar">
-              <div className="diag-pill-fill" style={{ width: `${vals[p.key]}%`, background: p.color }} />
-            </div>
-            <input type="range" className="diag-range" min="0" max="100" value={vals[p.key]} onChange={e => set(p.key, e.target.value)} />
-            <div className="diag-pill-val">{vals[p.key]}</div>
+          <div key={p.key} className="tl-slider">
+            <label htmlFor={`bs-diag-${p.key}`} className="wb-name">{p.label}</label>
+            <input id={`bs-diag-${p.key}`} type="range" className="tl-range" min="0" max="100" value={vals[p.key]} onChange={e => set(p.key, e.target.value)} />
+            <output htmlFor={`bs-diag-${p.key}`} className="wb-body">{vals[p.key]}</output>
           </div>
         ))}
       </div>
-      <div style={{ marginTop: 10, padding: 8, background: "var(--bg)", fontSize: 10, lineHeight: 1.6 }}>
-        <div style={{ color: "var(--ff)", marginBottom: 2 }}>
-          <strong style={{ color: dominant.color }}>Primary: {dominant.label}</strong>
-        </div>
-        <div style={{ color: "var(--ff)", fontWeight: 300 }}>{dominant.desc}</div>
-        <div style={{ marginTop: 6, color: "var(--ff)", fontSize: 9 }}>
-          {vals.system > 60 && vals.soul > 60 && "⚡ High System + Soul = infrastructure with atmosphere"}
-          {vals.scenography > 60 && vals.relational > 60 && "⚡ High Scenography + Relational = choreographed spectacle"}
-          {vals.system > 60 && vals.relational > 60 && vals.scenography < 40 && "⚡ System + Relational without Scenography = quiet coherence"}
-          {vals.soul > 60 && vals.scenography > 60 && vals.system < 40 && "⚡ Soul + Scenography without System = expressive but fragile"}
-        </div>
-      </div>
+      <p className="wb-body wb-measure">{dominant.label} leads. {dominant.desc}{combination ? ` ${combination}` : ""}</p>
     </div>
   );
 }
@@ -242,7 +242,7 @@ Rules:
 Signal:`,
 };
 
-export default function Backstage({ content, themeKey, onThemeChange, onPublish, asu }) {
+export default function Backstage({ content, themeKey, onThemeChange, onPublish, asu, navigateTo }) {
   const ideas = asu.get_ideas();
   const am = asu.get_agent_mask();
   const settings = asu.get_settings();
@@ -427,175 +427,7 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
     onPublish({section:map[ak]||"exploration",title:`${idea.title}: ${ag.name}`,subtitle:ag.name,year:new Date().getFullYear().toString(),status:"draft",desc:rn.outputs[ak].expansion,tags:idea.tags||[],relations:[]});
   }, [idea, onPublish]);
 
-  return (
-    <div className="bs en">
-      <div style={{marginBottom:40}}>
-        <span className="bsl">System Condition</span>
-        <div style={{display:"flex",justifyContent:"space-between",flexWrap:"wrap",gap:24}}>
-          <div style={{maxWidth:400,display:"grid",gap:6}}>
-            {[["condition","Condition"],["reading","Reading"],["building","Building"],["working","At"]].map(([k,l])=>(
-              <div key={k} style={{display:"flex",alignItems:"center",gap:8}}>
-                <span style={{fontSize:10,color:"var(--ff)",width:60,textTransform:"uppercase",letterSpacing:".08em"}}>{l}</span>
-                <input className="bsi" value={nowState[k]} onChange={e=>asu.set_system_condition({[k]:e.target.value})} style={{flex:1,fontSize:11,padding:"4px 8px"}} />
-              </div>
-            ))}
-          </div>
-          <div>
-            <div style={{fontSize:9,letterSpacing:".1em",textTransform:"uppercase",color:"var(--ff)",marginBottom:6}}>Posture</div>
-            <div className="thr">
-              {Object.entries(THEMES).map(([k,t])=>(
-                <div key={k} style={{textAlign:"center"}}>
-                  <div className={`thsw ${themeKey===k?"on":""}`} style={{background:t.bg}} onClick={()=>onThemeChange(k)}/>
-                  <div className="thl">{t.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="bsg">
-        <div>
-          <div className="bsc"><h4>New Idea</h4><Composer onAdd={addIdea}/></div>
-          <div className="bsc">
-            <h4>Ideas</h4>
-            {ideas.map(i=><div key={i.id} className="bsid"><span className={`bsinm ${i.id===aid?"on":""}`} onClick={()=>setAid(i.id)}>{i.title}</span><span style={{fontSize:9,color:"var(--ff)"}}>{i.runs.length}</span></div>)}
-          </div>
-          <div className="bsc">
-            <h4>Pipeline Mode</h4>
-            <div style={{display:"flex",flexWrap:"wrap",gap:2}}>
-              {Object.entries(PIPE_MODES).map(([k,v]) => (
-                <button key={k} className={`pb-emo-btn ${pipeMode===k?"on":""}`} onClick={()=>setPipeMode(k)} style={{fontSize:8,padding:"4px 10px"}}>
-                  {v.label}
-                </button>
-              ))}
-            </div>
-            <div style={{fontSize:9,color:"var(--fm)",marginTop:6,fontWeight:300}}>{activePipe.desc}</div>
-            {pipeMode !== "free" && (
-              <div style={{marginTop:8,fontSize:9,color:"var(--ff)"}}>
-                {pipeMode === "v4"
-                  ? "Perception → Exploration → Creation → Memory → Intelligence → Placement → Emergence → Practice → Material → Source → Governance"
-                  : `Sequence: ${activePipe.sequence?.map(k => AGENTS.find(a=>a.key===k)?.name).filter(Boolean).join(" → ")}`
-                }
-              </div>
-            )}
-            {pipeMode !== "free" && (
-              <div style={{marginTop:8,display:"flex",gap:4}}>
-                <button className="btn gh" style={{fontSize:8,padding:"3px 8px"}} onClick={()=>{setShowPrompt(p=>!p);setPromptCopied(false)}}>{showPrompt?"Hide":"View"} Prompt</button>
-                <button className="btn gh" style={{fontSize:8,padding:"3px 8px"}} onClick={()=>{navigator.clipboard?.writeText(SEQ_PROMPTS[pipeMode]);setPromptCopied(true);setTimeout(()=>setPromptCopied(false),2000)}}>{promptCopied?"Copied":"Copy"}</button>
-              </div>
-            )}
-            {showPrompt && pipeMode !== "free" && SEQ_PROMPTS[pipeMode] && (
-              <pre style={{marginTop:8,padding:10,background:"var(--bg)",border:"1px solid var(--bd)",fontSize:10,lineHeight:1.6,color:"var(--fm)",whiteSpace:"pre-wrap",wordBreak:"break-word",maxHeight:320,overflow:"auto",fontFamily:"var(--sans)"}}>{SEQ_PROMPTS[pipeMode]}</pre>
-            )}
-          </div>
-          <div className="bsc">
-            <h4>Agents {pipeMode !== "free" && <span style={{fontSize:9,fontWeight:300,color:"var(--ff)"}}>(sequence locked)</span>}</h4>
-            <div style={{display:"flex",flexWrap:"wrap",gap:3}}>
-              {pipeMode === "free"
-                ? AGENTS.map(a=><span key={a.key} className={`chip ${am[a.key]?"on":""}`} onClick={()=>asu.set_agent_mask({...am,[a.key]:!am[a.key]})}>{a.name}</span>)
-                : activePipe.sequence?.map(k => {const a = AGENTS.find(ag=>ag.key===k); return a ? <span key={k} className="chip on" style={{cursor:"default"}}>{a.name}</span> : null})
-              }
-            </div>
-          </div>
-          <div className="bsc">
-            <h4>Content ({content.length})</h4>
-            <div style={{maxHeight:200,overflow:"auto"}}>
-              {content.map(c=><div key={c.id} className="bspub"><span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:160}}>{c.title}</span><span className={`dt ${c.status}`}/></div>)}
-            </div>
-          </div>
-          <PillarDiagnostic />
-          <div className="bsc">
-            <h4>Settings</h4>
-            <div style={{display:"grid",gap:8}}>
-              <div>
-                <div style={{fontSize:9,letterSpacing:".08em",textTransform:"uppercase",color:"var(--ff)",marginBottom:4}}>Anthropic API Key</div>
-                <input className="bsi" type="password" placeholder="sk-ant-..." value={settings.apiKey} onChange={e=>asu.set_settings({apiKey:e.target.value})} style={{fontSize:11,padding:"6px 8px"}} />
-              </div>
-              <div>
-                <div style={{fontSize:9,letterSpacing:".08em",textTransform:"uppercase",color:"var(--ff)",marginBottom:4}}>Model</div>
-                <div style={{display:"flex",flexWrap:"wrap",gap:2}}>
-                  {MODELS.map(m=>(
-                    <button key={m.value} className={`pb-emo-btn ${settings.model===m.value?"on":""}`} onClick={()=>asu.set_settings({model:m.value})} style={{fontSize:8,padding:"4px 10px"}}>
-                      {m.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <div style={{fontSize:9,letterSpacing:".08em",textTransform:"uppercase",color:"var(--ff)",marginBottom:4}}>API Version</div>
-                <input className="bsi" value={settings.anthropicVersion} onChange={e=>asu.set_settings({anthropicVersion:e.target.value})} style={{fontSize:11,padding:"6px 8px"}} />
-              </div>
-              {!settings.apiKey && <div style={{fontSize:9,color:"#c44",fontWeight:300}}>API key required for agent pipeline and synthesis</div>}
-            </div>
-          </div>
-        </div>
-        <div>
-          <div className="bsc">
-            <h4>Pipeline: {idea?.title} <span style={{fontSize:9,fontWeight:300,color:"var(--ff)"}}>{pipeMode !== "free" ? `· Sequence ${activePipe.label}` : "· Free mode"}</span></h4>
-            {(pbProject.name || pbEmotion) && (
-              <div style={{fontSize:9,color:"var(--ff)",marginBottom:4,padding:"4px 8px",background:"var(--bg)",borderRadius:4,display:"inline-flex",gap:6,alignItems:"center"}}>
-                <span style={{color:"var(--fm)"}}>Playbook:</span>
-                {pbProject.name && <span>{pbProject.name}</span>}
-                {pbEmotion && <span style={{color:PILLARS[0].color}}>· {pbEmotion}</span>}
-                {(() => { const d = asu.get_dominant_pillar(); return <span style={{color:d.color}}>· {d.label}</span>; })()}
-              </div>
-            )}
-            {(() => { const aom = asu.get_art_of_model(); const ar = aom.responses[aom.activeVersion]||{}; const filled = Object.values(ar).filter(v=>v?.trim()).length; return filled > 0 ? (
-              <div style={{fontSize:9,color:"var(--ff)",marginBottom:6,padding:"4px 8px",background:"var(--bg)",borderRadius:4,display:"inline-flex",gap:6,alignItems:"center"}}>
-                <span style={{color:"var(--fm)"}}>Art of Model ({aom.activeVersion}):</span>
-                <span>{filled} steps</span>
-                {aom.synthesis[aom.activeVersion] && <span>· synthesized</span>}
-              </div>
-            ) : null; })()}
-            <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
-              <span style={{fontSize:11,color:"var(--fm)"}}>{running?"Running…":lastRun?"Complete":"Idle"}</span>
-              <button className="btn" onClick={run} disabled={running}>{running?"Running…":"Run"}</button>
-            </div>
-            <div className="pipe"><div className="pipe-f" style={{width:`${running?progress:lastRun?100:0}%`}}/></div>
-          </div>
-          <div className="bsc">
-            <h4>Outputs {lastRun?.mode && lastRun.mode !== "free" && <span style={{fontSize:9,fontWeight:300,color:"var(--ff)"}}> · Sequence {PIPE_MODES[lastRun.mode]?.label || lastRun.mode}</span>}</h4>
-            {!lastRun?<div style={{fontSize:11,color:"var(--ff)",fontWeight:300}}>Run to see outputs.</div>:lastRun.selection.map((ak,idx)=>{
-              const out=lastRun.outputs[ak];const ag=AGENTS.find(a=>a.key===ak);
-              if(!ag) return null;
-              const proc=!out&&lastRun.status==="running";
-              const V4_LABELS = {"field":"Perception","works-in-progress":"Exploration","action":"Creation","cache":"Memory","atlas":"Intelligence","grace":"Placement","open":"Emergence","art-practice":"Practice","hotel":"Material","clssm":"Source","freedom-embassy":"Governance"};
-              const stepLabel = lastRun.mode && lastRun.mode !== "free"
-                ? lastRun.mode === "v4"
-                  ? V4_LABELS[ak] || null
-                  : `${idx===0&&lastRun.mode==="v3"?"Phase -1/0":idx===0&&lastRun.mode==="v2"?"Phase 0":`Phase ${idx}`}`
-                : null;
-              return(
-                <div key={ak} className="rout" style={{opacity:proc?.5:1}}>
-                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                    <h5>{stepLabel && <span style={{fontSize:9,color:"var(--ff)",fontWeight:400,marginRight:6}}>{stepLabel}</span>}{ag.name}{proc&&<span style={{fontSize:10,color:"var(--ff)",fontWeight:300}}> processing…</span>}</h5>
-                    {out&&<button className="btn gh" style={{fontSize:9,padding:"3px 8px"}} onClick={()=>pub(ak,lastRun)}>Publish</button>}
-                  </div>
-                  {out?(
-                    <>
-                      <p className="rexp">{out.expansion}</p>
-                      {out.steps?.length>0&&<div style={{marginTop:6}}><div style={{fontSize:9,fontWeight:500,letterSpacing:".1em",textTransform:"uppercase",color:"var(--ff)",marginBottom:3}}>Plan</div><ol className="rsteps">{out.steps.map((s,i)=><li key={i}>{s}</li>)}</ol></div>}
-                      {out.tasks?.length>0&&<div style={{marginTop:6}}><div style={{fontSize:9,fontWeight:500,letterSpacing:".1em",textTransform:"uppercase",color:"var(--ff)",marginBottom:3}}>Tasks</div>{out.tasks.map((t,i)=><div key={i} style={{fontSize:11,color:"var(--fm)",padding:"1px 0",display:"flex",gap:6}}><span style={{fontSize:9}}>{t.status==="done"?"✓":"○"}</span><span>{t.label}</span></div>)}</div>}
-                    </>
-                  ):proc?<div style={{fontSize:11,color:"var(--ff)",fontWeight:300,padding:"6px 0"}}>Waiting…</div>:null}
-                </div>
-              );
-            })}
-          </div>
-          {lastRun?.status==="complete"&&(
-            <div className="bsc">
-              <h4>Export</h4>
-              <div style={{display:"flex",gap:6}}>
-                <button className="btn gh" onClick={()=>navigator.clipboard?.writeText(mkMd(idea,lastRun))}>Copy Markdown</button>
-                <button className="btn gh" onClick={()=>{const b=new Blob([mkMd(idea,lastRun)],{type:"text/markdown"});const u=URL.createObjectURL(b);const a=document.createElement("a");a.href=u;a.download=`${idea.title.toLowerCase().replace(/[^a-z0-9]+/g,"-")}.md`;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(u)}}>Download .md</button>
-              </div>
-            </div>
-          )}
-          {lastRun?.status==="complete"&&(
-            <div className="bsc">
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                <h4>Synthesis</h4>
-                <button className="btn" disabled={bsSyncing} style={{fontSize:10}} onClick={async ()=>{
+  const generateSynthesis = async () => {
                   if(bsSyncing) return;
                   setBsSyncing(true); setSynthCopied(false); setSynthLogged(false);
                   const agentOutputs = lastRun.selection.map(ak => {
@@ -632,30 +464,195 @@ Respond with ONLY the synthesis text, no preamble.`;
                     setBsSynthesis(`Synthesis unavailable. ${err.message}`);
                   }
                   setBsSyncing(false);
-                }}>{bsSyncing?"Generating…":bsSynthesis?"Regenerate":"Generate Synthesis"}</button>
+                };
+  const downloadMarkdown = () => {
+    const b = new Blob([mkMd(idea, lastRun)], { type: "text/markdown" });
+    const u = URL.createObjectURL(b);
+    const a = document.createElement("a");
+    a.href = u;
+    a.download = `${idea.title.toLowerCase().replace(/[^a-z0-9]+/g,"-")}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(u);
+  };
+  const aom = asu.get_art_of_model();
+  const aomAnswered = Object.values(aom.responses[aom.activeVersion] || {}).filter(v => v?.trim()).length;
+  const shapedBy = [
+    (pbProject.name || pbEmotion) ? `Playbook${pbProject.name ? ` (${pbProject.name})` : ""}${pbEmotion ? `, ${pbEmotion}` : ""}, ${asu.get_dominant_pillar().label} leading` : null,
+    aomAnswered > 0 ? `Art of Model${aom.synthesis[aom.activeVersion] ? ", with its synthesis" : ""}` : null,
+  ].filter(Boolean);
+  const sequenceNames = pipeMode === "free" ? [] : (activePipe.sequence || []).map(k => AGENTS.find(a => a.key === k)?.name).filter(Boolean);
+  const STATUS_WORDS = { live: "Live", wip: "In progress", draft: "Draft", seed: "Seed", archived: "Archived" };
+
+  return (
+    <section className="wb wb-page">
+      <header className="wb-header">
+        <h1 className="wb-title">Backstage</h1>
+        <nav className="wb-actions" aria-label="Backstage">
+          <button type="button" className="wb-link" onClick={() => navigateTo?.("studio")}>Workbench</button>
+        </nav>
+      </header>
+
+      <div className="wb-tool-body">
+        <div className="tl-section">
+          <h2 className="bg-question-title">Ideas</h2>
+          <div className="tl-chips">
+            {ideas.map(i => (
+              <button key={i.id} type="button" className="tl-chip" aria-pressed={i.id === aid} onClick={() => setAid(i.id)}>{i.title}</button>
+            ))}
+          </div>
+          <Composer onAdd={addIdea} />
+        </div>
+
+        <div className="tl-section">
+          <h2 className="wb-headline">{idea?.title}</h2>
+          {shapedBy.length > 0 ? <p className="wb-body wb-measure">Shaped by {shapedBy.join(" and ")}.</p> : null}
+
+          <div className="wb-block">
+            <div className="wb-segments tl-segments tl-segments-wrap" role="group" aria-label="How the agents run">
+              {Object.entries(PIPE_MODES).map(([k, v]) => (
+                <button key={k} type="button" className="wb-segment" aria-pressed={pipeMode === k} onClick={() => setPipeMode(k)}>{v.label}</button>
+              ))}
+            </div>
+            <p className="wb-body wb-measure">{activePipe.desc}</p>
+          </div>
+
+          {pipeMode === "free" ? (
+            <div className="wb-block">
+              <p className="wb-name">Agents</p>
+              <div className="tl-chips">
+                {AGENTS.map(a => (
+                  <button key={a.key} type="button" className="tl-chip" aria-pressed={!!am[a.key]} onClick={() => asu.set_agent_mask({ ...am, [a.key]: !am[a.key] })}>{a.name}</button>
+                ))}
               </div>
-              {bsSyncing && <div style={{fontSize:12,color:"var(--fm)",fontWeight:300,marginTop:8}}>Reading agent outputs and finding the throughline…</div>}
-              {bsSynthesis && !bsSyncing && (
-                <div style={{marginTop:8}}>
-                  <div style={{fontSize:13,fontWeight:300,color:"var(--fg)",lineHeight:1.7,fontFamily:"var(--display)",letterSpacing:"0em"}}>{bsSynthesis}</div>
-                  <div style={{display:"flex",gap:6,marginTop:10}}>
-                    <button className="btn gh" style={{fontSize:9}} onClick={()=>{
-                      navigator.clipboard?.writeText(bsSynthesis);
-                      setSynthCopied(true);
-                      setTimeout(()=>setSynthCopied(false),2000);
-                    }}>{synthCopied?"Copied ✓":"Copy"}</button>
-                    <button className="btn gh" style={{fontSize:9}} onClick={()=>{
-                      asuRef.current.log_decision({decision:`Synthesis for "${idea.title}": ${bsSynthesis.slice(0,200)}`,pillar:asuRef.current.get_dominant_pillar().key,note:"Auto-logged from backstage synthesis"});
-                      setSynthLogged(true);
-                      setTimeout(()=>setSynthLogged(false),2000);
-                    }}>{synthLogged?"Logged ✓":"Log as Decision"}</button>
-                  </div>
-                </div>
-              )}
+            </div>
+          ) : (
+            <div className="wb-block">
+              <p className="wb-body wb-measure">The sequence sets the agents: {sequenceNames.join(", then ")}.</p>
+              <div className="wb-actions">
+                <button type="button" className="wb-link" aria-expanded={showPrompt} onClick={() => { setShowPrompt(p => !p); setPromptCopied(false) }}>{showPrompt ? "Hide the prompt" : "Show the prompt"}</button>
+                <button type="button" className="wb-link" onClick={() => { navigator.clipboard?.writeText(SEQ_PROMPTS[pipeMode]); setPromptCopied(true); setTimeout(() => setPromptCopied(false), 2000) }}>{promptCopied ? "Copied" : "Copy the prompt"}</button>
+              </div>
+              {showPrompt && SEQ_PROMPTS[pipeMode] ? <pre className="tl-code">{SEQ_PROMPTS[pipeMode]}</pre> : null}
             </div>
           )}
+
+          <div className="wb-actions">
+            <button type="button" className="wb-button" onClick={run} disabled={running}>{running ? "Running" : lastRun ? "Run it again" : "Run"}</button>
+            {!settings.apiKey ? <p className="wb-body">A key is needed before this can run. Add one under Settings.</p> : null}
+          </div>
+          {running ? <div className="tl-progress" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress)} aria-label="Run progress"><div style={{ width: `${progress}%` }} /></div> : null}
+        </div>
+
+        {lastRun ? (
+          <div className="tl-section">
+            <h2 className="bg-question-title">What the agents made of it</h2>
+            <div className="tl-list">
+              {lastRun.selection.map((ak) => {
+                const out = lastRun.outputs[ak]; const ag = AGENTS.find(a => a.key === ak);
+                if (!ag) return null;
+                const proc = !out && lastRun.status === "running";
+                return (
+                  <div key={ak} className="tl-row">
+                    <h3 className="wb-name">{ag.name}</h3>
+                    {proc ? <p className="wb-body" role="status">Waiting.</p> : null}
+                    {out ? (
+                      <>
+                        <p className="wb-text wb-measure">{out.expansion}</p>
+                        {out.steps?.length > 0 ? <ol className="tl-ol">{out.steps.map((st, i) => <li key={i}>{st}</li>)}</ol> : null}
+                        {out.tasks?.length > 0 ? <ul className="tl-ul">{out.tasks.map((t, i) => <li key={i}>{t.label}{t.status === "done" ? " (done)" : ""}</li>)}</ul> : null}
+                        <div className="wb-actions">
+                          <button type="button" className="wb-link" onClick={() => pub(ak, lastRun)}>Publish as a draft</button>
+                        </div>
+                      </>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
+
+        {lastRun?.status === "complete" ? (
+          <div className="tl-section">
+            <h2 className="bg-question-title">Synthesis</h2>
+            {bsSyncing ? <p className="wb-body" role="status">Reading what the agents made and finding the throughline.</p> : null}
+            {bsSynthesis && !bsSyncing ? <p className="wb-text wb-measure">{bsSynthesis}</p> : null}
+            <div className="wb-actions">
+              <button type="button" className="wb-button" disabled={bsSyncing} onClick={generateSynthesis}>{bsSynthesis ? "Generate it again" : "Generate the synthesis"}</button>
+              {bsSynthesis && !bsSyncing ? (
+                <>
+                  <button type="button" className="wb-link" onClick={() => { navigator.clipboard?.writeText(bsSynthesis); setSynthCopied(true); setTimeout(() => setSynthCopied(false), 2000); }}>{synthCopied ? "Copied" : "Copy it"}</button>
+                  <button type="button" className="wb-link" onClick={() => {
+                    asuRef.current.log_decision({decision:`Synthesis for "${idea.title}": ${bsSynthesis.slice(0,200)}`,pillar:asuRef.current.get_dominant_pillar().key,note:"Auto-logged from backstage synthesis"});
+                    setSynthLogged(true);
+                    setTimeout(() => setSynthLogged(false), 2000);
+                  }}>{synthLogged ? "Logged" : "Log it as a decision"}</button>
+                </>
+              ) : null}
+            </div>
+            <div className="wb-actions">
+              <button type="button" className="wb-link" onClick={() => navigator.clipboard?.writeText(mkMd(idea, lastRun))}>Copy the run as Markdown</button>
+              <button type="button" className="wb-link" onClick={downloadMarkdown}>Download the run as Markdown</button>
+            </div>
+          </div>
+        ) : null}
+
+        <PillarDiagnostic />
+
+        <div className="tl-section">
+          <h2 className="bg-question-title">Settings</h2>
+          <div className="wb-signal">
+            <label htmlFor="bs-key" className="wb-label">Anthropic API key</label>
+            <input id="bs-key" className="wb-field" type="password" placeholder="sk-ant-" value={settings.apiKey} onChange={e => asu.set_settings({ apiKey: e.target.value })} autoComplete="off" />
+          </div>
+          <div className="wb-block">
+            <p className="wb-label">Model</p>
+            <div className="wb-segments tl-segments tl-segments-wrap" role="group" aria-label="Model">
+              {MODELS.map(m => (
+                <button key={m.value} type="button" className="wb-segment" aria-pressed={settings.model === m.value} onClick={() => asu.set_settings({ model: m.value })}>{m.label}</button>
+              ))}
+            </div>
+          </div>
+          <div className="wb-signal tl-narrow">
+            <label htmlFor="bs-version" className="wb-label">API version</label>
+            <input id="bs-version" className="wb-field" value={settings.anthropicVersion} onChange={e => asu.set_settings({ anthropicVersion: e.target.value })} autoComplete="off" />
+          </div>
+        </div>
+
+        <div className="tl-section">
+          <h2 className="bg-question-title">System condition</h2>
+          <div className="tl-form">
+            {[["condition","Condition"],["reading","Reading"],["building","Building"],["working","At"]].map(([k, l]) => (
+              <div key={k} className="wb-signal">
+                <label htmlFor={`bs-now-${k}`} className="wb-label">{l}</label>
+                <input id={`bs-now-${k}`} className="wb-field" value={nowState[k]} onChange={e => asu.set_system_condition({ [k]: e.target.value })} autoComplete="off" />
+              </div>
+            ))}
+          </div>
+          <div className="wb-block">
+            <p className="wb-label">Posture</p>
+            <div className="wb-segments tl-segments tl-segments-wrap" role="group" aria-label="Posture">
+              {Object.entries(THEMES).map(([k, t]) => (
+                <button key={k} type="button" className="wb-segment" aria-pressed={themeKey === k} onClick={() => onThemeChange(k)}>{t.label}</button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="tl-section">
+          <h2 className="bg-question-title">What is on the site</h2>
+          <div className="tl-list tl-scroll">
+            {content.map(c => (
+              <div key={c.id} className="tl-pair">
+                <span className="wb-name">{c.title}</span>
+                <span className="wb-body">{STATUS_WORDS[c.status] || c.status}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
