@@ -106,7 +106,7 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         id: `t-stale-${c.id}`, kind: study ? 'Claim in tension with a later fact' : 'Stale claim', severity: 'repair',
         title: study ? `${quote(c.statement)} sits uneasily with a later public fact` : `${quote(c.statement)} is no longer true`,
         detail: `${fact.statement}${usedIn ? ` The claim ${study ? 'appeared' : 'still appears'} in ${usedIn}.` : ''}${c.tensionNote ? ` ${c.tensionNote}` : ''}`,
-        sources: [...(c.usedIn || []), fact.source].filter(Boolean), owners: authority.claims,
+        sources: [...new Set([...(c.usedIn || []), fact.source].filter(Boolean))], owners: authority.claims,
       });
     } else if (disputed.length) {
       // Two records say different things. Nothing here says which is right.
@@ -115,7 +115,7 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         id: `t-disputed-${c.id}`, kind: 'Records disagree', severity: 'decide',
         title: `${quote(c.statement)} does not match another record`,
         detail: `${others.map(f => f.statement).join(' ')}${usedIn ? ` The claim appears in ${usedIn}.` : ''}${c.tensionNote ? ` ${c.tensionNote}` : ' Nothing recorded says which is right.'}`,
-        sources: [...(c.usedIn || []), ...others.map(f => f.source)].filter(Boolean), owners: authority.claims,
+        sources: [...new Set([...(c.usedIn || []), ...others.map(f => f.source)].filter(Boolean))], owners: authority.claims,
       });
     } else if (!study && !c.verifiedOn && c.kind !== 'meaning' && !(brand.facts || []).some(f => f.id === c.supportedBy)) {
       // A claim someone could be asked to back up, with nothing on file that does.

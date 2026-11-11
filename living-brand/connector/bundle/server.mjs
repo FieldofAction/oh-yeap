@@ -24374,7 +24374,7 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         severity: "repair",
         title: study ? `${quote(c.statement)} sits uneasily with a later public fact` : `${quote(c.statement)} is no longer true`,
         detail: `${fact.statement}${usedIn ? ` The claim ${study ? "appeared" : "still appears"} in ${usedIn}.` : ""}${c.tensionNote ? ` ${c.tensionNote}` : ""}`,
-        sources: [...c.usedIn || [], fact.source].filter(Boolean),
+        sources: [...new Set([...c.usedIn || [], fact.source].filter(Boolean))],
         owners: authority.claims
       });
     } else if (disputed.length) {
@@ -24385,7 +24385,7 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         severity: "decide",
         title: `${quote(c.statement)} does not match another record`,
         detail: `${others.map((f) => f.statement).join(" ")}${usedIn ? ` The claim appears in ${usedIn}.` : ""}${c.tensionNote ? ` ${c.tensionNote}` : " Nothing recorded says which is right."}`,
-        sources: [...c.usedIn || [], ...others.map((f) => f.source)].filter(Boolean),
+        sources: [...new Set([...c.usedIn || [], ...others.map((f) => f.source)].filter(Boolean))],
         owners: authority.claims
       });
     } else if (!study && !c.verifiedOn && c.kind !== "meaning" && !(brand.facts || []).some((f) => f.id === c.supportedBy)) {
@@ -26880,7 +26880,7 @@ serveStdio(() => {
     }, async (args) => {
       try {
         const result = tool.run(args || {});
-        return { content: [{ type: "text", text: result.text }], structuredContent: result.data };
+        return { content: [{ type: "text", text: result.text }], structuredContent: { account: result.text, ...result.data || {} } };
       } catch (error2) {
         return { content: [{ type: "text", text: failure(error2) }], isError: true };
       }

@@ -161,8 +161,10 @@ trusting it with anything that matters.
 - **On a real brand the page acts as one person**, the one the engagement
   names. The switch that lets a visitor try other people's seats exists only
   for the fictional sample.
-- **Each result has a readable text and a structured form.** They carry the
-  same facts; which one the assistant sees depends on the client.
+- **Each result has a readable account and structured fields.** Which one an
+  assistant is shown depends on the client, so the account travels in both:
+  as the text, and as `account` among the structured fields. The other fields
+  are a subset for programs to read; the account is the whole answer.
 - **Context packages are records only.** Nothing is sent to the partner, and
   nothing outside `packages.json` enforces an end date or a revocation.
 - **Separation between clients is separate folders** and a per-record check,
