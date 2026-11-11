@@ -3,7 +3,7 @@
 // never sees the multi-tenant store, and every record is re-checked against
 // the tenant stamp at query time.
 
-import { assessStanding, searchText, termHits, wordsOf } from './standing.js';
+import { assessStanding, searchText, termHits, wordsOf, STOP_WORDS } from './standing.js';
 
 export class IsolationError extends Error {}
 
@@ -38,7 +38,7 @@ export function openTenant(vault, engagement, { asOf } = {}) {
 }
 
 // Words of any script, two characters or longer.
-const termsOf = query => String(query || '').toLowerCase().split(/[^\p{L}\p{N}-]+/u).filter(t => t.length > 1);
+const termsOf = query => String(query || '').toLowerCase().split(/[^\p{L}\p{N}-]+/u).filter(t => t.length > 1 && !STOP_WORDS.has(t));
 
 export function search(tenantIndex, query, purpose = {}) {
   const terms = termsOf(query);

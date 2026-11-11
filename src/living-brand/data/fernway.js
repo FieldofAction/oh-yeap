@@ -237,7 +237,7 @@ export const fernway = {
       text: 'Lapsed parents cite price rise. Still call it the calm one. Miss the bedtime routine. Confused about ads on the free tier.',
     },
     {
-      id: 'fw-pricing-2026', title: 'Pricing and plans 2026', kind: 'Offer record', workType: 'Offer', element: 'Plans and prices',
+      id: 'fw-pricing-2026', title: 'Pricing and plans 2026', power: 'offer', kind: 'Offer record', workType: 'Offer', element: 'Plans and prices',
       canvas: 'Pricing page and app store', audience: 'Subscribers', intendedOutcome: 'Revenue per subscriber', level: 'company', period: { from: '2026-03-01' },
       exposure: 'Public', made: { by: 'Finance and product', date: '2026-02-15' }, rationale: 'Price rise for the standard plan; ad-supported tier added in April.',
       provenance: { source: 'Finance, plans register', origin: 'human' }, pipeline: 'approved', standing: 'operational', domain: 'product',

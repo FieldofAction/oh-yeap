@@ -110,7 +110,7 @@ repository.
 | Tool | Changes anything? |
 |---|---|
 | `list_engagements`, `open_engagement`, `search_material`, `get_item`, `get_interpretation`, `build_brief`, `export_engagement_package`, `get_workbench` | No. They write nothing, not even a log |
-| `add_source_note`, `verify_item`, `record_reuse`, `record_choice`, `record_answer`, `propose_standing` | Adds to the record, where the engagement's grant allows writing. Never raises standing |
+| `add_source_note`, `verify_item`, `record_reuse`, `record_choice`, `withdraw_choice`, `record_answer`, `propose_standing` | Adds to the record, where the engagement's grant allows writing. Never raises standing |
 | `approve_item`, `decide_proposal`, `answer_choice`, `retire_item`, `name_authority` | Only where the practitioner has been named by the company. Never in a public-source study |
 | `issue_context_package`, `revoke_context_package` | Records a read-only package for a partner, or its withdrawal. Needs the power to share |
 | `save_engagement_package` | Writes the handoff package and packet to a file in `exports/` |
@@ -123,9 +123,15 @@ export the record or end the engagement.
 
 Three rules hold in every tool and on the page. Material has to be checked
 against its source before it can be approved. Adopting something as canon
-needs a scope in the decider's words, and a check if nobody has made one; it
-also records their approval. Turning a proposal down, sending it back,
-declining a choice or retiring material needs a reason.
+needs to say what it covers, and a check if nobody has made one; it also
+records their approval. The kinds of work it is said to cover are what its
+rules then bind, and rules can be held back from it. Turning a proposal down,
+sending it back, declining a choice or retiring material needs a reason, and
+so does a choice.
+
+In a study from public sources nothing is ever authorized or authoritative,
+whatever has been checked, and every class is named as the study's reading
+("read as current", not "canon"). Reuse cannot be recorded in one.
 
 ## Limits
 

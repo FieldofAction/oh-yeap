@@ -94,7 +94,8 @@ test('the connector decides only as its own practitioner, and only where they ar
   assert.notEqual(mine.data.id, p.data.id);
   assert.throws(() => call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: mine.data.id, outcome: 'adopt' }), /Say what this canon covers/);
   assert.throws(() => call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: mine.data.id, outcome: 'reject' }), /Say why it is turned down/);
-  const adopted = call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: mine.data.id, outcome: 'adopt', scope: 'Every use of the mark' });
+  const adopted = call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: mine.data.id, outcome: 'adopt', scope: 'Every use of the mark', covers: ['all'] });
+  assert.deepEqual(adopted.data.covers, ['all']);
   assert.match(adopted.text, /Adopted.*it was experiment, and that is kept[\s\S]*It covers: Every use of the mark\. It is approved by Founder Person/);
   assert.match(call('open_engagement', { engagement_id: 'eng-moonhouse' }).text, /You are named for: visual standing/);
   assert.match(call('open_engagement', { engagement_id: 'eng-fernway' }).text, /You are not named to decide anything in this engagement/);
@@ -126,8 +127,12 @@ test('a public-source study cannot decide, share or be handed back', () => {
   call('import_packet', { json: JSON.stringify(study()) });
   assert.match(call('open_engagement', { engagement_id: 'eng-tidewater' }).text, /independent study\. Tidewater did not take part/);
   const p = call('propose_standing', { engagement_id: 'eng-tidewater', item_id: 'tw-mark', to: 'canon', rationale: 'x' });
-  assert.match(p.text, /waits for no one named/);
-  assert.match(p.text, /only Tidewater can name them/);
+  assert.match(p.text, /^Noted tidewater-p-[^:]*: read as current, where the study had it as read as a trial\. This is the practitioner's note to themselves\. Nothing about Tidewater's material has changed, and only Tidewater could decide it\./);
+  assert.ok(!/reviewer will see|waits for/.test(p.text), 'a study has no reviewer and nothing waiting');
+  const read = call('get_item', { engagement_id: 'eng-tidewater', item_id: 'tw-mark' }).text;
+  assert.match(read, /Authorized: Tidewater has authorized nothing for this study/);
+  assert.match(read, /How this study reads it: Read as a trial\.[^\n]*Not Tidewater's own classification\./);
+  assert.throws(() => call('record_reuse', { engagement_id: 'eng-tidewater', item_id: 'tw-mark', where: 'A deck' }), /A study may not reuse Tidewater's material/);
   assert.throws(() => call('decide_proposal', { engagement_id: 'eng-tidewater', proposal_id: p.data.id, outcome: 'adopt' }), /Only Tidewater can/);
   assert.throws(() => call('name_authority', { engagement_id: 'eng-tidewater', area: 'standing.visual', person_name: 'Me' }), /Only Tidewater can name/);
   assert.throws(() => call('issue_context_package', { engagement_id: 'eng-tidewater', partner_name: 'A', assignment: 'x', channels: [], expires: '2027-01-01' }), /holds nothing of Tidewater/);

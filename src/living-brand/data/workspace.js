@@ -103,15 +103,10 @@ export const closed = [
 export const agency = {
   id: 'northbound', name: 'Northbound Studio',
   engagements: [
-    { id: 'nb-fernway', brandId: 'fernway', clientLabel: 'Client A', milestones: [{ date: '2026-11-20', label: 'Concept review' }, { date: '2027-01-12', label: 'Launch' }], team: ['Lead designer', 'Producer'] },
-    { id: 'nb-brightloop', brandId: 'brightloop', clientLabel: 'Client B', milestones: [{ date: '2026-12-01', label: 'Launch' }], team: ['Lead designer', 'Illustrator'] },
+    { id: 'nb-client-a', clientLabel: 'Client A', milestones: [{ date: '2026-11-20', label: 'Concept review' }, { date: '2027-01-12', label: 'Launch' }], team: ['Lead designer', 'Producer'] },
+    { id: 'nb-client-b', clientLabel: 'Client B', milestones: [{ date: '2026-12-01', label: 'Launch' }], team: ['Lead designer', 'Illustrator'] },
   ],
 };
 
-// Connections, labelled by what actually exists in this build.
-export const connections = [
-  { name: 'Source notes and file references', state: 'working', note: 'How material enters this build: by hand, with where it was found.' },
-  { name: 'The connector', state: 'working', note: 'Opens the same record in conversation, from a folder on your own machine.' },
-  { name: 'Model reasoning', state: 'simulated', note: 'Interpretation here is deterministic and authored. No model is called.' },
-  { name: 'Publishing', state: 'excluded', note: 'An engagement never publishes. Publishing stays with the company\'s own tools.' },
-];
+// What a visitor should know about this page before trusting anything on it.
+export const note = 'Everything on this page is fictional. The material was entered by hand, the reading was written by a person, no model is called, and nothing is published.';

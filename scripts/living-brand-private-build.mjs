@@ -52,12 +52,6 @@ const catalog = {
     engagements: open.map(o => ({ id: o.engagement.id, clientLabel: o.brand.name, role: o.engagement.role })),
   },
   open, closed: [], agency: null,
-  connections: [
-    { name: 'Brand packets', state: 'working', note: 'How material enters this page: one plain file per brand, kept outside the public repository.' },
-    { name: 'The connector', state: 'working', note: 'Opens the same packets in conversation, on your own machine.' },
-    { name: 'Model reasoning', state: 'excluded', note: 'This page calls no model. Where a model drafted a record or a reading, the engagement says so under Kind of work.' },
-    { name: 'Publishing', state: 'excluded', note: 'An engagement never publishes.' },
-  ],
 };
 
 // The page's code and the brands' records are kept apart: the code is bundled

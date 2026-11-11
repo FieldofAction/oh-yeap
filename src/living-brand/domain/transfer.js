@@ -1,7 +1,7 @@
 // Transfer: scoped context for collaborators, the engagement package that is
 // left behind, and the portable packet a brand partition travels in.
 
-import { assessStanding, basisNote, effectiveRules, rulesInForce, isPublicStudy, BASES, STANDING_CLASSES, PIPELINE } from './standing.js';
+import { assessStanding, basisNote, classOf, effectiveRules, rulesInForce, isPublicStudy, BASES, STANDING_CLASSES, PIPELINE } from './standing.js';
 import { carryForward, findTensions, fingerprint, organizationalHypotheses, POWERS } from './inquiry.js';
 
 // A partner (agency, freelancer, agent) receives only what its assignment
@@ -62,12 +62,17 @@ export function buildHandoff(state, { brief, asOf, ended = null, packages = [] }
   const { brand, engagement } = state;
   const carried = carryForward(brand, engagement, { asOf });
   const study = isPublicStudy(brand);
+  const answered = new Set((state.answers || []).map(a => a.question));
+  // Someone the brand names as deciding is not a visitor with methods to take away.
+  const owner = !study && Object.values(brand.authority || {}).some(l => Array.isArray(l) && l.includes(engagement.actor));
   const tensions = findTensions(brand, { asOf, workTypes: engagement.workTypes || [], channels: engagement.channels || [] });
   return {
     format: 'living-brand.engagement/0.2',
     company: brand.name,
     basis: brand.basis || 'company-record',
     basisNote: basisNote({ ...brand, basis: brand.basis || 'company-record' }),
+    // In a study every standing below is the author's reading, named as one.
+    ...(study ? { standingNote: `Every standing in this file is this study's reading of public material. None of it is ${brand.name}'s own classification, approval or decision.` } : {}),
     // Written on the day it is exported. The engagement has ended only if it says so.
     written: asOf,
     engagement: {
@@ -87,17 +92,20 @@ export function buildHandoff(state, { brief, asOf, ended = null, packages = [] }
     proposals: state.proposals,
     decisions: state.decisions,
     openTensions: tensions.map(t => ({ kind: t.kind, title: t.title, sources: t.sources })),
-    openQuestions: engagement.questions || [],
+    // A question that has been answered is no longer open; the answer is below with who gave it.
+    openQuestions: (engagement.questions || []).filter(q => !answered.has(q)),
     answers: state.answers || [],
-    unknowns: brand.unknowns || [],
+    unknowns: (brand.unknowns || []).filter(u => !answered.has(u)),
     sources: brand.items.map(i => ({
-      id: i.id, title: i.title, pipeline: i.pipeline, standing: i.standing, rights: i.rights?.status,
+      id: i.id, title: i.title, pipeline: i.pipeline, standing: i.standing, ...(study ? { readAs: classOf(i.standing, brand).name } : {}), rights: i.rights?.status,
       provenance: i.provenance?.source, origin: i.provenance?.origin, fingerprint: fingerprint(i),
       links: (i.sources || []).map(s => s.url), verification: i.verification || null,
     })),
     retained: study
       ? { company: `Nothing. ${brand.name} did not commission this and has not seen it.`, practitioner: 'The study: public sources, the reading of them, and the questions only the company can answer.' }
-      : { company: 'Everything above: sources, interpretation, choices, proposals and the brief.', practitioner: 'General methods listed in the practitioner\'s workbench. No client material.' },
+      : owner
+        ? { company: 'Everything in this file: sources, interpretation, choices, proposals, decisions, answers and the brief.', practitioner: 'Nothing separate. The person who made this pass is one of the people who decide here.' }
+        : { company: 'Everything above: sources, interpretation, choices, proposals and the brief.', practitioner: 'General methods listed in the practitioner\'s workbench. No client material.' },
     completed: engagement.modesCompleted || [],
     notCompleted: MODES.filter(m => !(engagement.modesCompleted || []).includes(m)),
   };
@@ -187,6 +195,7 @@ export function readPacket(packet) {
     if (item.brief !== undefined && (typeof item.brief !== 'object' || item.brief === null)) bad(`${item.id}: its brief must be a record.`);
     if (item.power !== undefined && !Object.hasOwn(POWERS, item.power)) bad(`${item.id}: "${String(item.power).slice(0, 40)}" is not an area of decision.`);
     if (item.uses !== undefined && (typeof item.uses !== 'object' || item.uses === null || isList(item.uses))) bad(`${item.id}: what it uses must be a record of topics.`);
+    if (item.standingRecord?.covers !== undefined && !isList(item.standingRecord.covers)) bad(`${item.id}: what its canon covers must be a list of kinds of work.`);
   }
   for (const item of items) {
     if (!item || typeof item !== 'object' || !isText(item.id)) continue;

@@ -8,7 +8,7 @@ import {
   search, assessStanding, findTensions, carryForward, changeLedger, organizationalHypotheses, orientation,
   propose, decide, retire, recordReuse, recordChoice, answerChoice, recordAnswer, verifyItem, approveItem, addSourceNote, nameAuthority,
   buildBrief, buildContextPackage, revokePackage, packageValid, buildHandoff, toPacket, readPacket, packetAssertions, timeline, unnamedPowers,
-  deciders, powerFor, canDecide, rulesStatedBy, basisNote, isPublicStudy, STANDING_CLASSES, CHOICES, POWERS, BASES, PIPELINE,
+  deciders, powerFor, canDecide, rulesStatedBy, basisNote, classOf, withdrawChoice, isPublicStudy, STANDING_CLASSES, CHOICES, POWERS, BASES, PIPELINE,
 } from '../../src/living-brand/domain/index.js';
 
 const today = () => process.env.LIVING_BRAND_AS_OF || new Date().toISOString().slice(0, 10);
@@ -24,10 +24,10 @@ const lines = list => list.flat().filter(l => l !== null && l !== undefined && l
 const basisLine = brand => `${brand.name}: ${BASES[brand.basis || 'company-record'].name}. ${basisNote({ ...brand, basis: brand.basis || 'company-record' })}`;
 
 const standingLine = (item, st) =>
-  `relevant ${yn(st.relevant)}; authorized ${yn(st.authorized)}; reusable here ${yn(st.reusable)}; authoritative ${yn(st.authoritative)}`;
+  `${st.asked ? `relevant ${yn(st.relevant)}; ` : ''}authorized ${yn(st.authorized)}; reusable here ${yn(st.reusable)}; authoritative ${yn(st.authoritative)}`;
 
-const itemLine = (item, st) => [
-  `- ${item.title} [${item.id}] (${[item.kind, item.period?.from?.slice(0, 4)].filter(Boolean).join(', ')}; ${STANDING_CLASSES[item.standing].name.toLowerCase()}; ${item.pipeline})`,
+const itemLine = (item, st, brand) => [
+  `- ${item.title} [${item.id}] (${[item.kind, item.period?.from?.slice(0, 4)].filter(Boolean).join(', ')}; ${classOf(item.standing, brand).name.toLowerCase()}; ${item.pipeline})`,
   st ? `  ${standingLine(item, st)}` : null,
 ];
 
@@ -131,7 +131,7 @@ export function createTools(store) {
         return {
           text: lines([
             results.length ? `${results.length} of ${state.brand.items.length} items in ${state.brand.name}'s material${query ? ` match "${query}"` : ''}.` : `Nothing in ${state.brand.name}'s material matches "${query}". Other clients' material is not searched.`,
-            ...results.slice(0, 25).map(r => itemLine(r.item, r.standing)),
+            ...results.slice(0, 25).map(r => itemLine(r.item, r.standing, state.brand)),
             results.length > 25 ? `…and ${results.length - 25} more. Narrow the query.` : null,
           ]),
           data: { results: results.map(r => ({ id: r.item.id, title: r.item.title, standing: r.item.standing, pipeline: r.item.pipeline, relevant: r.standing.relevant, authorized: r.standing.authorized, reusable: r.standing.reusable, authoritative: r.standing.authoritative })) },
@@ -166,8 +166,8 @@ export function createTools(store) {
             `- Reusable here: ${st.reasons.reusable.join(' ')}`,
             `- Authoritative: ${st.reasons.authoritative.join(' ')}`,
             '',
-            `Standing: ${STANDING_CLASSES[item.standing].name}. ${STANDING_CLASSES[item.standing].job}${rec?.basis === 'reading' ? ` A reading of public material, not ${state.brand.name}'s own classification.` : rec ? ` Set by ${person(state.brand, rec.by)} on ${rec.date}.` : ''}`,
-            item.standingHistory?.length ? `Before: ${item.standingHistory.map(h => `${STANDING_CLASSES[h.standing].name} until ${h.until}`).join('; ')}.` : null,
+            `${isPublicStudy(state.brand) ? 'How this study reads it' : 'Standing'}: ${classOf(item.standing, state.brand).name}. ${classOf(item.standing, state.brand).job}${isPublicStudy(state.brand) ? ` Not ${state.brand.name}'s own classification.` : item.retired ? ` Retired by ${person(state.brand, item.retired.by)} on ${item.retired.date}: ${item.retired.reason}` : rec ? ` Set by ${person(state.brand, rec.by)} on ${rec.date}${rec.scope ? `. It covers: ${rec.scope}` : ''}.` : ''}`,
+            item.standingHistory?.length ? `Before: ${item.standingHistory.map(h => `${classOf(h.standing, state.brand).name} until ${h.until}`).join('; ')}.` : null,
             `Stage: ${item.pipeline}.${item.verification ? ` Checked by ${person(state.brand, item.verification.by)} on ${item.verification.date}: ${item.verification.how}` : ''}`,
             `Standing is decided by ${who(state.brand, deciders(state.brand, powerFor(item)).map(d => d.id))}.`,
             '',
@@ -213,16 +213,16 @@ export function createTools(store) {
             cf?.evidenceNote || null,
             tensions.length ? '\nTensions:' : '\nNo tensions found in what has been entered.',
             ...tensions.flatMap(t => [
-              `- ${t.kind}: ${String(t.title).replace(/[.]+$/, '')}. ${t.detail}${t.owners?.length ? ` For ${who(brand, t.owners)} to resolve.` : ''}${t.sources?.length ? ` [${[...new Set(t.sources)].join(', ')}]` : ''}`,
+              `- [${t.id}] ${t.kind}: ${String(t.title).replace(/[.]+$/, '')}. ${t.detail}${t.owners?.length ? ` For ${who(brand, t.owners)} to resolve.` : ''}${t.sources?.length ? ` [${[...new Set(t.sources)].join(', ')}]` : ''}`,
               ...(t.points || []).map(pt => `  - Rule: ${pt.rule} ${pt.says || `It has: ${pt.has}.`}`),
             ]),
             state.proposals.length ? '\nProposals on record:' : null,
-            ...state.proposals.map(p => `- ${p.id}: ${brand.items.find(i => i.id === p.itemId)?.title || p.itemId}, ${STANDING_CLASSES[p.from].name.toLowerCase()} to ${STANDING_CLASSES[p.to].name.toLowerCase()}. ${p.status === 'open' ? `Waiting for ${who(brand, p.reviewer)}.` : `${p.status}${p.decided ? ` by ${person(brand, p.decided.by)} on ${p.decided.date}${p.decided.note ? `: ${p.decided.note}` : ''}` : ''}.`}`),
+            ...state.proposals.map(p => `- ${p.id}: ${brand.items.find(i => i.id === p.itemId)?.title || p.itemId}, ${classOf(p.from, brand).name.toLowerCase()} to ${classOf(p.to, brand).name.toLowerCase()}. ${p.status === 'open' ? (isPublicStudy(brand) ? 'A note to themselves.' : `Waiting for ${who(brand, p.reviewer)}.`) : `${p.status}${p.decided ? ` by ${person(brand, p.decided.by)} on ${p.decided.date}${p.decided.note ? `: ${p.decided.note}` : ''}` : ''}.`}`),
             state.choices.length ? '\nChoices on record:' : null,
-            ...state.choices.map(c => `- ${c.id}: ${CHOICES[c.verdict]} ${c.subject}. ${c.status === 'awaiting decision' ? `Waiting for ${c.owner ? person(brand, c.owner) : `someone to be named for ${POWERS[c.needs]}`}.` : c.answer ? `${c.status} by ${person(brand, c.answer.by)} on ${c.answer.date}.` : 'Recorded.'}`),
+            ...state.choices.map(c => `- ${c.id}: ${CHOICES[c.verdict]} ${c.subject}. ${c.status === 'withdrawn' ? 'Withdrawn.' : c.status === 'awaiting decision' ? `Waiting for ${c.owner ? person(brand, c.owner) : `someone to be named for ${POWERS[c.needs]}`}.` : c.answer ? `${c.status} by ${person(brand, c.answer.by)} on ${c.answer.date}.` : 'Recorded.'}`),
             (state.answers || []).length ? '\nAnswers on record:' : null,
             ...(state.answers || []).map(a => `- ${a.question} Answered by ${person(brand, a.by)} on ${a.date}: ${a.answer}`),
-            hyps.length ? '\nHypotheses beyond the creative work (written by a person; never causes):' : null,
+            hyps.length ? '\nHypotheses beyond the creative work (written by whoever made this reading; never stated as causes):' : null,
             ...hyps.flatMap(h => [`- ${h.title}. ${h.statement}`, `  Uncertain because: ${h.uncertainty}`, h.test ? `  Could be tested by: ${h.test}` : null, `  Decided by: ${h.owner ? person(brand, h.owner) : 'no one named'}.`]),
           ]),
           data: { tensions, proposals: state.proposals, choices: state.choices, answers: state.answers || [], ledger: ledger.map(c => ({ kind: c.kind, when: c.when, before: c.before.id, after: c.after.id })), carryForward: cf ? cf.rows.map(r => ({ id: r.item.id, verdict: r.verdict, why: r.why })) : null, hypotheses: hyps },
@@ -251,7 +251,7 @@ export function createTools(store) {
           level: a.level, from: a.from, pipeline: a.pipeline, standing: a.standing, domain: a.domain, origin: a.origin, url: a.url, rightsNote: a.rights_note, tags: a.tags,
         }, { by, asOf }));
         const item = next.brand.items.at(-1);
-        return { text: `Recorded "${item.title}" [${item.id}] as ${item.pipeline}, ${STANDING_CLASSES[item.standing].name.toLowerCase()}, rights unknown, not approved. It is not evidence of anything yet.`, data: { id: item.id, pipeline: item.pipeline, standing: item.standing } };
+        return { text: `Recorded "${item.title}" [${item.id}] as ${item.pipeline}, ${classOf(item.standing, next.brand).name.toLowerCase()}, rights unknown, not approved. It is not evidence of anything yet.`, data: { id: item.id, pipeline: item.pipeline, standing: item.standing } };
       },
     },
     {
@@ -286,10 +286,10 @@ export function createTools(store) {
     },
     {
       name: 'record_choice', title: 'Record a choice',
-      description: 'Record the practitioner\'s judgment about something: preserve, investigate, repair, evolve or invent. A choice changes nothing in the company\'s knowledge. If it needs someone\'s authority, say which area in "needs" and it is routed to whoever is named, or waits if no one is.',
-      input: { type: 'object', properties: { engagement_id: ENG, subject: { type: 'string' }, verdict: { type: 'string', enum: Object.keys(CHOICES) }, rationale: { type: 'string' }, sources: { type: 'array', items: { type: 'string' }, description: 'Item ids this rests on.' }, needs: { type: 'string', enum: Object.keys(POWERS), description: 'The area of authority it needs, if any.' } }, required: ['engagement_id', 'subject', 'verdict', 'rationale'] },
-      run({ engagement_id, subject, verdict, rationale, sources, needs }) {
-        const next = change(engagement_id, { action: 'choice', subject }, (state, by) => recordChoice(state, { subject, verdict, rationale, sources, needs, by, asOf: today() }));
+      description: 'Record the practitioner\'s judgment about something: preserve, investigate, repair, evolve or invent. The verdict and the reason are theirs: give the reason in their words, never a suggestion\'s wording they have not adopted. A choice changes nothing in the company\'s knowledge. If it needs someone\'s authority, say which area in "needs" and it is routed to whoever is named, or waits if no one is. If it answers one of the entries from get_interpretation, pass that entry\'s id in "about" so the two are read together.',
+      input: { type: 'object', properties: { engagement_id: ENG, subject: { type: 'string' }, verdict: { type: 'string', enum: Object.keys(CHOICES) }, rationale: { type: 'string', description: 'Their reason, in their words.' }, sources: { type: 'array', items: { type: 'string' }, description: 'Item ids this rests on.' }, needs: { type: 'string', enum: Object.keys(POWERS), description: 'The area of authority it needs, if any.' }, about: { type: 'string', description: 'The id of the tension this answers, from get_interpretation, if any.' } }, required: ['engagement_id', 'subject', 'verdict', 'rationale'] },
+      run({ engagement_id, subject, verdict, rationale, sources, needs, about }) {
+        const next = change(engagement_id, { action: 'choice', subject }, (state, by) => recordChoice(state, { subject, verdict, rationale, sources, needs, about, by, asOf: today() }));
         const c = next.choices.at(-1);
         return { text: `Recorded: ${CHOICES[c.verdict]} ${c.subject}. ${c.status === 'accepted' ? `${POWERS[c.needs].replace(/^./, x => x.toUpperCase())} is theirs to decide here, so recording it decided it.` : c.needs ? (c.owner ? `Routed to ${person(next.brand, c.owner)}; it waits for their decision.` : `It needs a decision on ${POWERS[c.needs]}, and no one is named for that at ${next.brand.name} yet.`) : 'No one else\'s authority is needed.'}`, data: c };
       },
@@ -302,6 +302,16 @@ export function createTools(store) {
         const next = change(engagement_id, { action: 'answer-choice', choice: choice_id, outcome }, state => answerChoice(state, choice_id, { by: onlyAsSelf(state, acting_as), outcome, note, asOf: today() }));
         const c = next.choices.find(x => x.id === choice_id);
         return { text: `${c.status === 'accepted' ? 'Accepted' : 'Declined'} by ${person(next.brand, c.answer.by)}: ${CHOICES[c.verdict]} ${c.subject}.${c.answer.note ? ` ${c.answer.note}` : ''}`, data: c };
+      },
+    },
+    {
+      name: 'withdraw_choice', title: 'Withdraw a choice',
+      description: 'Take back a choice the practitioner recorded. It stays in the record, marked withdrawn; nothing is erased. Only the person who recorded it can withdraw it.',
+      input: { type: 'object', properties: { engagement_id: ENG, choice_id: { type: 'string', description: 'The choice id from record_choice or get_interpretation.' } }, required: ['engagement_id', 'choice_id'] },
+      run({ engagement_id, choice_id }) {
+        const next = change(engagement_id, { action: 'withdraw-choice', choice: choice_id }, (state, by) => withdrawChoice(state, choice_id, { by, asOf: today() }));
+        const c = next.choices.find(x => x.id === choice_id);
+        return { text: `Withdrawn: ${CHOICES[c.verdict]} ${c.subject}. It stays in the record as withdrawn.`, data: c };
       },
     },
     {
@@ -323,26 +333,29 @@ export function createTools(store) {
         const p = next.proposals.at(-1);
         const stated = p.to === 'canon' ? rulesStatedBy(next.brand, item_id) : [];
         return { text: lines([
-          `Proposal ${p.id} recorded: ${STANDING_CLASSES[p.from].name} to ${STANDING_CLASSES[p.to].name}. Nothing has changed. It waits for ${who(next.brand, p.reviewer)}.`,
-          p.warnings.length ? 'The reviewer will see:' : null, ...p.warnings.map(w => `- ${w}`),
+          isPublicStudy(next.brand)
+            ? `Noted ${p.id}: ${classOf(p.to, next.brand).name.toLowerCase()}, where the study had it as ${classOf(p.from, next.brand).name.toLowerCase()}. This is the practitioner's note to themselves. Nothing about ${next.brand.name}'s material has changed, and only ${next.brand.name} could decide it.`
+            : `Proposal ${p.id} recorded: ${STANDING_CLASSES[p.from].name} to ${STANDING_CLASSES[p.to].name}. Nothing has changed. It waits for ${who(next.brand, p.reviewer)}.`,
+          !isPublicStudy(next.brand) && p.warnings.length ? 'The reviewer will see:' : null, ...(isPublicStudy(next.brand) ? [] : p.warnings.map(w => `- ${w}`)),
           stated.length ? 'Adopting it would put these rules in force:' : null, ...stated.map(r => `- ${r.statement}`),
         ]), data: p };
       },
     },
     {
       name: 'decide_proposal', title: 'Decide a proposal',
-      description: 'Adopt, reject or send back a proposal. Only works where the practitioner whose workbench this is has been named by the company to decide that area. It cannot decide as anyone else. Rejecting or sending back needs their reason in "note". Adopting as canon needs "scope" (what the canon covers, in their words) and, if the material has not been checked against its source, "checked" (what they checked it against); it also records their approval. Ask for these; do not supply them yourself. Adopting keeps the previous standing, the evidence, the scope and the date in the record.',
-      input: { type: 'object', properties: { engagement_id: ENG, proposal_id: { type: 'string' }, outcome: { type: 'string', enum: ['adopt', 'reject', 'revise'] }, note: { type: 'string', description: 'Their reason. Required to reject or send back.' }, scope: { type: 'string', description: 'What the canon covers, in their words. Required to adopt as canon unless the proposal already carries one.' }, checked: { type: 'string', description: 'What they checked the record against. Required to adopt as canon when the material is not yet verified.' }, acting_as: { type: 'string', description: 'Present only so that a request to decide as someone else is refused clearly.' } }, required: ['engagement_id', 'proposal_id', 'outcome'] },
-      run({ engagement_id, proposal_id, outcome, note, scope, checked, acting_as }) {
-        const next = change(engagement_id, { action: 'decide', proposal: proposal_id, outcome }, state => decide(state, proposal_id, { by: onlyAsSelf(state, acting_as), outcome, note, scope, checked, asOf: today() }));
+      description: 'Adopt, reject or send back a proposal. Only works where the practitioner whose workbench this is has been named by the company to decide that area. It cannot decide as anyone else. Rejecting or sending back needs their reason in "note". Adopting as canon needs what the canon covers: "covers" lists the kinds of work it binds (the work types of the brand\'s material, or "all"), and that list is what its rules are then applied to; "scope" is the same in their words. If the material has not been checked against its source it also needs "checked" (what they checked it against). "hold_back_rule_ids" names rules the material states that they are not adopting with it. Adoption as canon records their approval. Ask for all of these; do not supply them yourself. Adopting keeps the previous standing, the evidence, the scope and the date in the record.',
+      input: { type: 'object', properties: { engagement_id: ENG, proposal_id: { type: 'string' }, outcome: { type: 'string', enum: ['adopt', 'reject', 'revise'] }, note: { type: 'string', description: 'Their reason. Required to reject or send back.' }, covers: { type: 'array', items: { type: 'string' }, description: 'The kinds of work the canon binds, as the brand\'s material names them (for example "Marketing website"), or ["all"]. Its rules apply to these and nothing else.' }, scope: { type: 'string', description: 'What the canon covers, in their words.' }, hold_back_rule_ids: { type: 'array', items: { type: 'string' }, description: 'Ids of rules the material states that are not to come into force with it.' }, checked: { type: 'string', description: 'What they checked the record against. Required to adopt as canon when the material is not yet verified.' }, acting_as: { type: 'string', description: 'Present only so that a request to decide as someone else is refused clearly.' } }, required: ['engagement_id', 'proposal_id', 'outcome'] },
+      run({ engagement_id, proposal_id, outcome, note, scope, covers, hold_back_rule_ids, checked, acting_as }) {
+        const next = change(engagement_id, { action: 'decide', proposal: proposal_id, outcome }, state => decide(state, proposal_id, { by: onlyAsSelf(state, acting_as), outcome, note, scope, covers, holdBack: hold_back_rule_ids, checked, asOf: today() }));
         const d = next.decisions.at(-1);
         const item = next.brand.items.find(i => i.id === d.itemId);
         const inForce = outcome === 'adopt' && d.to === 'canon' ? rulesStatedBy(next.brand, item.id) : [];
         return { text: outcome === 'adopt'
           ? lines([
             `Adopted. "${item.title}" is now ${STANDING_CLASSES[item.standing].name.toLowerCase()}; it was ${STANDING_CLASSES[d.from].name.toLowerCase()}, and that is kept in its history.`,
-            d.to === 'canon' ? `It covers: ${d.scope}. It is approved by ${person(next.brand, item.approval.by)}; its rights are ${item.rights?.status || 'unknown'}.` : null,
+            d.to === 'canon' ? `It covers: ${d.scope}.${d.covers ? '' : ' No kind of work was named, so its rules keep the reach they were written with.'} It is approved by ${person(next.brand, item.approval.by)}; its rights are ${item.rights?.status || 'unknown'}.` : null,
             inForce.length ? 'Rules now in force:' : null, ...inForce.map(r => `- ${r.statement}`),
+            d.heldBack?.length ? 'Held back, not in force:' : null, ...(d.heldBack || []).map(id => `- ${next.brand.rules.find(r => r.id === id)?.statement || id}`),
           ])
           : `Proposal ${outcome === 'reject' ? 'turned down' : 'sent back for revision'}: ${d.note} "${item.title}" is unchanged.`, data: d };
       },

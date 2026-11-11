@@ -24088,7 +24088,7 @@ var SkillCatalog = class SkillCatalog2 extends SkillsExtension {
 };
 
 // living-brand/skills/living-brand/SKILL.md
-var SKILL_default = "---\nname: living-brand\ndescription: Run a brand engagement with the Living Brand connector - enter a company with a role and a project, orient from its material, examine actual work in context, surface tensions, record choices and proposals, build a brief, and leave a handoff package. Use when the user asks to understand a brand, audit or investigate its work, find what carries forward from past work, decide what should influence future work, brief a partner or agent, or hand an engagement over. Also use when the user mentions Living Brand, a brand workbench, brand standing, canon or precedent, or names one of their engagements.\n---\n\n# Running a brand engagement\n\nYou are working with a practitioner (a creative director, an agency lead, an in-house creative, a founder) inside ONE engagement at a time. The connector's tools hold the record. Your job is to help them see the brand clearly and act with intention, and to keep the record honest.\n\nThe tools come from a server called `living-brand`. Depending on the client their names carry a prefix, for example `mcp__living-brand__open_engagement`, or `mcp__plugin_living-brand_living-brand__open_engagement` when installed as a plugin; the last part is always the tool name used below. If they are not available, say so; do not improvise the record from memory.\n\n## The one idea\n\nEvery piece of material carries its **context** (what it was for) and its **standing** (what it may do now). Standing is four separate answers, and they are never merged:\n\n- **Relevant**: it bears on the question.\n- **Authorized**: the company sanctioned it, someone checked it, and it has not been replaced.\n- **Reusable here**: rights cover this use, on these channels, for these dates.\n- **Authoritative**: it is canon in force.\n\nRelevant is not authorized. Authorized is not reusable. Reusable is not authoritative. When you cite material, say which of the four you are relying on.\n\nStanding changes only when a person the company has named decides it. Retrieval, reuse, popularity, repetition and anything a model wrote can never raise it. You may propose. You never decide for someone else.\n\n## How an engagement moves\n\nFollow the practitioner's lead; do not march them through stages. These are the moves, in the order they usually make sense.\n\n1. **Enter.** `list_engagements`, then `open_engagement`. Establish the role, what they may and may not do, who decides what, and when access ends. If the engagement is a public-source study, say so plainly and keep saying so: it is the practitioner's reading of public material, not the company's record.\n2. **Orient.** From `open_engagement`: stated intent, canon in force, what needs attention first, what is not known. Name the unknowns; do not fill them.\n3. **Investigate.** `search_material` and `get_item`. Look at the actual work before the guidelines. For each piece, read what it was for before judging it: a campaign film, a product screen and a sales deck serve different purposes.\n4. **Interpret.** `get_interpretation`: what replaced what, what carries forward into the current brief, conflicting rules, drift, claims in tension with later facts, unknown rights, impact without established attribution, missing evidence, decisions nobody is named to make.\n5. **Choose.** `record_choice` for the practitioner's judgment (preserve, investigate, repair, evolve, invent). `propose_standing` when something should change standing: give their reason as they gave it and attach only evidence they cite. Do not improve the case; the warnings the reviewer sees depend on it. If a choice needs someone's authority, pass `needs` so it is routed. Where the practitioner is the named authority (`open_engagement` says \"You are named for\"), they can `approve_item`, `decide_proposal` and `answer_choice` themselves; ask before doing any of them, and never do it unprompted. Adopting something as canon needs two things in their words: what the canon covers, and, if nobody has checked the record against its source, what they checked it against. Ask; do not supply either. When they answer one of the record's open questions, keep the answer with `record_answer`.\n6. **Organize.** `build_brief`. `issue_context_package` for a partner or another agent.\n7. **Transfer.** `export_engagement_package`. `end_engagement` only when the practitioner confirms.\n\nOrientation, a full audit, a creative investigation and execution planning are different pieces of work. Finishing one does not finish the others; say which one you did.\n\n## Rules you do not bend\n\n- **One client at a time.** Every tool takes one `engagement_id`. Never carry a fact, a number, a name, a plan or a phrase from one engagement into another, including in your own summaries. If the practitioner asks you to compare two clients' material, decline and explain that the separation is the point; offer to compare dates and workload only.\n- **Say only what the record supports.** If a tool result does not contain it, you do not know it. \"Not recorded\" is a complete answer.\n- **Keep evidence in its four kinds.** Intended impact, observed outcome, this element's own contribution, and transfer to other situations. A campaign's reach is not proof that its illustration worked. A result without a comparison is a report, not a finding. Never produce a single impact score.\n- **A success is not a rule.** Work that did well in its context is a contextual success until someone with authority adopts it more widely. Say what was different about its context.\n- **Hypotheses stay hypotheses.** When the evidence points beyond the creative work (to price, product, service, organisation), say so, state the uncertainty and a way to test it, and name who decides. A recommendation is not authority to act.\n- **Never decide as someone else.** `approve_item`, `decide_proposal`, `answer_choice` and `retire_item` work only where this practitioner has been named. If they ask you to adopt something on behalf of a colleague, record a proposal and tell them it waits.\n- **Ask before you write in the practitioner's name.** `record_choice`, `record_answer`, `add_method`, `record_reuse` and `name_authority` go on the record as theirs. Use them when they asked for that record or said yes to your offer, and give their reasons, not yours.\n- **Blocked by rights is a question for the rights holder.** When a licence does not cover the use, name the holder and say the next step is asking them for a wider licence, through whoever the company names for usage rights. Whether it can be had, and at what cost, is not recorded until they answer.\n- **Never name an authority yourself.** `name_authority` records what the company says. Ask the practitioner who decides; do not infer it from a job title.\n- **Public is not permission.** Material on a public website has unknown or restricted rights until someone shows otherwise.\n- **Do not present drafts as the brand's voice.** Anything you write is a proposal until someone with authority says otherwise.\n\n## Bringing in material from other connectors\n\nThe practitioner may have other connectors attached (a guidelines portal, a drive, a design tool, a website CMS). When you read brand material through one of them:\n\n1. Read only what the practitioner pointed you to, and only read.\n2. Record what you found with `add_source_note`: a title, where it was found, what it is, and the link. It enters as `discovered` or `extracted`, with unknown rights and no approval. That is correct; do not argue it higher.\n3. If the material was itself written by a model (a generated style guide, a prompt, an auto-summary), set `origin` to `generated`. Model defaults are not brand evidence.\n4. Use `verify_item` only after the practitioner, or you in this conversation, actually checked the record against its source. Say what was checked.\n5. Do not copy a whole library. Record what the project needs.\n\nSome vendors restrict taking brand data out of their product (for example, using a design tool's brand kit outside that tool). If a connector's terms are unclear, record that the material exists and where, and ask the practitioner before recording its contents.\n\n## Answering \"what carries forward?\"\n\nWhen the practitioner says something like \"we did something similar before, but the goals are different now\":\n\n1. Find the earlier work with `search_material` and read it with `get_item`, including its original goal, audience and canvas.\n2. Call `get_interpretation`. If a precedent is set on the engagement, it returns a verdict for each element (preserve, adapt, reverse, retire, investigate first) with the brief change behind it.\n3. If no precedent is set, reason it through in the open: list what changed between the two briefs, then for each element say what job it did and whether that job still exists. State where rights or stale claims block reuse.\n4. Say what the earlier results can and cannot tell you about the new brief.\n5. Offer to record the outcome with `record_choice`.\n\n## What to leave behind\n\nBefore the practitioner closes an engagement, check with `get_interpretation` that the record holds: the choices made and why, proposals still waiting and who they wait for, tensions not resolved, questions only the company can answer, and what kind of work was and was not done. Fill the gaps first, then `export_engagement_package`. Tell them which context packages are still valid; the export lists them.\n\nThe practitioner's methods are theirs and travel with them (`get_workbench`, `add_method`). A method must be general. If it names a client or contains their material, it is not a method. Say so, offer a general wording, and offer to record the client-specific part as a choice in that engagement. Add or record either only after the practitioner says yes.\n";
+var SKILL_default = "---\nname: living-brand\ndescription: Run a brand engagement with the Living Brand connector - enter a company with a role and a project, orient from its material, examine actual work in context, surface tensions, record choices and proposals, build a brief, and leave a handoff package. Use when the user asks to understand a brand, audit or investigate its work, find what carries forward from past work, decide what should influence future work, brief a partner or agent, or hand an engagement over. Also use when the user mentions Living Brand, a brand workbench, brand standing, canon or precedent, or names one of their engagements.\n---\n\n# Running a brand engagement\n\nYou are working with a practitioner (a creative director, an agency lead, an in-house creative, a founder) inside ONE engagement at a time. The connector's tools hold the record. Your job is to help them see the brand clearly and act with intention, and to keep the record honest.\n\nThe tools come from a server called `living-brand`. Depending on the client their names carry a prefix, for example `mcp__living-brand__open_engagement`, or `mcp__plugin_living-brand_living-brand__open_engagement` when installed as a plugin; the last part is always the tool name used below. If they are not available, say so; do not improvise the record from memory.\n\n## The one idea\n\nEvery piece of material carries its **context** (what it was for) and its **standing** (what it may do now). Standing is four separate answers, and they are never merged:\n\n- **Relevant**: it bears on the question.\n- **Authorized**: the company sanctioned it, someone checked it, and it has not been replaced.\n- **Reusable here**: rights cover this use, on these channels, for these dates.\n- **Authoritative**: it is canon in force.\n\nRelevant is not authorized. Authorized is not reusable. Reusable is not authoritative. When you cite material, say which of the four you are relying on.\n\nStanding changes only when a person the company has named decides it. Retrieval, reuse, popularity, repetition and anything a model wrote can never raise it. You may propose. You never decide for someone else.\n\n## How an engagement moves\n\nFollow the practitioner's lead; do not march them through stages. These are the moves, in the order they usually make sense.\n\n1. **Enter.** `list_engagements`, then `open_engagement`. Establish the role, what they may and may not do, who decides what, and when access ends. If the engagement is a public-source study, say so plainly and keep saying so: it is the practitioner's reading of public material, not the company's record.\n2. **Orient.** From `open_engagement`: stated intent, canon in force, what needs attention first, what is not known. Name the unknowns; do not fill them.\n3. **Investigate.** `search_material` and `get_item`. Look at the actual work before the guidelines. For each piece, read what it was for before judging it: a campaign film, a product screen and a sales deck serve different purposes.\n4. **Interpret.** `get_interpretation`: what replaced what, what carries forward into the current brief, conflicting rules, drift, claims in tension with later facts, unknown rights, impact without established attribution, missing evidence, decisions nobody is named to make.\n5. **Choose.** `record_choice` for the practitioner's judgment (preserve, investigate, repair, evolve, invent). `propose_standing` when something should change standing: give their reason as they gave it and attach only evidence they cite. Do not improve the case; the warnings the reviewer sees depend on it. If a choice needs someone's authority, pass `needs` so it is routed. Where the practitioner is the named authority (`open_engagement` says \"You are named for\"), they can `approve_item`, `decide_proposal` and `answer_choice` themselves; ask before doing any of them, and never do it unprompted. Adopting something as canon needs, from them: which kinds of work it covers (`covers`; this is what its rules will then be applied to), any rules the material states that they are not adopting with it (`hold_back_rule_ids`), and, if nobody has checked the record against its source, what they checked it against. Read them the rules it would put in force first. Ask; do not supply any of it. When they answer one of the record's open questions, keep the answer with `record_answer`.\n6. **Organize.** `build_brief`. `issue_context_package` for a partner or another agent.\n7. **Transfer.** `export_engagement_package`. `end_engagement` only when the practitioner confirms.\n\nOrientation, a full audit, a creative investigation and execution planning are different pieces of work. Finishing one does not finish the others; say which one you did.\n\n## Rules you do not bend\n\n- **One client at a time.** Every tool takes one `engagement_id`. Never carry a fact, a number, a name, a plan or a phrase from one engagement into another, including in your own summaries. If the practitioner asks you to compare two clients' material, decline and explain that the separation is the point; offer to compare dates and workload only.\n- **Say only what the record supports.** If a tool result does not contain it, you do not know it. \"Not recorded\" is a complete answer.\n- **Keep evidence in its four kinds.** Intended impact, observed outcome, this element's own contribution, and transfer to other situations. A campaign's reach is not proof that its illustration worked. A result without a comparison is a report, not a finding. Never produce a single impact score.\n- **A success is not a rule.** Work that did well in its context is a contextual success until someone with authority adopts it more widely. Say what was different about its context.\n- **Hypotheses stay hypotheses.** When the evidence points beyond the creative work (to price, product, service, organisation), say so, state the uncertainty and a way to test it, and name who decides. A recommendation is not authority to act.\n- **Never decide as someone else.** `approve_item`, `decide_proposal`, `answer_choice` and `retire_item` work only where this practitioner has been named. If they ask you to adopt something on behalf of a colleague, record a proposal and tell them it waits.\n- **Ask before you write in the practitioner's name.** `record_choice`, `record_answer`, `add_method`, `record_reuse` and `name_authority` go on the record as theirs. Use them when they asked for that record or said yes to your offer, and give their reasons, not yours.\n- **Blocked by rights is a question for the rights holder.** When a licence does not cover the use, name the holder and say the next step is asking them for a wider licence, through whoever the company names for usage rights. Whether it can be had, and at what cost, is not recorded until they answer.\n- **Never name an authority yourself.** `name_authority` records what the company says. Ask the practitioner who decides; do not infer it from a job title.\n- **Public is not permission.** Material on a public website has unknown or restricted rights until someone shows otherwise.\n- **A study is a reading, and stays one.** In a public-source study nothing is authorized or authoritative, whatever has been checked, and the classes are the practitioner's reading (\"read as current\"), never the company's classification. When the study sets a statement beside a later report, say that the pairing is the study's own. Do not turn a pairing into a claim that the company contradicted itself.\n- **Do not present drafts as the brand's voice.** Anything you write is a proposal until someone with authority says otherwise.\n\n## Bringing in material from other connectors\n\nThe practitioner may have other connectors attached (a guidelines portal, a drive, a design tool, a website CMS). When you read brand material through one of them:\n\n1. Read only what the practitioner pointed you to, and only read.\n2. Record what you found with `add_source_note`: a title, where it was found, what it is, and the link. It enters as `discovered` or `extracted`, with unknown rights and no approval. That is correct; do not argue it higher.\n3. If the material was itself written by a model (a generated style guide, a prompt, an auto-summary), set `origin` to `generated`. Model defaults are not brand evidence.\n4. Use `verify_item` only after the practitioner, or you in this conversation, actually checked the record against its source. Say what was checked.\n5. Do not copy a whole library. Record what the project needs.\n\nSome vendors restrict taking brand data out of their product (for example, using a design tool's brand kit outside that tool). If a connector's terms are unclear, record that the material exists and where, and ask the practitioner before recording its contents.\n\n## Answering \"what carries forward?\"\n\nWhen the practitioner says something like \"we did something similar before, but the goals are different now\":\n\n1. Find the earlier work with `search_material` and read it with `get_item`, including its original goal, audience and canvas.\n2. Call `get_interpretation`. If a precedent is set on the engagement, it returns a verdict for each element (preserve, adapt, reverse, retire, investigate first) with the brief change behind it.\n3. If no precedent is set, reason it through in the open: list what changed between the two briefs, then for each element say what job it did and whether that job still exists. State where rights or stale claims block reuse.\n4. Say what the earlier results can and cannot tell you about the new brief.\n5. Offer to record the outcome with `record_choice`.\n\n## What to leave behind\n\nBefore the practitioner closes an engagement, check with `get_interpretation` that the record holds: the choices made and why, proposals still waiting and who they wait for, tensions not resolved, questions only the company can answer, and what kind of work was and was not done. Fill the gaps first, then `export_engagement_package`. Tell them which context packages are still valid; the export lists them.\n\nThe practitioner's methods are theirs and travel with them (`get_workbench`, `add_method`). A method must be general. If it names a client or contains their material, it is not a method. Say so, offer a general wording, and offer to record the client-specific part as a choice in that engagement. Add or record either only after the practitioner says yes.\n";
 
 // living-brand/connector/store.mjs
 import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync, renameSync, rmSync, readdirSync, chmodSync, statSync, rmdirSync, lstatSync } from "node:fs";
@@ -24112,6 +24112,15 @@ var BASES = {
   "public-source": { name: "Public-source study", note: "Read from public material only. Not the company's own record." }
 };
 var isPublicStudy = (brand) => brand?.basis === "public-source";
+var STUDY_CLASSES = {
+  canon: { name: "Read as current", job: "This study reads it as what the company uses now. Only the company can say what governs." },
+  precedent: { name: "Read as earlier work", job: "This study reads it as work that came before what is used now." },
+  contextual: { name: "Seen in use, standing unclear", job: "It has been seen in use. Whether the company treats it as settled is not known." },
+  experiment: { name: "Read as a trial", job: "This study reads it as something being tried." },
+  operational: { name: "On the public record", job: "Something the company did or published. It is not read here as a statement of the brand." },
+  archive: { name: "Read as past", job: "This study reads it as no longer in use." }
+};
+var classOf = (standing, brand) => (isPublicStudy(brand) ? STUDY_CLASSES : STANDING_CLASSES)[standing] || { name: "Unclassified", job: "" };
 var basisNote = (brand) => String(brand?.basisNote || "").trim() || BASES[brand?.basis]?.note || "";
 var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 function longDate(d) {
@@ -24121,7 +24130,9 @@ function longDate(d) {
   const month = MONTHS[Number(m[2]) - 1] || m[2];
   return m[3] ? `${Number(m[3])} ${month} ${m[1]}` : `${month} ${m[1]}`;
 }
+var onDate = (d) => /^\d{4}-\d{2}-\d{2}$/.test(String(d || "")) ? `on ${longDate(d)}` : /^\d{4}/.test(String(d || "")) ? `in ${longDate(d)}` : `on ${longDate(d)}`;
 var nameOf = (brand, id) => brand?.people?.[id]?.name || id || "someone unrecorded";
+var times = (n) => `${n} time${n === 1 ? "" : "s"}`;
 var pipelineRank = (stage) => PIPELINE.indexOf(stage);
 var isEffective = (window, asOf) => {
   if (!window) return true;
@@ -24130,7 +24141,8 @@ var isEffective = (window, asOf) => {
   return true;
 };
 var human = (c) => c.replace("-", " ");
-var searchText = (item) => [item.title, item.text, (item.tags || []).join(" "), item.rationale, item.kind, item.element, item.workType].filter(Boolean).join(" ");
+var searchText = (item) => [item.title, item.text, (item.tags || []).join(" "), item.rationale, item.kind, item.element, item.workType, item.period?.from?.slice(0, 4)].filter(Boolean).join(" ");
+var STOP_WORDS = /* @__PURE__ */ new Set(["the", "and", "for", "with", "that", "this", "from", "are", "was", "were", "has", "have", "not", "but", "its", "our", "your", "you", "all", "any", "can", "into", "than", "then", "what", "when", "who", "how", "why", "out", "one", "of", "to", "in", "on", "at", "by", "an", "as", "is", "it", "or", "be", "we", "no", "so", "if", "up", "do"]);
 function wordsOf(text) {
   const raw = String(text || "").toLowerCase().split(/[^\p{L}\p{N}-]+/u).filter(Boolean);
   return new Set(raw.flatMap((w) => [w, w.replace(/-/g, ""), ...w.split("-")]).filter(Boolean));
@@ -24156,6 +24168,7 @@ function assessStanding(item, purpose = {}, brand = null) {
   const asked = Boolean(purpose.terms?.length);
   const relevant = !asked || matched.length > 0;
   reasons.relevant.push(relevant ? matched.length ? `Matches ${matched.join(", ")}.` : "No question asked." : "Does not match the question.");
+  const study = isPublicStudy(brand);
   let authorized = true;
   const status = item.approval?.status;
   if (status !== "approved" && status !== "published") {
@@ -24168,7 +24181,7 @@ function assessStanding(item, purpose = {}, brand = null) {
   }
   if (item.retired) {
     authorized = false;
-    reasons.authorized.push(`Retired on ${longDate(item.retired.date)}.`);
+    reasons.authorized.push(`Retired ${onDate(item.retired.date)}.`);
   }
   if (item.supersededBy) {
     const successor = brand?.items?.find((i) => i.id === item.supersededBy);
@@ -24184,12 +24197,25 @@ function assessStanding(item, purpose = {}, brand = null) {
     reasons.authorized.push("Outside its effective dates.");
   }
   if (authorized) {
-    reasons.authorized.push(status === "published" ? `Published by ${item.approval.by || "the company"}${item.approval.date ? ` on ${longDate(item.approval.date)}` : ""}. No internal approval record seen.` : `Approved by ${nameOf(brand, item.approval.by)} on ${longDate(item.approval.date)}.`);
+    reasons.authorized.push(status === "published" ? `Published by ${item.approval.by || "the company"}${item.approval.date ? ` ${onDate(item.approval.date)}` : ""}. No internal approval record seen.` : `Approved by ${nameOf(brand, item.approval.by)} ${onDate(item.approval.date)}.`);
+  }
+  if (study) {
+    authorized = false;
+    reasons.authorized = [`${brand.name} has authorized nothing for this study.${status === "published" && item.approval?.date ? ` It published this ${onDate(item.approval.date)}.` : ""}`];
   }
   const rights = item.rights || { status: "unknown" };
   const wanted = purpose.channels || [];
   let reusable = false;
-  if (rights.status === "cleared" || rights.status === "restricted") {
+  const untrue = study ? [] : (brand?.claims || []).filter((c) => (c.usedIn || []).includes(item.id)).filter((c) => {
+    const fact = (brand?.facts || []).find((f) => f.id === c.contradictedBy);
+    return fact?.date && asOf && fact.date <= asOf;
+  });
+  if (untrue.length) {
+    reasons.reusable.push(...untrue.map((c) => `Carries a claim that is no longer true: "${String(c.statement).replace(/[.]+$/, "")}".`));
+  } else if (rights.status === "own") {
+    reusable = true;
+    reasons.reusable.push(rights.note || "The brand's own rules and values. Nothing in it is licensed from anyone else.");
+  } else if (rights.status === "cleared" || rights.status === "restricted") {
     const missing = uncoveredChannels(rights, wanted);
     const expired = rights.until && asOf && asOf > rights.until;
     const lapsesDuring = rights.until && purpose.until && purpose.until > rights.until;
@@ -24197,20 +24223,21 @@ function assessStanding(item, purpose = {}, brand = null) {
     if (expired) reasons.reusable.push(`Licence ended ${longDate(rights.until)}.`);
     else if (missing.length) reasons.reusable.push(`Not licensed for ${missing.map(human).join(", ")}.`);
     else if (lapsesDuring) reasons.reusable.push(`Licence ends ${longDate(rights.until)}, before the work would finish.`);
+    else if (rights.status === "restricted" && !(rights.channels || []).length) reasons.reusable.push("Its use is restricted, and no permitted use is recorded.");
     else if (!wanted.length && rights.status === "restricted") reasons.reusable.push(`No channel named for this use. Licensed for ${scope} only.`);
     else {
       reusable = true;
       reasons.reusable.push(wanted.length ? `Licensed for ${wanted.map(human).join(", ")}.` : `Rights cleared for ${scope}.`);
     }
-    if (rights.note && !reusable) reasons.reusable.push(rights.note);
+    if (rights.note) reasons.reusable.push(rights.note);
   } else if (rights.status === "expired") {
     reasons.reusable.push("Rights expired.");
   } else {
     reasons.reusable.push((rights.status && rights.status !== "unknown" ? `Rights recorded as "${rights.status}", which is not a status this record recognises.` : "Rights unknown.") + (rights.note ? ` ${rights.note}` : ""));
   }
-  const authoritative = item.standing === "canon" && authorized;
+  const authoritative = !study && item.standing === "canon" && authorized;
   const record2 = item.standingRecord;
-  reasons.authoritative.push(authoritative ? record2?.basis === "reading" ? `Read as canon from public material${record2.scope ? `: ${record2.scope}` : ""}. The company has not confirmed it here.` : `Canon since ${record2?.date ? longDate(record2.date) : "an unrecorded date"}${record2?.scope ? `: ${record2.scope}` : ""}.` : `${STANDING_CLASSES[item.standing]?.name || "Unclassified"}${item.standing === "canon" ? ", but not authorized" : ""}${item.reuse?.length ? `, reused ${item.reuse.length} times; reuse confers no authority` : ""}.`);
+  reasons.authoritative.push(study ? `${STUDY_CLASSES[item.standing]?.name || "Unclassified"}. That is this study's reading; only ${brand.name} can say what governs.` : authoritative ? `Canon since ${record2?.date ? longDate(record2.date) : "an unrecorded date"}${record2?.scope ? `: ${record2.scope}` : ""}.` : `${STANDING_CLASSES[item.standing]?.name || "Unclassified"}${item.standing === "canon" ? ", but not authorized" : ""}${item.reuse?.length ? `, reused ${times(item.reuse.length)}; reuse confers no authority` : ""}.`);
   return { relevant, asked, authorized, reusable, authoritative, reasons };
 }
 function effectiveRules(brand) {
@@ -24218,7 +24245,9 @@ function effectiveRules(brand) {
   return (brand.rules || []).map((r) => {
     const source = items.get(r.source);
     if (source?.retired) return { ...r, standing: "archive", inherited: true };
-    return r.standing ? r : { ...r, standing: source?.standing || "operational", inherited: true };
+    if (r.standing) return r;
+    const covers = source?.standing === "canon" ? source.standingRecord?.covers : null;
+    return { ...r, standing: source?.standing || "operational", inherited: true, ...Array.isArray(covers) && covers.length ? { scope: covers } : {} };
   });
 }
 function rulesInForce(rules, asOf) {
@@ -24258,7 +24287,7 @@ function openTenant(vault, engagement, { asOf } = {}) {
   });
   return deepFreeze2({ tenant, brand: partition, log: [] });
 }
-var termsOf = (query) => String(query || "").toLowerCase().split(/[^\p{L}\p{N}-]+/u).filter((t) => t.length > 1);
+var termsOf = (query) => String(query || "").toLowerCase().split(/[^\p{L}\p{N}-]+/u).filter((t) => t.length > 1 && !STOP_WORDS.has(t));
 function search(tenantIndex, query, purpose = {}) {
   const terms = termsOf(query);
   const results = [];
@@ -24314,7 +24343,8 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         detail: `${workTypes.length ? `Both apply to this project (${workTypes.join(", ")}). ` : ""}${whose} Neither outranks the other until someone with authority scopes them.`,
         sources: [...new Set(rs.map((r) => r.source))],
         owners,
-        ruleIds: rs.map((r) => r.id)
+        ruleIds: rs.map((r) => r.id),
+        power: `standing.${rs[0].domain || "visual"}`
       });
     }
   }
@@ -24339,13 +24369,14 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
       const what = (d) => d.retired ? `It matches ${quote(d.retired.statement)}, retired ${longDate(d.retired.effective.to)}.` : d.says || `It has ${d.has}.`;
       out.push({
         id: `t-drift-${item.id}`,
-        kind: "Drift from canon",
+        kind: study ? "Differs from what is read as current" : "Drift from canon",
         severity: "repair",
-        title: allRetired ? `${item.title} still follows a retired rule` : `${item.title} departs from canon${drifts.length > 1 ? ` on ${drifts.length} points` : ""}`,
-        detail: `${drifts.length === 1 ? `${what(drifts[0])} Canon: ${quote(drifts[0].canon.statement)}.` : "Each point is listed with the canon rule it departs from."}${item.provenance?.origin === "generated" ? " This file was written by a model; its defaults are not brand evidence." : ""}`,
+        title: study ? `${item.title} differs from what this study reads as current${drifts.length > 1 ? ` on ${drifts.length} points` : ""}` : allRetired ? `${item.title} still follows a retired rule` : `${item.title} departs from canon${drifts.length > 1 ? ` on ${drifts.length} points` : ""}`,
+        detail: `${drifts.length === 1 ? `${what(drifts[0])} ${study ? "Read as current" : "Canon"}: ${quote(drifts[0].canon.statement)}.` : `Each point is listed with the rule it ${study ? "differs" : "departs"} from.`}${item.provenance?.origin === "generated" ? " This file was written by a model; its defaults are not brand evidence." : ""}`,
         points: drifts.length > 1 ? drifts.map((d) => ({ rule: d.canon.statement, has: d.has, says: d.retired ? what(d) : d.says, ruleId: d.canon.id })) : void 0,
         sources: [.../* @__PURE__ */ new Set([item.id, ...drifts.map((d) => d.canon.source)])],
-        owners: [...new Set(drifts.flatMap((d) => authority[`standing.${d.canon.domain || "visual"}`]))]
+        owners: [...new Set(drifts.flatMap((d) => authority[`standing.${d.canon.domain || "visual"}`]))],
+        power: `standing.${drifts[0].canon.domain || "visual"}`
       });
     }
     if (departs.length) {
@@ -24359,7 +24390,8 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         detail: `None of these rules is canon${byModel ? ", and some were written by a model" : ""}, so neither side is wrong yet. Someone has to decide which stands.`,
         points: departs.map((d) => ({ rule: d.rule.statement, has: d.has, says: d.says, ruleId: d.rule.id })),
         sources: [item.id, ...sourcesOfRules],
-        owners: [...new Set(departs.flatMap((d) => authority[`standing.${d.rule.domain || "visual"}`]))]
+        owners: [...new Set(departs.flatMap((d) => authority[`standing.${d.rule.domain || "visual"}`]))],
+        power: `standing.${departs[0].rule.domain || "visual"}`
       });
     }
   }
@@ -24367,15 +24399,28 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
     const fact = (brand.facts || []).find((f) => f.id === c.contradictedBy);
     const usedIn = (c.usedIn || []).map((id) => items[id]?.title || id).join(", ");
     const disputed = [...c.disputedBy || [], ...fact && !fact.date ? [fact.id] : []];
+    const said = c.isQuote === false ? String(c.statement || "").trim().replace(/[.]+$/, "") : quote(c.statement);
     if (fact && fact.date && fact.date <= asOf) {
-      out.push({
+      const note = String(c.tensionNote || "").trim();
+      const own = /pairing is (this|the) study's/i.test(note) ? "" : " The pairing is this study's own.";
+      out.push(study ? {
         id: `t-stale-${c.id}`,
-        kind: study ? "Claim in tension with a later fact" : "Stale claim",
+        kind: "Statement set beside a later report",
         severity: "repair",
-        title: study ? `${quote(c.statement)} sits uneasily with a later public fact` : `${quote(c.statement)} is no longer true`,
-        detail: `${fact.statement}${usedIn ? ` The claim ${study ? "appeared" : "still appears"} in ${usedIn}.` : ""}${c.tensionNote ? ` ${c.tensionNote}` : ""}`,
+        title: `Set beside a later report: ${said}`,
+        detail: `${note.includes(fact.statement.slice(0, 60)) ? "" : `${fact.statement} `}${note}${own}`.trim(),
         sources: [...new Set([...c.usedIn || [], fact.source].filter(Boolean))],
-        owners: authority.claims
+        owners: [],
+        power: "claims"
+      } : {
+        id: `t-stale-${c.id}`,
+        kind: "Stale claim",
+        severity: "repair",
+        title: `${said} is no longer true`,
+        detail: `${fact.statement}${usedIn ? ` The claim still appears in ${usedIn}.` : ""}${note ? ` ${note}` : ""}`,
+        sources: [...new Set([...c.usedIn || [], fact.source].filter(Boolean))],
+        owners: authority.claims,
+        power: "claims"
       });
     } else if (disputed.length) {
       const others = (brand.facts || []).filter((f) => disputed.includes(f.id));
@@ -24383,20 +24428,22 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         id: `t-disputed-${c.id}`,
         kind: "Records disagree",
         severity: "decide",
-        title: `${quote(c.statement)} does not match another record`,
+        title: `${said} does not match another record`,
         detail: `${others.map((f) => f.statement).join(" ")}${usedIn ? ` The claim appears in ${usedIn}.` : ""}${c.tensionNote ? ` ${c.tensionNote}` : " Nothing recorded says which is right."}`,
         sources: [...new Set([...c.usedIn || [], ...others.map((f) => f.source)].filter(Boolean))],
-        owners: authority.claims
+        owners: authority.claims,
+        power: "claims"
       });
     } else if (!study && !c.verifiedOn && c.kind !== "meaning" && !(brand.facts || []).some((f) => f.id === c.supportedBy)) {
       out.push({
         id: `t-unsupported-${c.id}`,
         kind: "Claim not yet confirmed",
         severity: "repair",
-        title: `${quote(c.statement)} has nothing on file behind it`,
+        title: `${said} has nothing on file behind it`,
         detail: `${usedIn ? `Used in ${usedIn}. ` : ""}${c.tensionNote || "No one has recorded checking it."}`,
         sources: c.usedIn || [],
-        owners: authority.claims
+        owners: authority.claims,
+        power: "claims"
       });
     }
   }
@@ -24404,7 +24451,7 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
     if (item.standing === "archive" && item.approval?.status === "rejected") continue;
     const r = item.rights || {};
     const isUsedNow = typeof item.inUse === "boolean" ? item.inUse : Boolean((item.relations || []).some((rel) => rel.type === "derived from") || item.reuse?.length);
-    const known = ["cleared", "restricted", "expired"].includes(r.status);
+    const known = ["cleared", "restricted", "expired", "own"].includes(r.status);
     if (!known && (isUsedNow || pipelineRank(item.pipeline) >= pipelineRank("verified"))) {
       out.push({
         id: `t-rights-${item.id}`,
@@ -24413,7 +24460,8 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         title: study ? `${item.title}: the terms for using it are not visible from public sources` : isUsedNow ? `${item.title} is in use with unreviewed rights` : `${item.title}: its rights have not been reviewed`,
         detail: r.note || (study ? "Nothing found says what others may do with it." : "No licence on file."),
         sources: [item.id],
-        owners: authority.rights
+        owners: authority.rights,
+        power: "rights"
       });
     }
     if (r.until && r.until >= asOf && channels.length && (item.functions || []).length) {
@@ -24425,7 +24473,8 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         title: `${item.title} is not licensed for ${missing.map((c) => c.replace("-", " ")).join(", ")}`,
         detail: r.note || `Ends ${longDate(r.until)}.`,
         sources: [item.id],
-        owners: authority.rights
+        owners: authority.rights,
+        power: "rights"
       });
     }
   }
@@ -24434,14 +24483,13 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
       const outcome = e.type === "observed" || e.type === "contribution" || e.type === "transfer";
       const flagged = outcome && (e.attribution === "not-established" || e.type === "observed" && e.basis === "reported" && /no control|same weeks/i.test(e.statement));
       if (flagged) {
-        const [first, ...rest] = e.statement.split(/(?<=[.!?])\s+/);
         out.push({
           id: `t-impact-${e.id}`,
           kind: "Attribution not established",
           severity: "investigate",
-          title: `${item.title}: ${quote(first)} is not evidence the work caused it`,
-          detail: rest.join(" ") || e.note || "The record says what happened after the work, not that the work caused it.",
-          sources: [item.id, e.source].filter(Boolean)
+          title: `${item.title}: a result is reported, and nothing recorded ties it to this work`,
+          detail: `${e.statement}${e.note ? ` ${e.note}` : ""}`,
+          sources: [...new Set([item.id, e.source].filter(Boolean))]
         });
       }
     }
@@ -24478,8 +24526,9 @@ var TENSION_ORDER = [
   "Conflicting guidance",
   "Records disagree",
   "Stale claim",
-  "Claim in tension with a later fact",
+  "Statement set beside a later report",
   "Drift from canon",
+  "Differs from what is read as current",
   "Material and written rule disagree",
   "Claim not yet confirmed",
   "Licence does not cover the plan",
@@ -24519,7 +24568,11 @@ function changeLedger(brand, { asOf } = {}) {
 function timeline(brand, { asOf } = {}) {
   const items = byId(brand);
   const facts = (brand.facts || []).map((f) => ({ id: f.id, date: f.date || "", statement: f.statement, source: items[f.source] ? f.source : null, links: f.links || [], ahead: Boolean(asOf && f.date && f.date > asOf) }));
-  const dated = facts.filter((f) => f.date).sort((a, b) => a.date.localeCompare(b.date));
+  const key = (d) => {
+    const [y, m = "99", day = "99"] = String(d).split("-");
+    return `${y}-${m}-${day}`;
+  };
+  const dated = facts.filter((f) => f.date).sort((a, b) => key(a.date).localeCompare(key(b.date)));
   return [...dated, ...facts.filter((f) => !f.date)];
 }
 function organizationalHypotheses(brand, engagement = {}) {
@@ -24579,6 +24632,7 @@ function carryForward(brand, engagement, { asOf }) {
 function buildBrief(brand, engagement, decisions, { asOf }) {
   const items = byId(brand);
   const sources = /* @__PURE__ */ new Set();
+  decisions = decisions.filter((d) => d.status !== "withdrawn");
   decisions.forEach((d) => (d.sources || []).forEach((s) => sources.add(s)));
   (engagement.materials || []).forEach((s) => sources.add(s));
   const live = rulesInForce(effectiveRules(brand), asOf).filter((r) => appliesTo(r, engagement.workTypes || []));
@@ -24595,7 +24649,7 @@ function buildBrief(brand, engagement, decisions, { asOf }) {
     objective: engagement.objective,
     audience: engagement.audience,
     channels: engagement.channels,
-    rules: live.map((r) => ({ id: r.id, statement: r.statement, standing: r.standing })),
+    rules: live.map((r) => ({ id: r.id, statement: r.statement, standing: r.standing, ...isPublicStudy(brand) ? { readAs: classOf(r.standing, brand).name } : {} })),
     decisions: decisions.map((d) => ({ verdict: d.verdict, subject: d.subject, rationale: d.rationale, by: d.by, status: d.status })),
     evaluation: engagement.evaluation || [],
     snapshot,
@@ -24618,7 +24672,7 @@ function flatKeys(o, acc = {}) {
   }
   return acc;
 }
-function orientation(brand, engagement, { asOf }) {
+function orientation(brand, engagement, { asOf, answers = [] }) {
   const items = byId(brand);
   const canon = brand.items.filter((i) => i.standing === "canon" && assessStanding(i, { asOf }, brand).authoritative);
   const stages = brand.items.reduce((acc, i) => ({ ...acc, [i.pipeline]: (acc[i.pipeline] || 0) + 1 }), {});
@@ -24627,7 +24681,8 @@ function orientation(brand, engagement, { asOf }) {
   const first = tensions.filter((t) => !seen.has(t.kind) && seen.add(t.kind));
   const attention = [...first, ...tensions.filter((t) => !first.includes(t))];
   const strengths = (engagement.strengths || []).filter((st) => Array.isArray(st.sources) && st.sources.length && st.sources.every((id) => items[id]));
-  const unknowns = [...brand.unknowns || []];
+  const answered = new Set((answers || []).map((a) => a.question));
+  const unknowns = (brand.unknowns || []).filter((u) => !answered.has(u));
   const gaps = unnamedPowers(brand);
   if (gaps.length) unknowns.push(`Who decides ${gaps.map((p) => POWERS[p]).join(", ")}.`);
   return { intent: brand.intent, canon, stages, strengths, tensions, attention, unknowns, owners: names(brand, brand.intent?.owner ? [brand.intent.owner] : []) };
@@ -24701,17 +24756,24 @@ function propose(state, { itemId, to, rationale, evidenceIds = [], by, scope, as
   const allEvidence = s.brand.items.flatMap((i) => (i.evidence || []).map((e) => ({ ...e, on: i.id, origin: i.provenance?.origin })));
   const cited = allEvidence.filter((e) => (evidenceIds || []).includes(e.id));
   const warnings = [];
-  const near = /* @__PURE__ */ new Set([item.id, ...(item.relations || []).map((r) => r.to), ...s.brand.items.filter((i) => (i.relations || []).some((r) => r.to === item.id)).map((i) => i.id)]);
-  const own = cited.filter((e) => near.has(e.on) || e.source === item.id);
+  const near = /* @__PURE__ */ new Set([...(item.relations || []).map((r) => r.to), ...s.brand.items.filter((i) => (i.relations || []).some((r) => r.to === item.id)).map((i) => i.id)]);
+  const own = cited.filter((e) => e.on === item.id || e.source === item.id);
+  const related = cited.filter((e) => !own.includes(e) && near.has(e.on));
   const independent = own.filter((e) => e.origin !== "generated" && e.basis !== "reuse" && e.type !== "intended");
+  const promotion = ["canon", "precedent", "contextual"].includes(to);
+  if (promotion && to !== "canon") {
+    if (item.pipeline === "discovered") warnings.push("Only found. Nobody has recorded what it is.");
+    if (item.approval?.status === "rejected") warnings.push(`It was rejected${item.approval.date ? ` ${onDate(item.approval.date)}` : ""}.`);
+  }
   if (to === "canon") {
-    if (cited.length && !own.length) warnings.push("The evidence cited was recorded on other material and does not bear on this.");
+    if (cited.length && !own.length && !related.length) warnings.push("The evidence cited was recorded on other material and does not bear on this.");
+    if (related.length) warnings.push(`Some of the evidence cited was recorded on related material (${[...new Set(related.map((e) => s.brand.items.find((i) => i.id === e.on)?.title || e.on))].join(", ")}), not on this piece.`);
     if (!independent.length) warnings.push("No independent evidence. Repetition and reuse are not evidence.");
     else if (!independent.some((e) => e.type === "contribution" || e.type === "transfer")) warnings.push("The evidence cited shows what happened, not that this work caused it.");
     if (cited.length && cited.every((e) => ["reported", "company_reported"].includes(e.basis))) warnings.push("All cited evidence is self-reported.");
-    if (item.rights?.status !== "cleared") warnings.push(`Rights are ${item.rights?.status || "unknown"}; canon that cannot be used is a trap.`);
+    if (!["cleared", "own"].includes(item.rights?.status)) warnings.push(`Rights are ${item.rights?.status || "unknown"}; canon that cannot be used is a trap.`);
     if (item.reuse?.length) warnings.push(`Reused ${item.reuse.length} time${item.reuse.length === 1 ? "" : "s"}. Frequency is a reason to review, not a reason to adopt.`);
-    if (item.approval?.status === "rejected") warnings.push(`It was rejected${item.approval.date ? ` on ${longDate(item.approval.date)}` : ""}.`);
+    if (item.approval?.status === "rejected") warnings.push(`It was rejected${item.approval.date ? ` ${onDate(item.approval.date)}` : ""}.`);
     if (pipelineRank(item.pipeline) < pipelineRank("verified")) warnings.push(`Only ${item.pipeline}. Check it against its source before it governs anything.`);
     if (item.provenance?.origin === "generated") warnings.push("This was written by a model. Its wording is a description, not a decision.");
   }
@@ -24734,7 +24796,7 @@ function propose(state, { itemId, to, rationale, evidenceIds = [], by, scope, as
   return s;
 }
 var rulesStatedBy = (brand, itemId) => (brand.rules || []).filter((r) => r.source === itemId && !r.standing);
-function decide(state, proposalId, { by, outcome, note, scope, checked, effectiveFrom, asOf }) {
+function decide(state, proposalId, { by, outcome, note, scope, covers, holdBack, checked, effectiveFrom, asOf }) {
   const s = clone2(state);
   const p = s.proposals.find((x) => x.id === proposalId);
   if (!p) throw new Error("No such proposal.");
@@ -24745,16 +24807,37 @@ function decide(state, proposalId, { by, outcome, note, scope, checked, effectiv
   if (outcome === "adopt" && item.standing !== p.from) throw new Error(`${item.title} changed standing after this proposal was made. Review it again.`);
   note = oneLine(note);
   if (outcome !== "adopt" && !note) throw new Error(outcome === "reject" ? "Say why it is turned down." : "Say what needs to change.");
-  scope = oneLine(scope) || oneLine(p.scope);
+  covers = [...new Set((Array.isArray(covers) ? covers : []).map(oneLine).filter(Boolean))];
+  if (covers.includes("all")) covers = ["all"];
+  scope = oneLine(scope) || (covers.length ? covers[0] === "all" ? "All work" : covers.join(", ") : oneLine(p.scope));
   checked = oneLine(checked);
   const toCanon = outcome === "adopt" && p.to === "canon";
+  if (outcome === "adopt" && ["canon", "precedent", "contextual"].includes(p.to)) {
+    if (item.pipeline === "discovered") throw new Error(`${item.title} has only been found. Nobody has recorded what it is, so it cannot be given that standing yet.`);
+    if (item.approval?.status === "rejected") throw new Error(`${item.title} was rejected. It cannot be given that standing while that stands.`);
+  }
   if (toCanon) {
-    if (item.pipeline === "discovered") throw new Error(`${item.title} has only been found. Record what it is before it can govern anything.`);
-    if (item.approval?.status === "rejected") throw new Error(`${item.title} was rejected. It cannot become canon while that stands.`);
     if (pipelineRank(item.pipeline) < pipelineRank("verified") && !checked) throw new Error(`${item.title} has not been checked against its source. Say what you checked it against.`);
     if (!scope) throw new Error("Say what this canon covers.");
   }
-  const decision = { id: nextId(s, "d", asOf), proposalId, itemId: item.id, outcome, by, note, date: asOf, from: item.standing, to: outcome === "adopt" ? p.to : item.standing, evidenceIds: p.evidenceIds, scope };
+  const stated = toCanon ? (s.brand.rules || []).filter((r) => r.source === item.id && !r.standing) : [];
+  const held = stated.filter((r) => (Array.isArray(holdBack) ? holdBack : []).includes(r.id));
+  const decision = {
+    id: nextId(s, "d", asOf),
+    proposalId,
+    itemId: item.id,
+    outcome,
+    by,
+    note,
+    date: asOf,
+    from: item.standing,
+    to: outcome === "adopt" ? p.to : item.standing,
+    evidenceIds: p.evidenceIds,
+    scope,
+    ...toCanon && covers.length ? { covers } : {},
+    ...toCanon && checked ? { checked } : {},
+    ...held.length ? { heldBack: held.map((r) => r.id) } : {}
+  };
   p.status = outcome === "adopt" ? "adopted" : outcome === "reject" ? "rejected" : "revise";
   p.decided = { by, date: asOf, note };
   if (outcome === "adopt") {
@@ -24772,7 +24855,11 @@ function decide(state, proposalId, { by, outcome, note, scope, checked, effectiv
     }
     item.standingHistory = [...item.standingHistory || [], { standing: item.standing, record: item.standingRecord || null, until: effectiveFrom || asOf }];
     item.standing = p.to;
-    item.standingRecord = { by, date: effectiveFrom || asOf, scope, decisionId: decision.id, evidenceIds: p.evidenceIds, rationale: p.rationale, basis: "decision" };
+    item.standingRecord = { by, date: effectiveFrom || asOf, scope, decisionId: decision.id, evidenceIds: p.evidenceIds, rationale: p.rationale, basis: "decision", ...toCanon && covers.length ? { covers } : {} };
+    for (const r of held) {
+      r.standing = "operational";
+      r.heldBack = { by, date: asOf, decisionId: decision.id };
+    }
     if (p.to !== "archive") delete item.retired;
     closeStale(s, item, decision.id, asOf);
   }
@@ -24796,6 +24883,7 @@ function retire(state, itemId, { by, reason, asOf }) {
 }
 function recordReuse(state, itemId, { where, asOf }) {
   if (!String(where || "").trim()) throw new Error("Say where it was reused.");
+  if (isPublicStudy(state.brand)) throw new AuthorityError(`A study may not reuse ${state.brand.name}'s material, so there is no reuse of yours to record. What you saw others do with it belongs in a source note.`);
   requireWrite(state, "record reuse");
   const s = clone2(state);
   const item = findItem(s, itemId);
@@ -24808,7 +24896,7 @@ function verifyItem(state, itemId, { by, how, asOf }) {
   const s = clone2(state);
   const item = findItem(s, itemId);
   if (pipelineRank(item.pipeline) >= pipelineRank("verified")) throw new Error(`${item.title} is already ${item.pipeline}.`);
-  if (item.pipeline === "discovered") throw new Error(`${item.title} has only been found. Record what it is before checking it.`);
+  if (item.pipeline === "discovered") throw new Error(`${item.title} has only been found. Nobody has recorded what it is, so there is nothing yet to check.`);
   item.pipelineHistory = [...item.pipelineHistory || [], { stage: item.pipeline, until: asOf }];
   item.pipeline = "verified";
   item.verification = { by, how: String(how).trim(), date: asOf };
@@ -24818,7 +24906,7 @@ function approveItem(state, itemId, { by, note, asOf }) {
   const s = clone2(state);
   const item = findItem(s, itemId);
   if (!canDecide(s.brand, by, powerFor(item))) throw new AuthorityError(refusal(s.brand, by, item, "approve"));
-  if (item.pipeline === "discovered") throw new Error(`${item.title} has only been found. Record what it is before approving it.`);
+  if (item.pipeline === "discovered") throw new Error(`${item.title} has only been found. Nobody has recorded what it is, so it cannot be approved yet.`);
   if (item.retired) throw new Error(`${item.title} is retired.`);
   if (item.approval?.status === "approved") throw new Error(`${item.title} is already approved.`);
   if (pipelineRank(item.pipeline) < pipelineRank("verified")) throw new Error(`${item.title} has not been checked against its source. Check it first, then approve it.`);
@@ -24916,18 +25004,30 @@ var CHOICES = {
   evolve: "Evolve",
   invent: "Invent"
 };
-function recordChoice(state, { subject, verdict, rationale, sources = [], by, needs, asOf }) {
+function recordChoice(state, { subject, verdict, rationale, sources = [], by, needs, about, asOf }) {
   if (!CHOICES[verdict]) throw new Error(`Unknown choice ${verdict}.`);
   if (needs && !POWERS[needs]) throw new Error(`Unknown area ${needs}.`);
   subject = oneLine(subject);
   if (!subject) throw new Error("A choice needs a subject.");
+  if (!String(rationale || "").trim()) throw new Error("Say why. A choice is your judgment, and the reason is part of it.");
   requireWrite(state, "record choices");
   const s = clone2(state);
   const mine = Boolean(needs) && canDecide(s.brand, by, needs);
   const owner = needs ? mine ? by : deciders(s.brand, needs)[0]?.id || null : null;
-  const choice = { id: nextId(s, "c", asOf), subject, verdict, rationale: String(rationale || "").trim(), sources: Array.isArray(sources) ? sources : [], by, date: asOf, needs: needs || null, owner, status: needs ? mine ? "accepted" : "awaiting decision" : "recorded" };
+  const choice = { id: nextId(s, "c", asOf), subject, verdict, rationale: String(rationale || "").trim(), sources: Array.isArray(sources) ? sources : [], by, date: asOf, needs: needs || null, owner, status: needs ? mine ? "accepted" : "awaiting decision" : "recorded", ...oneLine(about) ? { about: oneLine(about) } : {} };
   if (mine) choice.answer = { by, date: asOf, note: "" };
   s.choices.push(choice);
+  return s;
+}
+function withdrawChoice(state, choiceId, { by, asOf }) {
+  const found = state.choices.find((c2) => c2.id === choiceId);
+  if (!found) throw new Error("No such choice.");
+  if (found.by !== by) throw new AuthorityError("Only the person who recorded a choice can withdraw it.");
+  if (found.status === "withdrawn") throw new Error("That choice was already withdrawn.");
+  const s = clone2(state);
+  const c = s.choices.find((x) => x.id === choiceId);
+  c.status = "withdrawn";
+  c.withdrawn = { by, date: asOf };
   return s;
 }
 function answerChoice(state, choiceId, { by, outcome, note, asOf }) {
@@ -25015,12 +25115,16 @@ function buildHandoff(state, { brief, asOf, ended = null, packages = [] }) {
   const { brand, engagement } = state;
   const carried = carryForward(brand, engagement, { asOf });
   const study = isPublicStudy(brand);
+  const answered = new Set((state.answers || []).map((a) => a.question));
+  const owner = !study && Object.values(brand.authority || {}).some((l) => Array.isArray(l) && l.includes(engagement.actor));
   const tensions = findTensions(brand, { asOf, workTypes: engagement.workTypes || [], channels: engagement.channels || [] });
   return {
     format: "living-brand.engagement/0.2",
     company: brand.name,
     basis: brand.basis || "company-record",
     basisNote: basisNote({ ...brand, basis: brand.basis || "company-record" }),
+    // In a study every standing below is the author's reading, named as one.
+    ...study ? { standingNote: `Every standing in this file is this study's reading of public material. None of it is ${brand.name}'s own classification, approval or decision.` } : {},
     // Written on the day it is exported. The engagement has ended only if it says so.
     written: asOf,
     engagement: {
@@ -25046,14 +25150,16 @@ function buildHandoff(state, { brief, asOf, ended = null, packages = [] }) {
     proposals: state.proposals,
     decisions: state.decisions,
     openTensions: tensions.map((t) => ({ kind: t.kind, title: t.title, sources: t.sources })),
-    openQuestions: engagement.questions || [],
+    // A question that has been answered is no longer open; the answer is below with who gave it.
+    openQuestions: (engagement.questions || []).filter((q) => !answered.has(q)),
     answers: state.answers || [],
-    unknowns: brand.unknowns || [],
+    unknowns: (brand.unknowns || []).filter((u) => !answered.has(u)),
     sources: brand.items.map((i) => ({
       id: i.id,
       title: i.title,
       pipeline: i.pipeline,
       standing: i.standing,
+      ...study ? { readAs: classOf(i.standing, brand).name } : {},
       rights: i.rights?.status,
       provenance: i.provenance?.source,
       origin: i.provenance?.origin,
@@ -25061,7 +25167,7 @@ function buildHandoff(state, { brief, asOf, ended = null, packages = [] }) {
       links: (i.sources || []).map((s) => s.url),
       verification: i.verification || null
     })),
-    retained: study ? { company: `Nothing. ${brand.name} did not commission this and has not seen it.`, practitioner: "The study: public sources, the reading of them, and the questions only the company can answer." } : { company: "Everything above: sources, interpretation, choices, proposals and the brief.", practitioner: "General methods listed in the practitioner's workbench. No client material." },
+    retained: study ? { company: `Nothing. ${brand.name} did not commission this and has not seen it.`, practitioner: "The study: public sources, the reading of them, and the questions only the company can answer." } : owner ? { company: "Everything in this file: sources, interpretation, choices, proposals, decisions, answers and the brief.", practitioner: "Nothing separate. The person who made this pass is one of the people who decide here." } : { company: "Everything above: sources, interpretation, choices, proposals and the brief.", practitioner: "General methods listed in the practitioner's workbench. No client material." },
     completed: engagement.modesCompleted || [],
     notCompleted: MODES.filter((m) => !(engagement.modesCompleted || []).includes(m))
   };
@@ -25148,6 +25254,7 @@ function readPacket(packet) {
     if (item.brief !== void 0 && (typeof item.brief !== "object" || item.brief === null)) bad(`${item.id}: its brief must be a record.`);
     if (item.power !== void 0 && !Object.hasOwn(POWERS, item.power)) bad(`${item.id}: "${String(item.power).slice(0, 40)}" is not an area of decision.`);
     if (item.uses !== void 0 && (typeof item.uses !== "object" || item.uses === null || isList(item.uses))) bad(`${item.id}: what it uses must be a record of topics.`);
+    if (item.standingRecord?.covers !== void 0 && !isList(item.standingRecord.covers)) bad(`${item.id}: what its canon covers must be a list of kinds of work.`);
   }
   for (const item of items) {
     if (!item || typeof item !== "object" || !isText(item.id)) continue;
@@ -25741,6 +25848,7 @@ var fernway = {
     {
       id: "fw-pricing-2026",
       title: "Pricing and plans 2026",
+      power: "offer",
       kind: "Offer record",
       workType: "Offer",
       element: "Plans and prices",
@@ -26180,9 +26288,9 @@ var lines = (list) => list.flat().filter((l) => l !== null && l !== void 0 && l 
   return text.startsWith("\n") ? ["", flat(text.slice(1))] : [flat(text)];
 }).join("\n");
 var basisLine = (brand) => `${brand.name}: ${BASES[brand.basis || "company-record"].name}. ${basisNote({ ...brand, basis: brand.basis || "company-record" })}`;
-var standingLine = (item, st) => `relevant ${yn(st.relevant)}; authorized ${yn(st.authorized)}; reusable here ${yn(st.reusable)}; authoritative ${yn(st.authoritative)}`;
-var itemLine = (item, st) => [
-  `- ${item.title} [${item.id}] (${[item.kind, item.period?.from?.slice(0, 4)].filter(Boolean).join(", ")}; ${STANDING_CLASSES[item.standing].name.toLowerCase()}; ${item.pipeline})`,
+var standingLine = (item, st) => `${st.asked ? `relevant ${yn(st.relevant)}; ` : ""}authorized ${yn(st.authorized)}; reusable here ${yn(st.reusable)}; authoritative ${yn(st.authoritative)}`;
+var itemLine = (item, st, brand) => [
+  `- ${item.title} [${item.id}] (${[item.kind, item.period?.from?.slice(0, 4)].filter(Boolean).join(", ")}; ${classOf(item.standing, brand).name.toLowerCase()}; ${item.pipeline})`,
   st ? `  ${standingLine(item, st)}` : null
 ];
 var ENG = { type: "string", description: 'Engagement id from list_engagements, for example "eng-fernway".' };
@@ -26284,7 +26392,7 @@ function createTools(store) {
         return {
           text: lines([
             results.length ? `${results.length} of ${state.brand.items.length} items in ${state.brand.name}'s material${query ? ` match "${query}"` : ""}.` : `Nothing in ${state.brand.name}'s material matches "${query}". Other clients' material is not searched.`,
-            ...results.slice(0, 25).map((r) => itemLine(r.item, r.standing)),
+            ...results.slice(0, 25).map((r) => itemLine(r.item, r.standing, state.brand)),
             results.length > 25 ? `\u2026and ${results.length - 25} more. Narrow the query.` : null
           ]),
           data: { results: results.map((r) => ({ id: r.item.id, title: r.item.title, standing: r.item.standing, pipeline: r.item.pipeline, relevant: r.standing.relevant, authorized: r.standing.authorized, reusable: r.standing.reusable, authoritative: r.standing.authoritative })) }
@@ -26321,8 +26429,8 @@ function createTools(store) {
             `- Reusable here: ${st.reasons.reusable.join(" ")}`,
             `- Authoritative: ${st.reasons.authoritative.join(" ")}`,
             "",
-            `Standing: ${STANDING_CLASSES[item.standing].name}. ${STANDING_CLASSES[item.standing].job}${rec?.basis === "reading" ? ` A reading of public material, not ${state.brand.name}'s own classification.` : rec ? ` Set by ${person(state.brand, rec.by)} on ${rec.date}.` : ""}`,
-            item.standingHistory?.length ? `Before: ${item.standingHistory.map((h) => `${STANDING_CLASSES[h.standing].name} until ${h.until}`).join("; ")}.` : null,
+            `${isPublicStudy(state.brand) ? "How this study reads it" : "Standing"}: ${classOf(item.standing, state.brand).name}. ${classOf(item.standing, state.brand).job}${isPublicStudy(state.brand) ? ` Not ${state.brand.name}'s own classification.` : item.retired ? ` Retired by ${person(state.brand, item.retired.by)} on ${item.retired.date}: ${item.retired.reason}` : rec ? ` Set by ${person(state.brand, rec.by)} on ${rec.date}${rec.scope ? `. It covers: ${rec.scope}` : ""}.` : ""}`,
+            item.standingHistory?.length ? `Before: ${item.standingHistory.map((h) => `${classOf(h.standing, state.brand).name} until ${h.until}`).join("; ")}.` : null,
             `Stage: ${item.pipeline}.${item.verification ? ` Checked by ${person(state.brand, item.verification.by)} on ${item.verification.date}: ${item.verification.how}` : ""}`,
             `Standing is decided by ${who(state.brand, deciders(state.brand, powerFor(item)).map((d) => d.id))}.`,
             "",
@@ -26372,16 +26480,16 @@ Related: ${item.relations.map((r) => `${r.type} ${r.to}`).join("; ")}.` : null,
             cf?.evidenceNote || null,
             tensions.length ? "\nTensions:" : "\nNo tensions found in what has been entered.",
             ...tensions.flatMap((t) => [
-              `- ${t.kind}: ${String(t.title).replace(/[.]+$/, "")}. ${t.detail}${t.owners?.length ? ` For ${who(brand, t.owners)} to resolve.` : ""}${t.sources?.length ? ` [${[...new Set(t.sources)].join(", ")}]` : ""}`,
+              `- [${t.id}] ${t.kind}: ${String(t.title).replace(/[.]+$/, "")}. ${t.detail}${t.owners?.length ? ` For ${who(brand, t.owners)} to resolve.` : ""}${t.sources?.length ? ` [${[...new Set(t.sources)].join(", ")}]` : ""}`,
               ...(t.points || []).map((pt) => `  - Rule: ${pt.rule} ${pt.says || `It has: ${pt.has}.`}`)
             ]),
             state.proposals.length ? "\nProposals on record:" : null,
-            ...state.proposals.map((p) => `- ${p.id}: ${brand.items.find((i) => i.id === p.itemId)?.title || p.itemId}, ${STANDING_CLASSES[p.from].name.toLowerCase()} to ${STANDING_CLASSES[p.to].name.toLowerCase()}. ${p.status === "open" ? `Waiting for ${who(brand, p.reviewer)}.` : `${p.status}${p.decided ? ` by ${person(brand, p.decided.by)} on ${p.decided.date}${p.decided.note ? `: ${p.decided.note}` : ""}` : ""}.`}`),
+            ...state.proposals.map((p) => `- ${p.id}: ${brand.items.find((i) => i.id === p.itemId)?.title || p.itemId}, ${classOf(p.from, brand).name.toLowerCase()} to ${classOf(p.to, brand).name.toLowerCase()}. ${p.status === "open" ? isPublicStudy(brand) ? "A note to themselves." : `Waiting for ${who(brand, p.reviewer)}.` : `${p.status}${p.decided ? ` by ${person(brand, p.decided.by)} on ${p.decided.date}${p.decided.note ? `: ${p.decided.note}` : ""}` : ""}.`}`),
             state.choices.length ? "\nChoices on record:" : null,
-            ...state.choices.map((c) => `- ${c.id}: ${CHOICES[c.verdict]} ${c.subject}. ${c.status === "awaiting decision" ? `Waiting for ${c.owner ? person(brand, c.owner) : `someone to be named for ${POWERS[c.needs]}`}.` : c.answer ? `${c.status} by ${person(brand, c.answer.by)} on ${c.answer.date}.` : "Recorded."}`),
+            ...state.choices.map((c) => `- ${c.id}: ${CHOICES[c.verdict]} ${c.subject}. ${c.status === "withdrawn" ? "Withdrawn." : c.status === "awaiting decision" ? `Waiting for ${c.owner ? person(brand, c.owner) : `someone to be named for ${POWERS[c.needs]}`}.` : c.answer ? `${c.status} by ${person(brand, c.answer.by)} on ${c.answer.date}.` : "Recorded."}`),
             (state.answers || []).length ? "\nAnswers on record:" : null,
             ...(state.answers || []).map((a) => `- ${a.question} Answered by ${person(brand, a.by)} on ${a.date}: ${a.answer}`),
-            hyps.length ? "\nHypotheses beyond the creative work (written by a person; never causes):" : null,
+            hyps.length ? "\nHypotheses beyond the creative work (written by whoever made this reading; never stated as causes):" : null,
             ...hyps.flatMap((h) => [`- ${h.title}. ${h.statement}`, `  Uncertain because: ${h.uncertainty}`, h.test ? `  Could be tested by: ${h.test}` : null, `  Decided by: ${h.owner ? person(brand, h.owner) : "no one named"}.`])
           ]),
           data: { tensions, proposals: state.proposals, choices: state.choices, answers: state.answers || [], ledger: ledger.map((c) => ({ kind: c.kind, when: c.when, before: c.before.id, after: c.after.id })), carryForward: cf ? cf.rows.map((r) => ({ id: r.item.id, verdict: r.verdict, why: r.why })) : null, hypotheses: hyps }
@@ -26438,7 +26546,7 @@ Related: ${item.relations.map((r) => `${r.type} ${r.to}`).join("; ")}.` : null,
           tags: a.tags
         }, { by, asOf }));
         const item = next.brand.items.at(-1);
-        return { text: `Recorded "${item.title}" [${item.id}] as ${item.pipeline}, ${STANDING_CLASSES[item.standing].name.toLowerCase()}, rights unknown, not approved. It is not evidence of anything yet.`, data: { id: item.id, pipeline: item.pipeline, standing: item.standing } };
+        return { text: `Recorded "${item.title}" [${item.id}] as ${item.pipeline}, ${classOf(item.standing, next.brand).name.toLowerCase()}, rights unknown, not approved. It is not evidence of anything yet.`, data: { id: item.id, pipeline: item.pipeline, standing: item.standing } };
       }
     },
     {
@@ -26477,10 +26585,10 @@ Related: ${item.relations.map((r) => `${r.type} ${r.to}`).join("; ")}.` : null,
     {
       name: "record_choice",
       title: "Record a choice",
-      description: `Record the practitioner's judgment about something: preserve, investigate, repair, evolve or invent. A choice changes nothing in the company's knowledge. If it needs someone's authority, say which area in "needs" and it is routed to whoever is named, or waits if no one is.`,
-      input: { type: "object", properties: { engagement_id: ENG, subject: { type: "string" }, verdict: { type: "string", enum: Object.keys(CHOICES) }, rationale: { type: "string" }, sources: { type: "array", items: { type: "string" }, description: "Item ids this rests on." }, needs: { type: "string", enum: Object.keys(POWERS), description: "The area of authority it needs, if any." } }, required: ["engagement_id", "subject", "verdict", "rationale"] },
-      run({ engagement_id, subject, verdict, rationale, sources, needs }) {
-        const next = change(engagement_id, { action: "choice", subject }, (state, by) => recordChoice(state, { subject, verdict, rationale, sources, needs, by, asOf: today() }));
+      description: `Record the practitioner's judgment about something: preserve, investigate, repair, evolve or invent. The verdict and the reason are theirs: give the reason in their words, never a suggestion's wording they have not adopted. A choice changes nothing in the company's knowledge. If it needs someone's authority, say which area in "needs" and it is routed to whoever is named, or waits if no one is. If it answers one of the entries from get_interpretation, pass that entry's id in "about" so the two are read together.`,
+      input: { type: "object", properties: { engagement_id: ENG, subject: { type: "string" }, verdict: { type: "string", enum: Object.keys(CHOICES) }, rationale: { type: "string", description: "Their reason, in their words." }, sources: { type: "array", items: { type: "string" }, description: "Item ids this rests on." }, needs: { type: "string", enum: Object.keys(POWERS), description: "The area of authority it needs, if any." }, about: { type: "string", description: "The id of the tension this answers, from get_interpretation, if any." } }, required: ["engagement_id", "subject", "verdict", "rationale"] },
+      run({ engagement_id, subject, verdict, rationale, sources, needs, about }) {
+        const next = change(engagement_id, { action: "choice", subject }, (state, by) => recordChoice(state, { subject, verdict, rationale, sources, needs, about, by, asOf: today() }));
         const c = next.choices.at(-1);
         return { text: `Recorded: ${CHOICES[c.verdict]} ${c.subject}. ${c.status === "accepted" ? `${POWERS[c.needs].replace(/^./, (x) => x.toUpperCase())} is theirs to decide here, so recording it decided it.` : c.needs ? c.owner ? `Routed to ${person(next.brand, c.owner)}; it waits for their decision.` : `It needs a decision on ${POWERS[c.needs]}, and no one is named for that at ${next.brand.name} yet.` : "No one else's authority is needed."}`, data: c };
       }
@@ -26494,6 +26602,17 @@ Related: ${item.relations.map((r) => `${r.type} ${r.to}`).join("; ")}.` : null,
         const next = change(engagement_id, { action: "answer-choice", choice: choice_id, outcome }, (state) => answerChoice(state, choice_id, { by: onlyAsSelf(state, acting_as), outcome, note, asOf: today() }));
         const c = next.choices.find((x) => x.id === choice_id);
         return { text: `${c.status === "accepted" ? "Accepted" : "Declined"} by ${person(next.brand, c.answer.by)}: ${CHOICES[c.verdict]} ${c.subject}.${c.answer.note ? ` ${c.answer.note}` : ""}`, data: c };
+      }
+    },
+    {
+      name: "withdraw_choice",
+      title: "Withdraw a choice",
+      description: "Take back a choice the practitioner recorded. It stays in the record, marked withdrawn; nothing is erased. Only the person who recorded it can withdraw it.",
+      input: { type: "object", properties: { engagement_id: ENG, choice_id: { type: "string", description: "The choice id from record_choice or get_interpretation." } }, required: ["engagement_id", "choice_id"] },
+      run({ engagement_id, choice_id }) {
+        const next = change(engagement_id, { action: "withdraw-choice", choice: choice_id }, (state, by) => withdrawChoice(state, choice_id, { by, asOf: today() }));
+        const c = next.choices.find((x) => x.id === choice_id);
+        return { text: `Withdrawn: ${CHOICES[c.verdict]} ${c.subject}. It stays in the record as withdrawn.`, data: c };
       }
     },
     {
@@ -26517,9 +26636,9 @@ Related: ${item.relations.map((r) => `${r.type} ${r.to}`).join("; ")}.` : null,
         const p = next.proposals.at(-1);
         const stated = p.to === "canon" ? rulesStatedBy(next.brand, item_id) : [];
         return { text: lines([
-          `Proposal ${p.id} recorded: ${STANDING_CLASSES[p.from].name} to ${STANDING_CLASSES[p.to].name}. Nothing has changed. It waits for ${who(next.brand, p.reviewer)}.`,
-          p.warnings.length ? "The reviewer will see:" : null,
-          ...p.warnings.map((w) => `- ${w}`),
+          isPublicStudy(next.brand) ? `Noted ${p.id}: ${classOf(p.to, next.brand).name.toLowerCase()}, where the study had it as ${classOf(p.from, next.brand).name.toLowerCase()}. This is the practitioner's note to themselves. Nothing about ${next.brand.name}'s material has changed, and only ${next.brand.name} could decide it.` : `Proposal ${p.id} recorded: ${STANDING_CLASSES[p.from].name} to ${STANDING_CLASSES[p.to].name}. Nothing has changed. It waits for ${who(next.brand, p.reviewer)}.`,
+          !isPublicStudy(next.brand) && p.warnings.length ? "The reviewer will see:" : null,
+          ...isPublicStudy(next.brand) ? [] : p.warnings.map((w) => `- ${w}`),
           stated.length ? "Adopting it would put these rules in force:" : null,
           ...stated.map((r) => `- ${r.statement}`)
         ]), data: p };
@@ -26528,18 +26647,20 @@ Related: ${item.relations.map((r) => `${r.type} ${r.to}`).join("; ")}.` : null,
     {
       name: "decide_proposal",
       title: "Decide a proposal",
-      description: 'Adopt, reject or send back a proposal. Only works where the practitioner whose workbench this is has been named by the company to decide that area. It cannot decide as anyone else. Rejecting or sending back needs their reason in "note". Adopting as canon needs "scope" (what the canon covers, in their words) and, if the material has not been checked against its source, "checked" (what they checked it against); it also records their approval. Ask for these; do not supply them yourself. Adopting keeps the previous standing, the evidence, the scope and the date in the record.',
-      input: { type: "object", properties: { engagement_id: ENG, proposal_id: { type: "string" }, outcome: { type: "string", enum: ["adopt", "reject", "revise"] }, note: { type: "string", description: "Their reason. Required to reject or send back." }, scope: { type: "string", description: "What the canon covers, in their words. Required to adopt as canon unless the proposal already carries one." }, checked: { type: "string", description: "What they checked the record against. Required to adopt as canon when the material is not yet verified." }, acting_as: { type: "string", description: "Present only so that a request to decide as someone else is refused clearly." } }, required: ["engagement_id", "proposal_id", "outcome"] },
-      run({ engagement_id, proposal_id, outcome, note, scope, checked, acting_as }) {
-        const next = change(engagement_id, { action: "decide", proposal: proposal_id, outcome }, (state) => decide(state, proposal_id, { by: onlyAsSelf(state, acting_as), outcome, note, scope, checked, asOf: today() }));
+      description: `Adopt, reject or send back a proposal. Only works where the practitioner whose workbench this is has been named by the company to decide that area. It cannot decide as anyone else. Rejecting or sending back needs their reason in "note". Adopting as canon needs what the canon covers: "covers" lists the kinds of work it binds (the work types of the brand's material, or "all"), and that list is what its rules are then applied to; "scope" is the same in their words. If the material has not been checked against its source it also needs "checked" (what they checked it against). "hold_back_rule_ids" names rules the material states that they are not adopting with it. Adoption as canon records their approval. Ask for all of these; do not supply them yourself. Adopting keeps the previous standing, the evidence, the scope and the date in the record.`,
+      input: { type: "object", properties: { engagement_id: ENG, proposal_id: { type: "string" }, outcome: { type: "string", enum: ["adopt", "reject", "revise"] }, note: { type: "string", description: "Their reason. Required to reject or send back." }, covers: { type: "array", items: { type: "string" }, description: `The kinds of work the canon binds, as the brand's material names them (for example "Marketing website"), or ["all"]. Its rules apply to these and nothing else.` }, scope: { type: "string", description: "What the canon covers, in their words." }, hold_back_rule_ids: { type: "array", items: { type: "string" }, description: "Ids of rules the material states that are not to come into force with it." }, checked: { type: "string", description: "What they checked the record against. Required to adopt as canon when the material is not yet verified." }, acting_as: { type: "string", description: "Present only so that a request to decide as someone else is refused clearly." } }, required: ["engagement_id", "proposal_id", "outcome"] },
+      run({ engagement_id, proposal_id, outcome, note, scope, covers, hold_back_rule_ids, checked, acting_as }) {
+        const next = change(engagement_id, { action: "decide", proposal: proposal_id, outcome }, (state) => decide(state, proposal_id, { by: onlyAsSelf(state, acting_as), outcome, note, scope, covers, holdBack: hold_back_rule_ids, checked, asOf: today() }));
         const d = next.decisions.at(-1);
         const item = next.brand.items.find((i) => i.id === d.itemId);
         const inForce = outcome === "adopt" && d.to === "canon" ? rulesStatedBy(next.brand, item.id) : [];
         return { text: outcome === "adopt" ? lines([
           `Adopted. "${item.title}" is now ${STANDING_CLASSES[item.standing].name.toLowerCase()}; it was ${STANDING_CLASSES[d.from].name.toLowerCase()}, and that is kept in its history.`,
-          d.to === "canon" ? `It covers: ${d.scope}. It is approved by ${person(next.brand, item.approval.by)}; its rights are ${item.rights?.status || "unknown"}.` : null,
+          d.to === "canon" ? `It covers: ${d.scope}.${d.covers ? "" : " No kind of work was named, so its rules keep the reach they were written with."} It is approved by ${person(next.brand, item.approval.by)}; its rights are ${item.rights?.status || "unknown"}.` : null,
           inForce.length ? "Rules now in force:" : null,
-          ...inForce.map((r) => `- ${r.statement}`)
+          ...inForce.map((r) => `- ${r.statement}`),
+          d.heldBack?.length ? "Held back, not in force:" : null,
+          ...(d.heldBack || []).map((id) => `- ${next.brand.rules.find((r) => r.id === id)?.statement || id}`)
         ]) : `Proposal ${outcome === "reject" ? "turned down" : "sent back for revision"}: ${d.note} "${item.title}" is unchanged.`, data: d };
       }
     },

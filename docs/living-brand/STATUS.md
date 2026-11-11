@@ -15,11 +15,16 @@ everything, for the page and for the connector alike:
   and, when a question was asked, relevant.
 - Standing changes only when a person the brand names decides it. Material
   has to be checked against its source before it can be approved. Adopting
-  something as canon needs a scope in the decider's words, and records their
-  approval. Turning something down needs a reason.
+  something as canon needs the decider to say which kinds of work it covers,
+  and that is what its rules then bind; rules can be held back from it; and
+  it records their approval. Turning something down needs a reason, and so
+  does a choice.
 - A brand has a basis: fictional, the company's own record, or an outsider's
   study of public sources. In a study nobody can decide anything, whatever
-  the record claims.
+  the record claims. Nothing in a study is ever authorized or authoritative,
+  whatever has been checked, and every class is named as the study's reading.
+  Where a study sets a statement beside a later report, it says the pairing
+  is its own.
 - One engagement opens one brand's partition and nothing else.
 
 **The page** (`/living-brand`, not indexed). The public page holds one
@@ -27,7 +32,7 @@ fictional brand, Fernway, and lets a visitor try each seat: the contract
 creative director, the people named to decide, an outside partner and an
 agency lead with two competing clients.
 
-**The connector** (`living-brand/`). A local MCP server with 25 tools, a
+**The connector** (`living-brand/`). A local MCP server with 26 tools, a
 skill that tells an assistant how to run an engagement, and a plugin manifest
 so both install together. It keeps each client in its own folder on the
 practitioner's machine. Usage and limits are in
@@ -51,7 +56,7 @@ Automated, on every build:
 
 | Suite | Tests |
 |---|---|
-| Rules (`scripts/living-brand-test.mjs`) | 60 |
+| Rules (`scripts/living-brand-test.mjs`) | 69 |
 | Connector (`scripts/living-brand-connector-test.mjs`) | 25 |
 | Connector over the protocol, both protocol versions (`npm run living-brand:connector:test`) | 5 |
 | Page text audit, three states of the page at two widths in both themes | 12 scenarios |
@@ -69,7 +74,18 @@ repository and had to prove a finding by running it:
    page: 30 findings, and a plain verdict that the page was not ready to put
    in front of him. **An assistant run-through**: twelve messages through the
    connector, graded by a separate judge against the skill: ten findings.
-4. **A second round** after those fixes: see the end of this document.
+4. **A second round** after those fixes. A fairness review of the
+   public-source study examined every place it set a company statement beside
+   a later report: 5 kept, 6 reworded, 3 removed as invented contradictions
+   or implied motives, plus 33 wording corrections where a sentence said more
+   than its source. Three operator tests found 44 more defects between them,
+   and the founder's verdict was still "not yet".
+5. **The connector in a real session.** A restart loaded the connector and
+   the skill from this repository's own configuration, and a real brand
+   packet was imported and read back through the live tools. That showed what
+   no harness had: the client handed the assistant only the structured half
+   of each result, which left out most of the account. The account now
+   travels in both halves.
 
 The findings that changed the product most:
 
@@ -91,7 +107,17 @@ The findings that changed the product most:
   is now always shown, evidence counts only where it bears on the material,
   and the skill says to give their reason as they gave it.
 - A partner was handed an asset whose headline claim the record said was no
-  longer true. Such material is withheld.
+  longer true. Such material is withheld, and is no longer called reusable.
+- In a study, marking a record as checked made the company's material read
+  "authorized" and "authoritative". Nothing in a study can be either.
+- The scope typed at adoption was recorded and then ignored. The kinds of
+  work a decider names are now what the canon binds, and the form shows what
+  adopting it would mark as a departure before they commit.
+- One click filed the reading's suggested verdict and reason as the reader's
+  own judgment. A suggestion is now a starting point with the reason left
+  empty.
+- The study was drafted by a model whose maker is a defendant in litigation
+  the study records. The study now says so where it describes itself.
 
 ## What is real, simulated or missing
 
@@ -114,10 +140,18 @@ The findings that changed the product most:
 - The page saves in the browser only. The packet download is the way to keep
   or move work.
 - A proposal that is sent back is proposed again; it cannot be edited in
-  place. Choices cannot be edited or removed, only reset.
+  place. A choice can be withdrawn but not edited.
 - Two choices that contradict each other are both accepted.
 - The connector can name who decides but cannot take a naming back; the page
-  can.
+  can. On the page, standing is decided in Choose; a drawer links there.
+- Material that has only been found can be described through the connector's
+  source notes, not on the page.
+- Someone holding the power to name deciders can name themselves for any
+  area. The page says so; it does not stop it.
+- After the records behind a private page are rebuilt, answers and choices
+  can be brought across. Decisions about material cannot, and are made again.
+- Every drawer repeats that its picture is a stand-in. One reviewer called
+  that redundant; it stays, because the picture once read as a symbol.
 - Every date is a day. Two decisions on the same day are ordered by their
   sequence, not by time.
 - The Soul Mega record was drafted from files in this repository, not from

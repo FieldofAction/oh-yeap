@@ -4,7 +4,7 @@
 // Where the brand has named no one, nothing can be adopted or retired, and a
 // public-source study can never decide anything, whatever its record says.
 
-import { STANDING_CLASSES, pipelineRank, isPublicStudy, longDate } from './standing.js';
+import { STANDING_CLASSES, pipelineRank, isPublicStudy, onDate } from './standing.js';
 import { POWERS } from './inquiry.js';
 
 export class AuthorityError extends Error {}
@@ -89,18 +89,28 @@ export function propose(state, { itemId, to, rationale, evidenceIds = [], by, sc
   // Evidence bears on a piece of material only if it was recorded on it, comes
   // from it, or sits on material the record relates to it. What a brief
   // intended is not evidence of anything, and neither is the proposer's own note.
-  const near = new Set([item.id, ...(item.relations || []).map(r => r.to), ...s.brand.items.filter(i => (i.relations || []).some(r => r.to === item.id)).map(i => i.id)]);
-  const own = cited.filter(e => near.has(e.on) || e.source === item.id);
+  // Only evidence recorded on the piece itself, or naming it as its source,
+  // speaks for the piece. Evidence on a related piece speaks for the family.
+  const near = new Set([...(item.relations || []).map(r => r.to), ...s.brand.items.filter(i => (i.relations || []).some(r => r.to === item.id)).map(i => i.id)]);
+  const own = cited.filter(e => e.on === item.id || e.source === item.id);
+  const related = cited.filter(e => !own.includes(e) && near.has(e.on));
   const independent = own.filter(e => e.origin !== 'generated' && e.basis !== 'reuse' && e.type !== 'intended');
+  // Anything that would have the material consulted or obeyed is a promotion.
+  const promotion = ['canon', 'precedent', 'contextual'].includes(to);
+  if (promotion && to !== 'canon') {
+    if (item.pipeline === 'discovered') warnings.push('Only found. Nobody has recorded what it is.');
+    if (item.approval?.status === 'rejected') warnings.push(`It was rejected${item.approval.date ? ` ${onDate(item.approval.date)}` : ''}.`);
+  }
   if (to === 'canon') {
-    if (cited.length && !own.length) warnings.push('The evidence cited was recorded on other material and does not bear on this.');
+    if (cited.length && !own.length && !related.length) warnings.push('The evidence cited was recorded on other material and does not bear on this.');
+    if (related.length) warnings.push(`Some of the evidence cited was recorded on related material (${[...new Set(related.map(e => s.brand.items.find(i => i.id === e.on)?.title || e.on))].join(', ')}), not on this piece.`);
     if (!independent.length) warnings.push('No independent evidence. Repetition and reuse are not evidence.');
     else if (!independent.some(e => e.type === 'contribution' || e.type === 'transfer')) warnings.push('The evidence cited shows what happened, not that this work caused it.');
     if (cited.length && cited.every(e => ['reported', 'company_reported'].includes(e.basis))) warnings.push('All cited evidence is self-reported.');
-    if (item.rights?.status !== 'cleared') warnings.push(`Rights are ${item.rights?.status || 'unknown'}; canon that cannot be used is a trap.`);
+    if (!['cleared', 'own'].includes(item.rights?.status)) warnings.push(`Rights are ${item.rights?.status || 'unknown'}; canon that cannot be used is a trap.`);
     // Recorded reuse is always put in front of the reviewer, whatever else is cited.
     if (item.reuse?.length) warnings.push(`Reused ${item.reuse.length} time${item.reuse.length === 1 ? '' : 's'}. Frequency is a reason to review, not a reason to adopt.`);
-    if (item.approval?.status === 'rejected') warnings.push(`It was rejected${item.approval.date ? ` on ${longDate(item.approval.date)}` : ''}.`);
+    if (item.approval?.status === 'rejected') warnings.push(`It was rejected${item.approval.date ? ` ${onDate(item.approval.date)}` : ''}.`);
     if (pipelineRank(item.pipeline) < pipelineRank('verified')) warnings.push(`Only ${item.pipeline}. Check it against its source before it governs anything.`);
     if (item.provenance?.origin === 'generated') warnings.push('This was written by a model. Its wording is a description, not a decision.');
   }
@@ -121,7 +131,9 @@ export const rulesStatedBy = (brand, itemId) => (brand.rules || []).filter(r => 
 // own words. Adopting as canon needs the material to have been checked against
 // its source: the decider may say here what they checked it against. The scope
 // is theirs to set, and adoption as canon is also their approval of it.
-export function decide(state, proposalId, { by, outcome, note, scope, checked, effectiveFrom, asOf }) {
+// covers: the kinds of work the canon binds (or ['all']). holdBack: rules the
+// material states that the decider is not putting in force with it.
+export function decide(state, proposalId, { by, outcome, note, scope, covers, holdBack, checked, effectiveFrom, asOf }) {
   const s = clone(state);
   const p = s.proposals.find(x => x.id === proposalId);
   if (!p) throw new Error('No such proposal.');
@@ -133,16 +145,24 @@ export function decide(state, proposalId, { by, outcome, note, scope, checked, e
   if (outcome === 'adopt' && item.standing !== p.from) throw new Error(`${item.title} changed standing after this proposal was made. Review it again.`);
   note = oneLine(note);
   if (outcome !== 'adopt' && !note) throw new Error(outcome === 'reject' ? 'Say why it is turned down.' : 'Say what needs to change.');
-  scope = oneLine(scope) || oneLine(p.scope);
+  covers = [...new Set((Array.isArray(covers) ? covers : []).map(oneLine).filter(Boolean))];
+  if (covers.includes('all')) covers = ['all'];
+  // The scope is what the decider says it covers. Kinds of work, where given, are what the record can apply.
+  scope = oneLine(scope) || (covers.length ? (covers[0] === 'all' ? 'All work' : covers.join(', ')) : oneLine(p.scope));
   checked = oneLine(checked);
   const toCanon = outcome === 'adopt' && p.to === 'canon';
+  if (outcome === 'adopt' && ['canon', 'precedent', 'contextual'].includes(p.to)) {
+    if (item.pipeline === 'discovered') throw new Error(`${item.title} has only been found. Nobody has recorded what it is, so it cannot be given that standing yet.`);
+    if (item.approval?.status === 'rejected') throw new Error(`${item.title} was rejected. It cannot be given that standing while that stands.`);
+  }
   if (toCanon) {
-    if (item.pipeline === 'discovered') throw new Error(`${item.title} has only been found. Record what it is before it can govern anything.`);
-    if (item.approval?.status === 'rejected') throw new Error(`${item.title} was rejected. It cannot become canon while that stands.`);
     if (pipelineRank(item.pipeline) < pipelineRank('verified') && !checked) throw new Error(`${item.title} has not been checked against its source. Say what you checked it against.`);
     if (!scope) throw new Error('Say what this canon covers.');
   }
-  const decision = { id: nextId(s, 'd', asOf), proposalId, itemId: item.id, outcome, by, note, date: asOf, from: item.standing, to: outcome === 'adopt' ? p.to : item.standing, evidenceIds: p.evidenceIds, scope };
+  const stated = toCanon ? (s.brand.rules || []).filter(r => r.source === item.id && !r.standing) : [];
+  const held = stated.filter(r => (Array.isArray(holdBack) ? holdBack : []).includes(r.id));
+  const decision = { id: nextId(s, 'd', asOf), proposalId, itemId: item.id, outcome, by, note, date: asOf, from: item.standing, to: outcome === 'adopt' ? p.to : item.standing, evidenceIds: p.evidenceIds, scope,
+    ...(toCanon && covers.length ? { covers } : {}), ...(toCanon && checked ? { checked } : {}), ...(held.length ? { heldBack: held.map(r => r.id) } : {}) };
   p.status = outcome === 'adopt' ? 'adopted' : outcome === 'reject' ? 'rejected' : 'revise';
   p.decided = { by, date: asOf, note };
   if (outcome === 'adopt') {
@@ -160,7 +180,9 @@ export function decide(state, proposalId, { by, outcome, note, scope, checked, e
     }
     item.standingHistory = [...(item.standingHistory || []), { standing: item.standing, record: item.standingRecord || null, until: effectiveFrom || asOf }];
     item.standing = p.to;
-    item.standingRecord = { by, date: effectiveFrom || asOf, scope, decisionId: decision.id, evidenceIds: p.evidenceIds, rationale: p.rationale, basis: 'decision' };
+    item.standingRecord = { by, date: effectiveFrom || asOf, scope, decisionId: decision.id, evidenceIds: p.evidenceIds, rationale: p.rationale, basis: 'decision', ...(toCanon && covers.length ? { covers } : {}) };
+    // A rule held back keeps the standing it had as written, and says who held it back.
+    for (const r of held) { r.standing = 'operational'; r.heldBack = { by, date: asOf, decisionId: decision.id }; }
     if (p.to !== 'archive') delete item.retired;
     closeStale(s, item, decision.id, asOf);
   }
@@ -187,6 +209,7 @@ export function retire(state, itemId, { by, reason, asOf }) {
 // Reuse is recorded for review. It never changes standing.
 export function recordReuse(state, itemId, { where, asOf }) {
   if (!String(where || '').trim()) throw new Error('Say where it was reused.');
+  if (isPublicStudy(state.brand)) throw new AuthorityError(`A study may not reuse ${state.brand.name}'s material, so there is no reuse of yours to record. What you saw others do with it belongs in a source note.`);
   requireWrite(state, 'record reuse');
   const s = clone(state);
   const item = findItem(s, itemId);
@@ -202,7 +225,7 @@ export function verifyItem(state, itemId, { by, how, asOf }) {
   const s = clone(state);
   const item = findItem(s, itemId);
   if (pipelineRank(item.pipeline) >= pipelineRank('verified')) throw new Error(`${item.title} is already ${item.pipeline}.`);
-  if (item.pipeline === 'discovered') throw new Error(`${item.title} has only been found. Record what it is before checking it.`);
+  if (item.pipeline === 'discovered') throw new Error(`${item.title} has only been found. Nobody has recorded what it is, so there is nothing yet to check.`);
   item.pipelineHistory = [...(item.pipelineHistory || []), { stage: item.pipeline, until: asOf }];
   item.pipeline = 'verified';
   item.verification = { by, how: String(how).trim(), date: asOf };
@@ -216,7 +239,7 @@ export function approveItem(state, itemId, { by, note, asOf }) {
   const s = clone(state);
   const item = findItem(s, itemId);
   if (!canDecide(s.brand, by, powerFor(item))) throw new AuthorityError(refusal(s.brand, by, item, 'approve'));
-  if (item.pipeline === 'discovered') throw new Error(`${item.title} has only been found. Record what it is before approving it.`);
+  if (item.pipeline === 'discovered') throw new Error(`${item.title} has only been found. Nobody has recorded what it is, so it cannot be approved yet.`);
   if (item.retired) throw new Error(`${item.title} is retired.`);
   if (item.approval?.status === 'approved') throw new Error(`${item.title} is already approved.`);
   // Approving a record nobody has checked approves a description, not the work.
@@ -326,21 +349,55 @@ export const CHOICES = {
   preserve: 'Preserve', investigate: 'Investigate', repair: 'Repair', evolve: 'Evolve', invent: 'Invent',
 };
 
-export function recordChoice(state, { subject, verdict, rationale, sources = [], by, needs, asOf }) {
+export function recordChoice(state, { subject, verdict, rationale, sources = [], by, needs, about, asOf }) {
   if (!CHOICES[verdict]) throw new Error(`Unknown choice ${verdict}.`);
   if (needs && !POWERS[needs]) throw new Error(`Unknown area ${needs}.`);
   subject = oneLine(subject);
   if (!subject) throw new Error('A choice needs a subject.');
+  // A choice is a judgment, and a judgment has a reason. It is the person's own, so it is theirs to give.
+  if (!String(rationale || '').trim()) throw new Error('Say why. A choice is your judgment, and the reason is part of it.');
   requireWrite(state, 'record choices');
   const s = clone(state);
   // A choice that needs someone's decision is routed to them. If the person
   // recording it is the one named to decide, recording it is the decision.
   const mine = Boolean(needs) && canDecide(s.brand, by, needs);
   const owner = needs ? (mine ? by : deciders(s.brand, needs)[0]?.id || null) : null;
-  const choice = { id: nextId(s, 'c', asOf), subject, verdict, rationale: String(rationale || '').trim(), sources: Array.isArray(sources) ? sources : [], by, date: asOf, needs: needs || null, owner, status: needs ? (mine ? 'accepted' : 'awaiting decision') : 'recorded' };
+  const choice = { id: nextId(s, 'c', asOf), subject, verdict, rationale: String(rationale || '').trim(), sources: Array.isArray(sources) ? sources : [], by, date: asOf, needs: needs || null, owner, status: needs ? (mine ? 'accepted' : 'awaiting decision') : 'recorded', ...(oneLine(about) ? { about: oneLine(about) } : {}) };
   if (mine) choice.answer = { by, date: asOf, note: '' };
   s.choices.push(choice);
   return s;
+}
+
+// A choice can be taken back by the person who recorded it. It stays in the
+// record as withdrawn; nothing is erased.
+export function withdrawChoice(state, choiceId, { by, asOf }) {
+  const found = state.choices.find(c => c.id === choiceId);
+  if (!found) throw new Error('No such choice.');
+  if (found.by !== by) throw new AuthorityError('Only the person who recorded a choice can withdraw it.');
+  if (found.status === 'withdrawn') throw new Error('That choice was already withdrawn.');
+  const s = clone(state);
+  const c = s.choices.find(x => x.id === choiceId);
+  c.status = 'withdrawn';
+  c.withdrawn = { by, date: asOf };
+  return s;
+}
+
+// When the records behind a page are rebuilt, what a person wrote in their own
+// words can come across: their answers, and the choices that were theirs
+// alone. Decisions about material do not, because the material may have
+// changed under them; those are made again against the new record.
+export function carryOver(state, earlier) {
+  const s = clone(state);
+  const ids = new Set(s.brand.items.map(i => i.id));
+  const used = new Set([...s.choices, ...s.proposals, ...s.decisions, ...(s.answers || [])].map(x => x.id));
+  const fresh = list => (list || []).filter(x => x && typeof x.id === 'string' && !used.has(x.id));
+  const answers = fresh(earlier?.answers).filter(a => a.question && a.answer);
+  const choices = fresh(earlier?.choices).filter(c => c.subject && CHOICES[c.verdict] && c.status !== 'withdrawn')
+    .map(c => ({ ...c, sources: (c.sources || []).filter(id => ids.has(id)), carried: true }));
+  s.answers = [...(s.answers || []), ...answers];
+  s.choices = [...s.choices, ...choices];
+  s.seq = Math.max(s.seq || 0, earlier?.seq || 0);
+  return { state: s, carried: { answers: answers.length, choices: choices.length }, left: { decisions: (earlier?.decisions || []).length } };
 }
 
 // The person named for a choice's area accepts or declines it. Nobody else can.

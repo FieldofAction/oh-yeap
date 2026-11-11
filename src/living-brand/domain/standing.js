@@ -22,6 +22,18 @@ export const BASES = {
 
 export const isPublicStudy = brand => brand?.basis === 'public-source';
 
+// In a study the same six classes are an outsider's reading, and are named as
+// one. Nothing in a study may be taken for the company's own classification.
+export const STUDY_CLASSES = {
+  canon: { name: 'Read as current', job: 'This study reads it as what the company uses now. Only the company can say what governs.' },
+  precedent: { name: 'Read as earlier work', job: 'This study reads it as work that came before what is used now.' },
+  contextual: { name: 'Seen in use, standing unclear', job: 'It has been seen in use. Whether the company treats it as settled is not known.' },
+  experiment: { name: 'Read as a trial', job: 'This study reads it as something being tried.' },
+  operational: { name: 'On the public record', job: 'Something the company did or published. It is not read here as a statement of the brand.' },
+  archive: { name: 'Read as past', job: 'This study reads it as no longer in use.' },
+};
+export const classOf = (standing, brand) => (isPublicStudy(brand) ? STUDY_CLASSES : STANDING_CLASSES)[standing] || { name: 'Unclassified', job: '' };
+
 // A record may say in its own words how it was put together. That replaces the general note.
 export const basisNote = brand => String(brand?.basisNote || '').trim() || BASES[brand?.basis]?.note || '';
 
@@ -34,7 +46,10 @@ export function longDate(d) {
   const month = MONTHS[Number(m[2]) - 1] || m[2];
   return m[3] ? `${Number(m[3])} ${month} ${m[1]}` : `${month} ${m[1]}`;
 }
+// "on 11 November 2026", "in July 2020", "in 2020": the preposition follows how much of the date is known.
+export const onDate = d => (/^\d{4}-\d{2}-\d{2}$/.test(String(d || '')) ? `on ${longDate(d)}` : /^\d{4}/.test(String(d || '')) ? `in ${longDate(d)}` : `on ${longDate(d)}`);
 const nameOf = (brand, id) => brand?.people?.[id]?.name || id || 'someone unrecorded';
+const times = n => `${n} time${n === 1 ? '' : 's'}`;
 
 export const pipelineRank = stage => PIPELINE.indexOf(stage);
 
@@ -50,7 +65,9 @@ const human = c => c.replace('-', ' ');
 // Matching is by whole word, so "IPA" does not find "participation". A
 // hyphenated word also answers to its parts and to its joined form, and a
 // term of four letters or more finds words that begin with it.
-export const searchText = item => [item.title, item.text, (item.tags || []).join(' '), item.rationale, item.kind, item.element, item.workType].filter(Boolean).join(' ');
+export const searchText = item => [item.title, item.text, (item.tags || []).join(' '), item.rationale, item.kind, item.element, item.workType, item.period?.from?.slice(0, 4)].filter(Boolean).join(' ');
+// Words that are in everything find nothing worth finding.
+export const STOP_WORDS = new Set(['the', 'and', 'for', 'with', 'that', 'this', 'from', 'are', 'was', 'were', 'has', 'have', 'not', 'but', 'its', 'our', 'your', 'you', 'all', 'any', 'can', 'into', 'than', 'then', 'what', 'when', 'who', 'how', 'why', 'out', 'one', 'of', 'to', 'in', 'on', 'at', 'by', 'an', 'as', 'is', 'it', 'or', 'be', 'we', 'no', 'so', 'if', 'up', 'do']);
 export function wordsOf(text) {
   const raw = String(text || '').toLowerCase().split(/[^\p{L}\p{N}-]+/u).filter(Boolean);
   return new Set(raw.flatMap(w => [w, w.replace(/-/g, ''), ...w.split('-')]).filter(Boolean));
@@ -91,6 +108,7 @@ export function assessStanding(item, purpose = {}, brand = null) {
   // Authorized: sanctioned by the company, checked, not replaced, not retired, and current.
   // "Published" means the company put it out on its own channel: evidence of
   // sanction, but not an approval anyone in this system recorded.
+  const study = isPublicStudy(brand);
   let authorized = true;
   const status = item.approval?.status;
   if (status !== 'approved' && status !== 'published') {
@@ -98,7 +116,7 @@ export function assessStanding(item, purpose = {}, brand = null) {
     reasons.authorized.push(status === 'rejected' ? 'Rejected.' : status === 'pending' ? 'Approval pending.' : 'Never approved.');
   }
   if (pipelineRank(item.pipeline) < pipelineRank('verified')) { authorized = false; reasons.authorized.push(`Only ${item.pipeline || 'found'}; not checked against its source.`); }
-  if (item.retired) { authorized = false; reasons.authorized.push(`Retired on ${longDate(item.retired.date)}.`); }
+  if (item.retired) { authorized = false; reasons.authorized.push(`Retired ${onDate(item.retired.date)}.`); }
   if (item.supersededBy) {
     const successor = brand?.items?.find(i => i.id === item.supersededBy);
     const pending = successor?.period?.from && asOf && asOf < successor.period.from;
@@ -110,8 +128,15 @@ export function assessStanding(item, purpose = {}, brand = null) {
   if (asOf && item.standing === 'canon' && term && !isEffective(term, asOf)) { authorized = false; reasons.authorized.push('Outside its effective dates.'); }
   if (authorized) {
     reasons.authorized.push(status === 'published'
-      ? `Published by ${item.approval.by || 'the company'}${item.approval.date ? ` on ${longDate(item.approval.date)}` : ''}. No internal approval record seen.`
-      : `Approved by ${nameOf(brand, item.approval.by)} on ${longDate(item.approval.date)}.`);
+      ? `Published by ${item.approval.by || 'the company'}${item.approval.date ? ` ${onDate(item.approval.date)}` : ''}. No internal approval record seen.`
+      : `Approved by ${nameOf(brand, item.approval.by)} ${onDate(item.approval.date)}.`);
+  }
+  // A study is an outsider's reading. Publication is not an authorization
+  // given to its author, and checking a record against its source changes
+  // what the author knows, not what the company has allowed.
+  if (study) {
+    authorized = false;
+    reasons.authorized = [`${brand.name} has authorized nothing for this study.${status === 'published' && item.approval?.date ? ` It published this ${onDate(item.approval.date)}.` : ''}`];
   }
 
   // Reusable: rights are known, and cover the intended channels for the intended dates.
@@ -119,7 +144,17 @@ export function assessStanding(item, purpose = {}, brand = null) {
   const rights = item.rights || { status: 'unknown' };
   const wanted = purpose.channels || [];
   let reusable = false;
-  if (rights.status === 'cleared' || rights.status === 'restricted') {
+  // Material that carries a claim the record says is no longer true cannot be reused as it stands.
+  const untrue = study ? [] : (brand?.claims || []).filter(c => (c.usedIn || []).includes(item.id)).filter(c => {
+    const fact = (brand?.facts || []).find(f => f.id === c.contradictedBy);
+    return fact?.date && asOf && fact.date <= asOf;
+  });
+  if (untrue.length) {
+    reasons.reusable.push(...untrue.map(c => `Carries a claim that is no longer true: "${String(c.statement).replace(/[.]+$/, '')}".`));
+  } else if (rights.status === 'own') {
+    // The brand's own rules and values: nothing in it is anyone else's to license.
+    reusable = true; reasons.reusable.push(rights.note || 'The brand\'s own rules and values. Nothing in it is licensed from anyone else.');
+  } else if (rights.status === 'cleared' || rights.status === 'restricted') {
     const missing = uncoveredChannels(rights, wanted);
     const expired = rights.until && asOf && asOf > rights.until;
     const lapsesDuring = rights.until && purpose.until && purpose.until > rights.until;
@@ -127,9 +162,11 @@ export function assessStanding(item, purpose = {}, brand = null) {
     if (expired) reasons.reusable.push(`Licence ended ${longDate(rights.until)}.`);
     else if (missing.length) reasons.reusable.push(`Not licensed for ${missing.map(human).join(', ')}.`);
     else if (lapsesDuring) reasons.reusable.push(`Licence ends ${longDate(rights.until)}, before the work would finish.`);
+    else if (rights.status === 'restricted' && !(rights.channels || []).length) reasons.reusable.push('Its use is restricted, and no permitted use is recorded.');
     else if (!wanted.length && rights.status === 'restricted') reasons.reusable.push(`No channel named for this use. Licensed for ${scope} only.`);
     else { reusable = true; reasons.reusable.push(wanted.length ? `Licensed for ${wanted.map(human).join(', ')}.` : `Rights cleared for ${scope}.`); }
-    if (rights.note && !reusable) reasons.reusable.push(rights.note);
+    // What the licence does and does not cover is said either way.
+    if (rights.note) reasons.reusable.push(rights.note);
   } else if (rights.status === 'expired') {
     reasons.reusable.push('Rights expired.');
   } else {
@@ -137,13 +174,14 @@ export function assessStanding(item, purpose = {}, brand = null) {
   }
 
   // Authoritative: canon, in force. Reuse and popularity do not count.
-  const authoritative = item.standing === 'canon' && authorized;
+  // In a study nothing is authoritative: what governs is the company's to say.
+  const authoritative = !study && item.standing === 'canon' && authorized;
   const record = item.standingRecord;
-  reasons.authoritative.push(authoritative
-    ? (record?.basis === 'reading'
-      ? `Read as canon from public material${record.scope ? `: ${record.scope}` : ''}. The company has not confirmed it here.`
-      : `Canon since ${record?.date ? longDate(record.date) : 'an unrecorded date'}${record?.scope ? `: ${record.scope}` : ''}.`)
-    : `${STANDING_CLASSES[item.standing]?.name || 'Unclassified'}${item.standing === 'canon' ? ', but not authorized' : ''}${item.reuse?.length ? `, reused ${item.reuse.length} times; reuse confers no authority` : ''}.`);
+  reasons.authoritative.push(study
+    ? `${STUDY_CLASSES[item.standing]?.name || 'Unclassified'}. That is this study's reading; only ${brand.name} can say what governs.`
+    : authoritative
+      ? `Canon since ${record?.date ? longDate(record.date) : 'an unrecorded date'}${record?.scope ? `: ${record.scope}` : ''}.`
+      : `${STANDING_CLASSES[item.standing]?.name || 'Unclassified'}${item.standing === 'canon' ? ', but not authorized' : ''}${item.reuse?.length ? `, reused ${times(item.reuse.length)}; reuse confers no authority` : ''}.`);
 
   return { relevant, asked, authorized, reusable, authoritative, reasons };
 }
@@ -157,7 +195,10 @@ export function effectiveRules(brand) {
   return (brand.rules || []).map(r => {
     const source = items.get(r.source);
     if (source?.retired) return { ...r, standing: 'archive', inherited: true };
-    return r.standing ? r : { ...r, standing: source?.standing || 'operational', inherited: true };
+    if (r.standing) return r;
+    // The person who adopted the source said which kinds of work it covers. That, not the scope the record arrived with, is what its rules bind.
+    const covers = source?.standing === 'canon' ? source.standingRecord?.covers : null;
+    return { ...r, standing: source?.standing || 'operational', inherited: true, ...(Array.isArray(covers) && covers.length ? { scope: covers } : {}) };
   });
 }
 
