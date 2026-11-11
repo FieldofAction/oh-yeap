@@ -4,13 +4,14 @@
  * uppercase, no mono labels, no arrows.
  *
  * The look draws on four references, each for one thing:
- * - International Typographic Style: one grotesque family, few sizes, flush
- *   left, a grid in which section headings hang in a narrow column beside
- *   their content, and hierarchy from size, weight and position alone.
+ * - International Typographic Style: the site's two grotesques (one for
+ *   headings, one for text), two weights, five sizes, flush left, a grid in
+ *   which section headings hang in a narrow column beside their content, and
+ *   hierarchy from size, weight and position alone.
  * - Apple's Human Interface Guidelines: text in rows, short row text with the
- *   detail one step away, grouped lists, 44px targets, a sheet for one piece.
+ *   detail one step away, 44px targets on a phone, a sheet for one piece.
  * - Material Design: an 8px spacing grid, tonal surfaces in place of borders,
- *   one prominent action in a view, and a list beside its detail.
+ *   and one prominent action in a view.
  * - Apple's own pages: one idea to a section, said in a headline and a sentence.
  */
 :root {
@@ -31,7 +32,7 @@
   /* An 8px grid, with 4px for the smallest steps. */
   --lb-1: .25rem; --lb-2: .5rem; --lb-3: .75rem; --lb-4: 1rem; --lb-5: 1.5rem; --lb-6: 2rem; --lb-7: 3rem; --lb-8: 4rem; --lb-9: 6rem;
   /* Five sizes of text. Nothing on the page is smaller than the support size. */
-  --lb-t-display: clamp(2.125rem, 1.5rem + 2.9vw, 3.5rem);
+  --lb-t-display: clamp(2rem, 1.5rem + 2vw, 2.75rem);
   --lb-t-title: clamp(1.375rem, 1.25rem + .5vw, 1.625rem);
   --lb-t-deck: clamp(1.1875rem, 1.1rem + .4vw, 1.375rem);
   --lb-t-body: 1.0625rem;
@@ -39,9 +40,11 @@
   --lb-radius: 14px;
   --lb-radius-s: 10px;
   --lb-gutter: clamp(1rem, 3vw, 2.5rem);
-  --lb-rail: 11.5rem;
-  --lb-hang: 14rem;
+  --lb-rail: min(11.5rem, 18vw);
+  --lb-hang: 13.5rem;
   --lb-hang-gap: 2.5rem;
+  /* Running text is held to about 65 characters. */
+  --lb-measure: 35rem;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
@@ -57,7 +60,8 @@
 
 * { box-sizing: border-box; }
 html, body { margin: 0; background: var(--lb-bg); color: var(--lb-fg); }
-body { font-family: var(--lb-sans); font-size: var(--lb-t-body); line-height: 1.5; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+body { font-family: var(--lb-sans); font-size: var(--lb-t-body); font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+strong, b, th { font-weight: 600; }
 button, input, select, textarea { font: inherit; color: inherit; }
 a { color: inherit; }
 :focus-visible { outline: 2px solid var(--lb-fg); outline-offset: 2px; border-radius: 4px; }
@@ -69,7 +73,7 @@ p:last-child { margin-bottom: 0; }
 .lb-top {
   display: flex; justify-content: space-between; align-items: center; gap: var(--lb-2) var(--lb-4); flex-wrap: wrap;
   padding: var(--lb-3) var(--lb-gutter); border-bottom: 1px solid var(--lb-line);
-  background: color-mix(in srgb, var(--lb-bg) 88%, transparent); backdrop-filter: saturate(1.6) blur(14px); -webkit-backdrop-filter: saturate(1.6) blur(14px);
+  background: var(--lb-bg);
   position: sticky; top: 0; z-index: 5;
 }
 .lb-brandline { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--lb-1) var(--lb-4); }
@@ -83,37 +87,44 @@ p:last-child { margin-bottom: 0; }
 .lb-basis .lb-section { margin-top: var(--lb-4); }
 .lb-viewer { display: flex; align-items: center; gap: var(--lb-2); font-size: var(--lb-t-support); color: var(--lb-muted); }
 .lb-viewer select, .lb-form select, .lb-form input, .lb-form textarea, .lb-search input {
-  background: var(--lb-bg); border: 1px solid var(--lb-field); border-radius: var(--lb-radius-s); padding: .55rem .75rem; color: var(--lb-fg); min-height: 44px;
+  background: var(--lb-bg); border: 1px solid var(--lb-field); border-radius: var(--lb-radius-s); padding: .55rem .75rem; color: var(--lb-fg); min-height: 44px; min-width: 0; max-width: 100%;
 }
+.lb-form :is(input:not([type=checkbox]), select, textarea), .lb-search input { width: 100%; }
+::placeholder { color: var(--lb-muted); opacity: 1; }
 .lb-form textarea { min-height: 5rem; }
 .lb-viewer select { max-width: min(70vw, 22rem); }
 
 .lb-shell { display: grid; grid-template-columns: var(--lb-rail) minmax(0, 1fr); gap: var(--lb-7); padding: 0 var(--lb-gutter); max-width: 96rem; margin: 0 auto; }
-.lb-stages { position: sticky; top: calc(var(--lb-top-h, 3.6rem) + var(--lb-6)); align-self: start; display: flex; flex-direction: column; gap: 2px; padding-top: var(--lb-7); }
+.lb-stages { position: sticky; top: calc(var(--lb-top-h, 3.6rem) + var(--lb-4)); align-self: start; display: flex; flex-direction: column; gap: 2px; margin-top: var(--lb-7); max-height: calc(100vh - var(--lb-top-h, 3.6rem) - var(--lb-6)); overflow-y: auto; }
 .lb-stages button {
   text-align: left; background: none; border: 0; padding: .6rem .75rem; min-height: 44px; border-radius: var(--lb-radius-s); cursor: pointer; color: var(--lb-muted);
 }
-.lb-stages button:hover { color: var(--lb-fg); background: var(--lb-surface); }
-.lb-stages button.is-on { background: var(--lb-surface); color: var(--lb-fg); font-weight: 600; }
+@media (hover: hover) { .lb-stages button:hover { color: var(--lb-fg); background: var(--lb-surface); } }
+.lb-stages button { border: 1px solid transparent; }
+.lb-stages button.is-on { background: var(--lb-surface); color: var(--lb-fg); font-weight: 600; border-color: var(--lb-field); }
 
-.lb-main { max-width: 68rem; padding: var(--lb-7) 0 var(--lb-9); min-width: 0; }
+.lb-main { max-width: 68rem; padding: var(--lb-7) 0 var(--lb-9); min-width: 0; container-type: inline-size; }
 .lb-solo { margin: 0 auto; padding-left: var(--lb-gutter); padding-right: var(--lb-gutter); }
 
 /* Type -------------------------------------------------------------------- */
 h1, h2, h3, h4 { font-family: var(--lb-display); margin: 0; text-wrap: balance; }
-h1 { font-size: var(--lb-t-display); font-weight: 600; line-height: 1.04; letter-spacing: -.035em; max-width: 20ch; }
+h1 { font-size: var(--lb-t-display); font-weight: 600; line-height: 1.06; letter-spacing: -.03em; max-width: 22ch; }
+h1:focus { outline: none; }
 h2 { font-size: var(--lb-t-title); font-weight: 600; line-height: 1.15; letter-spacing: -.02em; margin-bottom: var(--lb-4); }
 h3 { font-family: var(--lb-sans); font-size: var(--lb-t-body); font-weight: 600; line-height: 1.35; margin: var(--lb-5) 0 var(--lb-2); }
 h4 { font-family: var(--lb-sans); font-weight: 600; font-size: var(--lb-t-body); margin: var(--lb-3) 0 var(--lb-1); }
-.lb-deck { font-size: var(--lb-t-deck); line-height: 1.4; letter-spacing: -.01em; max-width: 36rem; margin: var(--lb-5) 0 0; color: var(--lb-muted); text-wrap: pretty; }
-.lb-body { max-width: 42rem; color: var(--lb-fg); }
+.lb-deck { font-size: var(--lb-t-deck); line-height: 1.4; letter-spacing: -.01em; max-width: var(--lb-measure); margin: var(--lb-4) 0 0; color: var(--lb-muted); text-wrap: pretty; }
+.lb-body { max-width: var(--lb-measure); color: var(--lb-fg); }
 .lb-meta { color: var(--lb-muted); font-size: var(--lb-t-support); }
 .lb-missing { color: var(--lb-muted); margin: var(--lb-1) 0; }
 
 /* Sections ---------------------------------------------------------------- */
-.lb-section { margin-top: var(--lb-8); padding-top: var(--lb-5); border-top: 1px solid var(--lb-fg); }
-.lb-section > :is(p, ul, ol, dl, table, details, div, form) { max-width: 44rem; }
-.lb-section > :is(.lb-grid, .lb-table, .lb-nest, .lb-carry-rows, .lb-timeline, .lb-wide) { max-width: none; }
+.lb-section { margin-top: var(--lb-7); padding-top: var(--lb-5); border-top: 1px solid var(--lb-fg); }
+.lb-section > :is(p, dl) { max-width: var(--lb-measure); }
+.lb-section > :is(ul, ol, table, details, div, form) { max-width: 44rem; }
+.lb-section > :is(.lb-grid, .lb-table, .lb-nest, .lb-timeline, .lb-wide) { max-width: none; }
+/* One interval between the parts of a section, whatever they are. */
+.lb-section > :not(h2) + :not(h2) { margin-top: var(--lb-4); }
 .lb-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: var(--lb-7); }
 .lb-two > div { max-width: none; }
 .lb-two > div > h2:first-child, .lb-two > div > h3:first-child { margin-top: 0; }
@@ -121,12 +132,12 @@ h4 { font-family: var(--lb-sans); font-weight: 600; font-size: var(--lb-t-body);
 /* From the width of a small laptop the heading of a section hangs in its own
    column and stays in view while its content scrolls: the left edge of the
    page reads as an outline. */
-@media (min-width: 1040px) {
-  .lb-main > article > .lb-section:not(.lb-two):not(.lb-closed) { display: grid; grid-template-columns: var(--lb-hang) minmax(0, 1fr); column-gap: var(--lb-hang-gap); align-items: start; }
-  .lb-main > article > .lb-section:not(.lb-two):not(.lb-closed) > h2 { grid-column: 1; grid-row: 1 / span 60; position: sticky; top: calc(var(--lb-top-h, 3.6rem) + var(--lb-5)); margin: 0; }
-  .lb-main > article > .lb-section:not(.lb-two):not(.lb-closed) > :not(h2) { grid-column: 2; min-width: 0; }
-  .lb-main > article > .lb-section:not(.lb-two):not(.lb-closed) > :not(h2):not(:first-child):not(h2 + *) { margin-top: var(--lb-4); }
-  .lb-main > article > .lb-deck, .lb-main > article > .lb-lede { margin-left: calc(var(--lb-hang) + var(--lb-hang-gap)); }
+@container (min-width: 46rem) {
+  article > .lb-section:not(.lb-two):not(.lb-closed) { display: grid; grid-template-columns: var(--lb-hang) minmax(0, 1fr); column-gap: var(--lb-hang-gap); align-items: start; }
+  article > .lb-section:not(.lb-two):not(.lb-closed) > h2 { grid-column: 1; grid-row: 1 / span 60; position: sticky; top: calc(var(--lb-top-h, 3.6rem) + var(--lb-5)); margin: 0; }
+  article > .lb-section:not(.lb-two):not(.lb-closed) > :not(h2) { grid-column: 2; min-width: 0; }
+  article > .lb-deck, article > .lb-next { margin-left: calc(var(--lb-hang) + var(--lb-hang-gap)); }
+  article > .lb-closed > .lb-closed-body { margin-left: calc(var(--lb-hang) + var(--lb-hang-gap)); }
 }
 
 /* Lists of entries --------------------------------------------------------- */
@@ -156,18 +167,20 @@ h4 { font-family: var(--lb-sans); font-weight: 600; font-size: var(--lb-t-body);
 }
 .lb-row > details > summary::-webkit-details-marker { display: none; }
 .lb-row > details > summary::after {
-  content: ""; grid-column: 3; grid-row: 1; width: .55rem; height: .55rem; border-right: 1.5px solid var(--lb-fg); border-bottom: 1.5px solid var(--lb-fg);
+  content: ""; grid-column: 3; grid-row: 1; width: .55rem; height: .55rem; border-right: 2px solid var(--lb-fg); border-bottom: 2px solid var(--lb-fg);
   transform: rotate(45deg); justify-self: center; align-self: start; margin-top: .35rem; transition: transform .15s ease;
 }
 .lb-row > details[open] > summary::after { transform: rotate(-135deg); margin-top: .65rem; }
-.lb-row > details > summary:hover .lb-row-title { text-decoration: underline; text-underline-offset: .2em; text-decoration-color: var(--lb-field); }
-.lb-row-title { font-weight: 600; grid-column: 1; }
+@media (hover: hover) { .lb-row > details:not([open]) > summary:hover { background: color-mix(in srgb, var(--lb-fg) 5%, transparent); } }
+.lb-row-title { grid-column: 1; }
 /* With no one to name, the sentence takes the whole line. */
 .lb-row > details > summary > .lb-row-title:last-child { grid-column: 1 / 3; }
 .lb-row-who { color: var(--lb-muted); grid-column: 2; }
-.lb-row > details[open] { background: var(--lb-surface); border-radius: var(--lb-radius); margin: var(--lb-2) calc(-1 * var(--lb-4)); padding: 0 var(--lb-4); }
+.lb-row-who.is-mine { color: var(--lb-fg); font-weight: 600; }
+.lb-row > details[open] { background: var(--lb-surface); border: 1px solid transparent; border-radius: var(--lb-radius); margin: var(--lb-2) calc(-1 * var(--lb-4)); padding: 0 var(--lb-4); }
+.lb-row > details[open] > summary .lb-row-title { font-weight: 600; }
 .lb-findings > li.lb-row:has(> details[open]) { border-bottom-color: transparent; }
-.lb-row-body { padding: 0 0 var(--lb-5); display: grid; gap: var(--lb-3); max-width: 42rem; }
+.lb-row-body { padding: 0 0 var(--lb-5); display: grid; gap: var(--lb-3); max-width: var(--lb-measure); }
 .lb-row-body > * { margin: 0; }
 .lb-row-body .lb-actions { margin-top: var(--lb-1); }
 @media (prefers-reduced-motion: reduce) { .lb-row > details > summary::after { transition: none; } }
@@ -178,7 +191,7 @@ h4 { font-family: var(--lb-sans); font-weight: 600; font-size: var(--lb-t-body);
 .lb-findings > li.lb-decision > * { margin: 0; }
 .lb-findings > li.lb-decision + li { border-top: 1px solid var(--lb-line); }
 
-.lb-named { margin-right: var(--lb-3); white-space: nowrap; }
+.lb-named { margin-right: var(--lb-3); display: inline-block; }
 details > summary { cursor: pointer; }
 details[open] > summary { margin-bottom: var(--lb-2); }
 .lb-more > summary { color: var(--lb-fg); text-decoration: underline; text-underline-offset: .2em; padding: var(--lb-2) 0; min-height: 44px; display: flex; align-items: center; list-style: none; }
@@ -191,25 +204,25 @@ details[open] > summary { margin-bottom: var(--lb-2); }
 .lb-cites { display: flex; flex-wrap: wrap; gap: var(--lb-1) var(--lb-3); }
 .lb-cite {
   background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-decoration-color: var(--lb-field);
-  text-underline-offset: .2em; color: var(--lb-fg); font-size: var(--lb-t-support); text-align: left;
+  text-underline-offset: .2em; color: var(--lb-fg); font-size: var(--lb-t-support); text-align: left; min-height: 28px;
 }
+@media (pointer: coarse) { .lb-cite { min-height: 44px; } .lb-cites { gap: 0 var(--lb-4); } }
 .lb-cite:hover { text-decoration-color: var(--lb-fg); }
 .lb-cite.is-missing { color: var(--lb-no); text-decoration: line-through; }
 
 .lb-table { width: 100%; border-collapse: collapse; font-size: var(--lb-t-support); }
 .lb-table th { text-align: left; font-weight: 600; border-bottom: 1px solid var(--lb-fg); padding: var(--lb-2) var(--lb-4) var(--lb-2) 0; }
 .lb-table td { border-bottom: 1px solid var(--lb-line); padding: var(--lb-3) var(--lb-4) var(--lb-3) 0; vertical-align: top; }
+.lb-table :is(th, td) { overflow-wrap: anywhere; }
 
 /* Actions: one filled button in a view; the rest are quiet. */
 .lb-actions { display: flex; flex-wrap: wrap; gap: var(--lb-2); margin-top: var(--lb-4); align-items: center; }
 .lb-actions button, .lb-link {
-  background: var(--lb-surface-2); border: 0; border-radius: 999px; padding: .55rem 1.1rem; min-height: 44px; cursor: pointer; font-weight: 500;
+  background: var(--lb-bg); border: 1px solid var(--lb-field); border-radius: 999px; padding: .55rem 1.1rem; min-height: 44px; cursor: pointer; font-weight: 600;
 }
-/* On a filled entry a quiet button is drawn on the page colour, so it still reads as a button. */
-.lb-row details[open] .lb-actions button:not(.lb-primary), .lb-hyp .lb-actions button:not(.lb-primary) { background: var(--lb-bg); }
-.lb-actions button:hover, .lb-link:hover { box-shadow: inset 0 0 0 1px var(--lb-field); }
-.lb-actions .lb-primary { background: var(--lb-accent); color: var(--lb-on-accent); }
-.lb-actions .lb-primary:hover { box-shadow: none; opacity: .88; }
+.lb-actions button:hover, .lb-link:hover { border-color: var(--lb-fg); }
+.lb-actions .lb-primary { background: var(--lb-accent); color: var(--lb-on-accent); border-color: var(--lb-accent); }
+.lb-actions .lb-primary:hover { opacity: .88; }
 .lb-link { padding: .3rem .8rem; min-height: 36px; }
 
 /* Where the engagement sits ------------------------------------------------ */
@@ -222,7 +235,7 @@ details[open] > summary { margin-bottom: var(--lb-2); }
 .lb-nest-co { box-shadow: inset 0 0 0 1px var(--lb-fg); background: var(--lb-bg); }
 
 /* The work ------------------------------------------------------------------ */
-.lb-search { display: grid; gap: var(--lb-2); margin: var(--lb-6) 0 var(--lb-5); max-width: 30rem; }
+.lb-search { display: grid; gap: var(--lb-2); margin: 0 0 var(--lb-5); max-width: 30rem; }
 .lb-search span { color: var(--lb-muted); font-size: var(--lb-t-support); }
 .lb-grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr)); gap: var(--lb-6) var(--lb-5); }
 .lb-card { display: grid; gap: var(--lb-1); width: 100%; text-align: left; background: none; border: 0; padding: 0; cursor: pointer; }
@@ -247,22 +260,20 @@ details[open] > summary { margin-bottom: var(--lb-2); }
 .lb-drawer-wrap { position: fixed; inset: 0; background: rgb(0 0 0 / .4); z-index: 20; display: flex; justify-content: flex-end; }
 .lb-drawer {
   /* Room below the last control, so a notice at the foot of the screen never sits on it. */
-  width: min(42rem, 100%); height: 100%; overflow-y: auto; background: var(--lb-bg); padding: var(--lb-5) var(--lb-gutter) 14rem;
+  width: min(42rem, 100%); height: 100%; overflow-y: auto; overflow-x: hidden; background: var(--lb-bg); padding: var(--lb-5) var(--lb-gutter) 14rem;
   box-shadow: -1px 0 0 var(--lb-line);
 }
-.lb-drawer > h2 { margin-top: var(--lb-2); font-size: clamp(1.5rem, 1.3rem + 1vw, 2rem); letter-spacing: -.025em; }
 .lb-drawer > h3 { margin-top: var(--lb-6); padding-top: var(--lb-4); border-top: 1px solid var(--lb-line); }
-.lb-close { float: right; position: sticky; top: var(--lb-2); z-index: 2; background: var(--lb-surface-2); border: 0; border-radius: 999px; padding: .5rem 1rem; min-height: 44px; cursor: pointer; margin: 0 0 var(--lb-3) var(--lb-3); font-weight: 500; }
+.lb-close { float: right; position: sticky; top: var(--lb-2); z-index: 2; background: var(--lb-bg); border: 0; padding: .5rem .25rem; min-height: 44px; cursor: pointer; margin: 0 0 var(--lb-3) var(--lb-3); text-decoration: underline; text-underline-offset: .2em; }
 .lb-ev ul { margin: 0; padding-left: 1.1rem; }
 
 /* Forms ---------------------------------------------------------------------- */
 .lb-form { display: grid; gap: var(--lb-4); margin-top: var(--lb-6); }
-.lb-form label { display: grid; gap: var(--lb-1); font-weight: 500; }
-.lb-form label > :is(input, select, textarea) { font-weight: 400; }
+.lb-form label { display: grid; gap: var(--lb-1); }
 .lb-form fieldset { border: 0; border-radius: var(--lb-radius-s); padding: var(--lb-4); display: grid; gap: var(--lb-2); background: var(--lb-surface); margin: 0; }
 .lb-row details[open] .lb-form fieldset { background: var(--lb-bg); }
 .lb-form legend { padding: 0; font-weight: 600; float: left; width: 100%; margin-bottom: var(--lb-2); }
-.lb-form .lb-check { display: flex; gap: var(--lb-3); align-items: flex-start; font-weight: 400; min-height: 32px; clear: both; }
+.lb-form .lb-check { display: flex; gap: var(--lb-3); align-items: flex-start; min-height: 44px; padding: .55rem 0; clear: both; }
 .lb-form .lb-check input { min-height: 0; width: 1.15rem; height: 1.15rem; margin-top: .2rem; flex: none; accent-color: var(--lb-fg); }
 .lb-inline { max-width: 26rem; }
 
@@ -280,6 +291,7 @@ details[open] > summary { margin-bottom: var(--lb-2); }
 .lb-notice { pointer-events: none; }
 .lb-notice button { pointer-events: auto; background: none; border: 0; text-decoration: underline; text-underline-offset: .2em; cursor: pointer; color: inherit; min-height: 32px; }
 .lb-notice p { margin: 0; overflow-wrap: anywhere; }
+.lb-notice button:focus-visible { outline-color: var(--lb-bg); }
 .lb-notice-refused { box-shadow: 0 8px 28px rgb(0 0 0 / .22), inset 4px 0 0 var(--lb-no); }
 
 /* What happened, and what carries forward ----------------------------------- */
@@ -291,29 +303,18 @@ details[open] > summary { margin-bottom: var(--lb-2); }
 .lb-export { width: 100%; font-family: ui-monospace, Menlo, monospace; font-size: .875rem; background: var(--lb-surface); color: var(--lb-fg); border: 0; border-radius: var(--lb-radius-s); padding: var(--lb-3); }
 .lb-drawer a, .lb-main a { color: inherit; text-decoration-color: var(--lb-field); text-underline-offset: .2em; }
 .lb-carry td:first-child { color: var(--lb-muted); }
-.lb-carry-rows { list-style: none; padding: 0; margin: var(--lb-5) 0; display: grid; background: var(--lb-surface); border-radius: var(--lb-radius); overflow: hidden; }
-.lb-carry-rows li { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: var(--lb-4); align-items: center; padding: var(--lb-4) var(--lb-5); box-shadow: inset 4px 0 0 var(--lb-line); }
-.lb-carry-rows li + li { border-top: 1px solid var(--lb-line); }
-.lb-carry-rows h3 { margin: 0 0 var(--lb-1); }
-.lb-carry-rows p { margin: 0; font-size: var(--lb-t-support); }
-.lb-carry-plate { background: none; border: 0; padding: 0; cursor: pointer; }
-.lb-verdict-preserve { box-shadow: inset 4px 0 0 var(--lb-yes) !important; }
-.lb-verdict-reverse, .lb-verdict-retire { box-shadow: inset 4px 0 0 var(--lb-no) !important; }
-.lb-verdict-investigate, .lb-verdict-adapt { box-shadow: inset 4px 0 0 var(--lb-wait) !important; }
-.lb-hyp { background: var(--lb-surface); border-radius: var(--lb-radius); padding: var(--lb-5); margin-bottom: var(--lb-3); }
-.lb-hyp h3 { margin-top: 0; }
 .lb-tension-group + .lb-tension-group { margin-top: var(--lb-6); }
-.lb-tension-group > h3 { margin-top: 0; }
+.lb-tension-group > h3 { margin: 0 0 var(--lb-3); }
 
 code { font-family: ui-monospace, Menlo, monospace; font-size: .875rem; }
 
-@media (max-width: 760px) {
+@media (max-width: 47.5em) {
   /* Below the stage strip, which sits under the header at this width. */
   .lb-notice.is-top { top: calc(var(--lb-top-h, 3.6rem) + 4rem); }
   .lb-shell { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .lb-stages {
     position: sticky; top: var(--lb-top-h, 3.6rem); z-index: 4; margin: 0 calc(-1 * var(--lb-gutter)); padding: var(--lb-2) var(--lb-gutter);
-    flex-direction: row; overflow-x: auto; background: color-mix(in srgb, var(--lb-bg) 92%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    flex-direction: row; overflow-x: auto; background: var(--lb-bg);
     border-bottom: 1px solid var(--lb-line); scrollbar-width: none;
     /* The strip runs off the right edge: the fade says there is more, and the padding lets the last stage clear it. */
     -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent);
@@ -324,18 +325,19 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .875rem; }
   .lb-main { padding-top: var(--lb-6); padding-bottom: 12rem; }
   .lb-section { margin-top: var(--lb-7); }
   .lb-row > details > summary { grid-template-columns: minmax(0, 1fr) 1rem; }
-  .lb-row > details > summary::after { grid-column: 2; }
-  .lb-row-who { grid-column: 1; }
+  .lb-row > details > summary::after { grid-column: 2; grid-row: 1; }
+  .lb-row > details > summary > .lb-row-title, .lb-row > details > summary > .lb-row-title:last-child { grid-column: 1; grid-row: 1; }
+  .lb-row-who { grid-column: 1; grid-row: 2; }
   .lb-row > details[open] { margin-left: calc(-1 * var(--lb-3)); margin-right: calc(-1 * var(--lb-3)); padding: 0 var(--lb-3); }
   .lb-findings > li.lb-decision { padding: var(--lb-4); }
-  .lb-carry-rows li { grid-template-columns: 4.5rem minmax(0, 1fr); padding: var(--lb-4); }
   .lb-timeline li { grid-template-columns: minmax(0, 1fr); gap: var(--lb-1); }
-  .lb-facts { grid-template-columns: 6.25rem minmax(0, 1fr); gap: var(--lb-2) var(--lb-3); }
+  .lb-facts { grid-template-columns: min(6.25rem, 30vw) minmax(0, 1fr); gap: var(--lb-2) var(--lb-3); }
+  .lb-facts dt { overflow-wrap: anywhere; }
   .lb-answers-full { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* Parts added with the rebalanced stages ------------------------------------ */
-.lb-lead { font-size: var(--lb-t-deck); line-height: 1.4; letter-spacing: -.01em; max-width: 36rem; margin: 0 0 var(--lb-3); }
+.lb-lead { max-width: var(--lb-measure); margin: 0 0 var(--lb-2); }
 .lb-next { margin-top: var(--lb-7); }
 
 /* A section whose heading opens it. */
@@ -351,30 +353,29 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .875rem; }
 .lb-closed-body { padding-top: var(--lb-5); display: grid; gap: var(--lb-4); }
 .lb-closed-body > * { margin: 0; min-width: 0; }
 .lb-closed + .lb-closed { margin-top: var(--lb-5); }
-@media (min-width: 1040px) { .lb-main > article > .lb-closed > .lb-closed-body { margin-left: calc(var(--lb-hang) + var(--lb-hang-gap)); } }
 @media (prefers-reduced-motion: reduce) { .lb-closed > summary::after { transition: none; } }
 
 /* Search, and the classes present as a filter. A pressed chip is filled. */
-.lb-find { display: grid; gap: var(--lb-4); margin: var(--lb-7) 0 var(--lb-5); }
+.lb-find { display: grid; gap: var(--lb-4); margin: 0 0 var(--lb-5); }
 .lb-find .lb-search { margin: 0; }
 .lb-chips { display: flex; flex-wrap: wrap; gap: var(--lb-2); }
-.lb-chips button { background: none; border: 0; box-shadow: inset 0 0 0 1px var(--lb-field); border-radius: 999px; padding: .45rem 1rem; min-height: 40px; cursor: pointer; }
-.lb-chips button:hover { box-shadow: inset 0 0 0 1px var(--lb-fg); }
-.lb-chips button[aria-pressed="true"] { background: var(--lb-fg); color: var(--lb-bg); box-shadow: none; }
+.lb-chips button { background: none; border: 1px solid var(--lb-field); border-radius: 999px; padding: .55rem 1rem; min-height: 44px; cursor: pointer; }
+.lb-chips button:hover { border-color: var(--lb-fg); }
+.lb-chips button[aria-pressed="true"] { background: var(--lb-surface-2); border-color: var(--lb-fg); font-weight: 600; }
+@media (forced-colors: active) { .lb-chips button[aria-pressed="true"] { background: Highlight; color: HighlightText; forced-color-adjust: none; } }
 
 /* One piece: a small picture beside its name, so what it may do comes on the first screen. */
 .lb-piece { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: var(--lb-2) var(--lb-5); align-items: center; margin: var(--lb-2) 0 var(--lb-5); clear: both; }
 .lb-piece .lb-figure { display: contents; }
 .lb-piece .lb-plate { grid-column: 1; grid-row: 1; }
-.lb-piece h2 { grid-column: 2; grid-row: 1; margin: 0; font-size: clamp(1.5rem, 1.3rem + 1vw, 2rem); letter-spacing: -.025em; line-height: 1.1; }
-.lb-piece figcaption { grid-column: 1 / -1; grid-row: 2; color: var(--lb-muted); font-size: var(--lb-t-support); }
+.lb-piece h2 { grid-column: 2; grid-row: 1; margin: 0; min-width: 0; overflow-wrap: anywhere; }
 .lb-drawer h3 { margin-top: var(--lb-6); padding-top: var(--lb-4); border-top: 1px solid var(--lb-line); }
 .lb-drawer .lb-form h3, .lb-drawer .lb-ev h4 { border: 0; padding: 0; margin-top: 0; }
 .lb-drawer .lb-form { margin-top: var(--lb-5); background: var(--lb-surface); border-radius: var(--lb-radius); padding: var(--lb-5); }
 .lb-drawer .lb-form .lb-form { padding: 0; margin-top: var(--lb-3); }
 .lb-drawer .lb-form fieldset { background: var(--lb-bg); }
 
-@media (max-width: 760px) {
+@media (max-width: 47.5em) {
   /* A table wider than a phrase per column is read one row at a time, each cell under its heading. */
   .lb-table-stack { display: block; }
   .lb-table-stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
@@ -386,20 +387,22 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .875rem; }
   /* Pieces are read as rows on a phone: the picture is small and the name comes first. */
   .lb-grid { grid-template-columns: minmax(0, 1fr); gap: 0; border-top: 1px solid var(--lb-line); }
   .lb-grid > li { border-bottom: 1px solid var(--lb-line); }
-  .lb-card { grid-template-columns: 5rem minmax(0, 1fr); column-gap: var(--lb-4); padding: var(--lb-3) 0; align-content: center; }
+  .lb-card { grid-template-columns: min(5rem, 20vw) minmax(0, 1fr); column-gap: var(--lb-4); padding: var(--lb-3) 0; align-content: center; }
   .lb-card .lb-plate { grid-column: 1; grid-row: 1 / span 4; align-self: center; }
   .lb-card > :not(.lb-plate) { grid-column: 2; }
   .lb-card-title { margin-top: 0; }
-  .lb-piece { grid-template-columns: 4.5rem minmax(0, 1fr); }
-  /* One row: where you are, and the switch. A study's line takes a row of its own under it. */
+  .lb-piece { grid-template-columns: min(4.5rem, 20vw) minmax(0, 1fr); }
+  /* One row: where you are, and the switch, which keeps its whole name. A study's line takes a row of its own. */
   .lb-top { padding: var(--lb-2) var(--lb-gutter); flex-wrap: wrap; gap: var(--lb-1) var(--lb-3); }
-  .lb-home, .lb-viewer > span { white-space: nowrap; }
+  .lb-home { white-space: nowrap; }
   .lb-brandline { display: contents; }
   .lb-home { order: 1; flex: none; }
-  .lb-controls { order: 2; flex: 1 1 0; flex-wrap: nowrap; min-width: 0; justify-content: flex-end; gap: var(--lb-2); }
+  .lb-controls { order: 2; flex: 1 1 12rem; min-width: 0; justify-content: flex-end; gap: var(--lb-2); }
   .lb-study { order: 3; flex: 1 1 100%; }
-  .lb-viewer { min-width: 0; flex: 0 1 auto; }
-  .lb-viewer select { min-width: 0; width: 100%; max-width: 11.5rem; padding: .4rem .5rem; }
+  .lb-viewer { min-width: 0; flex: 1 1 auto; justify-content: flex-end; }
+  .lb-viewer > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .lb-viewer select { min-width: 0; width: 100%; max-width: 17rem; padding: .4rem .5rem; }
+  .lb-deck { font-size: var(--lb-t-body); }
   /* The classes run in one line and scroll, so the work starts on the first screen. */
   .lb-chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 calc(-1 * var(--lb-gutter)); padding: 2px var(--lb-gutter); scrollbar-width: none; }
   .lb-chips::-webkit-scrollbar { display: none; }
@@ -409,7 +412,14 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .875rem; }
 .lb-options { display: grid; grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr)); gap: var(--lb-1) var(--lb-4); clear: both; }
 
 /* A decision that is the reader's to make is the bordered thing in its list. */
-.lb-row.lb-decides > details[open] { background: none; box-shadow: inset 0 0 0 1.5px var(--lb-fg); }
+.lb-row.lb-decides > details[open] { background: none; border: 1.5px solid var(--lb-fg); }
 .lb-row.lb-decides .lb-row-who { color: var(--lb-fg); font-weight: 600; }
-.lb-row.lb-decides > details[open] .lb-actions button:not(.lb-primary) { background: var(--lb-surface-2); }
 .lb-row.lb-decides > details[open] .lb-form fieldset { background: var(--lb-surface); }
+
+/* A refusal is said at the field it is about. */
+.lb-refusal { color: var(--lb-no); margin: 0; }
+[aria-invalid="true"] { border-color: var(--lb-no) !important; }
+.lb-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* In dark the drawn stand-ins are held back, so they are not the brightest thing on the page. */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lb-plate { filter: brightness(.78); } }
+:root[data-theme="dark"] .lb-plate { filter: brightness(.78); }

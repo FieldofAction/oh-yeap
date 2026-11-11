@@ -32,6 +32,37 @@ fictional brand, Fernway, and lets a visitor try each seat: the contract
 creative director, the people named to decide, an outside partner and an
 agency lead with two competing clients.
 
+**How the page is laid out.** The page was rebuilt for reading after its
+owner said the information needed rebalancing. It takes one thing from each
+of four references:
+
+- International Typographic Style: the site's two grotesques, two weights
+  and five sizes, flush left; from laptop width a section's heading hangs in
+  a narrow column beside its content.
+- Apple's Human Interface Guidelines: text in rows, a row kept short with
+  its detail one step away, a sheet for one piece. Read at source.
+- Material Design: an 8px spacing grid, tone in place of borders, one
+  prominent action in a view. Read from Google's Android and component
+  documentation; Material's own site could not be reached from where this
+  was built.
+- Apple's pages: one idea to a section. From memory; apple.com and Wikipedia
+  could not be reached, so this and the International Style are not quoted
+  from a source.
+
+What that means on the page: an entry is a ruled row that is its own
+sentence when closed and opens in place; entries are read under who has to
+act, the reader's own first; a decision that is the reader's to make is the
+one bordered thing, with its notes above its buttons and again above "Adopt
+it"; what is waiting comes first on each stage and reference is closed under
+its heading; a choice is recorded where the reader is; a piece's sheet opens
+on whether it may be used. Nothing the house rule on page text forbids was
+taken from the references: no label above a heading, no small second line,
+no count as ornament, no arrow on a link.
+
+On the fictional brand the longest stage, Interpret, went from 6.0 screens
+to 2.7 on a laptop and from 9.7 to 3.8 on a phone, with no information
+removed.
+
 **The connector** (`living-brand/`). A local MCP server with 27 tools, a
 skill that tells an assistant how to run an engagement, and a plugin manifest
 so both install together. It keeps each client in its own folder on the
@@ -59,7 +90,7 @@ Automated, on every build:
 | Rules (`scripts/living-brand-test.mjs`) | 79 |
 | Connector (`scripts/living-brand-connector-test.mjs`) | 30 |
 | Connector over the protocol, both protocol versions (`npm run living-brand:connector:test`) | 5 |
-| Page text audit, three states of the page at two widths in both themes | 12 scenarios |
+| Page text audit, seven states of the page at two widths in both themes, three with their entries opened and one with a piece's sheet open | 28 scenarios |
 
 Independent rounds, each run by delegated agents that could not edit the
 repository and had to prove a finding by running it:
@@ -115,6 +146,17 @@ repository and had to prove a finding by running it:
    phone width". Seven medium findings in all. They are fixed, and the fixes
    were checked by the automated suites and by scripted browser runs at both
    widths, not by a sixth independent round.
+
+9. **The redesign, reviewed from five seats**: a design critic holding the
+   page to the references it draws on, a first-time reader on a phone, a
+   daily user, the founder's seat on the private page, and access. All five
+   found it shorter and clearer. They also found, and a second pass fixed:
+   hierarchy inside lists was flat (every entry bold); Orient had not been
+   rebalanced; rights sat below an action on a piece's sheet; a person's own
+   seat said nothing was waiting while the record named them four times;
+   focus was lost on every change of stage; and enlarged text crushed the
+   reading column. That second pass was checked by the automated suites and
+   scripted browser runs, not by a further independent round.
 
 The findings that changed the product most:
 
@@ -223,16 +265,21 @@ The findings that changed the product most:
   "adopted by": both are true, and they are separate answers.
 - Cards for reference documents read "reusable here: no"; the drawer says
   they can be worked from and not published.
-- Interpret and Choose are still long on a brand with many open entries.
-  Groups past three entries fold, and notes most proposals share are said
-  once, but entries that depart from the same rule still repeat it.
+- A piece's sheet is a modal sheet over the list at every width. The
+  references would have it sit beside the list on a wide screen.
+- Text typed into a form, and which rows are open, are lost when the seat is
+  changed on the fictional brand.
+- Rows show a small drawn mark to say they open. It is not a text arrow on a
+  link, which the house rule forbids, but it is the nearest thing on the page
+  to one.
 - A notice can still sit over a field it is asking for until the next tap.
 - Someone holding the power to name deciders can name themselves for any
   area. The page says so; it does not stop it.
 - After the records behind a private page are rebuilt, answers and choices
   can be brought across. Decisions about material cannot, and are made again.
-- Every drawer repeats that its picture is a stand-in. One reviewer called
-  that redundant; it stays, because the picture once read as a symbol.
+- A piece's sheet no longer repeats that its picture is a stand-in. The
+  stage that lists the pieces says it once, and the picture's own name says
+  it to a screen reader.
 - Every date is a day. Two decisions on the same day are ordered by their
   sequence, not by time.
 - The Soul Mega record was drafted from files in this repository, not from
