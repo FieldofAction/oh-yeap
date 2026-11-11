@@ -270,6 +270,14 @@ export default function Studio({ navigateTo, asu }) {
     setPickerFor(null);
   };
 
+  // Breakground and Desert have their own pages. The signal goes with you,
+  // and what you answer there comes back as a reading on it.
+  const onCarry = (signal, toolKey) => {
+    asu.carry_signal(signal);
+    setPickerFor(null);
+    navigateTo(toolKey);
+  };
+
   const onCopy = async (reading, format) => {
     const bundle = buildBundle(reading);
     const text = format === "markdown" ? bundleToMarkdown(bundle) : JSON.stringify(bundle, null, 2);
@@ -376,6 +384,13 @@ export default function Studio({ navigateTo, asu }) {
       <div className="wb-actions">
         <button type="button" className="wb-button" onClick={() => onRead(signal)} disabled={picked.size === 0 || isRunning}>Read</button>
         <button type="button" className="wb-link" onClick={() => setPickerFor(null)}>Cancel</button>
+      </div>
+      <div className="wb-block">
+        <p className="wb-name">Or take it into</p>
+        <div className="wb-actions">
+          <button type="button" className="wb-link" onClick={() => onCarry(signal, "breakground")}>Breakground</button>
+          <button type="button" className="wb-link" onClick={() => onCarry(signal, "desert")}>Desert</button>
+        </div>
       </div>
     </div>
   );

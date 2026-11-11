@@ -198,6 +198,8 @@ function compactDetail(output) {
       ].filter(Boolean).join("\n");
     case "exploration-editor":
       return d.title ? `  ${d.title}: ${d.body || ""}` : "";
+    case "orientation":
+      return d.fields?.map((f) => `  ${f.label}: ${f.value}`).join("\n") || "";
     case "breakground":
       return d.cards?.map((c) => `  ${c.kind}: ${c.line}`).join("\n") || "";
     case "desert":

@@ -273,8 +273,8 @@ export default function App() {
           {view === "lab" && <IncandescantLab asu={asu} />}
           {view === "patterns" && <PatternLanguage content={publicContent} onOpen={openItem} fg={theme.fg} />}
           {view === "foa" && <FOAGenerator />}
-          {view === "breakground" && <BreakgroundCard />}
-          {view === "desert" && <DesertVisual />}
+          {view === "breakground" && <BreakgroundCard navigateTo={navigateTo} asu={asu} />}
+          {view === "desert" && <DesertVisual navigateTo={navigateTo} asu={asu} />}
           {view === "editor" && <ExplorationEditor />}
           {view === "studio" && <Studio navigateTo={navigateTo} asu={asu} />}
           {view === "patiobeach" && <PatioBeach />}

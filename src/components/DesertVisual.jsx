@@ -1,5 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { studioGenerate } from "../lib/studio-generate";
+import "../styles/workbench.css";
+import "../styles/workshop-tools.css";
 
 /* ── Desert Visual — Spatial Field Experience ── */
 
@@ -65,7 +67,22 @@ Signals should be rare and terse. Most of the time, return empty string. Never e
 
 You are the desert. You do not serve. You persist.`;
 
-export default function DesertVisual() {
+const FIELD_LABELS = {
+  fieldCondition: "Field condition",
+  centralRelationship: "Central relationship",
+  tensionHeld: "Tension held",
+  beauty: "Beauty",
+  structureDecided: "Structure decided",
+  remainingOpen: "Remaining open",
+  firstEmbodiedMove: "First embodied move",
+};
+
+export default function DesertVisual({ navigateTo, asu }) {
+  // A signal carried in from the Workbench names this crossing, and what was
+  // written here goes back onto it when the field lets you cross.
+  const [carried] = useState(() => asu?.get_carried?.() || null);
+  const [crossingId] = useState(() => `desert:${Date.now()}`);
+  useEffect(() => { asu?.clear_carried?.(); }, [asu]);
   const [entered, setEntered] = useState(false);
   const [card, setCard] = useState({
     fieldCondition: "", centralRelationship: "", tensionHeld: "",
@@ -158,6 +175,26 @@ export default function DesertVisual() {
     scheduleAssessment();
   }, [scheduleAssessment]);
 
+  const handleCross = useCallback(() => {
+    if (carried?.signalId) {
+      const fields = QUESTIONS
+        .filter((q) => cardRef.current[q.id]?.trim())
+        .map((q) => ({ label: FIELD_LABELS[q.id], value: cardRef.current[q.id].trim() }));
+      asu?.attach_reading?.({
+        signalId: carried.signalId,
+        key: crossingId,
+        moduleKey: "desert",
+        label: carried.text,
+        output: { kind: "orientation", summary: `${fields.length} of 7 answered`, detail: { mode: "desert", fields } },
+      });
+      navigateTo?.("studio");
+      return;
+    }
+    setEntered(false);
+  }, [asu, carried, crossingId, navigateTo]);
+
+  const narrow = typeof window !== "undefined" && window.innerWidth < 600;
+
   // Atmosphere: haze clears with coherence
   const hazeOpacity = Math.max(0, 0.6 - fieldState.coherence * 0.5);
   const warmth = heat * 0.15;
@@ -166,14 +203,14 @@ export default function DesertVisual() {
   if (!entered) {
     return (
       <div className="dv-gate">
+        <button type="button" className="dv-leave" onClick={() => navigateTo?.("studio")}>Workbench</button>
         <div className="dv-gate-content">
-          <div className="dv-gate-title">Desert</div>
-          <div className="dv-gate-sub">
+          <h1 className="dv-gate-title">Desert</h1>
+          <p className="dv-gate-sub">
             Seven questions on the horizon. The distance between them is yours to cross.
-          </div>
-          <button className="dv-gate-enter" onClick={() => setEntered(true)}>
-            Enter
-          </button>
+          </p>
+          {carried?.text ? <p className="dv-gate-carried">{carried.text}</p> : null}
+          <button type="button" className="dv-button" onClick={() => setEntered(true)}>Enter</button>
         </div>
       </div>
     );
@@ -286,6 +323,8 @@ export default function DesertVisual() {
         {/* Questions floating in space */}
         {QUESTIONS.map((q, i) => {
           const pos = POSITIONS[i];
+          // On a narrow screen the outer positions would sit off the edge.
+          const left = narrow ? 27 + (pos.x / 100) * 46 : pos.x;
           const fc = fieldState.fields?.[q.id] ?? 0;
           const filled = card[q.id]?.trim();
           const isActive = activeField === q.id;
@@ -307,7 +346,7 @@ export default function DesertVisual() {
               key={q.id}
               className={`dv-field${isActive ? " dv-field--active" : ""}`}
               style={{
-                left: `${pos.x}%`,
+                left: `${left}%`,
                 top: `${pos.y}%`,
                 transform: isActive
                   ? `translate(-50%, -50%) translateZ(0px) scale(1)`
@@ -322,7 +361,6 @@ export default function DesertVisual() {
                 handleFieldClick(q.id);
               }}
             >
-              <div className="dv-field-num">{q.number}</div>
               <div className="dv-field-title">{q.title}</div>
               {isActive ? (
                 <textarea
@@ -372,11 +410,11 @@ export default function DesertVisual() {
       {/* Threshold */}
       {fieldState.threshold && (
         <div className="dv-threshold">
-          <button className="dv-cross-btn" onClick={() => setEntered(false)}>
-            Cross
-          </button>
+          <button type="button" className="dv-button" onClick={handleCross}>Cross</button>
         </div>
       )}
+
+      <button type="button" className="dv-leave" onClick={() => navigateTo?.("studio")}>Workbench</button>
 
       {/* Assessment pulse */}
       {assessing && <div className="dv-pulse" />}

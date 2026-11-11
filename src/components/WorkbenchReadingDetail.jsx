@@ -14,6 +14,12 @@ function Row({ k, v }) {
 export default function SubstepDetail({ kind, detail }) {
   if (!detail) return null;
   switch (kind) {
+    case "orientation":
+      return (
+        <div className="atrium-detail-block">
+          {detail.fields?.map((f, i) => <Row key={i} k={f.label} v={f.value} />)}
+        </div>
+      );
     case "backstage":
       return <ul className="atrium-detail-list">{detail.agents.map((a, i) => <li key={i}><Row k={a.name} v={a.take} /></li>)}</ul>;
     case "art-of-model":

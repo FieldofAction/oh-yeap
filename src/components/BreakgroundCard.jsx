@@ -1,5 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { studioGenerate } from "../lib/studio-generate";
+import "../styles/workbench.css";
+import "../styles/workshop-tools.css";
 
 /* ── Breakground Card — Field Orientation System ── */
 
@@ -232,7 +234,33 @@ function parseSummaryFromText(text) {
 
 /* ── Sub-components ── */
 
-function QuestionField({ q, value, onChange, focused, onFocus }) {
+const FIELD_LABELS = {
+  fieldCondition: "Field condition",
+  centralRelationship: "Central relationship",
+  tensionHeld: "Tension held",
+  beauty: "Beauty",
+  structureDecided: "Structure decided",
+  remainingOpen: "Remaining open",
+  firstEmbodiedMove: "First embodied move",
+};
+const MODE_LABELS = { manual: "Manual", "assisted-hybrid": "Assisted", desert: "Desert" };
+
+const dateLabel = (iso) => new Date(iso).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
+const answeredCount = (card) => QUESTIONS.filter((q) => card[q.id]?.trim()).length;
+
+// What goes back onto a held signal when an orientation is finished.
+function orientationReading(orientation) {
+  const fields = QUESTIONS
+    .filter((q) => orientation.card[q.id]?.trim())
+    .map((q) => ({ label: FIELD_LABELS[q.id], value: orientation.card[q.id].trim() }));
+  return {
+    kind: "orientation",
+    summary: `${fields.length} of 7 answered`,
+    detail: { mode: orientation.mode, fields },
+  };
+}
+
+function QuestionField({ q, value, onChange }) {
   const ref = useRef(null);
   useEffect(() => {
     if (ref.current) {
@@ -240,31 +268,22 @@ function QuestionField({ q, value, onChange, focused, onFocus }) {
       ref.current.style.height = ref.current.scrollHeight + "px";
     }
   }, [value]);
-  const filled = value && value.trim().length > 0;
 
   return (
-    <div
-      className={`bg-question${focused ? " bg-question--focused" : ""}${filled ? " bg-question--filled" : ""}`}
-      onClick={() => ref.current?.focus()}
-    >
-      <div className="bg-question-head">
-        <span className="bg-question-num">{q.number}</span>
-        <span className="bg-question-title">{q.title}</span>
-      </div>
-      <div className="bg-question-sub">{q.sub}</div>
+    <div className="bg-question">
+      <label htmlFor={`bg-q-${q.id}`} className="bg-question-title">{q.title}</label>
+      <p className="wb-body">{q.sub}</p>
       <textarea
+        id={`bg-q-${q.id}`}
         ref={ref}
         className="bg-question-input"
         value={value}
         onChange={(e) => onChange(q.id, e.target.value)}
-        onFocus={() => onFocus(q.id)}
         placeholder={q.placeholder}
         rows={1}
       />
       {q.id === "firstEmbodiedMove" && (
-        <div className="bg-question-note">
-          This last question matters most. Embodied action precedes alignment.
-        </div>
+        <p className="wb-body">This last question matters most. Embodied action precedes alignment.</p>
       )}
     </div>
   );
@@ -272,68 +291,50 @@ function QuestionField({ q, value, onChange, focused, onFocus }) {
 
 function SummaryView({ orientation, onBack, onExportJSON, onExportMD }) {
   const c = orientation.card;
-  const fields = QUESTIONS.map((q) => ({
-    label: q.title.replace("What is the ", "").replace("What ", "").replace("?", ""),
-    value: c[q.id],
-  }));
-  const filledCount = QUESTIONS.filter((q) => c[q.id]?.trim()).length;
-
   return (
-    <div className="bg-summary en">
-      <div className="bg-summary-header">
-        <button className="bg-btn bg-btn--ghost" onClick={onBack}>← Back</button>
-        <div className="bg-summary-meta">
-          <span className="bg-meta-label">{orientation.project || "Untitled"}</span>
-          <span className="bg-meta-sep">·</span>
-          <span className="bg-meta-date">{new Date(orientation.timestamp).toLocaleDateString()}</span>
-          <span className="bg-meta-sep">·</span>
-          <span className="bg-meta-count">{filledCount}/7 fields</span>
-          <span className="bg-meta-sep">·</span>
-          <span className="bg-meta-mode">{orientation.mode}</span>
-        </div>
+    <div className="wb-tool-body">
+      <div className="wb-actions">
+        <button type="button" className="wb-link" onClick={onBack}>Back</button>
+      </div>
+      <div className="wb-block">
+        <h2 className="wb-headline">{orientation.project || "Untitled"}</h2>
+        <p className="wb-body">{dateLabel(orientation.timestamp)}. {MODE_LABELS[orientation.mode] || orientation.mode}.</p>
       </div>
 
-      <h2 className="bg-summary-title">Field Orientation Summary</h2>
-
-      <div className="bg-summary-fields">
-        {fields.map((f, i) => (
-          <div key={i} className={`bg-summary-field dc dc${i + 1}`}>
-            <div className="bg-summary-field-label">{f.label}</div>
-            <div className="bg-summary-field-value">{f.value || "—"}</div>
+      <dl className="bg-answers">
+        {QUESTIONS.map((q) => (
+          <div key={q.id} className="bg-answer">
+            <dt className="wb-name">{FIELD_LABELS[q.id]}</dt>
+            <dd className={c[q.id]?.trim() ? "bg-answer-text" : "wb-body"}>{c[q.id]?.trim() || "Left open"}</dd>
           </div>
         ))}
-      </div>
+      </dl>
 
-      <div className="bg-summary-actions">
-        <div className="bg-summary-actions-label">Export</div>
-        <button className="bg-btn bg-btn--outline" onClick={onExportJSON}>JSON</button>
-        <button className="bg-btn bg-btn--outline" onClick={onExportMD}>Markdown</button>
+      <div className="wb-actions">
+        <button type="button" className="wb-link" onClick={onExportJSON}>Download as JSON</button>
+        <button type="button" className="wb-link" onClick={onExportMD}>Download as Markdown</button>
       </div>
     </div>
   );
 }
 
 function OrientationListItem({ o, onLoad, onDelete }) {
-  const filledCount = QUESTIONS.filter((q) => o.card[q.id]?.trim()).length;
   return (
-    <div className="bg-list-item">
-      <div className="bg-list-item-main" onClick={() => onLoad(o)}>
-        <div className="bg-list-item-name">{o.project || "Untitled"}</div>
-        <div className="bg-list-item-meta">
-          {new Date(o.timestamp).toLocaleDateString()} · {filledCount}/7 · {o.mode} · {o.status}
-        </div>
-      </div>
-      <button className="bg-list-item-del" onClick={(e) => { e.stopPropagation(); onDelete(o.id); }} title="Delete">×</button>
+    <div className="bg-saved">
+      <button type="button" className="bg-saved-open" onClick={() => onLoad(o)}>
+        <span className="wb-name">{o.project || "Untitled"}</span>
+        <span className="wb-body">{dateLabel(o.timestamp)}. {MODE_LABELS[o.mode] || o.mode}. {answeredCount(o.card)} of 7 answered.</span>
+      </button>
+      <button type="button" className="wb-link" onClick={() => onDelete(o.id)}>Delete</button>
     </div>
   );
 }
 
-/* ── Chat message bubble ── */
 function ChatMessage({ msg }) {
   return (
-    <div className={`bg-chat-msg bg-chat-msg--${msg.role} en`}>
-      <div className="bg-chat-msg-role">{msg.role === "assistant" ? "System" : "You"}</div>
-      <div className="bg-chat-msg-text">{msg.content}</div>
+    <div className="bg-chat-msg">
+      <p className="wb-name">{msg.role === "assistant" ? "Breakground" : "You"}</p>
+      <p className="bg-chat-text">{msg.content}</p>
     </div>
   );
 }
@@ -424,28 +425,27 @@ function HybridMode({ onComplete, projectName: initialProject }) {
 
   if (!started) {
     return (
-      <div className="bg-hybrid-start en">
-        <div className="bg-hybrid-start-text">
-          The assisted-hybrid mode will walk you through the Breakground Card one question at a time. The system asks, reflects, and pushes back when needed. You do the sensing and deciding.
+      <div className="wb-tool-body">
+        <p className="wb-body wb-measure">
+          Breakground asks one question at a time, reflects back what it hears, and pushes when an answer sounds habitual. You do the sensing and deciding.
+        </p>
+        <div className="wb-actions">
+          <button type="button" className="wb-button" onClick={startConversation}>Begin the conversation</button>
         </div>
-        <button className="bg-btn bg-btn--primary" onClick={startConversation}>
-          Begin conversation
-        </button>
       </div>
     );
   }
 
   return (
-    <div className="bg-hybrid en">
-      {/* Chat messages */}
+    <div className="wb-tool-body">
       <div className="bg-chat-scroll">
         {messages.map((msg, i) => (
           <ChatMessage key={i} msg={msg} />
         ))}
         {loading && (
-          <div className="bg-chat-msg bg-chat-msg--assistant en">
-            <div className="bg-chat-msg-role">System</div>
-            <div className="bg-chat-msg-loading">
+          <div className="bg-chat-msg" role="status" aria-label="Breakground is responding">
+            <p className="wb-name">Breakground</p>
+            <div className="bg-chat-loading">
               <span className="bg-dot" />
               <span className="bg-dot" />
               <span className="bg-dot" />
@@ -453,29 +453,26 @@ function HybridMode({ onComplete, projectName: initialProject }) {
           </div>
         )}
         {error && (
-          <div className="bg-chat-error">
-            {error}
-            <button className="bg-btn bg-btn--ghost" style={{ marginLeft: 8 }} onClick={() => setError(null)}>Dismiss</button>
+          <div className="wb-actions" role="alert">
+            <p className="wb-body">{error}</p>
+            <button type="button" className="wb-link" onClick={() => setError(null)}>Dismiss</button>
           </div>
         )}
         <div ref={chatEndRef} />
       </div>
 
-      {/* Summary extraction notice */}
       {summaryCard && (
-        <div className="bg-hybrid-summary-notice en">
-          <div className="bg-hybrid-summary-label">Orientation summary detected</div>
-          <button className="bg-btn bg-btn--primary" onClick={handleComplete}>
-            View summary
-          </button>
+        <div className="wb-actions">
+          <p className="wb-body">The seven answers are ready.</p>
+          <button type="button" className="wb-button" onClick={handleComplete}>See the summary</button>
         </div>
       )}
 
-      {/* Input */}
-      <div className="bg-chat-input-wrap">
+      <div className="wb-signal-row">
         <textarea
           ref={inputRef}
-          className="bg-chat-input"
+          className="wb-field bg-chat-input"
+          aria-label="Your response"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => {
@@ -484,17 +481,11 @@ function HybridMode({ onComplete, projectName: initialProject }) {
               sendMessage();
             }
           }}
-          placeholder="Respond…"
+          placeholder="Respond"
           rows={1}
           disabled={loading}
         />
-        <button
-          className="bg-btn bg-btn--primary bg-chat-send"
-          onClick={sendMessage}
-          disabled={loading || !input.trim()}
-        >
-          Send
-        </button>
+        <button type="button" className="wb-button" onClick={sendMessage} disabled={loading || !input.trim()}>Send</button>
       </div>
     </div>
   );
@@ -528,9 +519,9 @@ function DesertField({ q, value, onChange, coherence, focused, onFocus, onBlur }
         transition: "opacity 1.2s ease, filter 1.2s ease, transform 1.2s ease",
       }}
     >
-      <div className="bg-desert-field-num">{q.number}</div>
-      <div className="bg-desert-field-title">{q.title}</div>
+      <label htmlFor={`bg-d-${q.id}`} className="bg-desert-field-title">{q.title}</label>
       <textarea
+        id={`bg-d-${q.id}`}
         ref={ref}
         className="bg-desert-field-input"
         value={value}
@@ -655,16 +646,16 @@ function DesertMode({ onComplete, projectName: initialProject }) {
 
   if (!entered) {
     return (
-      <div className="bg-desert-gate en">
-        <div className="bg-desert-gate-text">
+      <div className="wb-tool-body">
+        <p className="wb-body wb-measure">
           The field holds its own conditions. It does not guide. It does not ask. It persists. Your movement against its persistence is where orientation happens.
-        </div>
-        <div className="bg-desert-gate-sub">
+        </p>
+        <p className="wb-body wb-measure">
           All seven questions are present. The field responds to coherence, not completion.
+        </p>
+        <div className="wb-actions">
+          <button type="button" className="wb-button" onClick={() => setEntered(true)}>Enter the field</button>
         </div>
-        <button className="bg-btn bg-btn--primary" onClick={() => setEntered(true)}>
-          Enter the field
-        </button>
       </div>
     );
   }
@@ -727,9 +718,7 @@ function DesertMode({ onComplete, projectName: initialProject }) {
       {/* Threshold — the field releases you only when coherence is found */}
       <div className="bg-desert-threshold">
         {fieldState.threshold ? (
-          <button className="bg-btn bg-btn--primary bg-desert-cross" onClick={handleComplete}>
-            Cross
-          </button>
+          <button type="button" className="wb-button" onClick={handleComplete}>Cross</button>
         ) : (
           <div className="bg-desert-held">
             {assessing ? "…" : ""}
@@ -742,13 +731,29 @@ function DesertMode({ onComplete, projectName: initialProject }) {
 
 /* ── Main component ── */
 
-export default function BreakgroundCard() {
+export default function BreakgroundCard({ navigateTo, asu }) {
+  // A signal carried in from the Workbench names the field, and the finished
+  // orientation goes back onto it as a reading.
+  const [carried] = useState(() => asu?.get_carried?.() || null);
   const [orientations, setOrientations] = useState(loadOrientations);
   const [current, setCurrent] = useState(null);
-  const [focusedQ, setFocusedQ] = useState(null);
   const [viewMode, setViewMode] = useState("card"); // "card" | "summary" | "library" | "hybrid" | "desert"
-  const [projectName, setProjectName] = useState("");
+  const [projectName, setProjectName] = useState(carried?.text || "");
   const [engagementMode, setEngagementMode] = useState("manual"); // "manual" | "hybrid" | "desert"
+  const signalId = carried?.signalId || null;
+
+  useEffect(() => { asu?.clear_carried?.(); }, [asu]);
+
+  const sendBack = useCallback((o) => {
+    if (!o?.signalId) return;
+    asu?.attach_reading?.({
+      signalId: o.signalId,
+      key: `breakground:${o.id}`,
+      moduleKey: "breakground",
+      label: o.project || "",
+      output: orientationReading(o),
+    });
+  }, [asu]);
 
   useEffect(() => {
     saveOrientations(orientations);
@@ -768,6 +773,7 @@ export default function BreakgroundCard() {
       project: projectName.trim() || "",
       timestamp: ts(),
       mode: "manual",
+      signalId,
       card: {
         fieldCondition: "",
         centralRelationship: "",
@@ -784,7 +790,7 @@ export default function BreakgroundCard() {
     };
     setCurrent(o);
     setViewMode("card");
-  }, [projectName, engagementMode]);
+  }, [projectName, engagementMode, signalId]);
 
   const updateField = useCallback((fieldId, value) => {
     setCurrent((prev) => {
@@ -811,8 +817,9 @@ export default function BreakgroundCard() {
       if (exists) return prev.map((o) => (o.id === completed.id ? completed : o));
       return [completed, ...prev];
     });
+    sendBack(completed);
     setViewMode("summary");
-  }, [current]);
+  }, [current, sendBack]);
 
   const handleHybridComplete = useCallback((card, conversationLog) => {
     const o = {
@@ -820,6 +827,7 @@ export default function BreakgroundCard() {
       project: projectName.trim() || "",
       timestamp: ts(),
       mode: "assisted-hybrid",
+      signalId,
       card,
       conversationLog,
       status: "active",
@@ -828,8 +836,9 @@ export default function BreakgroundCard() {
     };
     setCurrent(o);
     setOrientations((prev) => [o, ...prev]);
+    sendBack(o);
     setViewMode("summary");
-  }, [projectName]);
+  }, [projectName, signalId, sendBack]);
 
   const handleDesertComplete = useCallback((card) => {
     const o = {
@@ -837,6 +846,7 @@ export default function BreakgroundCard() {
       project: projectName.trim() || "",
       timestamp: ts(),
       mode: "desert",
+      signalId,
       card,
       conversationLog: null,
       status: "active",
@@ -845,8 +855,9 @@ export default function BreakgroundCard() {
     };
     setCurrent(o);
     setOrientations((prev) => [o, ...prev]);
+    sendBack(o);
     setViewMode("summary");
-  }, [projectName]);
+  }, [projectName, signalId, sendBack]);
 
   const loadOrientation = useCallback((o) => {
     setCurrent(o);
@@ -861,209 +872,106 @@ export default function BreakgroundCard() {
     }
   }, [current]);
 
-  const filledCount = current
-    ? QUESTIONS.filter((q) => current.card[q.id]?.trim()).length
-    : 0;
-
+  const filledCount = current ? answeredCount(current.card) : 0;
   const showStartScreen = !current && viewMode !== "library" && viewMode !== "hybrid" && viewMode !== "desert";
 
+  const MODES = [
+    ["manual", "Manual", "Fill in the card at your own pace, in any order."],
+    ["hybrid", "Assisted", "A conversational partner walks you through the card, one question at a time."],
+    ["desert", "Desert", "The field holds its own conditions. It responds to coherence, not completion."],
+  ];
+  const startBlock = (
+    <form className="wb-signal" onSubmit={(e) => { e.preventDefault(); startNew(); }}>
+      <label htmlFor="bg-field-name" className="wb-label">Name this field</label>
+      <div className="wb-signal-row">
+        <input
+          id="bg-field-name"
+          className="wb-field"
+          value={projectName}
+          onChange={(e) => setProjectName(e.target.value)}
+          placeholder="Site hero, brand direction, Q3 strategy"
+          autoComplete="off"
+        />
+        <button type="submit" className="wb-button">Begin</button>
+      </div>
+      <div className="wb-segments bg-modes" role="group" aria-label="How to work through it">
+        {MODES.map(([key, label]) => (
+          <button key={key} type="button" className="wb-segment" aria-pressed={engagementMode === key} onClick={() => setEngagementMode(key)}>{label}</button>
+        ))}
+      </div>
+      <p className="wb-body wb-measure">{MODES.find(([key]) => key === engagementMode)[2]}</p>
+    </form>
+  );
+
   return (
-    <div className="bg-wrap en">
-      {/* ── Header ── */}
-      <div className="bg-header">
-        <div className="bg-header-left">
-          <h1 className="bg-title">Breakground Card</h1>
-          <div className="bg-subtitle">Field Orientation System</div>
-        </div>
-        <div className="bg-header-right">
-          <button
-            className={`bg-tab${viewMode === "library" ? " bg-tab--active" : ""}`}
-            onClick={() => setViewMode("library")}
-          >
-            Library ({orientations.length})
-          </button>
+    <section className="wb wb-page">
+      <header className="wb-header">
+        <h1 className="wb-title">Breakground</h1>
+        <nav className="wb-actions" aria-label="Breakground">
+          <button type="button" className="wb-link" onClick={() => navigateTo?.("studio")}>Workbench</button>
+          <button type="button" className="wb-link" aria-current={viewMode === "library" ? "page" : undefined} onClick={() => setViewMode("library")}>Saved</button>
           {current && (
-            <button
-              className={`bg-tab${viewMode === "card" ? " bg-tab--active" : ""}`}
-              onClick={() => setViewMode("card")}
-            >
-              Card
-            </button>
+            <button type="button" className="wb-link" aria-current={viewMode === "card" ? "page" : undefined} onClick={() => setViewMode("card")}>Card</button>
           )}
           {current && filledCount > 0 && (
-            <button
-              className={`bg-tab${viewMode === "summary" ? " bg-tab--active" : ""}`}
-              onClick={() => { saveOrientation(); setViewMode("summary"); }}
-            >
-              Summary
-            </button>
+            <button type="button" className="wb-link" aria-current={viewMode === "summary" ? "page" : undefined} onClick={() => { saveOrientation(); setViewMode("summary"); }}>Summary</button>
           )}
-        </div>
-      </div>
+        </nav>
+      </header>
 
-      {/* ── Start screen with mode toggle ── */}
-      {showStartScreen && (
-        <div className="bg-start en">
-          <div className="bg-start-prompt">Name this field</div>
-          <div className="bg-start-row">
-            <input
-              className="bg-start-input"
-              value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              placeholder="e.g. Site Hero, Brand Direction, Q3 Strategy…"
-              onKeyDown={(e) => e.key === "Enter" && startNew()}
-            />
-            <button className="bg-btn bg-btn--primary" onClick={startNew}>
-              Begin
-            </button>
-          </div>
-          <div className="bg-mode-toggle">
-            <button
-              className={`bg-mode-btn${engagementMode === "manual" ? " bg-mode-btn--active" : ""}`}
-              onClick={() => setEngagementMode("manual")}
-            >
-              Manual
-            </button>
-            <button
-              className={`bg-mode-btn${engagementMode === "hybrid" ? " bg-mode-btn--active" : ""}`}
-              onClick={() => setEngagementMode("hybrid")}
-            >
-              Assisted
-            </button>
-            <button
-              className={`bg-mode-btn${engagementMode === "desert" ? " bg-mode-btn--active" : ""}`}
-              onClick={() => setEngagementMode("desert")}
-            >
-              Desert
-            </button>
-          </div>
-          <div className="bg-start-note">
-            {engagementMode === "manual"
-              ? "Fill in the card at your own pace, in any order."
-              : engagementMode === "hybrid"
-              ? "A conversational partner walks you through the card, one question at a time."
-              : "The field holds its own conditions. It responds to coherence, not completion."}
-          </div>
-        </div>
-      )}
+      {showStartScreen && <div className="wb-tool-body">{startBlock}</div>}
 
-      {/* ── Library ── */}
       {viewMode === "library" && (
-        <div className="bg-library en">
-          <div className="bg-start en" style={{ marginBottom: 32 }}>
-            <div className="bg-start-prompt">New orientation</div>
-            <div className="bg-start-row">
-              <input
-                className="bg-start-input"
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-                placeholder="Name this field…"
-                onKeyDown={(e) => e.key === "Enter" && startNew()}
-              />
-              <button className="bg-btn bg-btn--primary" onClick={startNew}>
-                Begin
-              </button>
+        <div className="wb-tool-body">
+          {startBlock}
+          {orientations.length > 0 ? (
+            <div className="bg-saved-list">
+              <h2 className="wb-name">Saved orientations</h2>
+              {orientations.map((o) => (
+                <OrientationListItem key={o.id} o={o} onLoad={loadOrientation} onDelete={deleteOrientation} />
+              ))}
             </div>
-            <div className="bg-mode-toggle">
-              <button
-                className={`bg-mode-btn${engagementMode === "manual" ? " bg-mode-btn--active" : ""}`}
-                onClick={() => setEngagementMode("manual")}
-              >
-                Manual
-              </button>
-              <button
-                className={`bg-mode-btn${engagementMode === "hybrid" ? " bg-mode-btn--active" : ""}`}
-                onClick={() => setEngagementMode("hybrid")}
-              >
-                Assisted
-              </button>
-            </div>
-          </div>
-          {orientations.length > 0 && (
-            <>
-              <div className="bg-library-label">Saved orientations</div>
-              <div className="bg-library-list">
-                {orientations.map((o) => (
-                  <OrientationListItem
-                    key={o.id}
-                    o={o}
-                    onLoad={loadOrientation}
-                    onDelete={deleteOrientation}
-                  />
-                ))}
-              </div>
-            </>
-          )}
-          {orientations.length === 0 && (
-            <div className="bg-library-empty">
-              No orientations yet. Begin one above.
-            </div>
+          ) : (
+            <p className="wb-body">Nothing is saved yet.</p>
           )}
         </div>
       )}
 
-      {/* ── Manual card view ── */}
       {viewMode === "card" && current && (
-        <div className="bg-card en">
-          <div className="bg-card-project">
+        <div className="wb-tool-body">
+          <div className="wb-signal">
+            <label htmlFor="bg-card-name" className="wb-label">The field</label>
             <input
-              className="bg-card-project-input"
+              id="bg-card-name"
+              className="wb-field"
               value={current.project}
               onChange={(e) => setCurrent((p) => ({ ...p, project: e.target.value }))}
-              placeholder="Untitled orientation"
+              placeholder="Untitled"
+              autoComplete="off"
             />
-            <div className="bg-card-progress">
-              <span className="bg-card-progress-count">{filledCount}</span>
-              <span className="bg-card-progress-sep">/</span>
-              <span className="bg-card-progress-total">7</span>
-            </div>
           </div>
 
-          <div className="bg-card-questions">
+          <div className="bg-questions">
             {QUESTIONS.map((q) => (
-              <QuestionField
-                key={q.id}
-                q={q}
-                value={current.card[q.id]}
-                onChange={updateField}
-                focused={focusedQ === q.id}
-                onFocus={setFocusedQ}
-              />
+              <QuestionField key={q.id} q={q} value={current.card[q.id]} onChange={updateField} />
             ))}
           </div>
 
-          <div className="bg-card-actions">
-            <button className="bg-btn bg-btn--ghost" onClick={() => { saveOrientation(); setViewMode("library"); }}>
-              Save & close
-            </button>
-            <button
-              className="bg-btn bg-btn--primary"
-              onClick={completeOrientation}
-              disabled={filledCount === 0}
-            >
-              Complete orientation
-            </button>
+          <div className="wb-actions">
+            <button type="button" className="wb-button" onClick={completeOrientation} disabled={filledCount === 0}>Complete orientation</button>
+            <button type="button" className="wb-link" onClick={() => { saveOrientation(); setViewMode("library"); }}>Save and close</button>
           </div>
         </div>
       )}
 
-      {/* ── Hybrid conversational mode ── */}
       {viewMode === "hybrid" && (
-        <HybridMode
-          onComplete={handleHybridComplete}
-          projectName={projectName}
-        />
+        <HybridMode onComplete={handleHybridComplete} projectName={projectName} />
       )}
 
-      {/* ── Desert mode ── */}
       {viewMode === "desert" && (
-        <DesertMode
-          onComplete={handleDesertComplete}
-          projectName={projectName}
-        />
+        <DesertMode onComplete={handleDesertComplete} projectName={projectName} />
       )}
 
-      {/* ── Summary view ── */}
       {viewMode === "summary" && current && (
         <SummaryView
           orientation={current}
@@ -1073,21 +981,9 @@ export default function BreakgroundCard() {
         />
       )}
 
-      {/* ── Governance ── */}
-      <div className="bg-governance">
-        <div className="bg-governance-label">Operating constraints</div>
-        <div className="bg-governance-items">
-          <span>Embodied action precedes alignment</span>
-          <span className="bg-gov-sep">·</span>
-          <span>Practice precedes documentation</span>
-          <span className="bg-gov-sep">·</span>
-          <span>Silence is allowed</span>
-          <span className="bg-gov-sep">·</span>
-          <span>State is visible</span>
-          <span className="bg-gov-sep">·</span>
-          <span>Change is legible</span>
-        </div>
-      </div>
-    </div>
+      <p className="wb-body wb-measure">
+        Embodied action precedes alignment. Practice precedes documentation. Silence is allowed. State is visible. Change is legible.
+      </p>
+    </section>
   );
 }

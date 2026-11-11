@@ -55,6 +55,8 @@ const DEFAULT_STORE = {
     // Held signals — the Field and Open seats. A signal stays open until the
     // operator lets it settle; readings (runs) attach to it by signalId.
     signals: [],             // [{id, text, ts, settledAt}]
+    // A held signal on its way into a tool that has its own page.
+    carried: null,           // {signalId, text} | null
   },
 };
 
@@ -188,6 +190,28 @@ function useASUStore() {
       signals: ((s.atrium?.signals)||[]).filter(sg => sg.id !== id),
       flowLane: ((s.atrium?.flowLane)||[]).filter(it => it.signalId !== id || it.canonical).map(it => it.signalId === id ? {...it, signalId: null} : it),
     }})),
+
+    // ── Carrying a signal into a tool, and bringing its reading back ──
+    get_carried: () => store.atrium?.carried || null,
+    carry_signal: (signal) => setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), carried: signal ? { signalId: signal.id, text: signal.text } : null}})),
+    clear_carried: () => setStore(s => s.atrium?.carried ? ({...s, atrium:{...s.atrium, carried: null}}) : s),
+    // A tool with its own page writes what it found back onto the signal. The
+    // key lets the same piece of work replace its earlier reading instead of
+    // stacking duplicates.
+    attach_reading: ({signalId, key, moduleKey, label, output}) => setStore(s => {
+      if (!signalId || !moduleKey || !output) return s;
+      const lane = (s.atrium?.flowLane)||[];
+      const now = Date.now();
+      const item = {
+        id: uid(), key: key || null, source: "Tool", label: label || "", ts: now, signalId,
+        payload: { runId: null, steps: [{ moduleKey, status: "done", output, error: null, startedAt: now, completedAt: now }] },
+      };
+      const existing = key ? lane.find(it => it.key === key) : null;
+      const next = existing
+        ? lane.map(it => it.key === key ? {...item, id: existing.id} : it)
+        : [item, ...lane];
+      return {...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), flowLane: next}};
+    }),
 
     // ── Atrium Sequence Tools (Slice 1: orchestration shell, mocked execution) ──
     get_sequence: () => store.atrium?.sequence || [],
