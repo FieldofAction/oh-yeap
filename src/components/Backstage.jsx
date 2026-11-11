@@ -548,18 +548,20 @@ Respond with ONLY the synthesis text, no preamble.`;
                 const members = AGENTS.filter(a => a.ring === r.ring);
                 const allOn = members.every(a => am[a.key]);
                 return (
-                  <fieldset key={r.ring} className="tl-ring">
+                  <fieldset key={r.ring} className={`tl-ring${members.length > 4 ? " tl-ring-wide" : ""}`}>
                     <legend className="tl-ring-head">
                       <span className="wb-name">{r.name}</span>
                       <span className="wb-body">{r.line}</span>
                     </legend>
-                    {members.map(a => (
-                      <label key={a.key} className="tl-agent">
-                        <input type="checkbox" checked={!!am[a.key]} onChange={() => asu.set_agent_mask({ ...am, [a.key]: !am[a.key] })} />
-                        <span className="tl-agent-name">{a.name}</span>
-                        <span className="tl-agent-role">{AGENT_ROLES[a.key]}</span>
-                      </label>
-                    ))}
+                    <div className="tl-ring-agents">
+                      {members.map(a => (
+                        <label key={a.key} className="tl-agent">
+                          <input type="checkbox" checked={!!am[a.key]} onChange={() => asu.set_agent_mask({ ...am, [a.key]: !am[a.key] })} />
+                          <span className="tl-agent-name">{a.name}</span>
+                          <span className="tl-agent-role">{AGENT_ROLES[a.key]}</span>
+                        </label>
+                      ))}
+                    </div>
                     <button type="button" className="wb-link tl-ring-all" onClick={() => asu.set_agent_mask({ ...am, ...Object.fromEntries(members.map(a => [a.key, !allOn])) })}>
                       {allOn ? `Leave out the ${r.name.toLowerCase()}` : `Use all of the ${r.name.toLowerCase()}`}
                     </button>

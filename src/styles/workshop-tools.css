@@ -210,7 +210,7 @@
 .tl-agent:has(input:checked) .tl-agent-name { color: var(--wb-ink); }
 .tl-agent:has(input:checked) .tl-agent-role { color: var(--wb-ink); }
 .tl-ring-all { align-self: flex-start; }
-.tl-ring .tl-agent:last-of-type { border-bottom: 1px solid var(--wb-line); }
+.tl-ring-agents { border-bottom: 1px solid var(--wb-line); }
 .tl-order { gap: 0; list-style: decimal; padding-left: 28px; }
 .tl-order .tl-agent { display: list-item; cursor: default; padding-left: 8px; }
 .tl-order .tl-agent::marker { color: var(--wb-soft); font-variant-numeric: tabular-nums; }
@@ -253,4 +253,18 @@
   .tl-section:has(> :is(h2, h3):first-child) { grid-template-columns: minmax(0, 1fr); }
   .tl-section:has(> :is(h2, h3):first-child) > :is(h2, h3):first-child { grid-row: auto; }
   .tl-section:has(> :is(h2, h3):first-child) > :not(:first-child) { grid-column: 1; }
+}
+
+/* On a wide screen the roster runs in two columns, reading down then across.
+   The name sits over what the agent does so each column stays readable. */
+@media (min-width: 900px) {
+  .tl-roster { max-width: none; }
+  .tl-roster:not(.tl-order) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--wb-gap); row-gap: 28px; }
+  .tl-ring-wide { grid-column: 1 / -1; }
+  .tl-ring-wide .tl-ring-agents { column-count: 2; column-gap: var(--wb-gap); }
+  .tl-order { display: block; column-count: 2; column-gap: calc(var(--wb-gap) + 28px); }
+  .tl-agent { break-inside: avoid; }
+  .tl-ring .tl-agent { grid-template-columns: 20px minmax(0, 1fr); row-gap: 2px; }
+  .tl-ring .tl-agent-role { grid-column: 2; }
+  .tl-order .tl-agent-name { display: block; min-width: 0; }
 }
