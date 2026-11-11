@@ -52,6 +52,9 @@ const DEFAULT_STORE = {
     openLoops: [],           // [{id, label, source, ts}] unfinished work across modules
     sequence: [],            // [moduleKey, ...] operator-defined run order
     currentRun: null,        // { id, signal, startedAt, completedAt, steps:[{moduleKey, status, output, error, startedAt, completedAt}] } | null
+    // Held signals — the Field and Open seats. A signal stays open until the
+    // operator lets it settle; readings (runs) attach to it by signalId.
+    signals: [],             // [{id, text, ts, settledAt}]
   },
 };
 
@@ -67,7 +70,7 @@ function loadStore() {
       backstage: { ...DEFAULT_STORE.backstage, ...saved.backstage, ideas: saved.backstage?.ideas?.length ? saved.backstage.ideas : DEFAULT_STORE.backstage.ideas, agentMask: { ...DEFAULT_STORE.backstage.agentMask, ...(saved.backstage?.agentMask||{}) } },
       system: { ...DEFAULT_STORE.system, ...saved.system },
       artOfModel: { ...DEFAULT_STORE.artOfModel, ...saved.artOfModel, responses: { ...DEFAULT_STORE.artOfModel.responses, ...(saved.artOfModel?.responses||{}) }, synthesis: { ...DEFAULT_STORE.artOfModel.synthesis, ...(saved.artOfModel?.synthesis||{}) } },
-      atrium: { ...DEFAULT_STORE.atrium, ...(saved.atrium||{}), flowLane: Array.isArray(saved.atrium?.flowLane) ? saved.atrium.flowLane : [], openLoops: Array.isArray(saved.atrium?.openLoops) ? saved.atrium.openLoops : [], sequence: Array.isArray(saved.atrium?.sequence) ? saved.atrium.sequence : [], currentRun: null },
+      atrium: { ...DEFAULT_STORE.atrium, ...(saved.atrium||{}), flowLane: Array.isArray(saved.atrium?.flowLane) ? saved.atrium.flowLane : [], openLoops: Array.isArray(saved.atrium?.openLoops) ? saved.atrium.openLoops : [], sequence: Array.isArray(saved.atrium?.sequence) ? saved.atrium.sequence : [], signals: Array.isArray(saved.atrium?.signals) ? saved.atrium.signals : [], currentRun: null },
     };
   } catch { return DEFAULT_STORE; }
 }
@@ -168,6 +171,24 @@ function useASUStore() {
     },
     close_open_loop: (id) => setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), openLoops: ((s.atrium?.openLoops)||[]).filter(l => l.id !== id)}})),
 
+    // ── Held signals ──
+    get_signals: () => store.atrium?.signals || [],
+    hold_signal: (text) => {
+      const clean = String(text || "").trim();
+      if (!clean) return null;
+      const signal = { id: uid(), text: clean, ts: Date.now(), settledAt: null };
+      setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), signals: [signal, ...((s.atrium?.signals)||[])]}}));
+      return signal;
+    },
+    settle_signal: (id) => setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), signals: ((s.atrium?.signals)||[]).map(sg => sg.id === id ? {...sg, settledAt: Date.now()} : sg)}})),
+    reopen_signal: (id) => setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), signals: ((s.atrium?.signals)||[]).map(sg => sg.id === id ? {...sg, settledAt: null} : sg)}})),
+    // Removes the signal and its non-canonical readings. Canonical readings are
+    // kept and fall back to the earlier-runs list.
+    remove_signal: (id) => setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium),
+      signals: ((s.atrium?.signals)||[]).filter(sg => sg.id !== id),
+      flowLane: ((s.atrium?.flowLane)||[]).filter(it => it.signalId !== id || it.canonical).map(it => it.signalId === id ? {...it, signalId: null} : it),
+    }})),
+
     // ── Atrium Sequence Tools (Slice 1: orchestration shell, mocked execution) ──
     get_sequence: () => store.atrium?.sequence || [],
     add_to_sequence: (moduleKey) => setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), sequence: [...((s.atrium?.sequence)||[]), moduleKey]}})),
@@ -182,13 +203,18 @@ function useASUStore() {
     clear_sequence: () => setStore(s => ({...s, atrium:{...(s.atrium||DEFAULT_STORE.atrium), sequence: []}})),
 
     get_current_run: () => store.atrium?.currentRun || null,
-    start_run: (canonContext = []) => {
-      const seq = store.atrium?.sequence || [];
-      const signal = store.atrium?.activeSignal || "";
+    // With no options this runs the stored sequence on the active signal (the
+    // original behavior). The Workbench passes a held signal, the tools to read
+    // it with, and a summary of that signal's earlier readings.
+    start_run: (canonContext = [], options = {}) => {
+      const seq = Array.isArray(options.sequence) ? options.sequence : (store.atrium?.sequence || []);
+      const signal = typeof options.signal === "string" ? options.signal : (store.atrium?.activeSignal || "");
       if (seq.length === 0) return null;
       const run = {
         id: uid(),
         signal,
+        signalId: options.signalId || null,
+        earlierReadings: Array.isArray(options.earlierReadings) ? options.earlierReadings : [],
         startedAt: Date.now(),
         completedAt: null,
         status: "running",
@@ -220,6 +246,7 @@ function useASUStore() {
         source: "Run",
         label: completed.signal || "(no signal)",
         ts: completed.completedAt,
+        signalId: completed.signalId || null,
         payload: { runId: completed.id, steps: completed.steps },
       };
       // Stratification cap: canonical items are exempt (they never expire); non-canonical

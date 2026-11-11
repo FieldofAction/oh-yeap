@@ -68,10 +68,13 @@ const viewFromHash = () => {
 const WORK_VIEWS = new Set(["public", "superconscious", "patiobeach"]);
 const CANON_VIEWS = new Set(["canon", "materials"]);
 const INFO_VIEWS = new Set(["about", "colophon"]);
+// The Workbench and its tools share the system theme and typeface.
+const WORKSHOP_VIEWS = new Set(["studio", "model", "playbook", "console", "foa", "breakground", "desert", "backstage", "editor", "lab"]);
 const themeForView = (v) =>
   WORK_VIEWS.has(v) ? "threshold" :
   CANON_VIEWS.has(v) ? "canon" :
-  INFO_VIEWS.has(v) ? "info" : "light";
+  INFO_VIEWS.has(v) ? "info" :
+  WORKSHOP_VIEWS.has(v) ? "system" : "light";
 
 function cv(t) {
   return {
@@ -170,7 +173,7 @@ export default function App() {
     const handler = (e) => {
       const tag = e.target.tagName;
       const isInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || e.target.isContentEditable;
-      if (e.key === "?" && !e.ctrlKey && !e.metaKey) setEgg(p => !p);
+      if (e.key === "?" && !e.ctrlKey && !e.metaKey && !isInput) setEgg(p => !p);
       if ((e.key === "m" || e.key === "M") && !e.ctrlKey && !e.metaKey && !isInput) setLens(p => !p);
       if ((e.key === "p" || e.key === "P") && !e.ctrlKey && !e.metaKey && !isInput) setPatternLens(p => !p);
       if ((e.key === "g" || e.key === "G") && !e.ctrlKey && !e.metaKey && !isInput) setShowGraph(p => !p);
@@ -252,7 +255,7 @@ export default function App() {
   }, []);
 
   return (
-    <div style={cv(theme)} className="app-layout">
+    <div style={cv(theme)} className={`app-layout${WORKSHOP_VIEWS.has(view) ? " workshop-system" : ""}`}>
       <Sidebar view={view} navigateTo={navigateTo} filter={filter} setFilter={handleFilter} hiddenCounts={hiddenCounts} />
       <div className="app-content">
         <DualLensBar modelActive={lens} patternActive={patternLens} onToggleModel={toggleLens} onTogglePattern={togglePatternLens} onOpenModels={() => navigateTo("models")} onOpenPatterns={() => navigateTo("patterns")} />

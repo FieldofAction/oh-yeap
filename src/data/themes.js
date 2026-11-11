@@ -1,6 +1,8 @@
 export const THEMES = {
   threshold: { label:"Threshold", bg:"#0C0D10", fg:"#E8EAF0", fm:"#868B94", ff:"#565A62", bd:"#1C1E24", sf:"#12131A", sfh:"#1A1C22", cbg:"#101118", ch:"#181A20", ac1:"#E8EAF0", ac2:"#E8EAF0" },
   canon: { label:"Canon", bg:"#2A2D36", fg:"#E0E3EC", fm:"#8A8F9A", ff:"#5E6370", bd:"#383B44", sf:"#303340", sfh:"#363940", cbg:"#2E3138", ch:"#343840", ac1:"#E0E3EC", ac2:"#E0E3EC" },
+  // System — white ground and Apple-neutral ink for the Workbench.
+  system: { label:"System", bg:"#FFFFFF", fg:"#1D1D1F", fm:"#6E6E73", ff:"#6E6E73", bd:"#D2D2D7", sf:"#F5F5F7", sfh:"#E8E8ED", cbg:"#F5F5F7", ch:"#E8E8ED", ac1:"#1D1D1F", ac2:"#1D1D1F" },
   light: { label:"Light", bg:"#F4F5F7", fg:"#1A1B1E", fm:"#474A52", ff:"#868B94", bd:"#D6D9E0", sf:"#EBEDF2", sfh:"#E2E4EA", cbg:"#EDEEF2", ch:"#E5E7EC", ac1:"#1A1B1E", ac2:"#1A1B1E" },
   // Daylight — custom paper-light palette tuned for the work views (home / Superconscious / Patio Beach).
   // Cool-neutral paper with near-black ink; keeps the signature blue. Tonal inverse of Threshold.

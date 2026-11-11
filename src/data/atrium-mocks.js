@@ -242,6 +242,26 @@ export const SHAPE_MOCKS = {
   grace: (signal, priorSteps = [], canonContext = []) => {
     const stepCount = priorSteps.length;
     const canonCount = canonContext.length;
+    // Withholding is a real outcome: with fewer than two readings to compare and
+    // no canon to echo, there is nothing that could have repeated.
+    if (stepCount < 2 && canonCount === 0) {
+      return {
+        kind: "grace",
+        summary: "Not yet",
+        detail: {
+          notYet: true,
+          reveal: "",
+          condition: stepCount === 0
+            ? "Nothing has read this signal yet, so there is nothing to compare."
+            : "One reading so far. Nothing has had the chance to repeat.",
+          failureMode: [],
+          nextAgent: "",
+          fieldType: null,
+          fieldTypeLabel: null,
+          fieldTypeSurface: null,
+        },
+      };
+    }
     const consoleStep = priorSteps.find((s) => s.output?.kind === "console");
     const consoleTensions = consoleStep?.output?.detail?.tensions?.map((t) => t.pair) || [];
     const playbookStep = priorSteps.find((s) => s.output?.kind === "playbook");
@@ -320,6 +340,7 @@ export function synthesizeRun(steps, signal) {
     const d = graceStep.output.detail;
     return {
       source: "grace",
+      notYet: d.notYet === true,
       reveal: d.reveal ?? d.takeaway ?? "",
       condition: d.condition ?? d.reading ?? "",
       failureMode: d.failureMode ?? d.tensionsSeen ?? [],
