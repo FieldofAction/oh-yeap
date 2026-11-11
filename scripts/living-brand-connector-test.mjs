@@ -90,7 +90,14 @@ test('the connector decides only as its own practitioner, and only where they ar
 
   call('import_packet', { json: JSON.stringify(rival()) });
   const mine = call('propose_standing', { engagement_id: 'eng-moonhouse', item_id: 'mh-mark', to: 'canon', rationale: 'It is the mark', evidence_ids: ['mh-e1'] });
-  assert.match(call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: mine.data.id, outcome: 'adopt' }).text, /Adopted.*it was experiment, and that is kept/);
+  assert.match(mine.data.id, /^moonhouse-p-/, 'a proposal id says whose record it is in');
+  assert.notEqual(mine.data.id, p.data.id);
+  assert.throws(() => call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: mine.data.id, outcome: 'adopt' }), /Say what this canon covers/);
+  assert.throws(() => call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: mine.data.id, outcome: 'reject' }), /Say why it is turned down/);
+  const adopted = call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: mine.data.id, outcome: 'adopt', scope: 'Every use of the mark' });
+  assert.match(adopted.text, /Adopted.*it was experiment, and that is kept[\s\S]*It covers: Every use of the mark\. It is approved by Founder Person/);
+  assert.match(call('open_engagement', { engagement_id: 'eng-moonhouse' }).text, /You are named for: visual standing/);
+  assert.match(call('open_engagement', { engagement_id: 'eng-fernway' }).text, /You are not named to decide anything in this engagement/);
   assert.match(call('get_item', { engagement_id: 'eng-moonhouse', item_id: 'mh-mark' }).text, /Before: Experiment until 2026-11-11/);
   assert.throws(() => call('approve_item', { engagement_id: 'eng-fernway', item_id: 'fw-story-builder' }), /The practitioner cannot approve Story Builder generator/);
   assert.throws(() => call('approve_item', { engagement_id: 'eng-moonhouse', item_id: 'mh-mark' }), /already approved/);
@@ -337,4 +344,40 @@ test('two connectors on one folder do not lose each other\'s writes', async () =
   const state = store.load('eng-fernway', { asOf: '2026-11-11' });
   assert.ok(state.choices.length >= 6 && state.choices.length <= 18);
   assert.equal(new Set(state.choices.map(c => c.id)).size, state.choices.length);
+});
+
+// --- Found by the assistant run-through and operator testing, and pinned here ---
+
+test('the reviewer always sees recorded reuse, and a package says what it carries and who reviews it', () => {
+  const { call } = fresh();
+  const p = call('propose_standing', { engagement_id: 'eng-fernway', item_id: 'fw-onboarding-papercut', to: 'canon', rationale: 'The paper-cut onboarding scenes are everywhere now.', evidence_ids: ['e-onb-complete'] });
+  assert.match(p.text, /The reviewer will see:[\s\S]*Reused 4 times\. Frequency is a reason to review/);
+  assert.match(p.text, /shows what happened, not that this work caused it/);
+  const pkg = call('issue_context_package', { engagement_id: 'eng-fernway', partner_name: 'Landing-page agent', assignment: 'Return-season landing page', channels: ['owned-web'], work_types: ['Customer campaign'], expires: '2026-12-31' });
+  assert.match(pkg.text, /Rules in the package \(\d+\):[\s\S]*Review: outputs return to .*\. The partner cannot publish or change brand knowledge\./);
+  assert.match(pkg.text, /Small Hours, end card: .*Carries a claim that is no longer true: "Ad-free, always"/);
+  assert.ok(!/Included \(\d+\):[\s\S]*- Small Hours, end card\n[\s\S]*Rules in the package/.test(pkg.text), 'the end card is not handed over');
+  const out = call('export_engagement_package', { engagement_id: 'eng-fernway' });
+  assert.match(out.text, /The engagement has not been ended[\s\S]*Context packages still valid \(1\):\n- pkg-landing-page-agent-/);
+  assert.equal(out.data.handoff.engagement.ended, null);
+  assert.ok(out.data.handoff.interpretation.hypotheses.length > 0);
+});
+
+test('answers and choices are recorded as the practitioner\'s, and a choice is answered only by its decider', () => {
+  const { call } = fresh();
+  const routed = call('record_choice', { engagement_id: 'eng-fernway', subject: 'Reactivation offer', verdict: 'invent', rationale: 'Price came up most', needs: 'offer' });
+  assert.match(routed.text, /Routed to Tom Ekwueme/);
+  assert.throws(() => call('answer_choice', { engagement_id: 'eng-fernway', choice_id: routed.data.id, outcome: 'accept' }), /cannot answer this\. The offer at Fernway is decided by Tom Ekwueme/);
+  assert.throws(() => call('answer_choice', { engagement_id: 'eng-fernway', choice_id: routed.data.id, outcome: 'accept', acting_as: 'tom' }), /acts only as the practitioner/);
+  assert.throws(() => call('record_answer', { engagement_id: 'eng-fernway', question: 'Will the company test an offer?', answer: ' ' }), /Write the answer/);
+  const a = call('record_answer', { engagement_id: 'eng-fernway', question: 'Will the company test a reactivation offer before or alongside the campaign?', answer: 'Tom said before, on a held-out group.' });
+  assert.match(a.text, /Answer recorded by the practitioner/);
+  const seen = call('get_interpretation', { engagement_id: 'eng-fernway' }).text;
+  assert.match(seen, /Choices on record:\n- fernway-c-[^\n]*Invent Reactivation offer\. Waiting for Tom Ekwueme\./);
+  assert.match(seen, /Answers on record:\n- Will the company test a reactivation offer[^\n]*Tom said before, on a held-out group\./);
+
+  call('import_packet', { json: JSON.stringify(rival()) });
+  const own = call('record_choice', { engagement_id: 'eng-moonhouse', subject: 'Keep the mark', verdict: 'preserve', rationale: 'It is ours', needs: 'standing.visual' });
+  assert.match(own.text, /Visual standing is theirs to decide here, so recording it decided it/);
+  assert.equal(own.data.status, 'accepted');
 });

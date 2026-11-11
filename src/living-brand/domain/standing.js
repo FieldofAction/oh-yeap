@@ -16,11 +16,25 @@ export const STANDING_CLASSES = {
 // How the brand's knowledge was obtained. It changes what can be claimed.
 export const BASES = {
   fictional: { name: 'Fictional', note: 'Invented for demonstration.' },
-  'company-record': { name: 'Company record', note: 'Entered with the company, by people who can speak for it.' },
+  'company-record': { name: 'Company record', note: 'The company\'s own material. Each record says where it came from and whether anyone has checked it.' },
   'public-source': { name: 'Public-source study', note: 'Read from public material only. Not the company\'s own record.' },
 };
 
 export const isPublicStudy = brand => brand?.basis === 'public-source';
+
+// A record may say in its own words how it was put together. That replaces the general note.
+export const basisNote = brand => String(brand?.basisNote || '').trim() || BASES[brand?.basis]?.note || '';
+
+// Reasons are read by people: names, not ids, and dates written out.
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+export function longDate(d) {
+  const m = /^(\d{4})(?:-(\d{2}))?(?:-(\d{2}))?$/.exec(String(d || ''));
+  if (!m) return String(d || 'an unrecorded date');
+  if (!m[2]) return m[1];
+  const month = MONTHS[Number(m[2]) - 1] || m[2];
+  return m[3] ? `${Number(m[3])} ${month} ${m[1]}` : `${month} ${m[1]}`;
+}
+const nameOf = (brand, id) => brand?.people?.[id]?.name || id || 'someone unrecorded';
 
 export const pipelineRank = stage => PIPELINE.indexOf(stage);
 
@@ -32,6 +46,23 @@ export const isEffective = (window, asOf) => {
 };
 
 const human = c => c.replace('-', ' ');
+
+// Matching is by whole word, so "IPA" does not find "participation". A
+// hyphenated word also answers to its parts and to its joined form, and a
+// term of four letters or more finds words that begin with it.
+export const searchText = item => [item.title, item.text, (item.tags || []).join(' '), item.rationale, item.kind, item.element, item.workType].filter(Boolean).join(' ');
+export function wordsOf(text) {
+  const raw = String(text || '').toLowerCase().split(/[^\p{L}\p{N}-]+/u).filter(Boolean);
+  return new Set(raw.flatMap(w => [w, w.replace(/-/g, ''), ...w.split('-')]).filter(Boolean));
+}
+export function termHits(term, words) {
+  const t = String(term || '').toLowerCase();
+  if (!t) return false;
+  if (words.has(t) || words.has(t.replace(/-/g, ''))) return true;
+  if (t.length < 4) return false;
+  for (const w of words) if (w.startsWith(t)) return true;
+  return false;
+}
 
 // Which of the wanted channels a licence does not cover. "all" covers everything.
 export function uncoveredChannels(rights, wanted = []) {
@@ -48,11 +79,13 @@ export function assessStanding(item, purpose = {}, brand = null) {
   const reasons = { relevant: [], authorized: [], reusable: [], authoritative: [] };
 
   // Relevant: does it bear on the question? Says nothing about permission.
-  const hay = [item.title, item.text, (item.tags || []).join(' '), item.rationale, item.kind, item.element, item.workType].filter(Boolean).join(' ').toLowerCase();
-  const matched = (purpose.terms || []).filter(t => hay.includes(String(t).toLowerCase()));
-  const relevant = !purpose.terms?.length || matched.length > 0;
+  const hay = wordsOf(searchText(item));
+  const matched = (purpose.terms || []).filter(t => termHits(t, hay));
+  // With no question asked, relevance has no answer; asked says which case this is.
+  const asked = Boolean(purpose.terms?.length);
+  const relevant = !asked || matched.length > 0;
   reasons.relevant.push(relevant
-    ? (matched.length ? `Matches ${matched.join(', ')}.` : 'No query given.')
+    ? (matched.length ? `Matches ${matched.join(', ')}.` : 'No question asked.')
     : 'Does not match the question.');
 
   // Authorized: sanctioned by the company, checked, not replaced, not retired, and current.
@@ -65,18 +98,20 @@ export function assessStanding(item, purpose = {}, brand = null) {
     reasons.authorized.push(status === 'rejected' ? 'Rejected.' : status === 'pending' ? 'Approval pending.' : 'Never approved.');
   }
   if (pipelineRank(item.pipeline) < pipelineRank('verified')) { authorized = false; reasons.authorized.push(`Only ${item.pipeline || 'found'}; not checked against its source.`); }
-  if (item.retired) { authorized = false; reasons.authorized.push(`Retired on ${item.retired.date}.`); }
+  if (item.retired) { authorized = false; reasons.authorized.push(`Retired on ${longDate(item.retired.date)}.`); }
   if (item.supersededBy) {
     const successor = brand?.items?.find(i => i.id === item.supersededBy);
     const pending = successor?.period?.from && asOf && asOf < successor.period.from;
     if (!pending) { authorized = false; reasons.authorized.push(`Superseded by ${successor?.title || item.supersededBy}.`); }
   }
   // A campaign's flight ending does not withdraw its approval; canon leaving its effective dates does.
-  if (asOf && item.standing === 'canon' && item.period && !isEffective(item.period, asOf)) { authorized = false; reasons.authorized.push('Outside its effective dates.'); }
+  // Canon set by a decision recorded here runs from that decision: the dates the work ran are its flight, not its term.
+  const term = item.effective || (item.standingRecord?.decisionId ? null : item.period);
+  if (asOf && item.standing === 'canon' && term && !isEffective(term, asOf)) { authorized = false; reasons.authorized.push('Outside its effective dates.'); }
   if (authorized) {
     reasons.authorized.push(status === 'published'
-      ? `Published by ${item.approval.by || 'the company'}${item.approval.date ? ` on ${item.approval.date}` : ''}. No internal approval record seen.`
-      : `Approved by ${item.approval.by} on ${item.approval.date}.`);
+      ? `Published by ${item.approval.by || 'the company'}${item.approval.date ? ` on ${longDate(item.approval.date)}` : ''}. No internal approval record seen.`
+      : `Approved by ${nameOf(brand, item.approval.by)} on ${longDate(item.approval.date)}.`);
   }
 
   // Reusable: rights are known, and cover the intended channels for the intended dates.
@@ -89,9 +124,9 @@ export function assessStanding(item, purpose = {}, brand = null) {
     const expired = rights.until && asOf && asOf > rights.until;
     const lapsesDuring = rights.until && purpose.until && purpose.until > rights.until;
     const scope = (rights.channels || []).includes('all') ? 'every channel' : (rights.channels || []).map(human).join(', ') || 'no channel';
-    if (expired) reasons.reusable.push(`Licence ended ${rights.until}.`);
+    if (expired) reasons.reusable.push(`Licence ended ${longDate(rights.until)}.`);
     else if (missing.length) reasons.reusable.push(`Not licensed for ${missing.map(human).join(', ')}.`);
-    else if (lapsesDuring) reasons.reusable.push(`Licence ends ${rights.until}, before the work would finish.`);
+    else if (lapsesDuring) reasons.reusable.push(`Licence ends ${longDate(rights.until)}, before the work would finish.`);
     else if (!wanted.length && rights.status === 'restricted') reasons.reusable.push(`No channel named for this use. Licensed for ${scope} only.`);
     else { reusable = true; reasons.reusable.push(wanted.length ? `Licensed for ${wanted.map(human).join(', ')}.` : `Rights cleared for ${scope}.`); }
     if (rights.note && !reusable) reasons.reusable.push(rights.note);
@@ -107,10 +142,10 @@ export function assessStanding(item, purpose = {}, brand = null) {
   reasons.authoritative.push(authoritative
     ? (record?.basis === 'reading'
       ? `Read as canon from public material${record.scope ? `: ${record.scope}` : ''}. The company has not confirmed it here.`
-      : `Canon since ${record?.date || 'unknown'}${record?.scope ? `: ${record.scope}` : ''}.`)
+      : `Canon since ${record?.date ? longDate(record.date) : 'an unrecorded date'}${record?.scope ? `: ${record.scope}` : ''}.`)
     : `${STANDING_CLASSES[item.standing]?.name || 'Unclassified'}${item.standing === 'canon' ? ', but not authorized' : ''}${item.reuse?.length ? `, reused ${item.reuse.length} times; reuse confers no authority` : ''}.`);
 
-  return { relevant, authorized, reusable, authoritative, reasons };
+  return { relevant, asked, authorized, reusable, authoritative, reasons };
 }
 
 // A rule is a statement made by some piece of material. Unless it carries a

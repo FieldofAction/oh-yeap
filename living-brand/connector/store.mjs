@@ -15,7 +15,7 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { readPacket, toPacket, startFromPacket, startEngagement, PACKET_FORMAT } from '../../src/living-brand/domain/index.js';
 import { fernway } from '../../src/living-brand/data/fernway.js';
-import { engagements as sample, practitioner as samplePractitioner } from '../../src/living-brand/data/workspace.js';
+import { engagements as sample, closed as sampleClosed, practitioner as samplePractitioner } from '../../src/living-brand/data/workspace.js';
 
 const SAFE_ID = /^[a-z0-9][a-z0-9-]{0,62}$/;
 const PRIVATE_DIR = 0o700;
@@ -84,7 +84,7 @@ export function openStore(home = process.env.LIVING_BRAND_HOME || join(homedir()
         engagements: [
           { id: 'eng-fernway', client: 'Fernway', brandId: 'fernway', role: sample['eng-fernway'].role, project: sample['eng-fernway'].project, basis: 'fictional', status: 'open' },
           // An ended engagement is remembered by name alone; its material is gone.
-          { id: 'eng-brightloop', client: 'Brightloop', brandId: 'brightloop', role: sample['eng-brightloop'].role, basis: 'fictional', status: 'ended', endedOn: sample['eng-brightloop'].grant.revokedAt },
+          ...sampleClosed.map(c => ({ id: c.id, client: c.clientLabel, brandId: c.brandId, role: c.role, basis: 'fictional', status: 'ended', endedOn: c.grant.revokedAt })),
         ],
       });
     });

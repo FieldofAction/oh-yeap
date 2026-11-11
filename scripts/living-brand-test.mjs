@@ -7,9 +7,10 @@ import {
   organizationalHypotheses, propose, decide, retire, recordReuse, recordChoice, AuthorityError, viewFor,
   buildBrief, buildContextPackage, revokePackage, packageValid, buildHandoff, coordinationView, exportWorkbench, orientation,
   verifyItem, approveItem, effectiveRules, timeline, packetAssertions, addSourceNote, nameAuthority, changeLedger, toPacket, readPacket, startFromPacket, PACKET_FORMAT,
+  rulesStatedBy, answerChoice, unnameAuthority, basisNote, longDate,
 } from '../src/living-brand/domain/index.js';
 import { fernway } from '../src/living-brand/data/fernway.js';
-import { brightloop } from '../src/living-brand/data/brightloop.js';
+import { brightloop, brightloopEngagement } from '../src/living-brand/data/brightloop.js';
 import { engagements, agency, practitioner, AS_OF } from '../src/living-brand/data/workspace.js';
 
 const vault = { fernway, brightloop };
@@ -31,7 +32,7 @@ test('wrong-client retrieval: shared vocabulary never crosses tenants', () => {
 
 test('wrong-client retrieval: a grant for one brand cannot open another', () => {
   assert.throws(() => openTenant(vault, { ...eng, brandId: 'brightloop' }), IsolationError);
-  assert.throws(() => openTenant(vault, engagements['eng-brightloop']), /revoked/);
+  assert.throws(() => openTenant(vault, brightloopEngagement), /revoked/);
   assert.throws(() => openTenant(vault, { ...eng, asOf: '2027-04-01' }), /expired/);
 });
 
@@ -91,12 +92,12 @@ test('tensions: contradictory rules, stale claims, drift, unknown rights, unsupp
   const s = fresh();
   const t = findTensions(s.brand, { asOf, workTypes: eng.workTypes, channels: eng.channels });
   const kinds = new Set(t.map(x => x.kind));
-  for (const k of ['Conflicting guidance', 'Stale claim', 'Unsupported claim', 'Drift from canon', 'Unknown rights', 'Attribution not established', 'Missing evidence', 'Licence does not cover the plan']) assert.ok(kinds.has(k), k);
+  for (const k of ['Conflicting guidance', 'Stale claim', 'Claim not yet confirmed', 'Drift from canon', 'Unknown rights', 'Attribution not established', 'Missing evidence', 'Licence does not cover the plan']) assert.ok(kinds.has(k), k);
   assert.ok(t.find(x => x.id === 't-conflict-hero.screens'));
   assert.ok(t.find(x => x.id === 't-stale-c-ad-free'));
   assert.ok(t.find(x => x.id === 't-stale-c-screen-free'));
   assert.ok(!t.find(x => x.id === 't-stale-c-made-calm'));
-  assert.match(t.find(x => x.id === 't-drift-fw-voice-prompt-v1-wordmark.case').detail, /written by a model/);
+  assert.match(t.find(x => x.id === 't-drift-fw-voice-prompt-v1').detail, /written by a model/);
   // The retired lowercase rule is not a live conflict with title case.
   assert.ok(!t.find(x => x.id === 't-conflict-wordmark.case'));
   // For product launches alone, there is no hero-screen conflict.
@@ -244,7 +245,8 @@ test('duplicate proposals and stale decisions are refused', () => {
   s = propose(s, args);
   assert.throws(() => propose(s, args), /already asks/);
   s = propose(s, { ...args, to: 'precedent' });
-  s = decide(s, s.proposals[0].id, { by: 'priya', outcome: 'adopt', asOf });
+  assert.throws(() => decide(s, s.proposals[0].id, { by: 'priya', outcome: 'adopt', asOf }), /Say what this canon covers/);
+  s = decide(s, s.proposals[0].id, { by: 'priya', outcome: 'adopt', scope: 'Product illustration', asOf });
   assert.equal(s.proposals[1].status, 'superseded', 'the other open proposal is closed, not left to block');
   assert.throws(() => decide(s, s.proposals[1].id, { by: 'priya', outcome: 'adopt', asOf }), /closed when the item's standing changed/);
   assert.throws(() => propose(s, { ...args, to: 'canon' }), /already has that standing/);
@@ -342,10 +344,10 @@ test('public-source study: tensions are worded short of what only the company kn
   assert.equal(claim.kind, 'Claim in tension with a later fact');
   assert.match(claim.title, /sits uneasily with a later public fact/);
   assert.ok(!/no longer true/.test(claim.title));
-  assert.ok(!t.find(x => x.kind === 'Unsupported claim'), 'an outsider cannot know what is on file');
+  assert.ok(!t.find(x => x.kind === 'Claim not yet confirmed'), 'an outsider cannot know what is on file');
   const who = t.find(x => x.kind === 'No one named to decide');
   assert.match(who.detail, /Only Halden can say who decides/);
-  assert.ok(t.find(x => x.id === 't-drift-h-about-logo.colour'));
+  assert.ok(t.find(x => x.id === 't-drift-h-about'));
   assert.ok(!t.find(x => x.kind === 'Conflicting guidance'), 'the retired rule is not a live conflict');
 });
 
@@ -449,19 +451,21 @@ test('a written rule nobody adopted does not outrank the work that breaks it', (
   const mismatch = t.find(x => x.id === 't-mismatch-h-about');
   assert.equal(mismatch.kind, 'Material and written rule disagree');
   assert.match(mismatch.title, /departs from 1 written rule$/);
-  assert.deepEqual(mismatch.points, [{ rule: 'Two type families.', has: 'three', ruleId: 'hr-type' }]);
+  assert.deepEqual(mismatch.points, [{ rule: 'Two type families.', has: 'three', says: '', ruleId: 'hr-type' }]);
   assert.match(mismatch.detail, /is canon, and some were written by a model, so neither side is wrong yet/);
   assert.deepEqual(mismatch.owners, ['dd']);
   assert.ok(!t.find(x => x.kind === 'Drift from canon'));
   assert.ok(!t.some(x => x.id.includes('h-old')), 'history is not checked against today\'s rules');
   const dispute = t.find(x => x.id === 't-disputed-hc-founded');
   assert.equal(dispute.kind, 'Records disagree');
-  assert.match(dispute.detail, /started 2011, launched 2019.*An anniversary event implies 2019\. Nothing recorded says which is right/);
+  assert.match(dispute.detail, /started 2011, launched 2019.*An anniversary event implies 2019\.$/, 'the record\'s own note closes the entry');
   assert.ok(!/no longer true/.test(dispute.title));
 
   // The founder approves the system file; approval is not canon, and others cannot approve.
   assert.equal(assessStanding(s.brand.items[0], { asOf }).authorized, false);
   assert.throws(() => approveItem(s, 'h-system', { by: 'practitioner', asOf }), /cannot approve Design system file/);
+  assert.throws(() => approveItem(s, 'h-system', { by: 'dd', asOf }), /has not been checked against its source. Check it first/, 'approval does not skip the check');
+  s = verifyItem(s, 'h-system', { by: 'dd', how: 'Compared with the live stylesheet', asOf });
   s = approveItem(s, 'h-system', { by: 'dd', note: 'This is the system', asOf });
   const system = s.brand.items[0];
   assert.deepEqual([system.pipeline, system.approval.status, system.standing], ['approved', 'approved', 'operational']);
@@ -483,13 +487,23 @@ test('adopting a source as canon is what makes its rules canon', () => {
   assert.ok(findTensions(s.brand, { asOf }).find(x => x.kind === 'Material and written rule disagree'));
   s = propose(s, { itemId: 'h-system', to: 'canon', rationale: 'This is the system', by: 'intake', asOf });
   assert.ok(s.proposals[0].warnings.some(w => /Only extracted/.test(w)));
-  s = decide(s, s.proposals[0].id, { by: 'dd', outcome: 'adopt', asOf });
+  assert.deepEqual(rulesStatedBy(s.brand, 'h-system').map(r => r.id), ['hr-type'], 'the decider can see which rules adoption puts in force');
+  // Canon needs a scope, and material nobody has checked cannot govern.
+  assert.throws(() => decide(s, s.proposals[0].id, { by: 'dd', outcome: 'adopt', scope: 'The website', asOf }), /has not been checked against its source. Say what you checked it against/);
+  assert.throws(() => decide(s, s.proposals[0].id, { by: 'dd', outcome: 'adopt', checked: 'The live stylesheet', asOf }), /Say what this canon covers/);
+  s = decide(s, s.proposals[0].id, { by: 'dd', outcome: 'adopt', scope: 'The website', checked: 'The live stylesheet', asOf });
+  const adopted = s.brand.items[0];
+  assert.deepEqual([adopted.standing, adopted.pipeline, adopted.approval.status, adopted.approval.by, adopted.verification.how, adopted.standingRecord.scope], ['canon', 'approved', 'approved', 'dd', 'The live stylesheet', 'The website']);
+  const adoptedStanding = assessStanding(adopted, { asOf }, s.brand);
+  assert.deepEqual([adoptedStanding.authorized, adoptedStanding.authoritative], [true, true], 'canon that was adopted here is not left unauthorized');
+  assert.match(adoptedStanding.reasons.authorized.join(' '), /Approved by Founder on 11 November 2026/);
   assert.equal(effectiveRules(s.brand)[0].standing, 'canon');
   const t = findTensions(s.brand, { asOf });
   assert.ok(!t.find(x => x.kind === 'Material and written rule disagree'));
-  assert.equal(t.find(x => x.id === 't-drift-h-site-type.families').kind, 'Drift from canon');
+  assert.equal(t.find(x => x.id === 't-drift-h-site').kind, 'Drift from canon');
+  assert.throws(() => retire(s, 'h-system', { by: 'dd', reason: ' ', asOf }), /Say why it is being retired/);
   s = retire(s, 'h-system', { by: 'dd', reason: 'Superseded', asOf });
-  assert.ok(!findTensions(s.brand, { asOf }).some(x => x.id.includes('h-site-type')), 'a retired source\'s rules no longer bind');
+  assert.ok(!findTensions(s.brand, { asOf }).some(x => x.id.includes('h-site')), 'a retired source\'s rules no longer bind');
 });
 
 // --- Found by independent review, and pinned here ---
@@ -566,7 +580,7 @@ test('retiring a source ends its rules, its authorization and its place in packa
   const chime = s.brand.items.find(i => i.id === 'fw-sound-logo');
   const st = assessStanding(chime, { asOf }, s.brand);
   assert.deepEqual([st.authorized, st.authoritative], [false, false]);
-  assert.match(st.reasons.authorized.join(' '), /Retired on 2026-11-11/);
+  assert.match(st.reasons.authorized.join(' '), /Retired on 11 November 2026/);
   assert.equal(effectiveRules(s.brand).find(r => r.id === 'r-chime').standing, 'archive', 'an explicit canon rule does not outlive its source');
   const after = buildContextPackage(s, { partner: { id: 'a', name: 'A' }, assignment: 'x', channels: [], workTypes: ['Brand campaign'], expires: '2026-12-31', asOf }).package;
   assert.ok(!after.included.some(i => i.id === 'fw-sound-logo') && !after.rules.some(r => r.id === 'r-chime'));
@@ -584,7 +598,11 @@ test('a stale proposal can be turned down, and does not block a new one', () => 
   const again = propose(s, { itemId: 'h-about', to: 'precedent', rationale: 'b', by: 'dd', asOf });
   assert.equal(again.proposals[0].status, 'superseded');
   assert.equal(again.proposals[1].from, 'experiment');
-  assert.equal(decide(s, stale, { by: 'dd', outcome: 'reject', asOf }).proposals[0].status, 'rejected');
+  assert.throws(() => decide(s, stale, { by: 'dd', outcome: 'reject', asOf }), /Say why it is turned down/);
+  assert.throws(() => decide(s, stale, { by: 'dd', outcome: 'revise', asOf }), /Say what needs to change/);
+  const turned = decide(s, stale, { by: 'dd', outcome: 'reject', note: 'Not this season', asOf });
+  assert.equal(turned.proposals[0].status, 'rejected');
+  assert.deepEqual(turned.proposals[0].decided, { by: 'dd', date: asOf, note: 'Not this season' });
 });
 
 test('intake cannot grant standing, and a read-only grant writes nothing', () => {
@@ -667,4 +685,138 @@ test('ids never repeat, even when a record arrives without its counter', () => {
   let again = startFromPacket(packet);
   again = recordChoice(again, { subject: 'Three', verdict: 'preserve', by: 'p', asOf });
   assert.equal(new Set(again.choices.map(c => c.id)).size, 3);
+});
+
+// --- Found by operator testing, and pinned here ---
+
+test('a campaign piece adopted as canon is not put outside its dates by its own flight', () => {
+  let s = fresh();
+  const hero = () => s.brand.items.find(i => i.id === 'fw-small-hours-hero');
+  assert.ok(hero().period.to < asOf, 'the flight is over');
+  s = propose(s, { itemId: 'fw-small-hours-hero', to: 'canon', rationale: 'It set the look', by: 'practitioner', asOf });
+  s = decide(s, s.proposals[0].id, { by: 'priya', outcome: 'adopt', scope: 'Seasonal campaigns', asOf });
+  const st = assessStanding(hero(), { asOf }, s.brand);
+  assert.deepEqual([st.authorized, st.authoritative], [true, true]);
+  assert.match(st.reasons.authoritative.join(' '), /Canon since 11 November 2026: Seasonal campaigns/);
+});
+
+test('what was only found, or was rejected, cannot be adopted as canon', () => {
+  let s = fresh();
+  const found = s.brand.items.find(i => i.pipeline === 'discovered');
+  const rejected = s.brand.items.find(i => i.approval?.status === 'rejected');
+  assert.ok(found && rejected, 'the sample holds one of each');
+  s = propose(s, { itemId: found.id, to: 'canon', rationale: 'x', by: 'practitioner', asOf });
+  s = propose(s, { itemId: rejected.id, to: 'canon', rationale: 'x', by: 'practitioner', asOf });
+  assert.ok(s.proposals[1].warnings.some(w => /It was rejected/.test(w)));
+  const by = id => s.brand.authority[`standing.${s.brand.items.find(i => i.id === id).domain}`][0];
+  assert.throws(() => decide(s, s.proposals[0].id, { by: by(found.id), outcome: 'adopt', scope: 'x', checked: 'x', asOf }), /has only been found/);
+  assert.throws(() => decide(s, s.proposals[1].id, { by: by(rejected.id), outcome: 'adopt', scope: 'x', checked: 'x', asOf }), /was rejected/);
+});
+
+test('evidence counts only where it bears on the material, and recorded reuse is always shown', () => {
+  let s = fresh();
+  // Evidence recorded on unrelated research does not answer for the onboarding scenes.
+  s = propose(s, { itemId: 'fw-onboarding-papercut', to: 'canon', rationale: 'x', evidenceIds: ['e-int-calm'], by: 'practitioner', asOf });
+  const far = s.proposals[0].warnings.join(' ');
+  assert.match(far, /recorded on other material/);
+  assert.match(far, /No independent evidence/);
+  assert.match(far, /Reused 4 times/);
+  // Its own observed figure counts, but the reviewer still sees the reuse and what the figure does not show.
+  let own = propose(fresh(), { itemId: 'fw-onboarding-papercut', to: 'canon', rationale: 'x', evidenceIds: ['e-onb-complete'], by: 'practitioner', asOf });
+  const near = own.proposals[0].warnings.join(' ');
+  assert.ok(!/No independent evidence/.test(near));
+  assert.match(near, /shows what happened, not that this work caused it/);
+  assert.match(near, /Reused 4 times/);
+  // What a brief intended is not evidence.
+  own = propose(fresh(), { itemId: 'fw-small-hours-hero', to: 'canon', rationale: 'x', evidenceIds: ['e-sh-intent'], by: 'practitioner', asOf });
+  assert.match(own.proposals[0].warnings.join(' '), /No independent evidence/);
+  assert.throws(() => propose(fresh(), { itemId: 'fw-small-hours-hero', to: 'canon', rationale: '  ', by: 'practitioner', asOf }), /Say why/);
+});
+
+test('a routed choice is answered by the person named for it, and by no one else', () => {
+  let s = fresh();
+  s = recordChoice(s, { subject: 'Reactivation offer', verdict: 'invent', rationale: 'Price came up most', needs: 'offer', by: 'practitioner', asOf });
+  const id = s.choices[0].id;
+  assert.deepEqual([s.choices[0].status, s.choices[0].owner], ['awaiting decision', 'tom']);
+  assert.throws(() => answerChoice(s, id, { by: 'practitioner', outcome: 'accept', asOf }), AuthorityError);
+  assert.throws(() => answerChoice(s, id, { by: 'priya', outcome: 'accept', asOf }), /The offer at Fernway is decided by Tom Ekwueme/);
+  assert.throws(() => answerChoice(s, id, { by: 'tom', outcome: 'decline', asOf }), /Say why it is declined/);
+  s = answerChoice(s, id, { by: 'tom', outcome: 'decline', note: 'Not before the board meets', asOf });
+  assert.deepEqual([s.choices[0].status, s.choices[0].answer.by, s.choices[0].answer.note], ['declined', 'tom', 'Not before the board meets']);
+  assert.equal(s.decisions.at(-1).outcome, 'decline-choice');
+  assert.throws(() => answerChoice(s, id, { by: 'tom', outcome: 'accept', asOf }), /already been answered/);
+  assert.equal(readPacket(toPacket(s)).record.choices[0].status, 'declined', 'the answer travels in the packet');
+  // Someone who records a choice in their own area has decided it by recording it.
+  let f = startEngagement({ halden: founderBrand() }, founderEng());
+  f = recordChoice(f, { subject: 'Keep the mark', verdict: 'preserve', rationale: 'It is ours', needs: 'standing.visual', by: 'dd', asOf });
+  assert.deepEqual([f.choices[0].status, f.choices[0].owner, f.choices[0].answer.by], ['accepted', 'dd', 'dd']);
+});
+
+test('a naming can be taken back, and what waited for that person waits again', () => {
+  let s = startEngagement({ halden: founderBrand() }, founderEng());
+  s = nameAuthority(s, { power: 'claims', person: { name: 'Operations lead' }, by: 'dd', asOf });
+  s = recordChoice(s, { subject: 'Founding date', verdict: 'investigate', rationale: 'Two dates on file', needs: 'claims', by: 'dd', asOf });
+  assert.equal(s.choices[0].owner, 'ops');
+  assert.throws(() => unnameAuthority(s, { power: 'claims', personId: 'dd', by: 'dd', asOf }), /not named to decide public claims/);
+  s = unnameAuthority(s, { power: 'claims', personId: 'ops', by: 'dd', asOf });
+  assert.deepEqual(s.brand.authority.claims, []);
+  assert.equal(s.choices[0].owner, null);
+  assert.equal(s.decisions.at(-1).outcome, 'unname-authority');
+  assert.throws(() => unnameAuthority(study(), { power: 'claims', personId: 'x', by: 'practitioner', asOf }), AuthorityError);
+});
+
+test('an item may name the area that decides it, and that area decides', () => {
+  const brand = founderBrand();
+  brand.items = brand.items.map(i => (i.id === 'h-about' ? { ...i, power: 'claims', pipeline: 'verified' } : i));
+  const s = startEngagement({ halden: brand }, founderEng());
+  assert.throws(() => approveItem(s, 'h-about', { by: 'dd', asOf }), /No one has been named to decide public claims at Halden/);
+  assert.throws(() => readPacket({ ...toPacket(s), brand: { ...toPacket(s).brand, items: toPacket(s).brand.items.map(i => (i.id === 'h-about' ? { ...i, power: 'everything' } : i)) } }), /not an area of decision/);
+});
+
+test('a context package withholds material carrying a claim that is no longer true', () => {
+  const s = fresh();
+  const { package: pkg, audit } = buildContextPackage(s, { partner: { id: 'a', name: 'A' }, assignment: 'x', channels: ['owned-web'], workTypes: ['Customer campaign'], expires: '2026-12-31', asOf });
+  assert.ok(!pkg.included.some(i => i.id === 'fw-small-hours-endcard'));
+  assert.match(audit.withheld.find(w => w.id === 'fw-small-hours-endcard').reasons.join(' '), /Carries a claim that is no longer true: "Ad-free, always"/);
+});
+
+test('the handoff holds the interpretation and the packages issued, and ends only when ended', () => {
+  const s = fresh();
+  const { package: pkg } = buildContextPackage(s, { partner: { id: 'a', name: 'Agent' }, assignment: 'Landing page', channels: ['owned-web'], workTypes: ['Customer campaign'], expires: '2026-12-31', asOf });
+  const open = buildHandoff(s, { brief: {}, asOf, packages: [pkg] });
+  assert.equal(open.engagement.ended, null);
+  assert.equal(open.written, asOf);
+  assert.ok(open.interpretation.strengths.length && open.interpretation.hypotheses.length && open.interpretation.carryForward.length);
+  assert.deepEqual(open.contextPackages.map(p => [p.id, p.partner, p.expires, p.revokedAt]), [[pkg.id, 'Agent', '2026-12-31', null]]);
+  assert.equal(buildHandoff(s, { brief: {}, asOf, ended: asOf }).engagement.ended, asOf);
+});
+
+test('search matches whole words, and a query with no words matches nothing', () => {
+  const t = openTenant(vault, eng, { asOf });
+  assert.equal(search(t, '!!!').length, 0);
+  assert.equal(search(t, 'a').length, 0);
+  assert.equal(search(t, '').length, t.brand.items.length, 'no question asked lists everything');
+  assert.equal(search(t, '')[0].standing.asked, false);
+  assert.ok(search(t, 'papercut').length > 0 && search(t, 'papercut').length === search(t, 'paper-cut').length);
+  assert.ok(search(t, 'illus').length > 0, 'four letters or more find words that begin with them');
+  assert.ok(!search(t, 'ion').length, 'a fragment inside other words finds nothing');
+});
+
+test('the basis of a record can be put in its own words, and dates in reasons are written out', () => {
+  assert.match(basisNote({ basis: 'company-record' }), /Each record says where it came from/);
+  assert.equal(basisNote({ basis: 'company-record', basisNote: ' Drafted from files. ' }), 'Drafted from files.');
+  assert.deepEqual([longDate('2026-11-11'), longDate('2025-03'), longDate('2024'), longDate('')], ['11 November 2026', 'March 2025', '2024', 'an unrecorded date']);
+  assert.throws(() => readPacket({ ...toPacket(fresh()), brand: { ...toPacket(fresh()).brand, basisNote: 'x'.repeat(401) } }), /one short paragraph/);
+});
+
+test('rules that nobody adopted are not called in force, and one person is not listed twice', () => {
+  const brand = founderBrand({ claims: [], facts: [],
+    rules: [
+      { id: 'r1', topic: 'content.frame', value: 'pillars', statement: 'Four pillars organise content.', source: 'h-about', scope: ['all'], effective: {}, owner: 'dd', standing: 'operational', domain: 'verbal' },
+      { id: 'r2', topic: 'content.frame', value: 'terrains', statement: 'Three terrains.', source: 'h-mark-new', scope: ['all'], effective: {}, owner: 'dd', standing: 'operational', domain: 'verbal' },
+    ] });
+  const t = findTensions(startEngagement({ halden: brand }, founderEng()).brand, { asOf }).find(x => x.kind === 'Conflicting guidance');
+  assert.match(t.title, /^Two written rules disagree: "Four pillars organise content" and "Three terrains"$/);
+  assert.match(t.detail, /^Founder decides both: /);
+  assert.deepEqual(t.owners, ['dd']);
 });

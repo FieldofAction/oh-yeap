@@ -52,7 +52,7 @@ export const fernway = {
   ],
   items: [
     {
-      id: 'fw-strategy-2024', title: 'Company strategy 2024 to 2027', kind: 'Strategy document', workType: 'Company strategy', element: 'Narrative and priorities',
+      id: 'fw-strategy-2024', title: 'Company strategy 2024 to 2027', power: 'offer', kind: 'Strategy document', workType: 'Company strategy', element: 'Narrative and priorities',
       canvas: 'Internal document', audience: 'Leadership and board', intendedOutcome: 'Shared direction', level: 'company', period: { from: '2024-01-15' },
       exposure: 'Internal', made: { by: 'Tom Ekwueme', date: '2024-01-15' }, rationale: 'Positions Fernway against high-stimulation children\'s media.',
       provenance: { source: 'Google Drive, Leadership', origin: 'human', confidential: true }, pipeline: 'approved', standing: 'canon',

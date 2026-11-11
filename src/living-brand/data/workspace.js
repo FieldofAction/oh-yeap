@@ -90,15 +90,13 @@ export const engagements = {
     milestones: [{ date: '2026-11-20', label: 'Concept review' }, { date: '2026-12-08', label: 'Brief sign-off' }, { date: '2027-01-12', label: 'Launch' }],
     team: ['Creative director', 'Copywriter, two days a week'],
   },
-  'eng-brightloop': {
-    id: 'eng-brightloop', brandId: 'brightloop', clientLabel: 'Brightloop',
-    practitioner: 'Freelance creative director', role: 'Concept consultant',
-    project: 'Holiday concepts', purpose: 'Concept routes for a holiday campaign.',
-    grant: { brandId: 'brightloop', powers: ['read'], expires: '2026-10-30', revokedAt: '2026-10-30' },
-    workTypes: ['Brand campaign'], channels: ['paid-media'], asOf: '2026-11-11',
-    milestones: [{ date: '2026-12-01', label: 'Launch' }], team: ['Concept consultant'],
-  },
 };
+
+// An engagement that has ended is a line in the practitioner's history: who,
+// in what role, and when access ended. Nothing else about it is kept here.
+export const closed = [
+  { id: 'eng-brightloop', clientLabel: 'Brightloop', role: 'Concept consultant', brandId: 'brightloop', grant: { brandId: 'brightloop', revokedAt: '2026-10-30' } },
+];
 
 // An agency workspace that holds both clients. The coordination view must
 // show dates and people, never strategy.
@@ -112,11 +110,8 @@ export const agency = {
 
 // Connections, labelled by what actually exists in this build.
 export const connections = [
-  { name: 'Manual source notes and file references', state: 'working', note: 'How material enters this build.' },
-  { name: 'Frontify MCP server', state: 'proposed', note: 'Official beta; 52 tools including writes. Read guidelines and assets; never write from an engagement.' },
-  { name: 'Figma MCP server', state: 'proposed', note: 'Read design context from files the client shares. Writes need a paid seat.' },
-  { name: 'Google Drive, Box, Notion', state: 'proposed', note: 'Read-only discovery of selected folders, with provenance attached.' },
-  { name: 'Typeface Arc Graph', state: 'proposed', note: 'Where a client already runs it, read its rules rather than duplicate them.' },
-  { name: 'Frontier model reasoning', state: 'simulated', note: 'Interpretation here is deterministic and authored. No model is called.' },
-  { name: 'Publishing and distribution', state: 'excluded', note: 'An engagement never publishes. Publishing stays with the company\'s own tools.' },
+  { name: 'Source notes and file references', state: 'working', note: 'How material enters this build: by hand, with where it was found.' },
+  { name: 'The connector', state: 'working', note: 'Opens the same record in conversation, from a folder on your own machine.' },
+  { name: 'Model reasoning', state: 'simulated', note: 'Interpretation here is deterministic and authored. No model is called.' },
+  { name: 'Publishing', state: 'excluded', note: 'An engagement never publishes. Publishing stays with the company\'s own tools.' },
 ];

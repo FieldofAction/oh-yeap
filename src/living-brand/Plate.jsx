@@ -11,7 +11,7 @@ const TONES = {
   old: ['#e9e4d8', '#d4c9b0', '#a99a78', '#6d6148', '#3a3427'],
   code: ['#16181c', '#23262d', '#5d6a7d', '#9fb3c8', '#e8eef5'],
   grid: ['#20283b', '#34405a', '#c9735a', '#f0c98a', '#e9e2d0'],
-  lantern: ['#1c1426', '#4a2a3a', '#d98b3a', '#ffd27a', '#fff1d0'],
+  amber: ['#1c1426', '#4a2a3a', '#d98b3a', '#ffd27a', '#fff1d0'],
   ink: ['#000000', '#171717', '#595959', '#d3d3d3', '#ffffff'],
 };
 
@@ -113,12 +113,13 @@ export default function Plate({ item, large = false }) {
       </>);
       break;
     case 'glyph':
-      // An abstract mark placeholder: a plain geometric figure on a field.
+      // A placeholder for a mark: one plain block on a field, and a line where
+      // a name would sit. It is kept free of any figure that could be read as
+      // a symbol: no cross, ring, star or emblem.
       body = (<>
         <rect width="400" height="260" fill={c[0]} />
-        <circle cx="200" cy="130" r="64" fill="none" stroke={c[4]} strokeWidth="10" />
-        <rect x="192" y="52" width="16" height="156" fill={c[4]} />
-        <rect x="122" y="122" width="156" height="16" fill={c[4]} />
+        <rect x="150" y="62" width="100" height="100" rx="14" fill={c[4]} />
+        <rect x="150" y="184" width="100" height="10" rx="5" fill={accent} />
       </>);
       break;
     case 'can':

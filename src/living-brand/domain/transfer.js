@@ -1,8 +1,8 @@
 // Transfer: scoped context for collaborators, the engagement package that is
 // left behind, and the portable packet a brand partition travels in.
 
-import { assessStanding, effectiveRules, rulesInForce, isPublicStudy, BASES, STANDING_CLASSES, PIPELINE } from './standing.js';
-import { findTensions, fingerprint, POWERS } from './inquiry.js';
+import { assessStanding, basisNote, effectiveRules, rulesInForce, isPublicStudy, BASES, STANDING_CLASSES, PIPELINE } from './standing.js';
+import { carryForward, findTensions, fingerprint, organizationalHypotheses, POWERS } from './inquiry.js';
 
 // A partner (agency, freelancer, agent) receives only what its assignment
 // needs: approved, rights-compatible material and the rules that apply.
@@ -17,10 +17,17 @@ export function buildContextPackage(state, { partner, assignment, channels = [],
   if (state.engagement.grant.expires && expires > state.engagement.grant.expires) throw new Error(`A package cannot outlast the engagement, which ends ${state.engagement.grant.expires}.`);
   const included = [];
   const withheld = [];
+  // Material that carries a claim the record says is no longer true is not handed to anyone.
+  const untrue = Object.create(null);
+  for (const c of state.brand.claims || []) {
+    const fact = (state.brand.facts || []).find(f => f.id === c.contradictedBy);
+    if (fact?.date && asOf && fact.date <= asOf) for (const id of c.usedIn || []) (untrue[id] ||= []).push(c.statement);
+  }
   for (const item of state.brand.items) {
     const st = assessStanding(item, { channels, asOf, until: expires }, state.brand);
     const reasons = [];
     if (item.provenance?.confidential) reasons.push('Confidential');
+    for (const statement of untrue[item.id] || []) reasons.push(`Carries a claim that is no longer true: "${statement.replace(/[.]+$/, '')}"`);
     if (item.released && item.released !== 'public') reasons.push(item.released === 'unreleased' ? 'Unreleased' : 'Internal');
     if (!st.authorized) reasons.push(...st.reasons.authorized);
     if (!st.reusable && item.kind !== 'Guidelines') reasons.push(...st.reasons.reusable);
@@ -51,25 +58,37 @@ const MODES = ['orientation', 'audit', 'investigation', 'planning'];
 // The handoff: what is left behind when the engagement ends. For a company
 // engagement the company keeps it. A public-source study stays with whoever
 // made it, and says plainly what only the company could confirm.
-export function buildHandoff(state, { brief, asOf }) {
+export function buildHandoff(state, { brief, asOf, ended = null, packages = [] }) {
   const { brand, engagement } = state;
+  const carried = carryForward(brand, engagement, { asOf });
   const study = isPublicStudy(brand);
   const tensions = findTensions(brand, { asOf, workTypes: engagement.workTypes || [], channels: engagement.channels || [] });
   return {
     format: 'living-brand.engagement/0.2',
     company: brand.name,
     basis: brand.basis || 'company-record',
-    basisNote: BASES[brand.basis || 'company-record']?.note,
+    basisNote: basisNote({ ...brand, basis: brand.basis || 'company-record' }),
+    // Written on the day it is exported. The engagement has ended only if it says so.
+    written: asOf,
     engagement: {
       project: engagement.project, role: engagement.role, practitioner: engagement.practitioner,
-      purpose: engagement.purpose, mode: engagement.mode, scope: engagement.scope, started: engagement.started, ended: asOf,
+      purpose: engagement.purpose, mode: engagement.mode, scope: engagement.scope, started: engagement.started, ended,
     },
     brief,
+    interpretation: {
+      note: engagement.modeNote || '',
+      strengths: (engagement.strengths || []).map(s => ({ statement: s.statement, sources: s.sources })),
+      hypotheses: organizationalHypotheses(brand, engagement).map(h => ({ title: h.title, statement: h.statement, uncertainty: h.uncertainty, test: h.test, evidence: h.evidence.map(e => e.statement), decidedBy: h.owner ? brand.people?.[h.owner]?.name || h.owner : null })),
+      carryForward: carried ? carried.rows.map(r => ({ item: r.item.id, title: r.item.title, verdict: r.verdictName, why: r.why })) : [],
+    },
+    // Context handed to partners during the engagement, and whether each can still be read.
+    contextPackages: (packages || []).map(p => ({ id: p.id, partner: p.partner?.name, assignment: p.assignment, issued: p.issued, expires: p.expires, revokedAt: p.revokedAt || null, included: (p.included || []).map(i => i.title) })),
     choices: state.choices,
     proposals: state.proposals,
     decisions: state.decisions,
     openTensions: tensions.map(t => ({ kind: t.kind, title: t.title, sources: t.sources })),
     openQuestions: engagement.questions || [],
+    answers: state.answers || [],
     unknowns: brand.unknowns || [],
     sources: brand.items.map(i => ({
       id: i.id, title: i.title, pipeline: i.pipeline, standing: i.standing, rights: i.rights?.status,
@@ -96,7 +115,7 @@ export function toPacket(state) {
   brand.rules = (brand.rules || []).map(strip);
   return {
     format: PACKET_FORMAT, brand, engagement: JSON.parse(JSON.stringify(state.engagement)),
-    record: { choices: state.choices, proposals: state.proposals, decisions: state.decisions, seq: state.seq || 0 },
+    record: { choices: state.choices, proposals: state.proposals, decisions: state.decisions, answers: state.answers || [], seq: state.seq || 0 },
   };
 }
 
@@ -122,6 +141,7 @@ export function readPacket(packet) {
 
   if (!isText(brand.id) || !isText(brand.name) || hasControl(brand.id + brand.name)) bad('The brand needs an id and a name, as plain text.');
   if (!Object.hasOwn(BASES, brand.basis)) bad(`The brand's basis must be one of ${Object.keys(BASES).join(', ')}.`);
+  if (brand.basisNote !== undefined && (!isText(brand.basisNote) || hasControl(brand.basisNote) || brand.basisNote.length > 400)) bad('The note on how the record was put together must be one short paragraph of plain text.');
   if (!isList(brand.items)) bad('The brand needs a list of items.');
   for (const key of ['rules', 'claims', 'facts', 'unknowns']) if (brand[key] !== undefined && !isList(brand[key])) bad(`The brand's ${key} must be a list.`);
   for (const key of ['people', 'authority']) if (brand[key] !== undefined && (typeof brand[key] !== 'object' || brand[key] === null || isList(brand[key]))) bad(`The brand's ${key} must be a record of entries.`);
@@ -165,6 +185,8 @@ export function readPacket(packet) {
     if (item.standing === 'canon' && !study && !(isText(item.standingRecord?.by) && isText(item.standingRecord?.date))) bad(`${item.id} is marked canon without saying who decided it and when.`);
     if (item.standing === 'canon' && study && item.standingRecord?.basis !== 'reading') bad(`${item.id}: canon in a public-source study can only be a reading of public material.`);
     if (item.brief !== undefined && (typeof item.brief !== 'object' || item.brief === null)) bad(`${item.id}: its brief must be a record.`);
+    if (item.power !== undefined && !Object.hasOwn(POWERS, item.power)) bad(`${item.id}: "${String(item.power).slice(0, 40)}" is not an area of decision.`);
+    if (item.uses !== undefined && (typeof item.uses !== 'object' || item.uses === null || isList(item.uses))) bad(`${item.id}: what it uses must be a record of topics.`);
   }
   for (const item of items) {
     if (!item || typeof item !== 'object' || !isText(item.id)) continue;
@@ -187,6 +209,7 @@ export function readPacket(packet) {
     if (c.usedIn !== undefined && !isList(c.usedIn)) bad(`Claim ${c.id}: usedIn must be a list.`);
     for (const id of isList(c.usedIn) ? c.usedIn : []) if (!ids.has(id)) bad(`Claim ${c.id} is used in ${id}, which is not in the packet.`);
     if (c.contradictedBy && !factIds.has(c.contradictedBy)) bad(`Claim ${c.id} cites a fact that is not in the packet.`);
+    if (c.supportedBy && !factIds.has(c.supportedBy)) bad(`Claim ${c.id} cites a fact that is not in the packet.`);
     for (const id of isList(c.disputedBy) ? c.disputedBy : []) if (!factIds.has(id)) bad(`Claim ${c.id} cites a fact that is not in the packet.`);
   }
   if (engagement.carry !== undefined) {
@@ -200,16 +223,21 @@ export function readPacket(packet) {
     for (const p of record.proposals) {
       if (!p || !isText(p.id) || !ids.has(p.itemId) || !Object.hasOwn(STANDING_CLASSES, p.from) || !Object.hasOwn(STANDING_CLASSES, p.to) || !isList(p.evidenceIds) || !isList(p.warnings) || !isList(p.reviewer) || !isText(p.status)) bad('A proposal in the record is incomplete or points at an item that is not in the packet.');
     }
-    for (const c of record.choices) if (!c || !isText(c.id) || !isText(c.subject) || !isText(c.verdict)) bad('A choice in the record is incomplete.');
+    for (const c of record.choices) {
+      if (!c || !isText(c.id) || !isText(c.subject) || !isText(c.verdict)) { bad('A choice in the record is incomplete.'); continue; }
+      // A choice that says it was accepted or declined has to say by whom, and that person has to be among the brand's people.
+      if (['accepted', 'declined'].includes(c.status) && !(isText(c.answer?.by) && Object.hasOwn(people, c.answer.by))) bad(`Choice ${c.id} is marked ${c.status} without saying who, among the brand's people, answered it.`);
+    }
     for (const d of record.decisions) if (!d || !isText(d.id) || !isText(d.outcome)) bad('A decision in the record is incomplete.');
-    if (study && record.decisions.some(d => d && ['adopt', 'retire', 'approve', 'name-authority'].includes(d.outcome))) bad('A public-source study cannot carry decisions made for the company.');
+    if (record.answers !== undefined && (!isList(record.answers) || record.answers.some(a => !a || !isText(a.id) || !isText(a.question) || !isText(a.answer)))) bad('An answer in the record is incomplete.');
+    if (study && record.decisions.some(d => d && ['adopt', 'retire', 'approve', 'name-authority', 'unname-authority', 'accept-choice', 'decline-choice'].includes(d.outcome))) bad('A public-source study cannot carry decisions made for the company.');
   }
 
   if (problems.length) throw new Error(`Packet refused: ${[...new Set(problems)].join(' ')}`);
   return {
     brand: { rules: [], claims: [], facts: [], people: {}, authority: {}, ...JSON.parse(JSON.stringify(brand)) },
     engagement: JSON.parse(JSON.stringify(engagement)),
-    record: { choices: [], proposals: [], decisions: [], seq: 0, ...JSON.parse(JSON.stringify(record)) },
+    record: { choices: [], proposals: [], decisions: [], answers: [], seq: 0, ...JSON.parse(JSON.stringify(record)) },
   };
 }
 
