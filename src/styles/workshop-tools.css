@@ -129,3 +129,65 @@
   .dv-field-title { font-size: 15px; }
   .dv-signal { font-size: 16px; }
 }
+
+/* Shared pieces for the other Workshop tools. Each tool is a .wb.wb-page
+   built from the Workbench components; these cover what recurs across them. */
+.tl-section { display: flex; flex-direction: column; gap: 16px; }
+.tl-inline-form { display: flex; flex-direction: column; gap: 16px; padding: 8px 0; }
+.tl-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.tl-narrow { max-width: 320px; }
+.tl-indent { padding-left: 32px; }
+.tl-subhead { padding-top: 12px; }
+.tl-prewrap { white-space: pre-wrap; }
+.tl-locked { opacity: .45; }
+.tl-segments { align-self: flex-start; }
+.tl-segments-wrap { flex-wrap: wrap; }
+.wb-field.tl-area { display: block; min-height: 0; padding: 14px 20px; line-height: 1.45; resize: vertical; }
+.wb-signal > .wb-signal-row > .wb-field { flex: 1 1 200px; }
+.bg-question-input.tl-textarea { min-height: 72px; overflow: auto; resize: vertical; }
+
+.tl-select { align-self: flex-start; min-height: 56px; padding: 0 44px 0 20px; border: 0; border-radius: 14px; background-color: var(--wb-fill); font: inherit; font-size: 19px; color: var(--wb-ink); appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--wb-ink) 50%), linear-gradient(135deg, var(--wb-ink) 50%, transparent 50%); background-position: calc(100% - 23px) 26px, calc(100% - 17px) 26px; background-size: 6px 6px; background-repeat: no-repeat; cursor: pointer; }
+.wb .tl-select:focus-visible { outline: 2px solid var(--wb-ink); outline-offset: 3px; }
+
+/* Lists set as rows under hairlines */
+.tl-list { display: flex; flex-direction: column; }
+.tl-row { display: flex; flex-direction: column; gap: 6px; padding: 18px 0; border-top: 1px solid var(--wb-line); }
+.tl-row-open { width: 100%; min-height: 44px; font: inherit; text-align: left; color: var(--wb-ink); background: transparent; border: 0; border-top: 1px solid var(--wb-line); cursor: pointer; }
+.tl-row > .tl-row-open { padding: 0; border-top: 0; display: flex; flex-direction: column; gap: 6px; }
+.tl-row-open:hover .bg-question-title { text-decoration: underline; text-underline-offset: 4px; }
+.tl-row-body { display: flex; flex-direction: column; gap: 24px; padding-top: 16px; }
+.tl-pair, .tl-triple { display: grid; column-gap: 24px; row-gap: 2px; padding: 12px 0; border-top: 1px solid var(--wb-line); align-items: baseline; }
+.tl-pair { grid-template-columns: minmax(140px, 1fr) 2fr; }
+.tl-triple { grid-template-columns: minmax(140px, 1fr) 1.2fr 1.6fr; }
+.tl-scroll { max-height: 320px; overflow-y: auto; }
+.tl-ol, .tl-ul { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 4px; font-size: 17px; line-height: 1.45; color: var(--wb-soft); max-width: 620px; }
+.tl-code { margin: 0; padding: 20px; max-height: 360px; overflow: auto; border-radius: 14px; background: var(--wb-fill); font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; line-height: 1.5; color: var(--wb-ink); white-space: pre-wrap; word-break: break-word; }
+
+/* Toggles that name a thing: laws, agents, ideas */
+.tl-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.tl-chip { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; font: inherit; font-size: 17px; color: var(--wb-ink); background: var(--wb-fill); border: 0; border-radius: 12px; cursor: pointer; }
+.tl-chip[aria-pressed="true"] { color: #FFFFFF; background: var(--wb-ink); font-weight: 600; }
+.tl-swatch { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+
+/* Sliders */
+.tl-sliders { display: flex; flex-direction: column; gap: 4px; max-width: 620px; }
+.tl-slider { display: grid; grid-template-columns: 130px 1fr 3ch; align-items: center; column-gap: 16px; min-height: 44px; }
+.tl-slider output { text-align: right; font-variant-numeric: tabular-nums; }
+.tl-range { width: 100%; height: 28px; margin: 0; accent-color: var(--wb-ink); cursor: pointer; }
+.tl-progress { height: 2px; max-width: 620px; background: var(--wb-line); }
+.tl-progress > div { height: 2px; background: var(--wb-ink); transition: width .3s ease; }
+
+/* Console: the ring keeps its own drawing */
+.wb .fl-ring { display: flex; justify-content: center; max-width: 620px; }
+.wb .fl-svg { width: 100%; height: auto; }
+.wb .fl-svg [role="button"]:focus-visible { outline: 2px solid var(--wb-ink); outline-offset: 2px; }
+
+/* FOA Generator: the posters are the artifact and keep their own styling */
+.fg-output { display: flex; flex-direction: column; gap: 24px; }
+
+@media (max-width: 560px) {
+  .tl-pair, .tl-triple { grid-template-columns: 1fr; }
+  .tl-slider { grid-template-columns: 1fr 3ch; }
+  .tl-slider label { grid-column: 1 / -1; }
+  .tl-indent { padding-left: 0; }
+}
