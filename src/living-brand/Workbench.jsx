@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   startEngagement, openTenant, search, assessStanding, findTensions, carryForward, changeLedger, organizationalHypotheses,
-  propose, decide, retire, recordReuse, recordChoice, verifyItem, nameAuthority, viewFor, buildBrief, buildContextPackage,
+  propose, decide, retire, recordReuse, recordChoice, verifyItem, approveItem, nameAuthority, viewFor, buildBrief, buildContextPackage,
   revokePackage, packageValid, buildHandoff, toPacket, coordinationView, exportWorkbench, orientation, canDecide, powerFor,
-  deciders, fingerprint, isPublicStudy, pipelineRank, STANDING_CLASSES, PIPELINE, CHOICES, POWERS, BASES,
+  deciders, effectiveRules, fingerprint, isPublicStudy, pipelineRank, STANDING_CLASSES, PIPELINE, CHOICES, POWERS, BASES,
 } from './domain/index.js';
 import Plate from './Plate.jsx';
 
@@ -27,7 +27,7 @@ const fmt = d => {
 };
 const cap = s => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 const lower = s => (s ? s.charAt(0).toLowerCase() + s.slice(1) : s);
-const person = (brand, id) => brand.people?.[id]?.name || (id === 'practitioner' ? 'The practitioner' : id);
+const person = (brand, id) => brand.people?.[id]?.name || (id === 'practitioner' ? 'The practitioner' : id === 'intake' ? 'the intake reading' : id);
 const who = (brand, ids) => (ids?.length ? ids.map(id => person(brand, id)).join(' or ') : 'no one named');
 
 const read = key => { try { return JSON.parse(localStorage.getItem(key)); } catch { return null; } };
@@ -139,7 +139,7 @@ export default function Workbench({ catalog }) {
       {view === 'partner' && <main className="lb-main lb-solo"><Partner {...ctx} /></main>}
       {view === 'agency' && <main className="lb-main lb-solo"><Agency {...ctx} /></main>}
 
-      {open && <Drawer key={open.id} item={open} {...ctx} canWork={view === 'practitioner'} />}
+      {open && <Drawer key={open.id} item={open} {...ctx} canWork={view === 'practitioner'} actingAs={view === 'practitioner' ? actor : view.startsWith('person:') ? view.slice(7) : null} />}
     </div>
   );
 }
@@ -300,7 +300,9 @@ function Orient({ asOf, state, brand, items, setOpenId, tensions, go }) {
   const o = orientation(brand, state.engagement, { asOf });
   const reading = state.engagement.reading?.orient || {};
   const urgent = tensions.filter(t => t.severity !== 'investigate' || t.kind === 'Unknown rights').slice(0, 5);
-  const rules = (brand.rules || []).filter(r => !r.effective?.to);
+  const rules = effectiveRules(brand).filter(r => !r.effective?.to && r.standing !== 'archive');
+  const canonRules = rules.filter(r => r.standing === 'canon');
+  const otherRules = rules.filter(r => r.standing !== 'canon');
   return (
     <article>
       <h1>{reading.headline || `What ${brand.name} says it is for`}</h1>
@@ -320,14 +322,20 @@ function Orient({ asOf, state, brand, items, setOpenId, tensions, go }) {
           </ul>
         </section>
       )}
-      {rules.length > 0 && (
+      {canonRules.length > 0 && (
         <section className="lb-section">
           <h2>What governs work now</h2>
           <ul className="lb-findings">
-            {rules.map(r => (
+            {canonRules.map(r => (
               <li key={r.id}><p>{r.statement}</p><span className="lb-meta">{STANDING_CLASSES[r.standing]?.name || cap(r.standing)}{r.owner ? `, owned by ${person(brand, r.owner)}` : ''}{r.effective?.from ? `, since ${fmt(r.effective.from)}` : ''}</span> <Cite id={r.source} items={items} setOpenId={setOpenId} /></li>
             ))}
           </ul>
+        </section>
+      )}
+      {otherRules.length > 0 && (
+        <section className="lb-section">
+          <h2>{canonRules.length ? 'Written down, not adopted' : 'Nothing is canon yet. These rules are written down, not adopted'}</h2>
+          <RuleGroups rules={otherRules} brand={brand} items={items} setOpenId={setOpenId} />
         </section>
       )}
       {urgent.length > 0 && (
@@ -351,6 +359,21 @@ function Orient({ asOf, state, brand, items, setOpenId, tensions, go }) {
         <p className="lb-body">Found is not understood. A record counts as verified only once someone has checked it against its source, and as approved only once someone with authority has said so. Nothing here was promoted by being extracted or reused.</p>
       </section>
     </article>
+  );
+}
+
+// Rules grouped under the material that states them, so forty rules read as a handful of sources.
+function RuleGroups({ rules, brand, items, setOpenId }) {
+  const bySource = rules.reduce((a, r) => ({ ...a, [r.source]: [...(a[r.source] || []), r] }), {});
+  return (
+    <ul className="lb-findings">
+      {Object.entries(bySource).map(([source, list]) => (
+        <li key={source}>
+          <p><strong><Cite id={source} items={items} setOpenId={setOpenId} /></strong> <span className="lb-meta">{STANDING_CLASSES[list[0].standing]?.name || cap(list[0].standing)}{items[source]?.provenance?.origin === 'generated' ? ', written by a model' : ''}{list[0].owner ? `; ${person(brand, list[0].owner)} decides` : ''}</span></p>
+          <ul className="lb-list">{list.map(r => <li key={r.id}>{r.statement}</li>)}</ul>
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -402,7 +425,7 @@ const SOURCE_BASIS = {
   'recorded-by-practitioner': 'recorded by the practitioner', repo: 'from the company\'s own files',
 };
 
-function Drawer({ asOf, item, state, brand, items, act, actor, setOpenId, canWork }) {
+function Drawer({ asOf, item, state, brand, items, act, actor, setOpenId, canWork, actingAs }) {
   const e = state.engagement;
   const st = assessStanding(item, { channels: e.channels || [], asOf, until: e.newBrief?.until });
   const [to, setTo] = useState(item.standing === 'canon' ? 'precedent' : 'canon');
@@ -415,6 +438,7 @@ function Drawer({ asOf, item, state, brand, items, act, actor, setOpenId, canWor
   const evidenceTypes = [['intended', 'Intended impact'], ['observed', 'Observed outcome'], ['contribution', 'This element\'s contribution'], ['transfer', 'Transfer to other situations']];
   const reviewers = deciders(brand, powerFor(item)).map(p => p.name);
   const canVerify = canWork && item.pipeline !== 'discovered' && pipelineRank(item.pipeline) < pipelineRank('verified');
+  const canApprove = actingAs && canDecide(brand, actingAs, powerFor(item)) && item.pipeline !== 'discovered' && !['approved', 'published'].includes(item.approval?.status);
   useEffect(() => {
     const opener = document.activeElement;
     closeRef.current?.focus();
@@ -473,6 +497,14 @@ function Drawer({ asOf, item, state, brand, items, act, actor, setOpenId, canWor
             <div className="lb-actions"><button type="submit">Mark as checked</button></div>
           </form>
         )}
+
+        {canApprove && (
+          <div className="lb-form">
+            <p className="lb-body">You decide {POWERS[powerFor(item)]} at {brand.name}. Approving says this may be used. It does not make it canon.</p>
+            <div className="lb-actions"><button className="lb-primary" onClick={() => act(s => approveItem(s, item.id, { by: actingAs, asOf }), 'Approved. Its standing is unchanged.')}>Approve this</button></div>
+          </div>
+        )}
+        {item.approval?.status === 'approved' && <p className="lb-body">Approved by {person(brand, item.approval.by)} on {fmt(item.approval.date)}.</p>}
 
         <h3>Evidence</h3>
         {evidenceTypes.map(([k, n]) => {
@@ -602,7 +634,13 @@ function Interpret({ asOf, state, brand, items, setOpenId, tensions }) {
           <div key={kind} className="lb-tension-group">
             <h3>{kind}</h3>
             <ul className="lb-findings">
-              {list.map(t => <li key={t.id}><p><strong>{t.title}.</strong> {t.detail}</p><Cites ids={t.sources} items={items} setOpenId={setOpenId} />{t.owners?.length > 0 && <span className="lb-meta"> Resolved by {who(brand, t.owners)}</span>}</li>)}
+              {list.map(t => (
+                <li key={t.id}>
+                  <p><strong>{t.title}.</strong> {t.detail}</p>
+                  {t.points?.length > 0 && <ul className="lb-list">{t.points.map(pt => <li key={pt.ruleId}>{pt.rule} <span className="lb-meta">It has {pt.has}.</span></li>)}</ul>}
+                  <Cites ids={t.sources} items={items} setOpenId={setOpenId} />{t.owners?.length > 0 && <span className="lb-meta"> Resolved by {who(brand, t.owners)}</span>}
+                </li>
+              ))}
             </ul>
           </div>
         ))}

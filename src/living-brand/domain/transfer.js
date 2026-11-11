@@ -1,7 +1,7 @@
 // Transfer: scoped context for collaborators, the engagement package that is
 // left behind, and the portable packet a brand partition travels in.
 
-import { assessStanding, rulesInForce, isPublicStudy, BASES } from './standing.js';
+import { assessStanding, effectiveRules, rulesInForce, isPublicStudy, BASES } from './standing.js';
 import { findTensions, fingerprint } from './inquiry.js';
 
 // A partner (agency, freelancer, agent) receives only what its assignment
@@ -22,7 +22,7 @@ export function buildContextPackage(state, { partner, assignment, channels, work
     if (reasons.length) withheld.push({ id: item.id, title: item.title, reasons });
     else included.push({ id: item.id, title: item.title, standing: item.standing, rights: item.rights, fingerprint: fingerprint(item) });
   }
-  const rules = rulesInForce(state.brand.rules || [], asOf)
+  const rules = rulesInForce(effectiveRules(state.brand), asOf)
     .filter(r => !r.scope || r.scope.includes('all') || r.scope.some(s => workTypes.includes(s)))
     .map(r => ({ id: r.id, statement: r.statement, standing: r.standing }));
   const open = findTensions(state.brand, { asOf, workTypes, channels }).filter(t => t.kind === 'Conflicting guidance' || t.kind === 'Stale claim')

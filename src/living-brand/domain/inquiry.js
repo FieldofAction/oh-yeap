@@ -4,7 +4,7 @@
 // Interpretation that a person wrote (strengths, hypotheses, reasons) lives on
 // the engagement and is only shown when the evidence it cites exists.
 
-import { assessStanding, isEffective, isPublicStudy, pipelineRank, rulesInForce } from './standing.js';
+import { assessStanding, effectiveRules, isEffective, isPublicStudy, pipelineRank, rulesInForce } from './standing.js';
 
 const byId = brand => Object.fromEntries(brand.items.map(i => [i.id, i]));
 const names = (brand, ids) => (ids || []).map(id => brand.people?.[id]?.name || id);
@@ -16,7 +16,8 @@ const appliesTo = (rule, workTypes) => !rule.scope || rule.scope.includes('all')
 export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
   const out = [];
   const items = byId(brand);
-  const live = rulesInForce(brand.rules || [], asOf);
+  const allRules = effectiveRules(brand);
+  const live = rulesInForce(allRules, asOf);
   const study = isPublicStudy(brand);
   const authority = brand.authority || {};
 
@@ -36,12 +37,19 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
     }
   }
 
-  // Material that still follows a rule the brand has moved on from.
+  // Material that does not follow a rule in force. Against canon that is
+  // drift. Against a rule nobody has adopted, neither side is wrong yet:
+  // someone has to decide which stands. History is not checked.
   for (const item of brand.items) {
+    if (item.standing === 'archive') continue;
+    const departs = [];
     for (const [topic, value] of Object.entries(item.uses || {})) {
-      const canon = live.find(r => r.topic === topic && r.standing === 'canon');
-      if (canon && canon.value !== value) {
-        const retired = (brand.rules || []).find(r => r.topic === topic && r.value === value && !isEffective(r.effective, asOf));
+      const onTopic = live.filter(r => r.topic === topic);
+      if (!onTopic.length || onTopic.some(r => r.value === value)) continue;
+      const canon = onTopic.find(r => r.standing === 'canon');
+      if (!canon) { departs.push({ rule: onTopic[0], has: String(value).replace(/[+]/g, ', ') }); continue; }
+      if (canon.value !== value) {
+        const retired = allRules.find(r => r.topic === topic && r.value === value && !isEffective(r.effective, asOf));
         out.push({
           id: `t-drift-${item.id}-${topic}`, kind: 'Drift from canon', severity: 'repair',
           title: `${item.title} still follows a ${retired ? 'retired' : 'non-canon'} rule`,
@@ -49,6 +57,18 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
           sources: [item.id, canon.source], owners: authority[`standing.${canon.domain || 'visual'}`] || [],
         });
       }
+    }
+    if (departs.length) {
+      const sourcesOfRules = [...new Set(departs.map(d => d.rule.source).filter(Boolean))];
+      const byModel = sourcesOfRules.some(id => items[id]?.provenance?.origin === 'generated');
+      out.push({
+        id: `t-mismatch-${item.id}`, kind: 'Material and written rule disagree', severity: 'decide',
+        title: `${item.title} departs from ${departs.length} written rule${departs.length === 1 ? '' : 's'}`,
+        detail: `None of these rules is canon${byModel ? ', and some were written by a model' : ''}, so neither side is wrong yet. Someone has to decide which stands.`,
+        points: departs.map(d => ({ rule: d.rule.statement, has: d.has, ruleId: d.rule.id })),
+        sources: [item.id, ...sourcesOfRules],
+        owners: [...new Set(departs.flatMap(d => authority[`standing.${d.rule.domain || 'visual'}`] || []))],
+      });
     }
   }
 
@@ -63,10 +83,19 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         detail: `${fact.statement}${usedIn ? ` The claim ${study ? 'appeared' : 'still appears'} in ${usedIn}.` : ''}${c.tensionNote ? ` ${c.tensionNote}` : ''}`,
         sources: [...(c.usedIn || []), fact.source].filter(Boolean), owners: authority.claims || [],
       });
+    } else if ((c.disputedBy || []).length) {
+      // Two records say different things. Nothing here says which is right.
+      const others = (brand.facts || []).filter(f => c.disputedBy.includes(f.id));
+      out.push({
+        id: `t-disputed-${c.id}`, kind: 'Records disagree', severity: 'decide',
+        title: `"${c.statement}" does not match another record`,
+        detail: `${others.map(f => f.statement).join(' ')}${usedIn ? ` The claim appears in ${usedIn}.` : ''}${c.tensionNote ? ` ${c.tensionNote}` : ''} Nothing recorded says which is right.`,
+        sources: [...(c.usedIn || []), ...others.map(f => f.source)].filter(Boolean), owners: authority.claims || [],
+      });
     } else if (!study && !c.verifiedOn) {
       out.push({
         id: `t-unsupported-${c.id}`, kind: 'Unsupported claim', severity: 'repair',
-        title: `"${c.statement}" has no substantiation on file`, detail: `${usedIn ? `Used in ${usedIn}. ` : ''}No one has recorded checking it.`,
+        title: `"${c.statement}" has no substantiation on file`, detail: `${usedIn ? `Used in ${usedIn}. ` : ''}No one has recorded checking it.${c.tensionNote ? ` ${c.tensionNote}` : ''}`,
         sources: c.usedIn || [], owners: authority.claims || [],
       });
     }
@@ -207,7 +236,7 @@ export function buildBrief(brand, engagement, decisions, { asOf }) {
   const sources = new Set();
   decisions.forEach(d => (d.sources || []).forEach(s => sources.add(s)));
   (engagement.materials || []).forEach(s => sources.add(s));
-  const live = rulesInForce(brand.rules || [], asOf).filter(r => appliesTo(r, engagement.workTypes || []));
+  const live = rulesInForce(effectiveRules(brand), asOf).filter(r => appliesTo(r, engagement.workTypes || []));
   live.forEach(r => sources.add(r.source));
   const snapshot = [...sources].filter(id => items[id]).map(id => ({
     id, title: items[id].title, pipeline: items[id].pipeline, standing: items[id].standing,

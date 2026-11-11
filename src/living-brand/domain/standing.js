@@ -95,6 +95,14 @@ export function assessStanding(item, purpose = {}) {
   return { relevant, authorized, reusable, authoritative, reasons };
 }
 
+// A rule is a statement made by some piece of material. Unless it carries a
+// standing of its own, it has the standing of that material: adopting the
+// source as canon is what makes its rules canon.
+export function effectiveRules(brand) {
+  const items = Object.fromEntries((brand.items || []).map(i => [i.id, i]));
+  return (brand.rules || []).map(r => (r.standing ? r : { ...r, standing: items[r.source]?.standing || 'operational', inherited: true }));
+}
+
 export function rulesInForce(rules, asOf) {
-  return rules.filter(r => isEffective(r.effective, asOf) && r.standing !== 'retired');
+  return rules.filter(r => isEffective(r.effective, asOf) && r.standing !== 'retired' && r.standing !== 'archive');
 }

@@ -6,7 +6,7 @@ import {
   startEngagement, openTenant, search, IsolationError, assessStanding, findTensions, carryForward,
   organizationalHypotheses, propose, decide, retire, recordReuse, recordChoice, AuthorityError, viewFor,
   buildBrief, buildContextPackage, revokePackage, packageValid, buildHandoff, coordinationView, exportWorkbench, orientation,
-  verifyItem, addSourceNote, nameAuthority, changeLedger, toPacket, readPacket, startFromPacket, PACKET_FORMAT,
+  verifyItem, approveItem, effectiveRules, addSourceNote, nameAuthority, changeLedger, toPacket, readPacket, startFromPacket, PACKET_FORMAT,
 } from '../src/living-brand/domain/index.js';
 import { fernway } from '../src/living-brand/data/fernway.js';
 import { brightloop } from '../src/living-brand/data/brightloop.js';
@@ -430,4 +430,62 @@ test('the handoff of a study stays with whoever made it', () => {
   assert.match(h.retained.company, /did not commission this/);
   assert.deepEqual(h.unknowns, ['Whether the 2025 mark is final.']);
   assert.ok(h.sources.find(x => x.id === 'h-mark-new').links.includes('https://example.com/new'));
+});
+
+test('a written rule nobody adopted does not outrank the work that breaks it', () => {
+  const brand = { ...halden, basis: 'company-record', people: { dd: { name: 'Founder' } }, authority: { 'standing.visual': ['dd'], claims: [] },
+    rules: [{ id: 'hr-type', topic: 'type.families', value: 'two', statement: 'Two type families.', source: 'h-system', scope: ['all'], effective: {}, standing: 'operational', domain: 'visual' }],
+    claims: [{ id: 'hc-founded', statement: 'Founded in 2018.', usedIn: ['h-about'], disputedBy: ['hf-origin'], tensionNote: 'An anniversary event implies 2019.' }],
+    facts: [{ id: 'hf-origin', statement: 'The site says: started 2011, launched 2019.', date: '', source: 'h-about' }],
+    items: [
+      { id: 'h-system', title: 'Design system file', kind: 'Design system', level: 'brand', pipeline: 'extracted', standing: 'operational', domain: 'visual', provenance: { source: 'Read from the site', origin: 'generated' }, approval: { status: 'none' }, rights: { status: 'unknown' }, evidence: [], relations: [], text: 'Two families.' },
+      { id: 'h-about', title: 'Live site', kind: 'Web page', level: 'brand', pipeline: 'extracted', standing: 'operational', domain: 'visual', uses: { 'type.families': 'three' }, approval: { status: 'none' }, rights: { status: 'unknown' }, evidence: [], relations: [], text: 'Three families.' },
+      { id: 'h-old', title: 'Old site', kind: 'Web page', level: 'brand', pipeline: 'extracted', standing: 'archive', domain: 'visual', uses: { 'type.families': 'five' }, approval: { status: 'none' }, rights: { status: 'unknown' }, evidence: [], relations: [], text: 'Old.' },
+    ] };
+  let s = startEngagement({ halden: brand }, { ...haldenEng, actor: 'dd', grant: { brandId: 'halden', powers: ['read', 'propose', 'steward'] } });
+  const t = findTensions(s.brand, { asOf });
+  const mismatch = t.find(x => x.id === 't-mismatch-h-about');
+  assert.equal(mismatch.kind, 'Material and written rule disagree');
+  assert.match(mismatch.title, /departs from 1 written rule$/);
+  assert.deepEqual(mismatch.points, [{ rule: 'Two type families.', has: 'three', ruleId: 'hr-type' }]);
+  assert.match(mismatch.detail, /is canon, and some were written by a model, so neither side is wrong yet/);
+  assert.deepEqual(mismatch.owners, ['dd']);
+  assert.ok(!t.find(x => x.kind === 'Drift from canon'));
+  assert.ok(!t.some(x => x.id.includes('h-old')), 'history is not checked against today\'s rules');
+  const dispute = t.find(x => x.id === 't-disputed-hc-founded');
+  assert.equal(dispute.kind, 'Records disagree');
+  assert.match(dispute.detail, /started 2011, launched 2019.*An anniversary event implies 2019\. Nothing recorded says which is right/);
+  assert.ok(!/no longer true/.test(dispute.title));
+
+  // The founder approves the system file; approval is not canon, and others cannot approve.
+  assert.equal(assessStanding(s.brand.items[0], { asOf }).authorized, false);
+  assert.throws(() => approveItem(s, 'h-system', { by: 'practitioner', asOf }), /cannot approve Design system file/);
+  s = approveItem(s, 'h-system', { by: 'dd', note: 'This is the system', asOf });
+  const system = s.brand.items[0];
+  assert.deepEqual([system.pipeline, system.approval.status, system.standing], ['approved', 'approved', 'operational']);
+  const st = assessStanding(system, { asOf });
+  assert.deepEqual([st.authorized, st.authoritative], [true, false], 'approved is not canon');
+  assert.equal(s.decisions.at(-1).outcome, 'approve');
+  assert.throws(() => approveItem(s, 'h-system', { by: 'dd', asOf }), /already approved/);
+});
+
+test('adopting a source as canon is what makes its rules canon', () => {
+  const brand = { ...halden, basis: 'company-record', people: { dd: { name: 'Founder' } }, authority: { 'standing.visual': ['dd'] }, claims: [], facts: [],
+    rules: [{ id: 'hr-type', topic: 'type.families', value: 'two', statement: 'Two type families.', source: 'h-system', scope: ['all'], effective: {}, domain: 'visual' }],
+    items: [
+      { id: 'h-system', title: 'Design system file', kind: 'Design system', level: 'brand', pipeline: 'extracted', standing: 'operational', domain: 'visual', approval: { status: 'none' }, rights: { status: 'unknown' }, evidence: [], relations: [], text: 'Two.' },
+      { id: 'h-site', title: 'Live site', kind: 'Web page', level: 'brand', pipeline: 'extracted', standing: 'operational', domain: 'visual', uses: { 'type.families': 'three' }, approval: { status: 'none' }, rights: { status: 'unknown' }, evidence: [], relations: [], text: 'Three.' },
+    ] };
+  let s = startEngagement({ halden: brand }, { ...haldenEng, actor: 'dd', grant: { brandId: 'halden', powers: ['read', 'propose', 'steward'] } });
+  assert.equal(effectiveRules(s.brand)[0].standing, 'operational');
+  assert.ok(findTensions(s.brand, { asOf }).find(x => x.kind === 'Material and written rule disagree'));
+  s = propose(s, { itemId: 'h-system', to: 'canon', rationale: 'This is the system', by: 'intake', asOf });
+  assert.ok(s.proposals[0].warnings.some(w => /Only extracted/.test(w)));
+  s = decide(s, s.proposals[0].id, { by: 'dd', outcome: 'adopt', asOf });
+  assert.equal(effectiveRules(s.brand)[0].standing, 'canon');
+  const t = findTensions(s.brand, { asOf });
+  assert.ok(!t.find(x => x.kind === 'Material and written rule disagree'));
+  assert.equal(t.find(x => x.id === 't-drift-h-site-type.families').kind, 'Drift from canon');
+  s = retire(s, 'h-system', { by: 'dd', reason: 'Superseded', asOf });
+  assert.ok(!findTensions(s.brand, { asOf }).some(x => x.id.includes('h-site-type')), 'a retired source\'s rules no longer bind');
 });

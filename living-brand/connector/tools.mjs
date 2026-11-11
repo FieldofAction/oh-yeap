@@ -6,7 +6,7 @@
 import { readFileSync } from 'node:fs';
 import {
   search, assessStanding, findTensions, carryForward, changeLedger, organizationalHypotheses, orientation,
-  propose, decide, retire, recordReuse, recordChoice, verifyItem, addSourceNote, nameAuthority,
+  propose, decide, retire, recordReuse, recordChoice, verifyItem, approveItem, addSourceNote, nameAuthority,
   buildBrief, buildContextPackage, revokePackage, packageValid, buildHandoff, toPacket, readPacket,
   deciders, powerFor, isPublicStudy, STANDING_CLASSES, CHOICES, POWERS, BASES, PIPELINE,
 } from '../../src/living-brand/domain/index.js';
@@ -50,7 +50,7 @@ export function createTools(store) {
   const tools = [
     {
       name: 'list_engagements', title: 'List engagements', readOnly: true,
-      description: 'List the practitioner\'s engagements: which client each is for, the role, whether it is a company record or a public-source study, and whether it can still be opened. Call this first.',
+      description: 'List the practitioner\'s engagements: which client each is for, the role, whether it is a company record or a public-source study, and whether it can still be opened.',
       input: { type: 'object', properties: {} },
       run() {
         const b = store.bench();
@@ -67,7 +67,7 @@ export function createTools(store) {
     },
     {
       name: 'open_engagement', title: 'Open an engagement', readOnly: true,
-      description: 'Orient in one engagement: the company\'s stated intent, your role and what you may and may not do, who decides what, what is canon, what needs attention first, what is not known, and how far the material has been understood. Read this before making or recommending anything.',
+      description: 'Orient in one engagement: the company\'s stated intent, your role and what you may and may not do, who decides what, what is canon, what needs attention first, what is not known, and how far the material has been understood.',
       input: { type: 'object', properties: { engagement_id: ENG }, required: ['engagement_id'] },
       run({ engagement_id }) {
         const state = store.load(engagement_id);
@@ -194,7 +194,10 @@ export function createTools(store) {
             ...(cf ? cf.rows.map(r => `- ${r.verdictName}: ${r.item.title} [${r.item.id}]. ${r.why}`) : []),
             cf?.evidenceNote || null,
             tensions.length ? '\nTensions:' : '\nNo tensions found in what has been entered.',
-            ...tensions.map(t => `- ${t.kind}: ${t.title}. ${t.detail}${t.owners?.length ? ` Resolved by ${who(brand, t.owners)}.` : ''}${t.sources?.length ? ` [${[...new Set(t.sources)].join(', ')}]` : ''}`),
+            ...tensions.flatMap(t => [
+              `- ${t.kind}: ${t.title}. ${t.detail}${t.owners?.length ? ` Resolved by ${who(brand, t.owners)}.` : ''}${t.sources?.length ? ` [${[...new Set(t.sources)].join(', ')}]` : ''}`,
+              ...(t.points || []).map(pt => `  - Rule: ${pt.rule} It has: ${pt.has}.`),
+            ]),
             hyps.length ? '\nHypotheses beyond the creative work (written by a person; never causes):' : null,
             ...hyps.flatMap(h => [`- ${h.title}. ${h.statement}`, `  Uncertain because: ${h.uncertainty}`, h.test ? `  Could be tested by: ${h.test}` : null, `  Decided by: ${h.owner ? person(brand, h.owner) : 'no one named'}. A recommendation is not authority to act.`]),
           ]),
@@ -229,12 +232,22 @@ export function createTools(store) {
     },
     {
       name: 'verify_item', title: 'Mark material as checked against its source',
-      description: 'Record that a piece of material was checked against its source, and how. Moves it to "verified". This is not approval: approval stays with whoever the company names. Only call it when the check actually happened in this conversation or the practitioner says they did it.',
+      description: 'Record that a piece of material was checked against its source, and how. Moves it to "verified". This is not approval: approval stays with whoever the company names.',
       input: { type: 'object', properties: { engagement_id: ENG, item_id: ITEM, how: { type: 'string', description: 'What it was checked against, and when.' } }, required: ['engagement_id', 'item_id', 'how'] },
       run({ engagement_id, item_id, how }) {
         const next = change(engagement_id, { action: 'verify', item: item_id }, (state, by) => verifyItem(state, item_id, { by, how, asOf: today() }));
         const item = next.brand.items.find(i => i.id === item_id);
         return { text: `"${item.title}" is now verified: ${item.verification.how}. It is still not approved.`, data: { id: item.id, pipeline: item.pipeline } };
+      },
+    },
+    {
+      name: 'approve_item', title: 'Approve material for use',
+      description: 'Record the company\'s approval of a piece of material, so it counts as authorized. Works only where the practitioner whose workbench this is has been named to decide that area. Approval does not make material canon and does not clear its rights.',
+      input: { type: 'object', properties: { engagement_id: ENG, item_id: ITEM, note: { type: 'string' }, acting_as: { type: 'string', description: 'Present only so that a request to approve as someone else is refused clearly.' } }, required: ['engagement_id', 'item_id'] },
+      run({ engagement_id, item_id, note, acting_as }) {
+        const next = change(engagement_id, { action: 'approve', item: item_id }, state => approveItem(state, item_id, { by: onlyAsSelf(state, acting_as), note, asOf: today() }));
+        const item = next.brand.items.find(i => i.id === item_id);
+        return { text: `"${item.title}" is approved by ${person(next.brand, item.approval.by)}. It is still ${STANDING_CLASSES[item.standing].name.toLowerCase()}, and its rights are ${item.rights?.status || 'unknown'}.`, data: { id: item.id, approval: item.approval, standing: item.standing } };
       },
     },
     {
@@ -270,7 +283,7 @@ export function createTools(store) {
     {
       name: 'decide_proposal', title: 'Decide a proposal',
       description: 'Adopt, reject or send back a proposal. Only works where the practitioner whose workbench this is has been named by the company to decide that area. It cannot decide as anyone else. Adopting keeps the previous standing, the evidence, the scope and the date in the record.',
-      input: { type: 'object', properties: { engagement_id: ENG, proposal_id: { type: 'string' }, outcome: { type: 'string', enum: ['adopt', 'reject', 'revise'] }, note: { type: 'string' }, acting_as: { type: 'string', description: 'Leave empty. Present only so that a request to decide as someone else is refused clearly.' } }, required: ['engagement_id', 'proposal_id', 'outcome'] },
+      input: { type: 'object', properties: { engagement_id: ENG, proposal_id: { type: 'string' }, outcome: { type: 'string', enum: ['adopt', 'reject', 'revise'] }, note: { type: 'string' }, acting_as: { type: 'string', description: 'Present only so that a request to decide as someone else is refused clearly.' } }, required: ['engagement_id', 'proposal_id', 'outcome'] },
       run({ engagement_id, proposal_id, outcome, note, acting_as }) {
         const next = change(engagement_id, { action: 'decide', proposal: proposal_id, outcome }, state => decide(state, proposal_id, { by: onlyAsSelf(state, acting_as), outcome, note, asOf: today() }));
         const d = next.decisions.at(-1);
@@ -281,7 +294,7 @@ export function createTools(store) {
     {
       name: 'retire_item', title: 'Retire material to the archive',
       description: 'Retire a piece of material to the learning archive, keeping its history. Only works where the practitioner has been named to decide that area.',
-      input: { type: 'object', properties: { engagement_id: ENG, item_id: ITEM, reason: { type: 'string' }, acting_as: { type: 'string', description: 'Leave empty.' } }, required: ['engagement_id', 'item_id', 'reason'] },
+      input: { type: 'object', properties: { engagement_id: ENG, item_id: ITEM, reason: { type: 'string' }, acting_as: { type: 'string', description: 'Present only so that a request to retire as someone else is refused clearly.' } }, required: ['engagement_id', 'item_id', 'reason'] },
       run({ engagement_id, item_id, reason, acting_as }) {
         const next = change(engagement_id, { action: 'retire', item: item_id }, state => retire(state, item_id, { by: onlyAsSelf(state, acting_as), reason, asOf: today() }));
         const item = next.brand.items.find(i => i.id === item_id);
@@ -290,7 +303,7 @@ export function createTools(store) {
     },
     {
       name: 'name_authority', title: 'Name who decides',
-      description: 'Record who decides an area (visual, verbal, sonic or product standing, public claims, usage rights, the offer, publishing). Only the company can say this, so it works only in an engagement where the practitioner holds the steward power, and never in a public-source study. Ask the practitioner; never infer a name.',
+      description: 'Record who decides an area (visual, verbal, sonic or product standing, public claims, usage rights, the offer, publishing). Only the company can say this, so it works only in an engagement where the practitioner holds the steward power, and never in a public-source study.',
       input: { type: 'object', properties: { engagement_id: ENG, area: { type: 'string', enum: Object.keys(POWERS) }, person_name: { type: 'string' }, person_title: { type: 'string' } }, required: ['engagement_id', 'area', 'person_name'] },
       run({ engagement_id, area, person_name, person_title }) {
         const next = change(engagement_id, { action: 'name-authority', area }, (state, by) => {
@@ -378,7 +391,7 @@ export function createTools(store) {
       },
     },
     {
-      name: 'import_packet', title: 'Open a brand packet',
+      name: 'import_packet', title: 'Open a brand packet', destructive: true,
       description: 'Add an engagement from a brand packet: one brand partition and its engagement in plain JSON (format living-brand.packet/0.2), as exported by the workbench page or by export_engagement_package. Give either the path of a file the practitioner supplied or the JSON text. The packet is checked and refused if inconsistent. It replaces an engagement with the same id.',
       input: { type: 'object', properties: { path: { type: 'string', description: 'Path to a .packet.json file.' }, json: { type: 'string', description: 'The packet as JSON text.' } } },
       run({ path, json }) {
@@ -392,7 +405,7 @@ export function createTools(store) {
     },
     {
       name: 'end_engagement', title: 'End an engagement and remove its material', destructive: true,
-      description: 'End a company engagement: returns the final handoff package and portable packet to give to the company, then deletes that client\'s material from this workbench. This cannot be undone. Ask the practitioner to confirm first, and make sure they have saved what is returned. A public-source study is the practitioner\'s own and is not ended this way.',
+      description: 'End a company engagement: returns the final handoff package and portable packet to give to the company, then deletes that client\'s material from this workbench. This cannot be undone. A public-source study is the practitioner\'s own and is not ended this way.',
       input: { type: 'object', properties: { engagement_id: ENG, confirm: { type: 'boolean', description: 'Must be true, after the practitioner has agreed.' } }, required: ['engagement_id', 'confirm'] },
       run({ engagement_id, confirm }) {
         const state = store.load(engagement_id);

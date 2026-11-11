@@ -1,0 +1,15 @@
+{
+  "name": "living-brand",
+  "description": "A portable brand workbench: enter a company with a role and a project, read its material in context, keep what is relevant, authorized, reusable and authoritative apart, and leave a handoff package.",
+  "version": "0.2.0",
+  "author": {
+    "name": "Field of Action"
+  },
+  "homepage": "https://fieldofaction.org",
+  "keywords": [
+    "brand",
+    "creative direction",
+    "governance",
+    "handoff"
+  ]
+}

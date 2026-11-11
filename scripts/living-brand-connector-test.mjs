@@ -8,6 +8,7 @@ import { join } from 'node:path';
 import { openStore } from '../living-brand/connector/store.mjs';
 import { createTools } from '../living-brand/connector/tools.mjs';
 import { PACKET_FORMAT } from '../src/living-brand/domain/index.js';
+import { bundle, BUNDLE, skillInSync } from './living-brand-connector-build.mjs';
 
 process.env.LIVING_BRAND_AS_OF = '2026-11-11';
 
@@ -90,6 +91,8 @@ test('the connector decides only as its own practitioner, and only where they ar
   const mine = call('propose_standing', { engagement_id: 'eng-moonhouse', item_id: 'mh-mark', to: 'canon', rationale: 'It is the mark', evidence_ids: ['mh-e1'] });
   assert.match(call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: mine.data.id, outcome: 'adopt' }).text, /Adopted.*it was experiment, and that is kept/);
   assert.match(call('get_item', { engagement_id: 'eng-moonhouse', item_id: 'mh-mark' }).text, /Before: Experiment until 2026-11-11/);
+  assert.throws(() => call('approve_item', { engagement_id: 'eng-fernway', item_id: 'fw-story-builder' }), /The practitioner cannot approve Story Builder generator/);
+  assert.throws(() => call('approve_item', { engagement_id: 'eng-moonhouse', item_id: 'mh-mark' }), /already approved/);
   const c = call('record_choice', { engagement_id: 'eng-moonhouse', subject: 'Check the claim', verdict: 'repair', rationale: 'x', needs: 'claims' });
   assert.match(c.text, /no one is named for that at Moonhouse yet/);
   assert.match(call('name_authority', { engagement_id: 'eng-moonhouse', area: 'claims', person_name: 'Founder Person' }).text, /now decides public claims/);
@@ -178,6 +181,12 @@ test('every tool declares what the directory requires', () => {
     assert.ok(t.title && t.description.length > 60 && t.input.type === 'object', t.name);
     assert.ok(/^[a-z_]{3,40}$/.test(t.name), t.name);
   }
-  assert.ok(tools.end_engagement.destructive);
+  assert.ok(tools.end_engagement.destructive && tools.import_packet.destructive);
   assert.ok(tools.search_material.readOnly && !tools.record_choice.readOnly);
+});
+
+test('the committed connector bundle and the project skill are up to date', async () => {
+  const built = await bundle({ write: false });
+  assert.equal(readFileSync(BUNDLE, 'utf8'), built, 'Run `npm run living-brand:connector:build` and commit the result.');
+  assert.ok(skillInSync(), 'Run `npm run living-brand:connector:build` to refresh .claude/skills/living-brand.');
 });

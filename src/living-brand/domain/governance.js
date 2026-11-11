@@ -119,6 +119,23 @@ export function verifyItem(state, itemId, { by, how, asOf }) {
   return s;
 }
 
+// Approval is the company saying a piece of material may be used. Only the
+// person named for its area can give it, and only for material that has been
+// understood. It does not make the material canon.
+export function approveItem(state, itemId, { by, note, asOf }) {
+  const s = clone(state);
+  const item = s.brand.items.find(i => i.id === itemId);
+  if (!item) throw new Error(`No item ${itemId}.`);
+  if (!canDecide(s.brand, by, powerFor(item))) throw new AuthorityError(refusal(s.brand, by, item).replace('change the standing of', 'approve'));
+  if (item.pipeline === 'discovered') throw new Error(`${item.title} has only been found. Record what it is before approving it.`);
+  if (item.approval?.status === 'approved') throw new Error(`${item.title} is already approved.`);
+  item.pipelineHistory = [...(item.pipelineHistory || []), { stage: item.pipeline, until: asOf }];
+  item.pipeline = 'approved';
+  item.approval = { status: 'approved', by, date: asOf, note: note || '' };
+  s.decisions.push({ id: nextId(s, 'd', asOf), itemId, outcome: 'approve', by, note: note || '', date: asOf });
+  return s;
+}
+
 // Progressive intake: a source note enters as discovered or extracted, with
 // where it was found. It can never arrive verified, approved or as canon.
 const INTAKE_STAGES = ['discovered', 'extracted', 'interpreted'];

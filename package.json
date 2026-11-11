@@ -22,6 +22,9 @@
     "soulmega:release": "node scripts/soulmega-capture-release.mjs",
     "soulmega:setup": "node scripts/soulmega-mailchimp-setup.mjs",
     "living-brand:test": "node --test scripts/living-brand-test.mjs scripts/living-brand-connector-test.mjs",
+    "living-brand:connector:build": "node scripts/living-brand-connector-build.mjs",
+    "living-brand:connector:test": "node scripts/living-brand-connector-build.mjs && node --test scripts/living-brand-connector-mcp-test.mjs",
+    "living-brand:private": "node scripts/living-brand-private-build.mjs",
     "text:test": "node scripts/text-rule-test.mjs",
     "text:fixtures": "node --test scripts/text-rule-browser-test.mjs",
     "text:baseline": "node scripts/text-rule-test.mjs --update-baseline"
@@ -37,6 +40,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@modelcontextprotocol/client": "^2.4.0",
+    "@modelcontextprotocol/server": "^2.4.0",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",

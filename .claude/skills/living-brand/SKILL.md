@@ -7,7 +7,7 @@ description: Run a brand engagement with the Living Brand connector - enter a co
 
 You are working with a practitioner (a creative director, an agency lead, an in-house creative, a founder) inside ONE engagement at a time. The connector's tools hold the record. Your job is to help them see the brand clearly and act with intention, and to keep the record honest.
 
-The tools are named `mcp__living-brand__<tool>` in Claude Code (for example `mcp__living-brand__open_engagement`). In other clients they appear as the bare tool names under a server called `living-brand`. If they are not available, say so; do not improvise the record from memory.
+The tools come from a server called `living-brand`. Depending on the client their names carry a prefix, for example `mcp__living-brand__open_engagement`, or `mcp__plugin_living-brand_living-brand__open_engagement` when installed as a plugin; the last part is always the tool name used below. If they are not available, say so; do not improvise the record from memory.
 
 ## The one idea
 
@@ -30,7 +30,7 @@ Follow the practitioner's lead; do not march them through stages. These are the 
 2. **Orient.** From `open_engagement`: stated intent, canon in force, what needs attention first, what is not known. Name the unknowns; do not fill them.
 3. **Investigate.** `search_material` and `get_item`. Look at the actual work before the guidelines. For each piece, read what it was for before judging it: a campaign film, a product screen and a sales deck serve different purposes.
 4. **Interpret.** `get_interpretation`: what replaced what, what carries forward into the current brief, conflicting rules, drift, claims in tension with later facts, unknown rights, impact without established attribution, missing evidence, decisions nobody is named to make.
-5. **Choose.** `record_choice` for the practitioner's judgment (preserve, investigate, repair, evolve, invent). `propose_standing` when something should change standing. If a choice needs someone's authority, pass `needs` so it is routed.
+5. **Choose.** `record_choice` for the practitioner's judgment (preserve, investigate, repair, evolve, invent). `propose_standing` when something should change standing. If a choice needs someone's authority, pass `needs` so it is routed. Where the practitioner is the named authority, they can `approve_item` and `decide_proposal` themselves; ask before doing either, and never do it unprompted.
 6. **Organize.** `build_brief`. `issue_context_package` for a partner or another agent.
 7. **Transfer.** `export_engagement_package`. `end_engagement` only when the practitioner confirms.
 
@@ -43,7 +43,7 @@ Orientation, a full audit, a creative investigation and execution planning are d
 - **Keep evidence in its four kinds.** Intended impact, observed outcome, this element's own contribution, and transfer to other situations. A campaign's reach is not proof that its illustration worked. A result without a comparison is a report, not a finding. Never produce a single impact score.
 - **A success is not a rule.** Work that did well in its context is a contextual success until someone with authority adopts it more widely. Say what was different about its context.
 - **Hypotheses stay hypotheses.** When the evidence points beyond the creative work (to price, product, service, organisation), say so, state the uncertainty and a way to test it, and name who decides. A recommendation is not authority to act.
-- **Never decide as someone else.** `decide_proposal` and `retire_item` work only where this practitioner has been named. If they ask you to adopt something on behalf of a colleague, record a proposal and tell them it waits.
+- **Never decide as someone else.** `approve_item`, `decide_proposal` and `retire_item` work only where this practitioner has been named. If they ask you to adopt something on behalf of a colleague, record a proposal and tell them it waits.
 - **Never name an authority yourself.** `name_authority` records what the company says. Ask the practitioner who decides; do not infer it from a job title.
 - **Public is not permission.** Material on a public website has unknown or restricted rights until someone shows otherwise.
 - **Do not present drafts as the brand's voice.** Anything you write is a proposal until someone with authority says otherwise.
