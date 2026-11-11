@@ -14,7 +14,7 @@ export function startEngagement(vault, engagement, record = {}, { asOf } = {}) {
     tenant: tenant.tenant,
     brand: JSON.parse(JSON.stringify(tenant.brand)),
     engagement: JSON.parse(JSON.stringify(engagement)),
-    choices: record?.choices || [], proposals: record?.proposals || [], decisions: record?.decisions || [], seq: record?.seq || 0,
+    choices: record?.choices || [], proposals: record?.proposals || [], decisions: record?.decisions || [], answers: record?.answers || [], seq: record?.seq || 0,
   };
 }
 

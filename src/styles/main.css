@@ -2047,43 +2047,6 @@ html{-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%}
   .cn-xr-card{padding:12px 14px}
 }
 
-/* ── Exploration Editor ── */
-@media(max-width:768px){.ee-wrap{padding:60px 20px 120px}}
-
-/* Buttons */
-
-/* Inputs */
-
-/* Badge */
-
-/* Tags */
-
-/* List */
-
-/* New form */
-.ee-new-title{font-size:13px;font-weight:600;color:var(--fm);margin-bottom:16px;letter-spacing:.01em}
-
-/* Add form */
-
-/* Detail */
-
-/* Sections */
-
-/* Hypothesis */
-
-/* Fragments */
-.ee-frag-type{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ff);margin-bottom:4px}
-.ee-frag--note .ee-frag-type{color:var(--fm)}
-.ee-frag--visual .ee-frag-type{color:var(--ac1,var(--fm))}
-
-/* Questions */
-
-/* Resolve form */
-
-/* Connections */
-.ee-conn-title{font-size:14px;font-weight:500;color:var(--fg)}
-.ee-conn-why{font-size:12px;color:var(--ff);margin-top:2px}
-
 /* ── Dev Mode Bar (dev mode only — see DevModeBar.jsx / lib/devMode.js) ───
    Bottom-center status bar reporting what dev mode is revealing, with a list of
    the hidden items and a way back to the public view. Same amber register as the

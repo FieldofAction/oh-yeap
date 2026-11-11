@@ -65,9 +65,14 @@ serveStdio(() => {
     }, async args => {
       try {
         const result = tool.run(args || {});
-        return { content: [{ type: 'text', text: result.text }], structuredContent: result.data };
+        // Some clients show the assistant the text, others only the structured
+        // form. The readable account is the whole answer, so it travels in
+        // both: as the text, and first among the structured fields.
+        return { content: [{ type: 'text', text: result.text }], structuredContent: { account: result.text, ...(result.data || {}) } };
       } catch (error) {
-        return { content: [{ type: 'text', text: failure(error) }], isError: true };
+        // A refusal is an answer, and a client that shows only the structured half should see it.
+        const text = failure(error);
+        return { content: [{ type: 'text', text }], structuredContent: { account: text, refused: true }, isError: true };
       }
     });
   }
