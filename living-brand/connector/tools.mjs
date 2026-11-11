@@ -392,14 +392,20 @@ export function createTools(store) {
     },
     {
       name: 'import_packet', title: 'Open a brand packet', destructive: true,
-      description: 'Add an engagement from a brand packet: one brand partition and its engagement in plain JSON (format living-brand.packet/0.2), as exported by the workbench page or by export_engagement_package. Give either the path of a file the practitioner supplied or the JSON text. The packet is checked and refused if inconsistent. It replaces an engagement with the same id.',
-      input: { type: 'object', properties: { path: { type: 'string', description: 'Path to a .packet.json file.' }, json: { type: 'string', description: 'The packet as JSON text.' } } },
-      run({ path, json }) {
+      description: 'Add an engagement from a brand packet: one brand partition and its engagement in plain JSON (format living-brand.packet/0.2), as exported by the workbench page or by export_engagement_package. Give either the path of a file the practitioner supplied or the JSON text. The packet is checked and refused if inconsistent. It never replaces another client\'s engagement, and replaces the same client\'s open engagement only when replace is true.',
+      input: { type: 'object', properties: { path: { type: 'string', description: 'Path to a .packet.json file.' }, json: { type: 'string', description: 'The packet as JSON text.' }, replace: { type: 'boolean', description: 'Set true to overwrite the same client\'s engagement that is already open here.' } } },
+      run({ path, json, replace }) {
         if (!path && !json) throw new Error('Give a path or the JSON text of a packet.');
         let packet;
         try { packet = JSON.parse(path ? readFileSync(path, 'utf8') : json); } catch (e) { throw new Error(`Could not read the packet: ${e.message}`); }
         const { brand, engagement } = readPacket(packet);
-        const row = store.savePacket(packet, { note: 'Imported.' });
+        const existing = store.bench().engagements.find(e => e.id === engagement.id && e.status !== 'ended');
+        if (existing) {
+          const current = store.load(engagement.id);
+          if (current.brand.id !== brand.id) throw new Error(`An engagement with the id "${engagement.id}" is already open here for ${existing.client}. A packet for ${brand.name} cannot replace another client's record. Give this packet's engagement a different id.`);
+          if (replace !== true) throw new Error(`The ${existing.client} engagement is already open here with its own record (${current.choices.length} choices, ${current.proposals.length} proposals, ${current.decisions.length} decisions). Importing would replace it. Export it first if it matters, then call again with replace set to true.`);
+        }
+        const row = store.savePacket(packet, { note: existing ? 'Imported, replacing the previous record.' : 'Imported.' });
         return { text: `Opened ${brand.name} as engagement [${engagement.id}]: ${brand.items.length} items, ${(brand.rules || []).length} rules. ${basisLine(brand)} It is stored in its own folder.`, data: row };
       },
     },

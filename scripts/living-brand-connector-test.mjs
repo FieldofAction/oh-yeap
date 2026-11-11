@@ -145,7 +145,8 @@ test('ending an engagement hands back the record and removes the client\'s mater
   assert.throws(() => call('open_engagement', { engagement_id: 'eng-fernway' }), /ended on 2026-11-11/);
   // The handed-back packet reopens somewhere else with the record intact.
   const again = fresh();
-  again.call('import_packet', { json: JSON.stringify(out.data.packet) });
+  assert.throws(() => again.call('import_packet', { json: JSON.stringify(out.data.packet) }), /already open here with its own record/);
+  again.call('import_packet', { json: JSON.stringify(out.data.packet), replace: true });
   assert.match(again.call('build_brief', { engagement_id: 'eng-fernway' }).text, /Preserve: Chime/);
 });
 
@@ -166,6 +167,19 @@ test('each engagement keeps its own log', () => {
   const fern = readFileSync(join(home, 'engagements/eng-fernway/log.jsonl'), 'utf8');
   const moon = readFileSync(join(home, 'engagements/eng-moonhouse/log.jsonl'), 'utf8');
   assert.ok(!fern.includes('Moon mark') && moon.includes('Moon mark'));
+});
+
+test('importing never overwrites another client, and overwrites the same client only when asked', () => {
+  const { call } = fresh();
+  const impostor = rival(); impostor.engagement.id = 'eng-fernway';
+  assert.throws(() => call('import_packet', { json: JSON.stringify(impostor) }), /already open here for Fernway.*cannot replace another client/);
+  assert.match(call('open_engagement', { engagement_id: 'eng-fernway' }).text, /for Fernway/);
+  call('import_packet', { json: JSON.stringify(rival()) });
+  call('record_choice', { engagement_id: 'eng-moonhouse', subject: 'Keep the mark', verdict: 'preserve', rationale: 'x' });
+  assert.throws(() => call('import_packet', { json: JSON.stringify(rival()) }), /already open here with its own record \(1 choices/);
+  assert.match(call('build_brief', { engagement_id: 'eng-moonhouse' }).text, /Keep the mark/);
+  call('import_packet', { json: JSON.stringify(rival()), replace: true });
+  assert.ok(!/Keep the mark/.test(call('build_brief', { engagement_id: 'eng-moonhouse' }).text));
 });
 
 test('a packet can be opened from a file path', () => {
