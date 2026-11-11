@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from "react";
+import { studioGenerate } from "../lib/studio-generate";
 
 /* ── Desert Visual — Spatial Field Experience ── */
 
@@ -116,15 +117,10 @@ export default function DesertVisual() {
     setAssessing(true);
     try {
       const fieldEntries = QUESTIONS.map(q => `${q.title}: ${currentCard[q.id] || "(empty)"}`).join("\n");
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 256,
-          system: DESERT_SYSTEM_PROMPT,
-          messages: [{ role: "user", content: `Current field state:\n${fieldEntries}` }],
-        }),
+      const response = await studioGenerate({
+        maxTokens: 256,
+        system: DESERT_SYSTEM_PROMPT,
+        messages: [{ role: "user", content: `Current field state:\n${fieldEntries}` }],
       });
       if (!response.ok) throw new Error("Assessment failed");
       const data = await response.json();
