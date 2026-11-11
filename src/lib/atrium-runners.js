@@ -70,8 +70,11 @@ Return ONLY this JSON object (no preamble, no fence):
 
 Your job is NOT to summarize each step. It is to surface what the run as a whole revealed AND whether it echoes prior canonical readings. The reveal should be the one declarative line the operator most needs to read. If canonical runs are provided in the user message and this signal echoes one or more, name that explicitly in the condition prose — the apparatus recognizing it has been in this Field before.
 
+Withholding is a correct, expected outcome. If the upstream readings do not converge, if nothing has repeated across them, the earlier readings of this signal, or the canonical history, or if the signal is not yet articulate, do not manufacture a reveal. Set notYet to true, leave reveal and nextAgent as empty strings, failureMode as an empty array and fieldType as null, and use condition (one or two sentences) to say plainly what has not yet shown itself. A signal may be held for weeks; your job is to notice when it is ready, not to close it.
+
 Given the signal, prior steps' outputs, and any canonical history, produce a Field-direction with these fields (operator vocabulary):
 
+- notYet — true when you are withholding (see above), otherwise false.
 - reveal — a single declarative one-line headline naming what was uncovered (under 14 words, no hedging). This is the felt insight.
 - condition — a 2–3 sentence prose synthesis of what governs this situation across the run. Names the primary force.
 - failureMode — 1–3 named failure conditions; what would make this dead/collapse. Each as "X ↔ Y — brief explanation" naming the axis along which the work fails.
@@ -81,7 +84,7 @@ Given the signal, prior steps' outputs, and any canonical history, produce a Fie
 Tone: precise, never therapeutic, no coaching language. Speak the Field of Action OS vocabulary natively.
 
 Return ONLY this JSON object (no preamble, no fence):
-{"reveal":"...","condition":"...","failureMode":["..."],"nextAgent":"...","fieldType":"..."}`,
+{"notYet":false,"reveal":"...","condition":"...","failureMode":["..."],"nextAgent":"...","fieldType":"..."}`,
 };
 
 // Field-type metadata for label/surface lookup (matches FIELD_TYPES in atrium-mocks.js)
@@ -116,8 +119,21 @@ const COERCERS = {
     cache: raw?.cache || "",
   }),
   grace: (raw) => {
+    if (raw?.notYet === true) {
+      return {
+        notYet: true,
+        reveal: "",
+        condition: raw?.condition || "",
+        failureMode: [],
+        nextAgent: "",
+        fieldType: null,
+        fieldTypeLabel: null,
+        fieldTypeSurface: null,
+      };
+    }
     const ft = raw?.fieldType && FIELD_TYPE_META[raw.fieldType] ? raw.fieldType : null;
     return {
+      notYet: false,
       reveal: raw?.reveal || raw?.takeaway || "",
       condition: raw?.condition || raw?.reading || "",
       failureMode: Array.isArray(raw?.failureMode) ? raw.failureMode.slice(0, 5)
@@ -134,14 +150,14 @@ const SUMMARIZERS = {
   backstage: (d) => `8-agent take · ${d.agents?.length || 0} voices`,
   model: (d) => `Synthesis · ${d.steps?.length || 0} steps`,
   foa: () => "Field of Action outline · 4 zones",
-  grace: (d) => d.fieldTypeLabel ? `Field-direction · ${d.fieldTypeLabel}` : "Field-direction",
+  grace: (d) => d.notYet ? "Not yet" : d.fieldTypeLabel ? `Field-direction · ${d.fieldTypeLabel}` : "Field-direction",
 };
 
 // ── Upstream context builder — lightweight first-pass interpolator ──
 // Slice 2 first pass: stringify upstream outputs as readable context. Slice 2.5
 // would replace this with per-edge LLM-driven interpolators that reshape one
 // module's native output into the next module's expected input.
-function buildContextString(priorSteps) {
+export function buildContextString(priorSteps) {
   if (!priorSteps?.length) return "";
   const lines = priorSteps
     .filter((s) => s.output)
@@ -182,6 +198,12 @@ function compactDetail(output) {
       ].filter(Boolean).join("\n");
     case "exploration-editor":
       return d.title ? `  ${d.title}: ${d.body || ""}` : "";
+    case "lens":
+      return d.unread
+        ? `  Lens laid beside the signal, unread: ${d.lens} — ${d.text}`
+        : [`  Lens: ${d.lens}${d.fits === false ? " (did not fit)" : ""}`, d.reading && `  ${d.reading}`, d.question && `  Question raised: ${d.question}`].filter(Boolean).join("\n");
+    case "orientation":
+      return d.fields?.map((f) => `  ${f.label}: ${f.value}`).join("\n") || "";
     case "breakground":
       return d.cards?.map((c) => `  ${c.kind}: ${c.line}`).join("\n") || "";
     case "desert":
@@ -190,6 +212,7 @@ function compactDetail(output) {
       return d.sections?.map((s) => `  ${s.title}: ${s.body}`).join("\n") || "";
     case "grace":
       return [
+        d.notYet && "  Grace withheld: not yet",
         d.reveal && `  Reveal: ${d.reveal}`,
         d.condition && `  Condition: ${d.condition}`,
         d.fieldTypeLabel && `  Field type: ${d.fieldTypeLabel}`,
@@ -215,6 +238,45 @@ function buildCanonContextString(canonContext) {
     .join("\n\n");
 }
 
+// ── Lens runner — any mental model, pattern or law pairing reads the signal ──
+export async function runLensLLM(lens, signal, priorSteps, settings, options = {}) {
+  const system = `You read a signal through one lens and nothing else.
+
+The lens is "${lens.name}" (${lens.kind}): ${lens.text}
+
+Apply it to the operator's signal as it stands. Do not summarize the signal, do not resolve it, and do not give advice. A lens that does not fit is a correct, expected result: if it does not illuminate this signal, set fits to false and say plainly why in one sentence. Never stretch the lens to make it fit.
+
+Return ONLY this JSON object (no preamble, no fence):
+{"fits":true,"reading":"two or three sentences: what this lens makes visible in the signal","question":"one question the lens raises that the operator has not asked"}`;
+  const ctx = buildContextString(priorSteps);
+  const parts = [`Operator signal:\n${signal || "(empty)"}`];
+  if (ctx) parts.push(`Other readings in this run:\n${ctx}`);
+  const { text } = await callAtriumLLM({
+    system,
+    user: parts.join("\n\n"),
+    apiKey: settings.apiKey,
+    model: settings.model,
+    anthropicVersion: settings.anthropicVersion,
+    maxTokens: 600,
+    signal: options.abortSignal,
+  });
+  const parsed = extractJSON(text);
+  if (!parsed) throw new AtriumLLMError(`${lens.name} returned malformed JSON. Raw output starts with: ${text.slice(0, 120)}…`);
+  return {
+    kind: "lens",
+    summary: lens.name,
+    detail: {
+      lens: lens.name,
+      lensKind: lens.kind,
+      text: lens.text,
+      unread: false,
+      fits: parsed.fits !== false,
+      reading: typeof parsed.reading === "string" ? parsed.reading : "",
+      question: parsed.fits === false ? "" : (typeof parsed.question === "string" ? parsed.question : ""),
+    },
+  };
+}
+
 // ── Main runner ──────────────────────────────────────────────────────
 export async function runModuleLLM(moduleKey, signal, priorSteps, settings, options = {}) {
   const system = SYSTEM_PROMPTS[moduleKey];
@@ -224,6 +286,8 @@ export async function runModuleLLM(moduleKey, signal, priorSteps, settings, opti
   const parts = [`Operator signal:\n${signal || "(empty)"}`];
   if (ctx) parts.push(`Upstream context from prior steps in this run:\n${ctx}`);
   if (canonCtx) parts.push(`Prior canonical Field-directions in the apparatus's history (use to recognize condition repetition):\n${canonCtx}`);
+  const earlier = (options.earlierReadings || []).filter(Boolean);
+  if (earlier.length) parts.push(`Earlier readings of this same signal, oldest first (use to recognize what has and has not repeated):\n${earlier.join("\n\n---\n\n")}`);
   const user = parts.join("\n\n");
   const { text } = await callAtriumLLM({
     system,

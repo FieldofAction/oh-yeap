@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from "react";
 import html2canvas from "html2canvas";
+import { studioGenerate } from "../lib/studio-generate";
 
 const SYSTEM_PROMPT = `You are generating Field of Action (FOA) typographic artifacts.
 These artifacts behave like system signals, research posters, or engineering stamps, not marketing graphics.
@@ -164,17 +165,12 @@ export default function FOAGenerator() {
     setArtifacts([]);
 
     try {
-      const response = await fetch("/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 4000,
-          system: SYSTEM_PROMPT,
-          messages: [
-            { role: "user", content: `Idea:\n${idea.trim()}` },
-          ],
-        }),
+      const response = await studioGenerate({
+        maxTokens: 4000,
+        system: SYSTEM_PROMPT,
+        messages: [
+          { role: "user", content: `Idea:\n${idea.trim()}` },
+        ],
       });
 
       if (!response.ok) {

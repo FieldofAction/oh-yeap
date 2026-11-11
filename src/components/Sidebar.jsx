@@ -1,6 +1,7 @@
 import RelationalDesignNav from "./RelationalDesignNav";
 import useNavigationDrawer from "../hooks/useNavigationDrawer";
 import React, { useState, useEffect, useRef } from "react";
+import { STUDIO_KEY_STORAGE } from "../lib/studio-generate";
 
 // Launch note:
 // - Practice is public in WORK (Workbench published; other case studies stay
@@ -94,6 +95,8 @@ export default function Sidebar({ view, navigateTo, filter, setFilter, hiddenCou
     e?.preventDefault?.();
     if (gateInput === STUDIO_PASSWORD) {
       sessionStorage.setItem(STUDIO_UNLOCK_KEY, "1");
+      // Kept for the session so the Workshop tools can present it to /api/generate.
+      sessionStorage.setItem(STUDIO_KEY_STORAGE, gateInput);
       setUnlocked(true);
       const pending = gatePending;
       setGatePending(null);

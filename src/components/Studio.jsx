@@ -1,292 +1,242 @@
 import React, { useEffect, useState } from "react";
 import { runMock, synthesizeRun } from "../data/atrium-mocks";
-import { runModuleLLM, RUNNABLE_KEYS } from "../lib/atrium-runners";
+import { runModuleLLM, runLensLLM, RUNNABLE_KEYS, buildContextString } from "../lib/atrium-runners";
+import { isLensKey, lensFor, lensCard, searchLenses, randomLens } from "../data/lenses";
+import { SURFACE_BRIEF, SURFACE_QUESTIONS } from "../data/signal-surface";
 import { buildBundle, bundleToMarkdown } from "../lib/atrium-bundle";
+import SubstepDetail from "./WorkbenchReadingDetail";
+import "../styles/workbench.css";
 
-// FOA ring layout. Each seat is a role; a seat is "filled" by zero or more modules,
-// "implicit" if covered by infrastructure rather than a UI surface, or "open" if no
-// surface exists yet — open seats are rendered to make the gap visible.
-const RINGS = [
-  {
-    key: "operational",
-    label: "Operational",
-    desc: "Field → WIP → Action → Cache. The production cycle.",
-    seats: [
-      { role: "Field", verb: "Read", kind: "open", note: "No signal-capture surface yet. The Active Signal above fills this seat for now." },
-      { role: "WIP", verb: "Explore", modules: [
-        { key: "editor", label: "Exploration Editor", desc: "Draft and enrich exploration entries." },
-        { key: "breakground", label: "Breakground", desc: "Card-based exploration and compositions." },
-      ]},
-      { role: "Action", verb: "Produce", modules: [
-        { key: "backstage", label: "Backstage", desc: "Idea composer with 8-agent pipeline." },
-        { key: "foa", label: "FOA Generator", desc: "Generate Field of Action outputs from prompts." },
-      ]},
-      { role: "Cache", verb: "Store", kind: "implicit", note: "seed.js + useASUStore — already structural, no surface needed." },
-    ],
-  },
-  {
-    key: "practice",
-    label: "Practice",
-    desc: "The meta-work that informs the cycle.",
-    seats: [
-      { role: "Art Practice", verb: "Express", modules: [
-        { key: "desert", label: "Desert", desc: "Visual environment for desert compositions." },
-      ]},
-      { role: "CLSSM", verb: "Extract", modules: [
-        { key: "model", label: "Art of Model", desc: "Interactive synthesis engine for designing meaningful intervention." },
-      ]},
-      { role: "Atlas", verb: "Map", modules: [
-        { key: "console", label: "Console", desc: "7 laws diagram with 21 pair mechanics." },
-        { key: "playbook", label: "Playbook", desc: "4 pillars, 6 emotional registers, 23 references, 7 steps." },
-      ]},
-    ],
-  },
-  {
-    key: "governance",
-    label: "Governance",
-    desc: "Judgment, materialization, decision authority.",
-    seats: [
-      { role: "Grace", verb: "Evaluate", modules: [
-        { key: "grace", label: "Grace", desc: "Reads the run across upstream steps and renders a coherent take.", atriumOnly: true },
-      ]},
-      { role: "Open", verb: "Track", kind: "open", note: "No tracker for unfinished work across modules. Open Loops below will surface it." },
-      { role: "Hotel", verb: "Materialize", modules: [
-        { key: "lab", label: "Incandescent Lab", desc: "Process exhibitions from completed runs." },
-      ]},
-      { role: "Freedom Embassy", verb: "Decide", kind: "action", note: "Activated by 'Promote to canon' on completed runs in the Flow Lane." },
-    ],
-  },
+// The Workbench holds signals open. A signal is one line the operator is
+// tracking; it stays in Held until they let it settle. Tools read a held
+// signal, and each reading attaches to it. Grace reads across the others and
+// may withhold ("Not yet"), which is a result, not a failure.
+
+// Every Workshop tool, as an index. Each opens on its own page.
+const TOOLS = [
+  { key: "breakground", label: "Breakground", line: "Seven questions before the work begins." },
+  { key: "desert", label: "Desert", line: "The same seven fields, with no guide." },
+  { key: "model", label: "Art of Model", line: "Reads a signal for origin, field, counter and form." },
+  { key: "console", label: "Console", line: "Seven laws, and what happens between any two." },
+  { key: "playbook", label: "Playbook", line: "Four pillars and an emotional register, set as a brief." },
+  { key: "backstage", label: "Backstage", line: "One idea, read by eight agents." },
+  { key: "foa", label: "FOA Generator", line: "Typographic artifacts from a single idea." },
+  { key: "editor", label: "Exploration Editor", line: "Drafts that are allowed to stay drafts." },
+  { key: "lab", label: "Incandescent Lab", line: "Finished runs, shown as process." },
 ];
 
-// Derived: ordered palette of all module keys (used by the sequence builder).
-const MODULE_INFO = (() => {
-  const map = {};
-  RINGS.forEach((ring) => {
-    ring.seats.forEach((seat) => {
-      seat.modules?.forEach((m) => {
-        map[m.key] = { label: m.label, role: seat.role, verb: seat.verb };
-      });
-    });
-  });
-  return map;
-})();
+// The tools that can read a held signal from here, in the order they run.
+// Grace is last because it reads the others.
+const READERS = [
+  { key: "model", label: "Art of Model" },
+  { key: "backstage", label: "Backstage" },
+  { key: "foa", label: "FOA Generator" },
+  { key: "grace", label: "Grace" },
+];
+const READER_LABEL = {
+  ...Object.fromEntries(TOOLS.map((t) => [t.key, t.label])),
+  ...Object.fromEntries(READERS.map((r) => [r.key, r.label])),
+};
 
-const PALETTE_ORDER = Object.keys(MODULE_INFO);
+const labelFor = (key) => (isLensKey(key) ? lensFor(key)?.name : READER_LABEL[key]) || key;
 
-function ringCards(ring) {
-  const out = [];
-  ring.seats.forEach((seat) => {
-    const seatLabel = `${seat.role} · ${seat.verb}`;
-    if (seat.modules?.length) {
-      seat.modules.forEach((m) => out.push({ kind: m.atriumOnly ? "atrium-only" : "module", seat: seatLabel, ...m }));
-    } else if (seat.kind === "implicit") {
-      out.push({ kind: "implicit", seat: seatLabel, key: `${ring.key}-${seat.role}`, label: "Already structural", desc: seat.note });
-    } else if (seat.kind === "action") {
-      out.push({ kind: "action", seat: seatLabel, key: `${ring.key}-${seat.role}`, label: "Action seat", desc: seat.note });
-    } else {
-      out.push({ kind: "open", seat: seatLabel, key: `${ring.key}-${seat.role}`, label: "Open seat", desc: seat.note });
+const SAMPLE_STEP_MS = 1400;
+const EARLIER_READINGS_LIMIT = 5;
+const EARLIER_READING_CHARS = 1500;
+
+function dayLabel(ts) {
+  if (!ts) return "";
+  const d = new Date(ts);
+  const startOf = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+  const days = Math.round((startOf(new Date()) - startOf(d)) / 86400000);
+  if (days <= 0) return "today";
+  if (days === 1) return "yesterday";
+  const sameYear = d.getFullYear() === new Date().getFullYear();
+  return d.toLocaleDateString(undefined, sameYear ? { month: "long", day: "numeric" } : { month: "long", day: "numeric", year: "numeric" });
+}
+
+function joinNames(names) {
+  if (names.length <= 1) return names.join("");
+  return `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+}
+
+function readersOf(readings) {
+  const seen = [];
+  readings.forEach((r) => (r.payload?.steps || []).forEach((s) => {
+    const label = labelFor(s.moduleKey);
+    if (!seen.includes(label)) seen.push(label);
+  }));
+  return seen;
+}
+
+function isSample(reading) {
+  return (reading.payload?.steps || []).some((s) => s.output?.mock);
+}
+
+// A named reading, rewritten in Signal Surface's own grammar so it can be
+// pasted there. Its evidence is one private reading, and it says so.
+function surfaceEntry(reading, synth, signal) {
+  const steps = reading.payload?.steps || [];
+  const readers = joinNames(steps.map((s) => labelFor(s.moduleKey)));
+  const text = signal?.text || reading.label;
+  return [
+    `## ${text}`,
+    "",
+    `**Observed:** Held in the Workbench${signal?.ts ? ` since ${new Date(signal.ts).toLocaleDateString()}` : ""}. Read by ${readers} on ${new Date(reading.ts).toLocaleDateString()}.`,
+    `**Relationship — inference:** ${synth.condition}`,
+    `**Possible condition:** ${synth.reveal}`,
+    "**Evidence strength:** Thin. One private reading; no outside sources.",
+    synth.failureMode?.length ? `**Challenge:** ${synth.failureMode.join(" ")}` : null,
+    text.trim().endsWith("?") ? `**Watch question:** ${text}` : null,
+    synth.nextAgent ? `**Next test proposal:** ${synth.nextAgent}` : null,
+  ].filter((l) => l !== null).join("\n");
+}
+
+// One reading, set as text. Grace's take leads when Grace was part of it.
+function Reading({ reading, asu, onCopy, copied, signal }) {
+  const [open, setOpen] = useState(false);
+  const [surfaceCopied, setSurfaceCopied] = useState(false);
+  const steps = reading.payload?.steps || [];
+  const synth = synthesizeRun(steps, reading.label);
+  const hasGrace = synth.source === "grace";
+  const names = joinNames(steps.map((s) => labelFor(s.moduleKey)));
+  const lensSteps = steps.filter((s) => s.output?.kind === "lens");
+  const copyForSurface = async () => {
+    try {
+      await navigator.clipboard?.writeText?.(surfaceEntry(reading, synth, signal));
+      setSurfaceCopied(true);
+      setTimeout(() => setSurfaceCopied(false), 1800);
+    } catch {
+      // Clipboard can be unavailable in restricted contexts.
     }
-  });
-  return out;
-}
+  };
 
-// Mocked execution timing for slice 1 (no real module wiring yet).
-const MOCK_STEP_DURATION_MS = 1400;
+  return (
+    <div className="wb-reading">
+      {hasGrace ? (
+        <div className={`wb-grace${synth.notYet ? " wb-grace-notyet" : ""}`}>
+          <p className="wb-name">Grace</p>
+          <p className="wb-reveal">{synth.notYet ? "Not yet." : synth.reveal}</p>
+        </div>
+      ) : null}
 
-// Stratification (#2): non-canonical items older than this threshold drift into
-// the Compost zone. Canonical items are exempt — they never decay.
-const ACTIVE_THRESHOLD_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+      {hasGrace && synth.condition ? <p className="wb-body wb-measure">{synth.condition}</p> : null}
+      {lensSteps.map((s, i) => {
+        const d = s.output.detail;
+        return (
+          <div key={i} className="wb-block wb-lens">
+            <p className="wb-name">{d.lens}</p>
+            <p className="wb-body wb-measure">{d.text}</p>
+            {d.unread ? <p className="wb-body wb-measure">Laid beside the signal, unread. Add a key in Backstage and it will read it.</p> : null}
+            {d.reading ? <p className="wb-text wb-measure">{d.fits === false ? `It does not fit. ${d.reading}` : d.reading}</p> : null}
+            {d.question ? <p className="wb-text wb-measure">{d.question}</p> : null}
+          </div>
+        );
+      })}
+      {!hasGrace && lensSteps.length === 0 ? <p className="wb-body wb-measure">Read by {names}. Grace was not part of this reading, so nothing has been named.</p> : null}
 
-function classifyZone(item, now = Date.now()) {
-  if (item.canonical) return "canon";
-  if (item.archived) return "compost";
-  if (item.ts && (now - item.ts) > ACTIVE_THRESHOLD_MS) return "compost";
-  return "active";
-}
+      {hasGrace && !synth.notYet && synth.failureMode?.length > 0 ? (
+        <div className="wb-block">
+          <p className="wb-name">What would make this fail</p>
+          {synth.failureMode.map((t, i) => <p key={i} className="wb-body wb-measure">{t}</p>)}
+        </div>
+      ) : null}
+      {hasGrace && !synth.notYet && synth.nextAgent ? (
+        <div className="wb-block">
+          <p className="wb-name">What acts next</p>
+          <p className="wb-body wb-measure">{synth.nextAgent}</p>
+        </div>
+      ) : null}
+      {hasGrace && !synth.notYet && synth.fieldTypeLabel ? (
+        <p className="wb-body">It wants to land as a {synth.fieldTypeLabel}{synth.fieldTypeSurface ? `, on ${synth.fieldTypeSurface}` : ""}.</p>
+      ) : null}
 
-function matchesSearch(item, query) {
-  if (!query) return true;
-  const q = query.toLowerCase();
-  if (item.label?.toLowerCase().includes(q)) return true;
-  if (item.payload?.steps) {
-    const synth = synthesizeRun(item.payload.steps, item.label);
-    if (synth.reveal?.toLowerCase().includes(q)) return true;
-    if (synth.condition?.toLowerCase().includes(q)) return true;
-    if (synth.fieldTypeLabel?.toLowerCase().includes(q)) return true;
-  }
-  return false;
-}
+      {isSample(reading) ? <p className="wb-body">Sample text, not a reading. Add a key in Backstage to read with the model.</p> : null}
+      {reading.canonical ? <p className="wb-body">Kept as canon {dayLabel(reading.canonicalAt)}.</p> : null}
 
-// A scaffold sentence for the Active Signal. Optional — the operator can write
-// freely. The bracketed slots map onto the apparatus: [what] feeds Backstage and
-// FOA Generator, [why] feeds Art of Model and Playbook, [resistance] feeds Console.
-const SIGNAL_TEMPLATE = "I'm working on [what] toward [why]; the resistance is [what won't yield].";
+      <div className="wb-actions">
+        <button type="button" className="wb-link" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+          {open ? "Hide the full reading" : "Show the full reading"}
+        </button>
+        {hasGrace && !synth.notYet && !reading.canonical ? (
+          <button type="button" className="wb-link" onClick={() => asu.commit_to_canon(reading.id)}>Keep as canon</button>
+        ) : null}
+        {reading.canonical ? (
+          <button type="button" className="wb-link" onClick={() => asu.revert_canon(reading.id)}>Remove from canon</button>
+        ) : null}
+        {hasGrace && !synth.notYet && !isSample(reading) ? (
+          <button type="button" className="wb-link" onClick={copyForSurface}>{surfaceCopied ? "Copied" : "Copy for Signal Surface"}</button>
+        ) : null}
+        {!reading.canonical ? (
+          <button type="button" className="wb-link" onClick={() => asu.clear_flow_artifact(reading.id)}>Remove this reading</button>
+        ) : null}
+      </div>
 
-// Renders a structured stub output per module kind. Slice 1.5 — purely shape-honest;
-// no real processing. Each branch matches the shape produced by SHAPE_MOCKS in atrium-mocks.js.
-function SubstepDetail({ kind, detail }) {
-  if (!detail) return null;
-  const Row = ({ k, v }) => (
-    <div className="atrium-detail-row">
-      {k != null && <span className="atrium-detail-key">{k}</span>}
-      <span className="atrium-detail-val">{v}</span>
+      {open ? (
+        <div className="wb-trace">
+          {steps.map((s, i) => (
+            <div key={i} className="wb-trace-step">
+              <p className="wb-name">{labelFor(s.moduleKey)}</p>
+              {s.status === "error" ? <p className="wb-body">This tool failed: {s.error}</p> : null}
+              {s.output?.detail ? <SubstepDetail kind={s.output.kind} detail={s.output.detail} /> : null}
+            </div>
+          ))}
+          {reading.canonical ? (
+            <div className="wb-actions">
+              <button type="button" className="wb-link" onClick={() => onCopy(reading, "markdown")}>
+                {copied === `${reading.id}:markdown` ? "Copied" : "Copy as Markdown"}
+              </button>
+              <button type="button" className="wb-link" onClick={() => onCopy(reading, "json")}>
+                {copied === `${reading.id}:json` ? "Copied" : "Copy as JSON"}
+              </button>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
-  switch (kind) {
-    case "backstage":
-      return <ul className="atrium-detail-list">{detail.agents.map((a, i) => <li key={i}><Row k={a.name} v={a.take} /></li>)}</ul>;
-    case "art-of-model":
-      return (
-        <div className="atrium-detail-block">
-          {detail.steps.map((s, i) => <Row key={i} k={s.title} v={s.text} />)}
-          <Row k="Synthesis" v={detail.synthesis} />
-        </div>
-      );
-    case "foa-generator":
-      return (
-        <div className="atrium-detail-block">
-          {["field", "wip", "action", "cache"].map((k) => <Row key={k} k={k} v={detail[k]} />)}
-        </div>
-      );
-    case "exploration-editor":
-      return (
-        <div className="atrium-detail-block">
-          <Row k="Title" v={detail.title} />
-          <Row k="Body" v={detail.body} />
-          <Row k="Tags" v={detail.tags?.join(" · ")} />
-        </div>
-      );
-    case "breakground":
-      return <ul className="atrium-detail-list">{detail.cards.map((c, i) => <li key={i}><Row k={c.kind} v={c.line} /></li>)}</ul>;
-    case "console":
-      return (
-        <div className="atrium-detail-block">
-          <div className="atrium-detail-section-label">Active laws</div>
-          {detail.activeLaws.map((l, i) => <Row key={i} k={l.name} v={l.reading} />)}
-          {detail.tensions?.length > 0 && (
-            <>
-              <div className="atrium-detail-section-label">Tensions</div>
-              {detail.tensions.map((t, i) => <Row key={i} v={t.pair} />)}
-            </>
-          )}
-        </div>
-      );
-    case "playbook":
-      return (
-        <div className="atrium-detail-block">
-          <div className="atrium-detail-section-label">Pillars</div>
-          <Row k="System" v={detail.pillars.system} />
-          <Row k="Scenography" v={detail.pillars.scenography} />
-          <Row k="Soul" v={detail.pillars.soul} />
-          <Row k="Relational" v={detail.pillars.relational} />
-          <Row k="Emotion" v={detail.emotion} />
-          <div className="atrium-detail-section-label">Application</div>
-          <Row k="Big move" v={detail.application.bigMove} />
-          <Row k="Whimsy" v={detail.application.whimsy} />
-          <Row k="Connection" v={detail.application.connection} />
-        </div>
-      );
-    case "desert":
-      return (
-        <div className="atrium-detail-block">
-          <Row k="Palette" v={detail.palette} />
-          <Row k="Density" v={detail.density?.toFixed?.(2) ?? detail.density} />
-          <Row k="Mood" v={detail.mood} />
-          <Row k="Notes" v={detail.notes} />
-        </div>
-      );
-    case "lab":
-      return (
-        <div className="atrium-detail-block">
-          <Row k="Title" v={detail.title} />
-          {detail.sections?.map((s, i) => <Row key={i} k={s.title} v={s.body} />)}
-        </div>
-      );
-    case "grace": {
-      const reveal = detail.reveal ?? detail.takeaway;
-      const condition = detail.condition ?? detail.reading;
-      const failureMode = detail.failureMode ?? detail.tensionsSeen ?? [];
-      const nextAgent = detail.nextAgent ?? detail.nextMove;
-      return (
-        <div className="atrium-detail-block">
-          {detail.fieldTypeLabel && <Row k="Field type" v={`${detail.fieldTypeLabel}${detail.fieldTypeSurface ? ` · ${detail.fieldTypeSurface}` : ""}`} />}
-          {reveal && <Row k="Reveal" v={reveal} />}
-          {condition && <Row k="Condition" v={condition} />}
-          {failureMode?.length > 0 && (
-            <>
-              <div className="atrium-detail-section-label">Failure mode</div>
-              {failureMode.map((t, i) => <Row key={i} v={t} />)}
-            </>
-          )}
-          {nextAgent && <Row k="Next agent" v={nextAgent} />}
-        </div>
-      );
-    }
-    default:
-      return <pre className="atrium-detail-raw">{JSON.stringify(detail, null, 2)}</pre>;
-  }
 }
 
 export default function Studio({ navigateTo, asu }) {
-  const signal = asu?.get_active_signal?.() || "";
+  const signals = asu?.get_signals?.() || [];
   const flow = asu?.get_flow_lane?.() || [];
-  const loops = asu?.get_open_loops?.() || [];
-  const sequence = asu?.get_sequence?.() || [];
   const currentRun = asu?.get_current_run?.() || null;
   const canonicalRuns = asu?.get_canonical_runs?.() || [];
+  const hasKey = !!asu?.get_settings?.()?.apiKey;
   const isRunning = !!currentRun;
-  const [expandedFlowId, setExpandedFlowId] = useState(null);
-  const [expandedSubsteps, setExpandedSubsteps] = useState(() => new Set());
-  const [canonContextOn, setCanonContextOn] = useState(true);
+
+  const [tab, setTab] = useState("held");
+  const [draft, setDraft] = useState("");
+  const [pickerFor, setPickerFor] = useState(null);
+  const [picked, setPicked] = useState(() => new Set(["grace"]));
+  const [useCanon, setUseCanon] = useState(true);
   const [excludedCanonIds, setExcludedCanonIds] = useState(() => new Set());
-  const [searchQuery, setSearchQuery] = useState("");
-  const [compostOpen, setCompostOpen] = useState(false);
-  const [bundleOpenId, setBundleOpenId] = useState(null);
-  const [bundleFormat, setBundleFormat] = useState("json"); // "json" | "markdown"
-  const [bundleCopiedId, setBundleCopiedId] = useState(null);
+  const [earlierOpen, setEarlierOpen] = useState(() => new Set());
+  const [search, setSearch] = useState("");
+  const [pickedLenses, setPickedLenses] = useState([]);
+  const [lensQuery, setLensQuery] = useState("");
+  const [surfaceOpen, setSurfaceOpen] = useState(false);
+  const [copied, setCopied] = useState(null);
 
-  const onCopyBundle = async (item) => {
-    const bundle = buildBundle(item);
-    const text = bundleFormat === "markdown" ? bundleToMarkdown(bundle) : JSON.stringify(bundle, null, 2);
-    try {
-      await navigator.clipboard?.writeText?.(text);
-      setBundleCopiedId(item.id);
-      setTimeout(() => setBundleCopiedId((id) => (id === item.id ? null : id)), 1800);
-    } catch {
-      // Clipboard may be unavailable in restricted contexts; fall back silently.
-    }
-  };
-  const toggleSubstep = (key) => setExpandedSubsteps((prev) => {
-    const next = new Set(prev);
-    if (next.has(key)) next.delete(key); else next.add(key);
-    return next;
-  });
-  const toggleCanonExclusion = (id) => setExcludedCanonIds((prev) => {
-    const next = new Set(prev);
-    if (next.has(id)) next.delete(id); else next.add(id);
-    return next;
-  });
+  const held = signals.filter((s) => !s.settledAt);
+  const settled = signals.filter((s) => s.settledAt).sort((a, b) => b.settledAt - a.settledAt);
+  const signalIds = new Set(signals.map((s) => s.id));
+  // Runs made before signals existed, or whose signal was deleted.
+  const earlierRuns = flow.filter((it) => it.payload?.steps && (!it.signalId || !signalIds.has(it.signalId)));
+  const readingsFor = (id) => flow.filter((it) => it.signalId === id && it.payload?.steps);
+  const isEmpty = signals.length === 0 && earlierRuns.length === 0;
 
-  // Compact canonical context derived from the synthesized form of canonical runs.
-  // Passed to each step's runner so modules (especially Grace) can recognize
-  // condition repetition across runs.
-  const canonContext = (canonContextOn ? canonicalRuns : [])
+  const canonContext = (useCanon ? canonicalRuns : [])
     .filter((r) => !excludedCanonIds.has(r.id))
     .slice(0, 5)
     .map((r) => {
       const synth = synthesizeRun(r.payload.steps, r.label);
-      return {
-        signal: r.label,
-        reveal: synth.reveal,
-        condition: synth.condition,
-        fieldType: synth.fieldTypeLabel,
-      };
+      return { signal: r.label, reveal: synth.reveal, condition: synth.condition, fieldType: synth.fieldTypeLabel };
     });
 
-  // Run driver: walks the queued sequence one step at a time. For modules in
-  // RUNNABLE_KEYS with an API key set, calls the real LLM. Otherwise falls back
-  // to shape-honest mocks. Errors mark the step as "error" but do not halt the
-  // run — subsequent steps still execute, since each module is independent.
+  // Walks the reading one tool at a time. Tools in RUNNABLE_KEYS call the model
+  // when a key is set; otherwise they return sample text, which the reading is
+  // labelled with. A failed tool is recorded and the rest still run.
   useEffect(() => {
     if (!currentRun) return;
     const allDone = currentRun.steps.every((s) => s.status === "done" || s.status === "error");
@@ -299,34 +249,35 @@ export default function Studio({ navigateTo, asu }) {
       const step = currentRun.steps[runningIdx];
       const priorSteps = currentRun.steps.slice(0, runningIdx).filter((s) => s.status === "done");
       const settings = asu.get_settings?.() || {};
-      const useReal = !!settings.apiKey && RUNNABLE_KEYS.has(step.moduleKey);
+      const lens = isLensKey(step.moduleKey) ? lensFor(step.moduleKey) : null;
+      const useReal = !!settings.apiKey && (!!lens || RUNNABLE_KEYS.has(step.moduleKey));
       let cancelled = false;
       const controller = useReal ? new AbortController() : null;
-
       const stepCanonContext = currentRun.canonContext || [];
 
       (async () => {
         try {
           let output;
-          if (useReal) {
-            output = await runModuleLLM(step.moduleKey, currentRun.signal, priorSteps, settings, { abortSignal: controller.signal, canonContext: stepCanonContext });
+          if (lens && useReal) {
+            output = await runLensLLM(lens, currentRun.signal, priorSteps, settings, { abortSignal: controller.signal });
+          } else if (lens) {
+            // No key: the lens is laid beside the signal as it is written.
+            output = lensCard(lens);
+          } else if (useReal) {
+            output = await runModuleLLM(step.moduleKey, currentRun.signal, priorSteps, settings, {
+              abortSignal: controller.signal,
+              canonContext: stepCanonContext,
+              earlierReadings: currentRun.earlierReadings || [],
+            });
           } else {
-            await new Promise((r) => setTimeout(r, MOCK_STEP_DURATION_MS));
+            await new Promise((r) => setTimeout(r, SAMPLE_STEP_MS));
             output = runMock(step.moduleKey, currentRun.signal, priorSteps, stepCanonContext);
           }
           if (cancelled) return;
-          asu.update_run_step(runningIdx, {
-            status: "done",
-            completedAt: Date.now(),
-            output: { ...output, mock: !useReal },
-          });
+          asu.update_run_step(runningIdx, { status: "done", completedAt: Date.now(), output: { ...output, mock: !useReal && !lens } });
         } catch (err) {
           if (cancelled || err?.name === "AbortError") return;
-          asu.update_run_step(runningIdx, {
-            status: "error",
-            completedAt: Date.now(),
-            error: err?.message || String(err),
-          });
+          asu.update_run_step(runningIdx, { status: "error", completedAt: Date.now(), error: err?.message || String(err) });
         }
       })();
 
@@ -341,494 +292,371 @@ export default function Studio({ navigateTo, asu }) {
     }
   }, [currentRun, asu]);
 
-  const onRun = () => {
-    if (!sequence.length || isRunning) return;
-    asu.start_run(canonContext);
+  const onHold = (e) => {
+    e.preventDefault();
+    if (!draft.trim()) return;
+    asu.hold_signal(draft);
+    setDraft("");
+    setTab("held");
   };
-  const canRun = sequence.length > 0 && !isRunning;
-  const runningStepIdx = currentRun?.steps.findIndex((s) => s.status === "running") ?? -1;
-  const doneCount = currentRun?.steps.filter((s) => s.status === "done").length || 0;
+
+  const togglePicked = (key) => setPicked((prev) => {
+    const next = new Set(prev);
+    if (next.has(key)) next.delete(key); else next.add(key);
+    return next;
+  });
+  const toggleLens = (key, addOnly = false) => setPickedLenses((prev) => (
+    prev.includes(key) ? (addOnly ? prev : prev.filter((k) => k !== key)) : [...prev, key]
+  ));
+  const toggleCanonExclusion = (id) => setExcludedCanonIds((prev) => {
+    const next = new Set(prev);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    return next;
+  });
+  const toggleEarlier = (id) => setEarlierOpen((prev) => {
+    const next = new Set(prev);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    return next;
+  });
+
+  const onRead = (signal) => {
+    // Lenses first, then the tools, with Grace last so it reads all of them.
+    const sequence = [...pickedLenses, ...READERS.map((r) => r.key).filter((k) => picked.has(k))];
+    if (!sequence.length || isRunning) return;
+    // Oldest first, so the model can see what has and has not repeated.
+    const earlierReadings = readingsFor(signal.id)
+      .slice(0, EARLIER_READINGS_LIMIT)
+      .reverse()
+      .map((r) => `Reading from ${new Date(r.ts).toLocaleDateString()}:\n${buildContextString(r.payload.steps).slice(0, EARLIER_READING_CHARS)}`);
+    asu.start_run(canonContext, { signalId: signal.id, signal: signal.text, sequence, earlierReadings });
+    setPickerFor(null);
+    setPickedLenses([]);
+    setLensQuery("");
+  };
+
+  // Breakground and Desert have their own pages. The signal goes with you,
+  // and what you answer there comes back as a reading on it.
+  const onCarry = (signal, toolKey) => {
+    asu.carry_signal(signal);
+    setPickerFor(null);
+    navigateTo(toolKey);
+  };
+
+  const onCopy = async (reading, format) => {
+    const bundle = buildBundle(reading);
+    const text = format === "markdown" ? bundleToMarkdown(bundle) : JSON.stringify(bundle, null, 2);
+    try {
+      await navigator.clipboard?.writeText?.(text);
+      const mark = `${reading.id}:${format}`;
+      setCopied(mark);
+      setTimeout(() => setCopied((c) => (c === mark ? null : c)), 1800);
+    } catch {
+      // Clipboard can be unavailable in restricted contexts.
+    }
+  };
+
+  const q = search.trim().toLowerCase();
+  const matches = (text, readings) => {
+    if (!q) return true;
+    if (text?.toLowerCase().includes(q)) return true;
+    return readings.some((r) => {
+      const synth = synthesizeRun(r.payload.steps, r.label);
+      return [synth.reveal, synth.condition, synth.fieldTypeLabel].some((v) => v?.toLowerCase().includes(q));
+    });
+  };
+
+  const signalForm = (
+    <form className={`wb-signal${isEmpty ? " wb-signal-open" : ""}`} onSubmit={onHold}>
+      <label htmlFor="wb-signal-input" className="wb-label">What are you tracking right now?</label>
+      <div className="wb-signal-row">
+        {isEmpty ? (
+          // Before anything is held the line is large, so it is a textarea
+          // that wraps. Enter holds the signal, as it does in the one-line field.
+          <textarea
+            id="wb-signal-input"
+            className="wb-field"
+            rows={2}
+            value={draft}
+            onChange={(e) => {
+              setDraft(e.target.value.replace(/\n/g, " "));
+              // Grow with the text so a long signal is never clipped.
+              e.target.style.height = "auto";
+              e.target.style.height = `${e.target.scrollHeight}px`;
+            }}
+            onKeyDown={(e) => { if (e.key === "Enter") onHold(e); }}
+            placeholder="A question, an obstruction, a hunch"
+          />
+        ) : (
+          <input
+            id="wb-signal-input"
+            className="wb-field"
+            type="text"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder="A question, an obstruction, a hunch"
+            autoComplete="off"
+          />
+        )}
+        {draft.trim() ? <button type="submit" className="wb-button">Hold</button> : null}
+      </div>
+    </form>
+  );
+
+  const toolsIndex = (
+    <section className="wb-tools" aria-label="Tools">
+      {TOOLS.map((t) => (
+        <button key={t.key} type="button" className="wb-tool" onClick={() => navigateTo(t.key)}>
+          <span className="wb-tool-name">{t.label}</span>
+          <span className="wb-tool-line">{t.line}</span>
+        </button>
+      ))}
+    </section>
+  );
+
+  const picker = (signal) => (
+    <div className="wb-picker">
+      <fieldset className="wb-fieldset">
+        <legend className="wb-name">Read it with</legend>
+        {READERS.map((r) => (
+          <label key={r.key} className="wb-check">
+            <input type="checkbox" checked={picked.has(r.key)} onChange={() => togglePicked(r.key)} />
+            <span>{r.label}</span>
+          </label>
+        ))}
+      </fieldset>
+      <p className="wb-body wb-measure">Grace reads the others and this signal's earlier readings. It can answer "Not yet."</p>
+      <fieldset className="wb-fieldset wb-lens-picker">
+        <legend className="wb-name">Or through a lens</legend>
+        {pickedLenses.map((key) => (
+          <label key={key} className="wb-check">
+            <input type="checkbox" checked onChange={() => toggleLens(key)} />
+            <span>{lensFor(key)?.name}</span>
+          </label>
+        ))}
+        <label htmlFor="wb-lens-search" className="wb-label">Find a mental model, a pattern or a law pairing</label>
+        <input id="wb-lens-search" className="wb-field" type="search" value={lensQuery} onChange={(e) => setLensQuery(e.target.value)} autoComplete="off" />
+        {searchLenses(lensQuery).filter((l) => !pickedLenses.includes(l.key)).map((l) => (
+          <button key={l.key} type="button" className="wb-lens-result" onClick={() => toggleLens(l.key)}>
+            <span className="wb-name">{l.name}</span>
+            <span className="wb-body">{l.text}</span>
+          </button>
+        ))}
+        <div className="wb-actions">
+          <button type="button" className="wb-link" onClick={() => toggleLens(randomLens().key, true)}>Draw one at random</button>
+        </div>
+      </fieldset>
+      {canonicalRuns.length > 0 ? (
+        <fieldset className="wb-fieldset">
+          <label className="wb-check">
+            <input type="checkbox" checked={useCanon} onChange={() => setUseCanon((v) => !v)} />
+            <span>Let the tools see what is kept as canon</span>
+          </label>
+          {useCanon ? canonicalRuns.slice(0, 8).map((r) => (
+            <label key={r.id} className="wb-check wb-check-nested">
+              <input type="checkbox" checked={!excludedCanonIds.has(r.id)} onChange={() => toggleCanonExclusion(r.id)} />
+              <span>{synthesizeRun(r.payload.steps, r.label).reveal || r.label}</span>
+            </label>
+          )) : null}
+        </fieldset>
+      ) : null}
+      {!hasKey ? (
+        <p className="wb-body wb-measure">
+          No key is set, so this will produce sample text.{" "}
+          <button type="button" className="wb-link wb-link-inline" onClick={() => navigateTo("backstage")}>Add one in Backstage</button>
+        </p>
+      ) : null}
+      <div className="wb-actions">
+        <button type="button" className="wb-button" onClick={() => onRead(signal)} disabled={(picked.size === 0 && pickedLenses.length === 0) || isRunning}>Read</button>
+        <button type="button" className="wb-link" onClick={() => setPickerFor(null)}>Cancel</button>
+      </div>
+      <div className="wb-block">
+        <p className="wb-name">Or take it into</p>
+        <div className="wb-actions">
+          <button type="button" className="wb-link" onClick={() => onCarry(signal, "breakground")}>Breakground</button>
+          <button type="button" className="wb-link" onClick={() => onCarry(signal, "desert")}>Desert</button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const heldItem = (signal) => {
+    const readings = readingsFor(signal.id);
+    const [latest, ...older] = readings;
+    const readers = readersOf(readings);
+    const running = currentRun?.signalId === signal.id ? currentRun : null;
+    const runningStep = running?.steps.find((s) => s.status === "running") || running?.steps.find((s) => s.status === "queued");
+    const showOlder = earlierOpen.has(signal.id);
+    return (
+      <article key={signal.id} className="wb-item">
+        <span className="wb-mark" aria-hidden="true" />
+        <div className="wb-item-body">
+          <h2 className="wb-headline">{signal.text}</h2>
+          <p className="wb-body">
+            Held since {dayLabel(signal.ts)}.{signal.origin?.source ? ` From ${signal.origin.source}.` : ""}{readers.length ? ` Read by ${joinNames(readers)}.` : ""}
+          </p>
+
+          {running ? (
+            <div className="wb-actions" role="status">
+              <p className="wb-body">Reading with {runningStep ? labelFor(runningStep.moduleKey) : "the tools"}.</p>
+              <button type="button" className="wb-link" onClick={() => asu.abort_run()}>Stop</button>
+            </div>
+          ) : null}
+
+          {signal.origin?.note && !latest ? <p className="wb-body wb-measure">{signal.origin.note}</p> : null}
+          {latest ? <Reading reading={latest} asu={asu} onCopy={onCopy} copied={copied} signal={signal} /> : null}
+
+          {older.length > 0 ? (
+            <div className="wb-older">
+              <button type="button" className="wb-link" aria-expanded={showOlder} onClick={() => toggleEarlier(signal.id)}>
+                {showOlder ? "Hide earlier readings" : "Show earlier readings"}
+              </button>
+              {showOlder ? older.map((r) => (
+                <div key={r.id} className="wb-older-item">
+                  <p className="wb-body">Read {dayLabel(r.ts)}</p>
+                  <Reading reading={r} asu={asu} onCopy={onCopy} copied={copied} signal={signal} />
+                </div>
+              )) : null}
+            </div>
+          ) : null}
+
+          {pickerFor === signal.id ? picker(signal) : (
+            <div className="wb-actions">
+              <button type="button" className="wb-link" onClick={() => setPickerFor(signal.id)} disabled={isRunning}>Read it with a tool</button>
+              <button type="button" className="wb-link" onClick={() => asu.settle_signal(signal.id)} disabled={!!running}>Let it settle</button>
+            </div>
+          )}
+        </div>
+      </article>
+    );
+  };
+
+  const settledItem = (signal) => {
+    const readings = readingsFor(signal.id);
+    if (!matches(signal.text, readings)) return null;
+    const showOlder = earlierOpen.has(signal.id);
+    return (
+      <article key={signal.id} className="wb-item wb-item-settled">
+        <div className="wb-item-body">
+          <h2 className="wb-settled-line">{signal.text}</h2>
+          <p className="wb-body">Settled {dayLabel(signal.settledAt)}. Held from {dayLabel(signal.ts)}.</p>
+          {readings.length > 0 ? (
+            <div className="wb-older">
+              <button type="button" className="wb-link" aria-expanded={showOlder} onClick={() => toggleEarlier(signal.id)}>
+                {showOlder ? "Hide its readings" : "Show its readings"}
+              </button>
+              {showOlder ? readings.map((r) => (
+                <div key={r.id} className="wb-older-item">
+                  <p className="wb-body">Read {dayLabel(r.ts)}</p>
+                  <Reading reading={r} asu={asu} onCopy={onCopy} copied={copied} signal={signal} />
+                </div>
+              )) : null}
+            </div>
+          ) : null}
+          <div className="wb-actions">
+            <button type="button" className="wb-link" onClick={() => { asu.reopen_signal(signal.id); setTab("held"); }}>Hold it again</button>
+            <button type="button" className="wb-link" onClick={() => asu.remove_signal(signal.id)}>Delete</button>
+          </div>
+        </div>
+      </article>
+    );
+  };
+
+  if (isEmpty) {
+    return (
+      <section className="wb wb-empty">
+        <header className="wb-header">
+          <h1 className="wb-title">Workbench</h1>
+          <button type="button" className="wb-link" aria-expanded={tab === "tools"} onClick={() => setTab(tab === "tools" ? "held" : "tools")}>
+            {tab === "tools" ? "Close tools" : "Tools"}
+          </button>
+        </header>
+        {tab === "tools" ? toolsIndex : signalForm}
+      </section>
+    );
+  }
+
+  const visibleSettled = settled.map(settledItem).filter(Boolean);
+  const visibleEarlier = earlierRuns.filter((r) => matches(r.label, [r]));
 
   return (
-    <section className="studio-landing en">
-      <header className="studio-header">
-        <div className="studio-overtitle">Studio · Atrium</div>
-        <h1 className="studio-title">Workbench</h1>
-        <p className="studio-subtitle">An instrument of coherence — modules grouped by their role in the system.</p>
+    <section className="wb">
+      <header className="wb-header">
+        <h1 className="wb-title">Workbench</h1>
+        <nav className="wb-segments" aria-label="Workbench sections">
+          {[["held", "Held"], ["settled", "Settled"], ["tools", "Tools"]].map(([key, label]) => (
+            <button key={key} type="button" className="wb-segment" aria-pressed={tab === key} onClick={() => setTab(key)}>{label}</button>
+          ))}
+        </nav>
       </header>
 
-      {/* Active Signal */}
-      <div className="atrium-signal en d1">
-        <div className="atrium-signal-meta">
-          <span className="atrium-signal-tag">Active signal · Field (Read)</span>
-          <span className="atrium-signal-hint">Picked modules below run on this signal.</span>
-          <button
-            type="button"
-            className="atrium-signal-template-btn"
-            onClick={() => asu?.set_active_signal?.(SIGNAL_TEMPLATE)}
-            disabled={isRunning}
-            title="Pre-fill the input with a structured template"
-          >Use template</button>
-        </div>
-        <input
-          className="atrium-signal-input"
-          type="text"
-          value={signal}
-          onChange={(e) => asu?.set_active_signal?.(e.target.value)}
-          placeholder="What are you tracking right now? A question, an obstruction, a hunch."
-          aria-label="Active signal"
-          disabled={isRunning}
-        />
-        <div className="atrium-signal-template-hint">
-          Template: <em>I'm working on [what] toward [why]; the resistance is [what won't yield].</em> — or write it however you want.
-        </div>
-      </div>
+      {tab === "held" ? signalForm : null}
 
-      {/* Canon Context — Memory layer. Available canonical runs feed into the next run as context. */}
-      {canonicalRuns.length > 0 && (
-        <div className="atrium-canon-context en d1">
-          <div className="atrium-canon-context-header">
-            <span className="atrium-canon-context-label">
-              Canon context · {canonicalRuns.length} canonical run{canonicalRuns.length === 1 ? "" : "s"}
-            </span>
-            <span className="atrium-canon-context-hint">
-              {canonContextOn
-                ? "Available to runnable modules during the next run. Click a chip to exclude."
-                : "Off for the next run."}
-            </span>
-            <button
-              type="button"
-              className={`atrium-canon-toggle ${canonContextOn ? "atrium-canon-toggle-on" : "atrium-canon-toggle-off"}`}
-              onClick={() => setCanonContextOn((v) => !v)}
-              disabled={isRunning}
-            >
-              {canonContextOn ? "On" : "Off"}
-            </button>
-          </div>
-          {canonContextOn && (
-            <ul className="atrium-canon-context-list">
-              {canonicalRuns.slice(0, 8).map((r) => {
-                const synth = synthesizeRun(r.payload.steps, r.label);
-                const excluded = excludedCanonIds.has(r.id);
-                return (
-                  <li key={r.id} className={`atrium-canon-context-item${excluded ? " atrium-canon-context-item-excluded" : ""}`}>
-                    <button
-                      type="button"
-                      className="atrium-canon-context-chip"
-                      onClick={() => toggleCanonExclusion(r.id)}
-                      disabled={isRunning}
-                      title={excluded ? "Click to include in next run" : "Click to exclude from next run"}
-                    >
-                      <span className="atrium-canon-context-fieldtype">{synth.fieldTypeLabel || "—"}</span>
-                      <span className="atrium-canon-context-reveal">{synth.reveal || "(no reveal)"}</span>
-                      <span className="atrium-canon-context-state">{excluded ? "excluded" : "included"}</span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </div>
-      )}
-
-      {/* Sequence builder */}
-      <div className="atrium-sequence en d2">
-        <div className="atrium-sequence-header">
-          <span className="atrium-sequence-label">Sequence</span>
-          <span className="atrium-sequence-desc">
-            {isRunning
-              ? `Running step ${Math.max(runningStepIdx, doneCount) + 1}/${currentRun.steps.length}…`
-              : sequence.length === 0
-                ? "Pick modules from the palette to build a run."
-                : `${sequence.length} step${sequence.length === 1 ? "" : "s"} queued. Press Run to execute.`}
-          </span>
-        </div>
-
-        {sequence.length > 0 && (
-          <ol className="atrium-sequence-list">
-            {sequence.map((moduleKey, i) => {
-              const info = MODULE_INFO[moduleKey];
-              const step = currentRun?.steps[i];
-              const status = step?.status || "idle";
-              return (
-                <li key={`${moduleKey}-${i}`} className={`atrium-step atrium-step-${status}`}>
-                  <span className="atrium-step-idx">{i + 1}</span>
-                  <span className="atrium-step-role">{info?.role} · {info?.verb}</span>
-                  <span className="atrium-step-label">{info?.label || moduleKey}</span>
-                  <span className={`atrium-step-status atrium-step-status-${status}`}>{status}</span>
-                  {!isRunning && (
-                    <span className="atrium-step-actions">
-                      <button type="button" className="atrium-step-btn" onClick={() => asu.move_in_sequence(i, i - 1)} disabled={i === 0} aria-label="Move up">↑</button>
-                      <button type="button" className="atrium-step-btn" onClick={() => asu.move_in_sequence(i, i + 1)} disabled={i === sequence.length - 1} aria-label="Move down">↓</button>
-                      <button type="button" className="atrium-step-btn atrium-step-btn-x" onClick={() => asu.remove_from_sequence(i)} aria-label="Remove from sequence">×</button>
-                    </span>
-                  )}
-                </li>
-              );
-            })}
-          </ol>
-        )}
-
-        <div className="atrium-palette">
-          <div className="atrium-palette-label">Palette</div>
-          <div className="atrium-palette-chips">
-            {PALETTE_ORDER.map((key) => {
-              const info = MODULE_INFO[key];
-              const count = sequence.filter((k) => k === key).length;
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  className="atrium-palette-chip"
-                  onClick={() => asu.add_to_sequence(key)}
-                  disabled={isRunning}
-                  title={`Add ${info.label} to sequence`}
-                >
-                  <span className="atrium-palette-chip-role">{info.role}</span>
-                  <span className="atrium-palette-chip-label">{info.label}</span>
-                  {count > 0 && <span className="atrium-palette-chip-count">×{count}</span>}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="atrium-sequence-controls">
-          <button
-            type="button"
-            className="atrium-run-btn"
-            onClick={onRun}
-            disabled={!canRun}
-          >
-            {isRunning ? "Running…" : "Run sequence"}
+      {tab === "held" ? (
+        <div className="wb-surface">
+          <button type="button" className="wb-link" aria-expanded={surfaceOpen} onClick={() => setSurfaceOpen((v) => !v)}>
+            {surfaceOpen ? "Close Signal Surface" : "Bring a question in from Signal Surface"}
           </button>
-          {!isRunning && sequence.length > 0 && (
-            <button type="button" className="atrium-clear-btn" onClick={() => asu.clear_sequence()}>
-              Clear
-            </button>
-          )}
-          {isRunning && (
-            <button type="button" className="atrium-clear-btn" onClick={() => asu.abort_run()}>
-              Abort run
-            </button>
-          )}
-        </div>
-        <div className="atrium-sequence-note">
-          {asu?.get_settings?.()?.apiKey
-            ? "Backstage, Art of Model, FOA Generator, and Grace call the real LLM. Other modules use shape-honest mocks until slice 3."
-            : "No API key set — all modules use shape-honest mocks. Add a key in Backstage → Settings to wire the runnable four (Backstage, Art of Model, FOA Generator, Grace)."}
-        </div>
-      </div>
-
-      {/* Three rings — map of the apparatus (navigation, not orchestration) */}
-      {RINGS.map((ring, ri) => {
-        const cards = ringCards(ring);
-        return (
-          <div key={ring.key} className={`atrium-ring en d${Math.min(ri + 2, 5)}`}>
-            <div className="atrium-ring-header">
-              <span className="atrium-ring-label">{ring.label}</span>
-              <span className="atrium-ring-desc">{ring.desc}</span>
-            </div>
-            <div className="studio-grid">
-              {cards.map((c, i) => {
-                const stagger = `d${Math.min(i + 1, 5)}`;
-                if (c.kind === "module") {
-                  return (
-                    <button key={c.key} className={`studio-card en ${stagger}`} onClick={() => navigateTo(c.key)}>
-                      <div className="studio-card-seat">{c.seat}</div>
-                      <div className="studio-card-label">{c.label}</div>
-                      <div className="studio-card-desc">{c.desc}</div>
-                      <span className="studio-card-arrow">→</span>
-                    </button>
-                  );
-                }
+          {surfaceOpen ? (
+            <div className="wb-surface-list">
+              <p className="wb-body wb-measure">
+                The open questions from {SURFACE_BRIEF.title}, {new Date(`${SURFACE_BRIEF.date}T12:00:00`).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })}.
+              </p>
+              {SURFACE_QUESTIONS.map((sq) => {
+                const already = signals.some((s) => s.origin?.ref === sq.ref);
                 return (
-                  <div key={c.key} className={`studio-card studio-card-${c.kind} en ${stagger}`} aria-disabled="true">
-                    <div className="studio-card-seat">{c.seat}</div>
-                    <div className="studio-card-label">{c.label}</div>
-                    <div className="studio-card-desc">{c.desc}</div>
-                    {c.kind === "open" && <span className="studio-card-arrow">↳ to be designed</span>}
-                    {c.kind === "action" && <span className="studio-card-arrow">↳ Flow Lane action</span>}
-                    {c.kind === "atrium-only" && <span className="studio-card-arrow">↳ runs in Atrium sequence</span>}
+                  <div key={sq.ref} className="wb-surface-item">
+                    <div className="wb-block">
+                      <p className="wb-name">{sq.question}</p>
+                      <p className="wb-body wb-measure">It would be supported by: {sq.support} It would be weakened by: {sq.weaken}</p>
+                    </div>
+                    <button
+                      type="button"
+                      className="wb-link"
+                      disabled={already}
+                      onClick={() => asu.hold_signal(sq.question, { source: "Signal Surface", ref: sq.ref, note: `It would be supported by: ${sq.support} It would be weakened by: ${sq.weaken}` })}
+                    >{already ? "Held" : "Hold"}</button>
                   </div>
                 );
               })}
             </div>
-          </div>
-        );
-      })}
-
-      {/* Flow Lane — three-zone stratification: Canon · Active · Compost */}
-      {(() => {
-        const now = Date.now();
-        const filtered = flow.filter((it) => matchesSearch(it, searchQuery));
-        const canonItems = filtered.filter((it) => classifyZone(it, now) === "canon");
-        const activeItems = filtered.filter((it) => classifyZone(it, now) === "active");
-        const compostItems = filtered.filter((it) => classifyZone(it, now) === "compost");
-
-        const renderChip = (item) => {
-              const isRun = item.source === "Run" && item.payload?.steps;
-              const isExpanded = expandedFlowId === item.id;
-              const synth = isRun ? synthesizeRun(item.payload.steps, item.label) : null;
-              const zone = classifyZone(item, now);
-              return (
-                <div key={item.id} className={`atrium-flow-chip${isRun ? " atrium-flow-chip-run" : ""}${isExpanded ? " atrium-flow-chip-expanded" : ""}${item.canonical ? " atrium-flow-chip-canonical" : ""}`}>
-                  <div
-                    className="atrium-flow-chip-header"
-                    title={new Date(item.ts).toLocaleString()}
-                  >
-                    <span className="atrium-flow-chip-source">{item.source}{isRun && item.payload?.steps ? ` · ${item.payload.steps.length} steps` : ""}</span>
-                    <span className="atrium-flow-chip-label">{item.label}</span>
-                  </div>
-                  <button
-                    type="button"
-                    className="atrium-flow-chip-x"
-                    onClick={() => asu?.clear_flow_artifact?.(item.id)}
-                    aria-label="Remove artifact from flow lane"
-                  >×</button>
-                  {isRun && synth && (
-                    <div className={`atrium-flow-chip-synthesis atrium-flow-chip-synthesis-${synth.source}`}>
-                      <div className="atrium-flow-chip-synthesis-label">
-                        Field-direction {synth.source === "auto" ? "· auto (no Grace step)" : "· from Grace"}
-                        {synth.fieldTypeLabel && (
-                          <span className="atrium-flow-chip-synthesis-fieldtype"> · {synth.fieldTypeLabel}</span>
-                        )}
-                      </div>
-                      {synth.reveal && (
-                        <div className="atrium-flow-chip-synthesis-takeaway">{synth.reveal}</div>
-                      )}
-                      <p className="atrium-flow-chip-synthesis-text">{synth.condition}</p>
-                      {synth.failureMode?.length > 0 && (
-                        <>
-                          <div className="atrium-flow-chip-synthesis-sublabel">Failure mode</div>
-                          <ul className="atrium-flow-chip-synthesis-tensions">
-                            {synth.failureMode.map((t, i) => <li key={i}>{t}</li>)}
-                          </ul>
-                        </>
-                      )}
-                      {synth.nextAgent && (
-                        <div className="atrium-flow-chip-synthesis-next">
-                          <span className="atrium-flow-chip-synthesis-sublabel">Next agent</span>
-                          <span className="atrium-flow-chip-synthesis-next-text">{synth.nextAgent}</span>
-                        </div>
-                      )}
-                      {synth.fieldTypeSurface && synth.source === "grace" && (
-                        <div className="atrium-flow-chip-synthesis-surface">
-                          <span className="atrium-flow-chip-synthesis-sublabel">Surface</span>
-                          <span className="atrium-flow-chip-synthesis-surface-text">{synth.fieldTypeSurface}</span>
-                        </div>
-                      )}
-                      <div className="atrium-flow-chip-synthesis-actions">
-                        {item.canonical ? (
-                          <>
-                            <div className="atrium-canonical-badge">
-                              <span className="atrium-canonical-mark">● CANONICAL</span>
-                              <span className="atrium-canonical-ts">committed {new Date(item.canonicalAt).toLocaleString()}</span>
-                              <button
-                                type="button"
-                                className="atrium-canonical-undo"
-                                onClick={() => asu?.revert_canon?.(item.id)}
-                              >undo</button>
-                            </div>
-                            <button
-                              type="button"
-                              className="atrium-export-btn"
-                              onClick={() => setBundleOpenId(bundleOpenId === item.id ? null : item.id)}
-                            >{bundleOpenId === item.id ? "− Hide bundle" : "+ Export bundle"}</button>
-                          </>
-                        ) : zone === "compost" ? (
-                          <button
-                            type="button"
-                            className="atrium-restore-btn"
-                            onClick={() => asu?.restore_artifact?.(item.id)}
-                          >Restore from Compost</button>
-                        ) : (
-                          <>
-                            <button
-                              type="button"
-                              className="atrium-promote-btn"
-                              onClick={() => asu?.commit_to_canon?.(item.id)}
-                            >Promote to canon · Freedom Embassy</button>
-                            <button
-                              type="button"
-                              className="atrium-archive-btn"
-                              onClick={() => asu?.archive_artifact?.(item.id)}
-                              title="Move to Compost"
-                            >Archive</button>
-                          </>
-                        )}
-                      </div>
-                      {item.canonical && bundleOpenId === item.id && (() => {
-                        const bundle = buildBundle(item);
-                        const text = bundleFormat === "markdown" ? bundleToMarkdown(bundle) : JSON.stringify(bundle, null, 2);
-                        return (
-                          <div className="atrium-bundle-panel">
-                            <div className="atrium-bundle-panel-header">
-                              <span className="atrium-bundle-panel-label">Field-direction bundle · field-direction-bundle/v1</span>
-                              <div className="atrium-bundle-format">
-                                <button
-                                  type="button"
-                                  className={`atrium-bundle-format-btn${bundleFormat === "json" ? " on" : ""}`}
-                                  onClick={() => setBundleFormat("json")}
-                                >JSON</button>
-                                <button
-                                  type="button"
-                                  className={`atrium-bundle-format-btn${bundleFormat === "markdown" ? " on" : ""}`}
-                                  onClick={() => setBundleFormat("markdown")}
-                                >Markdown</button>
-                              </div>
-                              <button
-                                type="button"
-                                className="atrium-bundle-copy-btn"
-                                onClick={() => onCopyBundle(item)}
-                              >{bundleCopiedId === item.id ? "✓ Copied" : "Copy"}</button>
-                            </div>
-                            <pre className="atrium-bundle-body">{text}</pre>
-                            <div className="atrium-bundle-hint">
-                              Paste into Flora / Runway / a Public draft entry / any downstream tool. The Atrium upstreams; the production tool receives.
-                            </div>
-                          </div>
-                        );
-                      })()}
-                    </div>
-                  )}
-                  {isRun && (
-                    <button
-                      type="button"
-                      className="atrium-flow-chip-trace-toggle"
-                      onClick={() => setExpandedFlowId(isExpanded ? null : item.id)}
-                    >
-                      {isExpanded ? "− Hide trace" : "+ Show trace"} <span className="atrium-flow-chip-trace-count">({item.payload.steps.length} steps)</span>
-                    </button>
-                  )}
-                  {isRun && isExpanded && (
-                    <ol className="atrium-flow-substeps">
-                      {item.payload.steps.map((s, i) => {
-                        const info = MODULE_INFO[s.moduleKey];
-                        const subKey = `${item.id}.${i}`;
-                        const subOpen = expandedSubsteps.has(subKey);
-                        const hasDetail = !!s.output?.detail;
-                        return (
-                          <li key={i} className={`atrium-flow-substep atrium-flow-substep-${s.status}${subOpen ? " atrium-flow-substep-open" : ""}`}>
-                            <button
-                              type="button"
-                              className="atrium-flow-substep-row"
-                              onClick={() => hasDetail && toggleSubstep(subKey)}
-                              disabled={!hasDetail}
-                            >
-                              <span className="atrium-flow-substep-idx">{i + 1}</span>
-                              <span className="atrium-flow-substep-label">{info?.label || s.moduleKey}</span>
-                              <span className="atrium-flow-substep-output">{s.output?.summary || s.error || "—"}</span>
-                              {hasDetail && <span className="atrium-flow-substep-toggle">{subOpen ? "−" : "+"}</span>}
-                            </button>
-                            {subOpen && hasDetail && (
-                              <div className="atrium-flow-substep-detail">
-                                <SubstepDetail kind={s.output.kind} detail={s.output.detail} />
-                              </div>
-                            )}
-                          </li>
-                        );
-                      })}
-                    </ol>
-                  )}
-                </div>
-              );
-        };
-
-        return (
-          <div className="atrium-flow en d5">
-            <div className="atrium-flow-header">
-              <span className="atrium-flow-label">Flow lane</span>
-              <span className="atrium-flow-desc">Canon · Active · Compost</span>
-              <input
-                type="search"
-                className="atrium-flow-search"
-                placeholder="Search runs (signal, reveal, condition, field type)…"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-
-            {flow.length === 0 ? (
-              <div className="atrium-flow-empty">No artifacts yet. Run a sequence to populate.</div>
-            ) : (
-              <>
-                {/* Canon zone — always visible */}
-                <div className="atrium-flow-zone atrium-flow-zone-canon">
-                  <div className="atrium-flow-zone-header">
-                    <span className="atrium-flow-zone-label">Canon</span>
-                    <span className="atrium-flow-zone-count">{canonItems.length}</span>
-                    <span className="atrium-flow-zone-hint">Committed Field-directions. Durable across decay.</span>
-                  </div>
-                  <div className="atrium-flow-track">
-                    {canonItems.length === 0
-                      ? <div className="atrium-flow-empty">No canonical runs yet. Promote a run from Active to land here.</div>
-                      : canonItems.map(renderChip)}
-                  </div>
-                </div>
-
-                {/* Active zone — recent non-canonical runs */}
-                <div className="atrium-flow-zone atrium-flow-zone-active">
-                  <div className="atrium-flow-zone-header">
-                    <span className="atrium-flow-zone-label">Active</span>
-                    <span className="atrium-flow-zone-count">{activeItems.length}</span>
-                    <span className="atrium-flow-zone-hint">Recent runs. Promote to Canon, or Archive to Compost.</span>
-                  </div>
-                  <div className="atrium-flow-track">
-                    {activeItems.length === 0
-                      ? <div className="atrium-flow-empty">No active runs.</div>
-                      : activeItems.map(renderChip)}
-                  </div>
-                </div>
-
-                {/* Compost zone — archived or aged-out */}
-                {compostItems.length > 0 && (
-                  <div className="atrium-flow-zone atrium-flow-zone-compost">
-                    <button
-                      type="button"
-                      className="atrium-flow-zone-header atrium-flow-zone-header-clickable"
-                      onClick={() => setCompostOpen((v) => !v)}
-                    >
-                      <span className="atrium-flow-zone-label">Compost</span>
-                      <span className="atrium-flow-zone-count">{compostItems.length}</span>
-                      <span className="atrium-flow-zone-hint">Archived or aged out. Restorable.</span>
-                      <span className="atrium-flow-zone-toggle">{compostOpen ? "−" : "+"}</span>
-                    </button>
-                    {compostOpen && (
-                      <div className="atrium-flow-track">
-                        {compostItems.map(renderChip)}
-                      </div>
-                    )}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        );
-      })()}
-
-      {/* Open Loops — Track role. Stub until any module logs one. */}
-      {loops.length > 0 && (
-        <div className="atrium-loops en d5">
-          <div className="atrium-flow-header">
-            <span className="atrium-flow-label">Open loops</span>
-            <span className="atrium-flow-desc">Unfinished work across modules.</span>
-          </div>
-          <ul className="atrium-loops-list">
-            {loops.map((l) => (
-              <li key={l.id} className="atrium-loops-item">
-                <span className="atrium-loops-source">{l.source || "—"}</span>
-                <span className="atrium-loops-label">{l.label}</span>
-                <button
-                  type="button"
-                  className="atrium-loops-close"
-                  onClick={() => asu?.close_open_loop?.(l.id)}
-                >close</button>
-              </li>
-            ))}
-          </ul>
+          ) : null}
         </div>
-      )}
+      ) : null}
+
+      {tab === "held" ? (
+        <section className="wb-list" aria-label="Held">
+          {held.length === 0 ? <p className="wb-body">Nothing is being held.</p> : held.map(heldItem)}
+        </section>
+      ) : null}
+
+      {tab === "settled" ? (
+        <section className="wb-list wb-list-settled" aria-label="Settled">
+          <div className="wb-search">
+            <label htmlFor="wb-search-input" className="wb-label">Search what has settled</label>
+            <input id="wb-search-input" className="wb-field" type="search" value={search} onChange={(e) => setSearch(e.target.value)} />
+          </div>
+          {visibleSettled}
+          {visibleEarlier.length > 0 ? (
+            <div className="wb-earlier-runs">
+              <h2 className="wb-name">Runs from before signals could be held</h2>
+              {visibleEarlier.map((r) => (
+                <article key={r.id} className="wb-item wb-item-settled">
+                  <div className="wb-item-body">
+                    <h2 className="wb-settled-line">{r.label}</h2>
+                    <p className="wb-body">Read {dayLabel(r.ts)}</p>
+                    <Reading reading={r} asu={asu} onCopy={onCopy} copied={copied} />
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : null}
+          {visibleSettled.length === 0 && visibleEarlier.length === 0 ? (
+            <p className="wb-body">{q ? "Nothing settled matches that." : "Nothing has settled yet."}</p>
+          ) : null}
+        </section>
+      ) : null}
+
+      {tab === "tools" ? toolsIndex : null}
     </section>
   );
 }
