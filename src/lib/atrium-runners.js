@@ -190,6 +190,8 @@ function compactDetail(output) {
       return [
         d.activeLaws?.map((l) => `  ${l.name}: ${l.reading}`).join("\n"),
         d.tensions?.length ? "  Tensions: " + d.tensions.map((t) => t.pair).join("; ") : null,
+        d.situation ? `  Situation: ${d.situation}` : null,
+        d.synthesis ? `  Synthesis: ${d.synthesis}` : null,
       ].filter(Boolean).join("\n");
     case "playbook":
       return [

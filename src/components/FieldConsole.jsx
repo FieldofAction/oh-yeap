@@ -150,11 +150,25 @@ function MechanicsGrid({ combined }) {
 
 /* ── Main Component ── */
 
-export default function FieldConsole({ navigateTo }) {
-  const asu = useASUStore();
+const dateStamp = (ts) => new Date(ts).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
+const newSessionId = () => `console:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
+
+export default function FieldConsole({ navigateTo, asu: sharedAsu }) {
+  // Writes must go through the app's store instance: a second instance would
+  // save its own stale copy over the Workbench's signals.
+  const ownAsu = useASUStore();
+  const asu = sharedAsu || ownAsu;
+  // A signal carried in from the Workbench becomes the situation, and a banked
+  // session goes back onto it.
+  const [carried] = useState(() => asu.get_carried?.() || null);
+  const [sessionId, setSessionId] = useState(newSessionId);
+  const [bankedTo, setBankedTo] = useState(null);
+  const [signalId, setSignalId] = useState(carried?.signalId || null);
+  const [synthError, setSynthError] = useState(null);
+  const [copied, setCopied] = useState(false);
   const [active, setActive] = useState(new Set());
   const [detected, setDetected] = useState(new Set());
-  const [situation, setSituation] = useState("");
+  const [situation, setSituation] = useState(carried?.text || "");
   const [situationName, setSituationName] = useState("");
   const [synthesis, setSynthesis] = useState(null);
   const [detectionNote, setDetectionNote] = useState(null);
@@ -162,6 +176,8 @@ export default function FieldConsole({ navigateTo }) {
   const [detecting, setDetecting] = useState(false);
   const [showKey, setShowKey] = useState(false);
   const textRef = useRef(null);
+
+  useEffect(() => { asu.clear_carried?.(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const handler = (e) => {
@@ -194,7 +210,6 @@ export default function FieldConsole({ navigateTo }) {
     setDetectionNote(null);
     setSynthesis(null);
     try {
-      console.log("[Console] detect → key:", settings.apiKey ? `${settings.apiKey.slice(0,10)}...` : "MISSING", "model:", settings.model);
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "Content-Type":"application/json","x-api-key":settings.apiKey,"anthropic-version":settings.anthropicVersion,"anthropic-dangerous-direct-browser-access":"true" },
@@ -223,15 +238,16 @@ export default function FieldConsole({ navigateTo }) {
     const combined = new Set([...active, ...detected]);
     if (combined.size < 1) return;
     const settings = asu.get_settings();
-    if (!settings.apiKey) { setSynthesis("API key is missing. Add it in Backstage → Settings."); return; }
+    if (!settings.apiKey) { setSynthError("A key is needed for this. Add one in Backstage, under Settings."); return; }
     setLoading(true);
     setSynthesis(null);
+    setSynthError(null);
+    setBankedTo(null);
     const activeLaws = LAWS.filter(l => active.has(l.id));
     const detectedOnlyLaws = LAWS.filter(l => detected.has(l.id) && !active.has(l.id));
     const allLaws = LAWS.filter(l => combined.has(l.id));
     const lawDescriptions = allLaws.map(l => `${l.name} ("${l.axiom}"): ${l.description}`).join("\n");
     try {
-      console.log("[Console] synthesize → key:", settings.apiKey ? `${settings.apiKey.slice(0,10)}...` : "MISSING", "model:", settings.model);
       const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
         headers: { "Content-Type":"application/json","x-api-key":settings.apiKey,"anthropic-version":settings.anthropicVersion,"anthropic-dangerous-direct-browser-access":"true" },
@@ -245,12 +261,12 @@ export default function FieldConsole({ navigateTo }) {
           }]
         })
       });
-      if (!res.ok) { const errBody = await res.text(); console.error("[Console] API error:", res.status, errBody); setSynthesis(`API error ${res.status}. Check key and model in Backstage → Settings`); setLoading(false); return; }
+      if (!res.ok) { const errBody = await res.text(); console.error("[Console] API error:", res.status, errBody); setSynthError(`The model returned an error (${res.status}). Check the key and model in Backstage, under Settings.`); setLoading(false); return; }
       const data = await res.json();
       setSynthesis(data.content?.[0]?.text || "The field cannot be reduced to words. Sit with the combination.");
     } catch (err) {
       console.error("[Console] synthesis error:", err);
-      setSynthesis("Synthesis failed. Check browser console for details.");
+      setSynthError("The synthesis did not come back. The browser console has the details.");
     }
     setLoading(false);
   };
@@ -262,10 +278,106 @@ export default function FieldConsole({ navigateTo }) {
     setSituationName("");
     setSynthesis(null);
     setDetectionNote(null);
+    setSynthError(null);
+    setBankedTo(null);
+    setSignalId(null);
+    setSessionId(newSessionId());
   };
 
   const combined = new Set([...active, ...detected]);
   const detectedLaws = LAWS.filter(l => detected.has(l.id));
+  const combinedLaws = LAWS.filter(l => combined.has(l.id));
+  const pairsNow = [];
+  for (let i = 0; i < combinedLaws.length; i++) {
+    for (let j = i + 1; j < combinedLaws.length; j++) {
+      const m = PAIR_MECHANICS[getPairKey(combinedLaws[i].id, combinedLaws[j].id)];
+      if (m) pairsNow.push({ a: combinedLaws[i], b: combinedLaws[j], ...m });
+    }
+  }
+  const sessionTitle = situationName.trim() || situation.trim().split(/\n/)[0].slice(0, 120) || "Console session";
+
+  const sessionMarkdown = () => [
+    `# ${sessionTitle}`,
+    "",
+    `Console, ${dateStamp(Date.now())}`,
+    "",
+    situation.trim() ? `## What I am navigating\n\n${situation.trim()}\n` : null,
+    `## Laws at work\n\n${combinedLaws.map(l => `- **${l.name}** (${active.has(l.id) ? "engaged" : "detected"}): ${l.axiom}`).join("\n")}\n`,
+    pairsNow.length ? `## How they operate together\n\n${pairsNow.map(p => `- **${p.name}** (${p.a.name} and ${p.b.name}): ${p.mechanic}`).join("\n")}\n` : null,
+    `## Synthesis\n\n${synthesis}\n`,
+  ].filter(l => l !== null).join("\n");
+
+  const downloadSession = () => {
+    const b = new Blob([sessionMarkdown()], { type: "text/markdown" });
+    const u = URL.createObjectURL(b);
+    const a = document.createElement("a");
+    a.href = u;
+    a.download = `console-${sessionTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "session"}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(u);
+  };
+  const copySynthesis = async () => {
+    try {
+      await navigator.clipboard?.writeText?.(synthesis);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      // Clipboard can be unavailable in restricted contexts.
+    }
+  };
+
+  // Banking puts the session on the Workbench: onto the signal it was carried
+  // in with, or onto a new held signal named for this moment. From there Grace
+  // and the lenses can read it alongside everything else on that signal.
+  const bankSession = () => {
+    let target = signalId;
+    let targetText = carried?.signalId === signalId ? carried?.text : null;
+    if (!target) {
+      const held = asu.hold_signal(sessionTitle, { source: "the Console" });
+      if (!held) return;
+      target = held.id;
+      targetText = held.text;
+      setSignalId(held.id);
+    }
+    asu.attach_reading({
+      signalId: target,
+      key: sessionId,
+      moduleKey: "console",
+      label: sessionTitle,
+      output: {
+        kind: "console",
+        summary: sessionTitle,
+        detail: {
+          name: situationName.trim(),
+          situation: situation.trim(),
+          activeLaws: combinedLaws.map(l => ({ id: l.id, name: l.name, reading: `${active.has(l.id) ? "Engaged" : "Detected"}. ${l.axiom}.` })),
+          activeIds: [...active],
+          detectedIds: [...detected],
+          tensions: pairsNow.map(p => ({ pair: `${p.name}: ${p.a.name} and ${p.b.name}` })),
+          synthesis,
+        },
+      },
+    });
+    setBankedTo(targetText || sessionTitle);
+  };
+
+  const banked = (asu.get_flow_lane?.() || []).filter(it => it.payload?.steps?.[0]?.moduleKey === "console" && it.payload.steps[0].output?.detail?.synthesis);
+  const openBanked = (item) => {
+    const d = item.payload.steps[0].output.detail;
+    setSituationName(d.name || "");
+    setSituation(d.situation || "");
+    setActive(new Set(d.activeIds || []));
+    setDetected(new Set(d.detectedIds || []));
+    setSynthesis(d.synthesis);
+    setDetectionNote(null);
+    setSynthError(null);
+    setSignalId(item.signalId || null);
+    setSessionId(item.key || newSessionId());
+    setBankedTo(null);
+    window.scrollTo?.({ top: 0 });
+  };
 
   const engagedNames = LAWS.filter(l => active.has(l.id)).map(l => l.name);
   const detectedOnly = LAWS.filter(l => detected.has(l.id) && !active.has(l.id)).map(l => l.name);
@@ -368,6 +480,8 @@ export default function FieldConsole({ navigateTo }) {
           </div>
         ) : null}
 
+        {synthError ? <p className="wb-body wb-measure" role="alert">{synthError}</p> : null}
+
         {synthesis ? (
           <div className="tl-section">
             <h2 className="bg-question-title">{situationName || "Synthesis"}</h2>
@@ -375,6 +489,31 @@ export default function FieldConsole({ navigateTo }) {
             <p className="wb-body wb-measure">
               {engagedNames.length ? `Engaged: ${engagedNames.join(", ")}.` : ""}{engagedNames.length && detectedOnly.length ? " " : ""}{detectedOnly.length ? `Detected: ${detectedOnly.join(", ")}.` : ""}
             </p>
+            <div className="wb-actions">
+              <button type="button" className="wb-button" onClick={bankSession}>{bankedTo ? "Bank it again" : "Bank this session"}</button>
+              <button type="button" className="wb-link" onClick={downloadSession}>Download as Markdown</button>
+              <button type="button" className="wb-link" onClick={copySynthesis}>{copied ? "Copied" : "Copy the synthesis"}</button>
+            </div>
+            {bankedTo ? (
+              <div className="wb-actions" role="status">
+                <p className="wb-body">Banked on the Workbench, under "{bankedTo}".</p>
+                <button type="button" className="wb-link" onClick={() => navigateTo?.("studio")}>Open the Workbench</button>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
+        {banked.length > 0 ? (
+          <div className="tl-section">
+            <h2 className="bg-question-title">Banked sessions</h2>
+            <div className="tl-list">
+              {banked.map((item) => (
+                <button key={item.id} type="button" className="tl-row tl-row-open" onClick={() => openBanked(item)}>
+                  <span className="wb-name">{item.label || "Console session"}</span>
+                  <span className="wb-body">{dateStamp(item.ts)}</span>
+                </button>
+              ))}
+            </div>
           </div>
         ) : null}
       </div>

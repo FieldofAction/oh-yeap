@@ -101,6 +101,8 @@ function Reading({ reading, asu, onCopy, copied, signal }) {
   const hasGrace = synth.source === "grace";
   const names = joinNames(steps.map((s) => labelFor(s.moduleKey)));
   const lensSteps = steps.filter((s) => s.output?.kind === "lens");
+  // A banked Console session carries its own synthesis; show it as written.
+  const consoleSteps = steps.filter((s) => s.output?.kind === "console" && s.output.detail?.synthesis && s.output.detail?.activeLaws?.length);
   const copyForSurface = async () => {
     try {
       await navigator.clipboard?.writeText?.(surfaceEntry(reading, synth, signal));
@@ -133,7 +135,14 @@ function Reading({ reading, asu, onCopy, copied, signal }) {
           </div>
         );
       })}
-      {!hasGrace && lensSteps.length === 0 ? <p className="wb-body wb-measure">Read by {names}. Grace was not part of this reading, so nothing has been named.</p> : null}
+      {consoleSteps.map((s, i) => (
+        <div key={i} className="wb-block">
+          <p className="wb-name">Console</p>
+          <p className="wb-body wb-measure">{joinNames(s.output.detail.activeLaws.map((l) => l.name))} at work.</p>
+          <p className="wb-text wb-measure">{s.output.detail.synthesis}</p>
+        </div>
+      ))}
+      {!hasGrace && lensSteps.length === 0 && consoleSteps.length === 0 ? <p className="wb-body wb-measure">Read by {names}. Grace was not part of this reading, so nothing has been named.</p> : null}
 
       {hasGrace && !synth.notYet && synth.failureMode?.length > 0 ? (
         <div className="wb-block">
@@ -334,7 +343,7 @@ export default function Studio({ navigateTo, asu }) {
     setLensQuery("");
   };
 
-  // Breakground and Desert have their own pages. The signal goes with you,
+  // Breakground, Desert and the Console have their own pages. The signal goes with you,
   // and what you answer there comes back as a reading on it.
   const onCarry = (signal, toolKey) => {
     asu.carry_signal(signal);
@@ -474,6 +483,7 @@ export default function Studio({ navigateTo, asu }) {
         <div className="wb-actions">
           <button type="button" className="wb-link" onClick={() => onCarry(signal, "breakground")}>Breakground</button>
           <button type="button" className="wb-link" onClick={() => onCarry(signal, "desert")}>Desert</button>
+          <button type="button" className="wb-link" onClick={() => onCarry(signal, "console")}>Console</button>
         </div>
       </div>
     </div>
