@@ -179,7 +179,43 @@
 .tl-sliders { display: flex; flex-direction: column; gap: 4px; max-width: 620px; }
 .tl-slider { display: grid; grid-template-columns: 130px 1fr 3ch; align-items: center; column-gap: 16px; min-height: 44px; }
 .tl-slider output { text-align: right; font-variant-numeric: tabular-nums; }
-.tl-range { width: 100%; height: 28px; margin: 0; accent-color: var(--wb-ink); cursor: pointer; }
+/* The slider is the site's rule drawn as a scale: a 1px line with a tick at
+   each end, inked up to the value, and a dot that sits on it. */
+.tl-range {
+  --dot: 13px;
+  --at: calc(var(--dot) / 2 + (100% - var(--dot)) * var(--p, 50) / 100);
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 44px; margin: 0; padding: 0; border: 0; border-radius: 0; cursor: pointer;
+  background:
+    linear-gradient(var(--wb-ink), var(--wb-ink)) left center / var(--at) 1px no-repeat,
+    linear-gradient(var(--wb-line-strong), var(--wb-line-strong)) left calc(var(--dot) / 2) center / 1px 9px no-repeat,
+    linear-gradient(var(--wb-line-strong), var(--wb-line-strong)) right calc(var(--dot) / 2) center / 1px 9px no-repeat,
+    linear-gradient(var(--wb-line-strong), var(--wb-line-strong)) center / calc(100% - var(--dot)) 1px no-repeat;
+}
+.tl-range::-webkit-slider-runnable-track { height: 44px; background: transparent; }
+.tl-range::-moz-range-track { height: 44px; background: transparent; }
+.tl-range::-webkit-slider-thumb { -webkit-appearance: none; width: var(--dot); height: var(--dot); margin-top: calc((44px - var(--dot)) / 2); border: 0; border-radius: 50%; background: var(--wb-ink); }
+.tl-range::-moz-range-thumb { width: var(--dot); height: var(--dot); border: 0; border-radius: 50%; background: var(--wb-ink); }
+.tl-range:active { --dot: 17px; }
+.tl-range:focus-visible { outline: 2px solid var(--wb-ink); outline-offset: 2px; }
+
+/* Agents are a roster, grouped by ring: who is in the room and what each does. */
+.tl-roster { display: flex; flex-direction: column; gap: 28px; margin: 0; padding: 0; max-width: 720px; }
+.tl-ring { display: flex; flex-direction: column; margin: 0; padding: 0; border: 0; min-width: 0; }
+.tl-ring-head { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: 12px; width: 100%; padding: 0 0 8px; }
+.tl-agent { display: grid; grid-template-columns: 20px minmax(120px, 190px) minmax(0, 1fr); column-gap: 16px; align-items: baseline; min-height: 44px; padding: 11px 0; border-top: 1px solid var(--wb-line); font-size: 17px; line-height: 1.3; cursor: pointer; }
+.tl-agent input { align-self: center; width: 20px; height: 20px; margin: 0; accent-color: var(--wb-ink); }
+.tl-agent-name { font-weight: 600; color: var(--wb-soft); }
+.tl-agent-role { color: var(--wb-soft); }
+.tl-agent:has(input:checked) .tl-agent-name { color: var(--wb-ink); }
+.tl-agent:has(input:checked) .tl-agent-role { color: var(--wb-ink); }
+.tl-ring-all { align-self: flex-start; }
+.tl-ring .tl-agent:last-of-type { border-bottom: 1px solid var(--wb-line); }
+.tl-order { gap: 0; list-style: decimal; padding-left: 28px; }
+.tl-order .tl-agent { display: list-item; cursor: default; padding-left: 8px; }
+.tl-order .tl-agent::marker { color: var(--wb-soft); font-variant-numeric: tabular-nums; }
+.tl-order .tl-agent-name { display: inline-block; min-width: 190px; padding-right: 16px; color: var(--wb-ink); }
+.tl-order .tl-agent-role { color: var(--wb-soft); }
 .tl-progress { height: 2px; max-width: 620px; background: var(--wb-line); }
 .tl-progress > div { height: 2px; background: var(--wb-ink); transition: width .3s ease; }
 
@@ -195,6 +231,9 @@
   .tl-pair, .tl-triple { grid-template-columns: 1fr; }
   .tl-slider { grid-template-columns: 1fr 3ch; }
   .tl-slider label { grid-column: 1 / -1; }
+  .tl-agent { grid-template-columns: 20px minmax(0, 1fr); row-gap: 2px; }
+  .tl-agent-role { grid-column: 2; }
+  .tl-order .tl-agent-name { display: block; min-width: 0; }
   .tl-indent { padding-left: 0; }
 }
 

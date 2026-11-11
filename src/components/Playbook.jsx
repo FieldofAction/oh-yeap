@@ -137,7 +137,7 @@ export default function Playbook({ asu, navigateTo }) {
             {PILLARS.map(p => (
               <div key={p.key} className="tl-slider">
                 <label htmlFor={`pb-pillar-${p.key}`} className="wb-name">{p.label}</label>
-                <input id={`pb-pillar-${p.key}`} type="range" className="tl-range" min="0" max="100" value={pillars[p.key]} onChange={e=>asu.set_pillar_targets({[p.key]:parseInt(e.target.value)})} />
+                <input id={`pb-pillar-${p.key}`} type="range" className="tl-range" style={{ "--p": pillars[p.key] }} min="0" max="100" value={pillars[p.key]} onChange={e=>asu.set_pillar_targets({[p.key]:parseInt(e.target.value)})} />
                 <output htmlFor={`pb-pillar-${p.key}`} className="wb-body">{pillars[p.key]}</output>
               </div>
             ))}
