@@ -506,12 +506,13 @@ export default function Studio({ navigateTo, asu }) {
     const showOlder = earlierOpen.has(signal.id);
     return (
       <article key={signal.id} className="wb-item">
-        <span className="wb-mark" aria-hidden="true" />
+        <div className="wb-item-meta">
+          <p className="wb-meta-line"><span className="wb-mark" aria-hidden="true" />Held since {dayLabel(signal.ts)}</p>
+          {signal.origin?.source ? <p className="wb-meta-line wb-meta-soft">From {signal.origin.source}</p> : null}
+          {readers.length ? <p className="wb-meta-line wb-meta-soft">Read by {joinNames(readers)}</p> : null}
+        </div>
         <div className="wb-item-body">
           <h2 className="wb-headline">{signal.text}</h2>
-          <p className="wb-body">
-            Held since {dayLabel(signal.ts)}.{signal.origin?.source ? ` From ${signal.origin.source}.` : ""}{readers.length ? ` Read by ${joinNames(readers)}.` : ""}
-          </p>
 
           {running ? (
             <div className="wb-actions" role="status">
@@ -554,9 +555,12 @@ export default function Studio({ navigateTo, asu }) {
     const showOlder = earlierOpen.has(signal.id);
     return (
       <article key={signal.id} className="wb-item wb-item-settled">
+        <div className="wb-item-meta">
+          <p className="wb-meta-line wb-meta-soft">Settled {dayLabel(signal.settledAt)}</p>
+          <p className="wb-meta-line wb-meta-soft">Held from {dayLabel(signal.ts)}</p>
+        </div>
         <div className="wb-item-body">
           <h2 className="wb-settled-line">{signal.text}</h2>
-          <p className="wb-body">Settled {dayLabel(signal.settledAt)}. Held from {dayLabel(signal.ts)}.</p>
           {readings.length > 0 ? (
             <div className="wb-older">
               <button type="button" className="wb-link" aria-expanded={showOlder} onClick={() => toggleEarlier(signal.id)}>
@@ -659,9 +663,11 @@ export default function Studio({ navigateTo, asu }) {
               <h2 className="wb-name">Runs from before signals could be held</h2>
               {visibleEarlier.map((r) => (
                 <article key={r.id} className="wb-item wb-item-settled">
+                  <div className="wb-item-meta">
+                    <p className="wb-meta-line wb-meta-soft">Read {dayLabel(r.ts)}</p>
+                  </div>
                   <div className="wb-item-body">
                     <h2 className="wb-settled-line">{r.label}</h2>
-                    <p className="wb-body">Read {dayLabel(r.ts)}</p>
                     <Reading reading={r} asu={asu} onCopy={onCopy} copied={copied} />
                   </div>
                 </article>
