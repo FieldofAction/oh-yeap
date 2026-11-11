@@ -25,12 +25,14 @@ export function buildContextPackage(state, { partner, assignment, channels, work
     .map(r => ({ id: r.id, statement: r.statement, standing: r.standing }));
   const open = findTensions(state.brand, { asOf, workTypes, channels }).filter(t => t.kind === 'Conflicting guidance' || t.kind === 'Stale claim')
     .map(t => ({ title: t.title, ask: t.owners?.map(o => state.brand.people[o]?.name).join(' or ') }));
-  return {
+  const pkg = {
     id: `pkg-${partner.id}-${asOf}`, brand: state.brand.name, partner, assignment, powers,
     issued: asOf, expires, revokedAt: null,
-    included, withheld, rules, open,
+    included, withheldCount: withheld.length, rules, open,
     review: { reviewer: state.brand.people[state.brand.authority.publish?.[0]]?.name, note: 'Outputs return for review. The partner cannot publish or change brand knowledge.' },
   };
+  // The audit of what was withheld stays with the issuer; the partner receives only the package.
+  return { package: pkg, audit: { packageId: pkg.id, withheld } };
 }
 
 export const revokePackage = (pkg, asOf) => ({ ...pkg, revokedAt: asOf });

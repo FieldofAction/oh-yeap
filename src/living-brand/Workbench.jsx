@@ -1,17 +1,19 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   startEngagement, openTenant, search, assessStanding, findTensions, carryForward, organizationalHypotheses,
   propose, decide, retire, recordReuse, recordChoice, viewFor, buildBrief, buildContextPackage, revokePackage,
   packageValid, buildHandoff, coordinationView, exportWorkbench, orientation, STANDING_CLASSES, PIPELINE, CHOICES,
 } from './domain/index.js';
 import { fernway } from './data/fernway.js';
-import { brightloop } from './data/brightloop.js';
 import { engagements, practitioner, agency, connections, AS_OF } from './data/workspace.js';
 import Plate from './Plate.jsx';
 
-const VAULT = { fernway, brightloop };
+// Only the open engagement's partition is bundled. Other clients' material never
+// reaches this browser; their engagements are known here by metadata alone.
+const VAULT = { fernway };
 const ENG = engagements['eng-fernway'];
-const STORE_KEY = 'living-brand-state-v1';
+const STORE_KEY = 'living-brand-state-v2';
+const PLACE_KEY = 'living-brand-place';
 const asOf = AS_OF;
 
 const STAGES = [
@@ -41,8 +43,10 @@ const initial = () => {
 
 export default function Workbench() {
   const [{ state, pkg }, setAll] = useState(initial);
-  const [viewer, setViewer] = useState('practitioner');
-  const [stage, setStage] = useState('enter');
+  const place = (() => { try { return JSON.parse(localStorage.getItem(PLACE_KEY)) || {}; } catch { return {}; } })();
+  const [viewer, setViewer] = useState(VIEWERS.some(v => v[0] === place.viewer) ? place.viewer : 'practitioner');
+  const [stage, setStage] = useState(STAGES.some(s => s[0] === place.stage) ? place.stage : 'enter');
+  useEffect(() => { try { localStorage.setItem(PLACE_KEY, JSON.stringify({ viewer, stage })); } catch { /* storage unavailable */ } }, [viewer, stage]);
   const [openId, setOpenId] = useState(null);
   const [notice, setNotice] = useState(null);
 
@@ -51,7 +55,7 @@ export default function Workbench() {
   }, [state, pkg]);
 
   const act = (fn, ok) => {
-    try { const next = fn(state); setAll(a => ({ ...a, state: next })); setNotice(ok ? { kind: 'ok', text: ok } : null); }
+    try { const next = fn(state); setAll(a => ({ ...a, state: next })); const text = typeof ok === 'function' ? ok(next) : ok; setNotice(text ? { kind: 'ok', text } : null); }
     catch (e) { setNotice({ kind: 'refused', text: e.message }); }
   };
   const setPkg = p => setAll(a => ({ ...a, pkg: p }));
@@ -212,13 +216,12 @@ function Nesting() {
 }
 
 /* Orient ----------------------------------------------------------------- */
-function Orient({ state, items, setOpenId, tensions }) {
+function Orient({ state, items, setOpenId, tensions, setStage }) {
   const o = orientation(state.brand, state.engagement, { asOf });
-  const counts = tensions.reduce((a, t) => ({ ...a, [t.kind]: (a[t.kind] || 0) + 1 }), {});
   return (
     <article>
       <h1>Fernway wants to be the calm part of a family evening</h1>
-      <p className="lb-deck">{o.intent.statement} That is the chief executive's statement from 2024, and the 2023 guidelines are built on it. The question for this engagement is whether the work and the offer still keep that promise.</p>
+      <p className="lb-deck">The chief executive set that intent in 2024 and the 2023 guidelines are built on it. Since then the price rose, an ad-supported tier launched and bedtime mode added video. The question for this engagement is whether the work and the offer still keep the promise.</p>
       <section className="lb-section">
         <h2>What holds</h2>
         <ul className="lb-findings">
@@ -235,7 +238,8 @@ function Orient({ state, items, setOpenId, tensions }) {
       </section>
       <section className="lb-section">
         <h2>What needs attention before anything is made</h2>
-        <ul className="lb-list">{Object.entries(counts).map(([k, n]) => <li key={k}>{k}: {n}</li>)}</ul>
+        <ul className="lb-findings">{tensions.filter(t => t.severity !== 'investigate' || t.kind === 'Unknown rights').slice(0, 5).map(t => <li key={t.id}><p><strong>{t.kind}.</strong> {t.title}.</p><Cites ids={t.sources} items={items} setOpenId={setOpenId} /></li>)}</ul>
+        <div className="lb-actions"><button onClick={() => { setStage('interpret'); window.scrollTo(0, 0); }}>See all {tensions.length} tensions in Interpret</button></div>
       </section>
       <section className="lb-section">
         <h2>How well the material is understood</h2>
@@ -296,6 +300,13 @@ function Drawer({ item, state, items, act, setOpenId, canPropose }) {
   const [to, setTo] = useState('canon');
   const [why, setWhy] = useState('');
   const [ev, setEv] = useState([]);
+  const [where, setWhere] = useState('');
+  const closeRef = useRef(null);
+  useEffect(() => {
+    const opener = document.activeElement;
+    closeRef.current?.focus();
+    return () => opener?.focus?.();
+  }, [item.id]);
   const allEvidence = state.brand.items.flatMap(i => (i.evidence || []).map(e => ({ ...e, on: i.id })));
   const evidenceTypes = [['intended', 'Intended impact'], ['observed', 'Observed outcome'], ['contribution', 'This element\'s contribution'], ['transfer', 'Transfer to other situations']];
   useEffect(() => {
@@ -305,8 +316,14 @@ function Drawer({ item, state, items, act, setOpenId, canPropose }) {
   }, [setOpenId]);
   return (
     <div className="lb-drawer-wrap" onClick={e => e.target === e.currentTarget && setOpenId(null)}>
-      <aside className="lb-drawer" aria-label={item.title}>
-        <button className="lb-close" onClick={() => setOpenId(null)}>Close</button>
+      <aside className="lb-drawer" role="dialog" aria-modal="true" aria-label={item.title} onKeyDown={e => {
+        if (e.key !== 'Tab') return;
+        const f = [...e.currentTarget.querySelectorAll('button, input, select, textarea')].filter(x => !x.disabled);
+        if (!f.length) return;
+        if (e.shiftKey && document.activeElement === f[0]) { e.preventDefault(); f.at(-1).focus(); }
+        else if (!e.shiftKey && document.activeElement === f.at(-1)) { e.preventDefault(); f[0].focus(); }
+      }}>
+        <button className="lb-close" ref={closeRef} onClick={() => setOpenId(null)}>Close</button>
         <Plate item={item} large />
         <h2>{item.title}</h2>
         <p className="lb-body">{item.rationale || 'No rationale recorded.'}</p>
@@ -316,7 +333,7 @@ function Drawer({ item, state, items, act, setOpenId, canPropose }) {
           <dt>Canvas</dt><dd>{item.canvas}</dd>
           <dt>Audience</dt><dd>{item.audience}</dd>
           <dt>Meant to</dt><dd>{item.intendedOutcome}</dd>
-          <dt>Level</dt><dd>{item.level}</dd>
+          <dt>Level</dt><dd>{item.level.charAt(0).toUpperCase() + item.level.slice(1)}</dd>
           <dt>Dates</dt><dd>{fmt(item.period?.from)}{item.period?.to ? ` to ${fmt(item.period.to)}` : ''}</dd>
           <dt>Exposure</dt><dd>{item.exposure}</dd>
           <dt>Made by</dt><dd>{item.made?.by}</dd>
@@ -350,7 +367,7 @@ function Drawer({ item, state, items, act, setOpenId, canPropose }) {
           <ul className="lb-list">{item.reuse.map((r, k) => <li key={k}>{r.where}, {fmt(r.date)}</li>)}</ul></>)}
 
         {canPropose && (
-          <form className="lb-form" onSubmit={e => { e.preventDefault(); act(s => propose(s, { itemId: item.id, to, rationale: why || 'No rationale given', evidenceIds: ev, by: 'practitioner', scope: 'As proposed', asOf }), `Proposal sent to ${(state.brand.authority[`standing.${item.domain}`] || []).map(p => person(state.brand, p)).join(' or ')}. Nothing has changed yet.`); setWhy(''); setEv([]); }}>
+          <form className="lb-form" onSubmit={e => { e.preventDefault(); act(s => propose(s, { itemId: item.id, to, rationale: why || 'No rationale given', evidenceIds: ev, by: 'practitioner', scope: 'As proposed', asOf }), next => { const p = next.proposals.at(-1); return `Proposal sent to ${p.reviewer.map(r => person(state.brand, r)).join(' or ')}. Nothing has changed yet.${p.warnings.length ? ` The reviewer will see: ${p.warnings.join(' ')}` : ''}`; }); setWhy(''); setEv([]); }}>
             <h3>Propose a change of standing</h3>
             <label>New standing
               <select value={to} onChange={e => setTo(e.target.value)}>{Object.entries(STANDING_CLASSES).map(([k, v]) => <option key={k} value={k}>{v.name}</option>)}</select>
@@ -365,7 +382,12 @@ function Drawer({ item, state, items, act, setOpenId, canPropose }) {
             </fieldset>
             <div className="lb-actions">
               <button className="lb-primary" type="submit">Send proposal</button>
-              <button type="button" onClick={() => act(s => recordReuse(s, item.id, { where: 'Return season sketch', asOf }), 'Reuse recorded. Standing is unchanged: reuse does not confer authority.')}>Record a reuse</button>
+            </div>
+            <label>Reused where
+              <input value={where} onChange={e => setWhere(e.target.value)} placeholder="Return-season email header" />
+            </label>
+            <div className="lb-actions">
+              <button type="button" onClick={() => { act(s => recordReuse(s, item.id, { where, asOf }), 'Reuse recorded. Standing is unchanged: reuse does not confer authority.'); setWhere(''); }}>Record the reuse</button>
             </div>
           </form>
         )}
@@ -471,7 +493,7 @@ function Choose({ state, items, act, setOpenId }) {
         </ul>
       </section>
 
-      <form className="lb-form lb-section" onSubmit={e => { e.preventDefault(); if (!form.subject) return; act(s => recordChoice(s, { ...form, by: 'practitioner', asOf }), 'Recorded.'); setForm({ subject: '', verdict: 'preserve', rationale: '' }); }}>
+      <form className="lb-form lb-section" onSubmit={e => { e.preventDefault(); if (!form.subject.trim()) return; act(s => recordChoice(s, { ...form, by: 'practitioner', asOf }), 'Recorded.'); setForm({ subject: '', verdict: 'preserve', rationale: '' }); }}>
         <h2>Record your own</h2>
         <label>Subject<input value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })} /></label>
         <label>Choice<select value={form.verdict} onChange={e => setForm({ ...form, verdict: e.target.value })}>{Object.entries(CHOICES).map(([k, n]) => <option key={k} value={k}>{n}</option>)}</select></label>
@@ -559,20 +581,20 @@ function Organize({ state, items, setOpenId, pkg, setPkg, setNotice }) {
         <p className="lb-body">A landing page agent needs the rules and cleared material, not the research or the strategy. Its package is read-only, expires on 31 December 2026, and can be revoked.</p>
         <div className="lb-actions">
           {!pkg && <button className="lb-primary" onClick={issue}>Issue a context package</button>}
-          {pkg && !pkg.revokedAt && <button onClick={() => { setPkg(revokePackage(pkg, asOf)); setNotice({ kind: 'ok', text: 'Package revoked.' }); }}>Revoke the package</button>}
-          {pkg?.revokedAt && <button onClick={issue}>Issue a new package</button>}
+          {pkg && !pkg.package.revokedAt && <button onClick={() => { setPkg({ ...pkg, package: revokePackage(pkg.package, asOf) }); setNotice({ kind: 'ok', text: 'Package revoked.' }); }}>Revoke the package</button>}
+          {pkg?.package.revokedAt && <button onClick={issue}>Issue a new package</button>}
         </div>
-        {pkg && <PackageSummary pkg={pkg} />}
+        {pkg && <PackageSummary pkg={pkg.package} audit={pkg.audit} />}
       </section>
     </article>
   );
 }
 
-function PackageSummary({ pkg }) {
+function PackageSummary({ pkg, audit }) {
   return (
     <div className="lb-two">
       <div><h3>Included ({pkg.included.length})</h3><ul className="lb-list">{pkg.included.map(i => <li key={i.id}>{i.title}</li>)}</ul></div>
-      <div><h3>Withheld ({pkg.withheld.length})</h3><ul className="lb-list">{pkg.withheld.map(i => <li key={i.id}>{i.title}: {i.reasons[0]}</li>)}</ul></div>
+      <div><h3>Withheld ({audit.withheld.length})</h3><ul className="lb-list">{audit.withheld.map(i => <li key={i.id}>{i.title}: {i.reasons[0]}</li>)}</ul></div>
     </div>
   );
 }
@@ -677,15 +699,15 @@ function Executive({ state, items, setOpenId, act }) {
         <h2>What you cannot decide here</h2>
         <p className="lb-body">Visual canon belongs to Priya Raman. Trying anyway is refused and the refusal is shown, not hidden.</p>
         {state.proposals.filter(p => p.status === 'open').slice(0, 1).map(p => (
-          <div className="lb-actions" key={p.id}><button onClick={() => act(s => decide(s, p.id, { by: 'tom', outcome: 'adopt', asOf }))}>Adopt {items[p.itemId].title} as canon</button></div>
+          <div className="lb-actions" key={p.id}><button onClick={() => act(s => decide(s, p.id, { by: 'tom', outcome: 'adopt', asOf }))}>Adopt {items[p.itemId].title} as {STANDING_CLASSES[p.to].name.toLowerCase()}</button></div>
         ))}
       </section>
     </article>
   );
 }
 
-function Partner({ pkg, setOpenId }) {
-  void setOpenId;
+function Partner({ pkg: issued }) {
+  const pkg = issued?.package;
   if (!pkg) return (<article><h1>No context package has been issued to you</h1><p className="lb-deck">Fernway's material is reachable only through a package the engagement issues. Switch back to the creative director and issue one in Organize.</p></article>);
   if (!packageValid(pkg, asOf)) return (<article><h1>Your access to Fernway was revoked</h1><p className="lb-deck">Revoked on {fmt(pkg.revokedAt)}. Nothing from the package remains readable here.</p></article>);
   return (
@@ -695,7 +717,7 @@ function Partner({ pkg, setOpenId }) {
       <section className="lb-section"><h2>Rules</h2><ul className="lb-list">{pkg.rules.map(r => <li key={r.id}>{r.statement}</li>)}</ul></section>
       <section className="lb-section"><h2>Material you may use</h2><ul className="lb-list">{pkg.included.map(i => <li key={i.id}>{i.title}</li>)}</ul></section>
       <section className="lb-section"><h2>Unresolved, ask before relying on</h2><ul className="lb-list">{pkg.open.map(o => <li key={o.title}>{o.title}. Ask {o.ask}.</li>)}</ul></section>
-      <section className="lb-section"><h2>Not shared with you</h2><p className="lb-body">{pkg.withheld.length} items, including research and strategy, are withheld. Their titles are not listed here.</p></section>
+      <section className="lb-section"><h2>Not shared with you</h2><p className="lb-body">{pkg.withheldCount} items, including research and strategy, are withheld. This package does not name them.</p></section>
     </article>
   );
 }

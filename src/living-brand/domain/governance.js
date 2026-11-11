@@ -15,6 +15,10 @@ export function canDecide(brand, personId, power) {
 }
 
 const powerFor = item => `standing.${item.domain || 'visual'}`;
+const refusal = (brand, by, item) => {
+  const who = (brand.authority[powerFor(item)] || []).map(id => brand.people[id]?.name || id).join(' or ') || 'no one named';
+  return `${brand.people[by]?.name || 'This viewer'} cannot change the standing of ${item.title}. ${(item.domain || 'visual').replace(/^./, c => c.toUpperCase())} standing at ${brand.name} is decided by ${who}.`;
+};
 
 // Anyone with the propose grant may propose. Proposing changes nothing.
 export function propose(state, { itemId, to, rationale, evidenceIds = [], by, scope, asOf }) {
@@ -23,6 +27,8 @@ export function propose(state, { itemId, to, rationale, evidenceIds = [], by, sc
   if (!item) throw new Error(`No item ${itemId}.`);
   if (!STANDING_CLASSES[to]) throw new Error(`Unknown standing ${to}.`);
   if (!s.engagement.grant.powers.includes('propose')) throw new AuthorityError('This engagement may read, not propose.');
+  if (s.proposals.some(p => p.itemId === itemId && p.to === to && p.status === 'open')) throw new Error(`An open proposal already asks for ${item.title} to become ${STANDING_CLASSES[to].name.toLowerCase()}.`);
+  if (item.standing === to) throw new Error(`${item.title} already has that standing.`);
   const allEvidence = s.brand.items.flatMap(i => (i.evidence || []).map(e => ({ ...e, on: i.id, origin: i.provenance?.origin })));
   const cited = allEvidence.filter(e => evidenceIds.includes(e.id));
   const warnings = [];
@@ -47,7 +53,8 @@ export function decide(state, proposalId, { by, outcome, note, effectiveFrom, as
   if (!p) throw new Error('No such proposal.');
   if (p.status !== 'open') throw new Error('Proposal already decided.');
   const item = s.brand.items.find(i => i.id === p.itemId);
-  if (!canDecide(s.brand, by, powerFor(item))) throw new AuthorityError(`${s.brand.people[by]?.name || by} cannot decide ${powerFor(item)} for ${s.brand.name}.`);
+  if (!canDecide(s.brand, by, powerFor(item))) throw new AuthorityError(refusal(s.brand, by, item));
+  if (item.standing !== p.from) throw new Error(`${item.title} changed standing after this proposal was made. Review it again.`);
   if (!['adopt', 'reject', 'revise'].includes(outcome)) throw new Error('Outcome must be adopt, reject or revise.');
   const decision = { id: nextId('d', asOf), proposalId, itemId: item.id, outcome, by, note, date: asOf, from: item.standing, to: outcome === 'adopt' ? p.to : item.standing, evidenceIds: p.evidenceIds, scope: p.scope };
   if (outcome === 'adopt') {
@@ -63,7 +70,7 @@ export function decide(state, proposalId, { by, outcome, note, effectiveFrom, as
 export function retire(state, itemId, { by, reason, asOf }) {
   const s = clone(state);
   const item = s.brand.items.find(i => i.id === itemId);
-  if (!canDecide(s.brand, by, powerFor(item))) throw new AuthorityError(`${s.brand.people[by]?.name || by} cannot retire ${item.title}.`);
+  if (!canDecide(s.brand, by, powerFor(item))) throw new AuthorityError(refusal(s.brand, by, item));
   item.standingHistory = [...(item.standingHistory || []), { standing: item.standing, record: item.standingRecord || null, until: asOf }];
   item.standing = 'archive';
   item.standingRecord = { by, date: asOf, scope: `Retired: ${reason}` };
@@ -73,6 +80,7 @@ export function retire(state, itemId, { by, reason, asOf }) {
 
 // Reuse is recorded for review. It never changes standing.
 export function recordReuse(state, itemId, { where, asOf }) {
+  if (!String(where || '').trim()) throw new Error('Say where it was reused.');
   const s = clone(state);
   const item = s.brand.items.find(i => i.id === itemId);
   item.reuse = [...(item.reuse || []), { date: asOf, where }];
@@ -87,6 +95,8 @@ export const CHOICES = {
 
 export function recordChoice(state, { subject, verdict, rationale, sources = [], by, needs, asOf }) {
   if (!CHOICES[verdict]) throw new Error(`Unknown choice ${verdict}.`);
+  subject = String(subject || '').trim();
+  if (!subject) throw new Error('A choice needs a subject.');
   const s = clone(state);
   const owner = needs ? s.brand.authority[needs]?.[0] : null;
   s.choices.push({ id: nextId('c', asOf), subject, verdict, rationale, sources, by, date: asOf, needs: needs || null, owner, status: needs ? 'awaiting decision' : 'recorded' });

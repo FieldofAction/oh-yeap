@@ -225,7 +225,7 @@ year's *Small Hours* campaign targeted strangers. The workbench then:
 
 ### Tests
 
-`npm run living-brand:test` runs 22 domain tests. They also run in
+`npm run living-brand:test` runs 26 domain tests. They also run in
 `prebuild`. They cover:
 
 - **Wrong-client retrieval**:
@@ -234,6 +234,9 @@ year's *Small Hours* campaign targeted strangers. The workbench then:
   - a revoked or expired grant
   - a foreign record smuggled into an index
   - Brightloop markers absent from the brief, the handoff and the package
+- **Duplicate proposals** and decisions on stale proposals are refused.
+- **The browser bundle** imports no other client's data. Before this fix,
+  the operator test found Brightloop's brief inside the shipped JavaScript.
 - **Agency coordination** reveals no strategy.
 - **The portable workbench** carries no client material.
 - **The four standing answers** stay separate, including that public is not
@@ -264,8 +267,22 @@ year's *Small Hours* campaign targeted strangers. The workbench then:
 `npm run text:test` now covers three workbench states at both widths and in
 both themes. It finds 0 violations.
 
-An independent operator test was also run with Playwright, covering each
-role. Its results are summarized in the session report.
+An independent operator test with Playwright covered each role at both
+widths and in both themes. It found 10 defects, all now fixed:
+
+- other-client data in the bundle
+- duplicate proposals and adoptions
+- proposal warnings not shown to the proposer
+- the drawer not working as a dialog
+- refusal text that exposed internal keys
+- a mislabelled button
+- empty reuse records
+- whitespace-only choices
+- the viewer and stage lost on reload
+- an ornamental count list on Orient
+
+The partner package also no longer names the items it withholds; that list
+stays in the issuer's audit.
 
 ### What works
 

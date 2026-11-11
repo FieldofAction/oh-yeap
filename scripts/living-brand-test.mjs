@@ -45,7 +45,7 @@ test('exports and packages contain no other client material', () => {
   s = recordChoice(s, { subject: 'Paper-cut language', verdict: 'preserve', rationale: 'Recognition', sources: ['fw-small-hours-hero'], by: 'practitioner', asOf });
   const brief = buildBrief(s.brand, s.engagement, s.choices, { asOf });
   const handoff = buildHandoff(s, { brief, asOf });
-  const pkg = buildContextPackage(s, { partner: { id: 'mp', name: 'Production agent' }, assignment: 'Landing page', channels: ['owned-web'], workTypes: ['Customer campaign'], expires: '2026-12-31', asOf });
+  const { package: pkg } = buildContextPackage(s, { partner: { id: 'mp', name: 'Production agent' }, assignment: 'Landing page', channels: ['owned-web'], workTypes: ['Customer campaign'], expires: '2026-12-31', asOf });
   for (const out of [handoff, pkg, brief]) for (const m of BRIGHTLOOP_MARKERS) assert.ok(!serialized(out).includes(m), `found ${m}`);
 });
 
@@ -204,11 +204,13 @@ test('choices that need company authority are routed, not enacted', () => {
 
 test('partner context package: scoped, rights-checked, expiring, revocable', () => {
   const s = fresh();
-  const pkg = buildContextPackage(s, { partner: { id: 'agent', name: 'Landing page agent' }, assignment: 'Return-season landing page', channels: ['owned-web'], workTypes: ['Customer campaign'], expires: '2026-12-31', asOf });
+  const { package: pkg, audit } = buildContextPackage(s, { partner: { id: 'agent', name: 'Landing page agent' }, assignment: 'Return-season landing page', channels: ['owned-web'], workTypes: ['Customer campaign'], expires: '2026-12-31', asOf });
   const ids = pkg.included.map(i => i.id);
   assert.ok(ids.includes('fw-guidelines-v3') && ids.includes('fw-sound-logo'));
   for (const id of ['fw-interviews-2026', 'fw-strategy-2024', 'fw-small-hours-hero', 'fw-website-home', 'fw-shoot-2019', 'fw-guidelines-v2', 'fw-neon-night']) assert.ok(!ids.includes(id), id);
-  assert.ok(pkg.withheld.find(w => w.id === 'fw-interviews-2026').reasons.includes('Confidential'));
+  assert.ok(audit.withheld.find(w => w.id === 'fw-interviews-2026').reasons.includes('Confidential'));
+  assert.ok(!serialized(pkg).includes('interviews') && !serialized(pkg).includes('strategy'), 'partner package does not even name withheld items');
+  assert.equal(pkg.withheldCount, audit.withheld.length);
   assert.deepEqual(pkg.powers, ['read']);
   assert.ok(pkg.open.length > 0, 'unresolved conflicts travel with the package');
   assert.ok(packageValid(pkg, '2026-12-01'));
@@ -233,4 +235,33 @@ test('orientation works with only a few materials and keeps missing evidence vis
   assert.ok(o.canon.find(i => i.id === 'fw-guidelines-v3'));
   assert.equal(o.strengths.length, 0, 'no strength survives without its sources');
   assert.ok(o.tensions.find(t => t.kind === 'Missing evidence'));
+});
+
+test('duplicate proposals and stale decisions are refused', () => {
+  let s = fresh();
+  const args = { itemId: 'fw-onboarding-papercut', to: 'canon', rationale: 'x', evidenceIds: ['e-onb-complete'], by: 'practitioner', asOf };
+  s = propose(s, args);
+  assert.throws(() => propose(s, args), /already asks/);
+  s = propose(s, { ...args, to: 'precedent' });
+  s = decide(s, s.proposals[0].id, { by: 'priya', outcome: 'adopt', asOf });
+  assert.throws(() => decide(s, s.proposals[1].id, { by: 'priya', outcome: 'adopt', asOf }), /changed standing/);
+  assert.throws(() => propose(s, { ...args, to: 'canon' }), /already has that standing/);
+});
+
+test('refusals name who decides, in plain words', () => {
+  let s = fresh();
+  s = propose(s, { itemId: 'fw-small-hours-hero', to: 'canon', rationale: 'x', by: 'practitioner', asOf });
+  assert.throws(() => decide(s, s.proposals[0].id, { by: 'tom', outcome: 'adopt', asOf }), /decided by Priya Raman/);
+});
+
+test('empty reuse and whitespace choices are refused', () => {
+  const s = fresh();
+  assert.throws(() => recordReuse(s, 'fw-sound-logo', { where: '  ', asOf }));
+  assert.throws(() => recordChoice(s, { subject: '   ', verdict: 'preserve', by: 'p', asOf }));
+});
+
+test('the browser bundle never imports another client', async () => {
+  const { readFileSync } = await import('node:fs');
+  const src = readFileSync(new URL('../src/living-brand/Workbench.jsx', import.meta.url), 'utf8');
+  assert.ok(!/data\/brightloop/.test(src), 'Workbench must not import Brightloop data');
 });

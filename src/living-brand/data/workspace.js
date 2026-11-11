@@ -68,8 +68,8 @@ export const engagements = {
 export const agency = {
   id: 'northbound', name: 'Northbound Studio',
   engagements: [
-    { id: 'nb-fernway', brandId: 'fernway', clientLabel: 'Client A', milestones: [{ date: '2026-11-20', label: 'Concept review' }, { date: '2027-01-12', label: 'Launch' }], team: ['Lead designer', 'Producer'], strategy: 'Win back lapsed subscribers' },
-    { id: 'nb-brightloop', brandId: 'brightloop', clientLabel: 'Client B', milestones: [{ date: '2026-12-01', label: 'Launch' }], team: ['Lead designer', 'Illustrator'], strategy: 'Conquest of a competitor\'s lapsed subscribers' },
+    { id: 'nb-fernway', brandId: 'fernway', clientLabel: 'Client A', milestones: [{ date: '2026-11-20', label: 'Concept review' }, { date: '2027-01-12', label: 'Launch' }], team: ['Lead designer', 'Producer'] },
+    { id: 'nb-brightloop', brandId: 'brightloop', clientLabel: 'Client B', milestones: [{ date: '2026-12-01', label: 'Launch' }], team: ['Lead designer', 'Illustrator'] },
   ],
 };
 
