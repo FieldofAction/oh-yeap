@@ -205,7 +205,8 @@ function useASUStore() {
       const lane = (s.atrium?.flowLane)||[];
       const now = Date.now();
       const item = {
-        id: uid(), key: key || null, source: "Tool", label: label || "", ts: now, signalId,
+        // keep: this is the operator's own work, so the run cap never drops it.
+        id: uid(), key: key || null, source: "Tool", label: label || "", ts: now, signalId, keep: true,
         payload: { runId: null, steps: [{ moduleKey, status: "done", output, error: null, startedAt: now, completedAt: now }] },
       };
       const existing = key ? lane.find(it => it.key === key) : null;
@@ -280,8 +281,8 @@ function useASUStore() {
       // beyond 50 they get culled to keep localStorage bounded.
       const NON_CANONICAL_CAP = 50;
       const next = [flowItem, ...((s.atrium?.flowLane)||[])];
-      const canonicals = next.filter(it => it.canonical);
-      const nonCanonicals = next.filter(it => !it.canonical).slice(0, NON_CANONICAL_CAP);
+      const canonicals = next.filter(it => it.canonical || it.keep);
+      const nonCanonicals = next.filter(it => !it.canonical && !it.keep).slice(0, NON_CANONICAL_CAP);
       // Preserve original order (most recent first) by sorting on ts desc
       const merged = [...canonicals, ...nonCanonicals].sort((a, b) => (b.ts || 0) - (a.ts || 0));
       return {...s, atrium:{...s.atrium, currentRun: null, flowLane: merged}};

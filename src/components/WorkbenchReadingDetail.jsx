@@ -56,14 +56,16 @@ export default function SubstepDetail({ kind, detail }) {
     case "console":
       return (
         <div className="atrium-detail-block">
+          {detail.situation ? <Row k="Situation" v={detail.situation} /> : null}
           <div className="atrium-detail-section-label">Active laws</div>
-          {detail.activeLaws.map((l, i) => <Row key={i} k={l.name} v={l.reading} />)}
+          {(detail.activeLaws || []).map((l, i) => <Row key={i} k={l.name} v={l.reading} />)}
           {detail.tensions?.length > 0 && (
             <>
               <div className="atrium-detail-section-label">Tensions</div>
               {detail.tensions.map((t, i) => <Row key={i} v={t.pair} />)}
             </>
           )}
+          {detail.synthesis ? <Row k="Synthesis" v={detail.synthesis} /> : null}
         </div>
       );
     case "playbook":

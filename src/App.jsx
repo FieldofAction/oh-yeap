@@ -269,7 +269,7 @@ export default function App() {
           {view === "colophon" && <Colophon />}
           {view === "canon" && <Canon />}
           {view === "materials" && <MaterialsDetail />}
-          {view === "console" && <FieldConsole navigateTo={navigateTo} />}
+          {view === "console" && <FieldConsole navigateTo={navigateTo} asu={asu} />}
           {view === "lab" && <IncandescantLab asu={asu} navigateTo={navigateTo} />}
           {view === "patterns" && <PatternLanguage content={publicContent} onOpen={openItem} fg={theme.fg} />}
           {view === "foa" && <FOAGenerator navigateTo={navigateTo} />}
