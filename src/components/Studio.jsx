@@ -19,11 +19,24 @@ const TOOLS = [
   { key: "model", label: "Art of Model", line: "Reads a signal for origin, field, counter and form." },
   { key: "console", label: "Console", line: "Seven laws, and what happens between any two." },
   { key: "playbook", label: "Playbook", line: "Four pillars and an emotional register, set as a brief." },
-  { key: "backstage", label: "Backstage", line: "One idea, read by eight agents." },
+  { key: "backstage", label: "Backstage", line: "One idea, read by eleven agents." },
   { key: "foa", label: "FOA Generator", line: "Typographic artifacts from a single idea." },
   { key: "editor", label: "Exploration Editor", line: "Drafts that are allowed to stay drafts." },
   { key: "lab", label: "Incandescent Lab", line: "Finished runs, shown as process." },
 ];
+
+const TOOL = Object.fromEntries(TOOLS.map((t) => [t.key, t]));
+
+// The order the Workbench is used in. Only holding is required; the rest can
+// be skipped or repeated, but this is the order they make sense in.
+const STAGES = [
+  { key: "hold", name: "Hold", line: "Write down the one thing you are tracking. It stays open until you say otherwise.", tools: [] },
+  { key: "orient", name: "Orient", line: "Find where the signal stands before anything reads it.", tools: ["breakground", "desert"] },
+  { key: "read", name: "Read", line: "Look at it through a structure: a tool, or a lens picked on the signal itself.", tools: ["model", "console", "playbook"] },
+  { key: "make", name: "Make", line: "See what the signal produces when it is put to work.", tools: ["backstage", "foa"] },
+  { key: "settle", name: "Ask Grace, then settle", line: "Grace reads everything on the signal and says whether it is ready. \"Not yet\" keeps it held. When it is ready, let it settle.", tools: [] },
+];
+const ANYTIME = ["editor", "lab"];
 
 // The tools that can read a held signal from here, in the order they run.
 // Grace is last because it reads the others.
@@ -415,49 +428,104 @@ export default function Studio({ navigateTo, asu }) {
     </form>
   );
 
+  const toolRow = (key) => (
+    <button key={key} type="button" className="wb-tool" onClick={() => navigateTo(key)}>
+      <span className="wb-tool-name">{TOOL[key].label}</span>
+      <span className="wb-tool-line">{TOOL[key].line}</span>
+    </button>
+  );
+
   const toolsIndex = (
     <section className="wb-tools" aria-label="Tools">
-      {TOOLS.map((t) => (
-        <button key={t.key} type="button" className="wb-tool" onClick={() => navigateTo(t.key)}>
-          <span className="wb-tool-name">{t.label}</span>
-          <span className="wb-tool-line">{t.line}</span>
-        </button>
-      ))}
+      <p className="wb-text wb-measure">The Workbench runs in this order. Only the first step is required. The rest can be skipped or repeated.</p>
+      <ol className="wb-stages">
+        {STAGES.map((st) => (
+          <li key={st.key} className="wb-stage">
+            <div className="wb-stage-head">
+              <h2 className="wb-name">{st.name}</h2>
+              <p className="wb-body">{st.line}</p>
+            </div>
+            {st.tools.length ? <div className="wb-stage-tools">{st.tools.map(toolRow)}</div> : null}
+          </li>
+        ))}
+      </ol>
+      <div className="wb-stage wb-stage-aside">
+        <div className="wb-stage-head">
+          <h2 className="wb-name">At any point</h2>
+          <p className="wb-body">Places to keep what comes out.</p>
+        </div>
+        <div className="wb-stage-tools">{ANYTIME.map(toolRow)}</div>
+      </div>
     </section>
+  );
+
+  const carryLinks = (signal, keys) => (
+    <div className="wb-actions">
+      {keys.map((k) => (
+        <button key={k} type="button" className="wb-link" onClick={() => onCarry(signal, k)}>{TOOL[k].label}</button>
+      ))}
+    </div>
+  );
+  const readerCheck = (key) => (
+    <label key={key} className="wb-check">
+      <input type="checkbox" checked={picked.has(key)} onChange={() => togglePicked(key)} />
+      <span>{READER_LABEL[key]}</span>
+    </label>
   );
 
   const picker = (signal) => (
     <div className="wb-picker">
-      <fieldset className="wb-fieldset">
-        <legend className="wb-name">Read it with</legend>
-        {READERS.map((r) => (
-          <label key={r.key} className="wb-check">
-            <input type="checkbox" checked={picked.has(r.key)} onChange={() => togglePicked(r.key)} />
-            <span>{r.label}</span>
-          </label>
-        ))}
-      </fieldset>
-      <p className="wb-body wb-measure">Grace reads the others and this signal's earlier readings. It can answer "Not yet."</p>
-      <fieldset className="wb-fieldset wb-lens-picker">
-        <legend className="wb-name">Or through a lens</legend>
-        {pickedLenses.map((key) => (
-          <label key={key} className="wb-check">
-            <input type="checkbox" checked onChange={() => toggleLens(key)} />
-            <span>{lensFor(key)?.name}</span>
-          </label>
-        ))}
-        <label htmlFor="wb-lens-search" className="wb-label">Find a mental model, a pattern or a law pairing</label>
-        <input id="wb-lens-search" className="wb-field" type="search" value={lensQuery} onChange={(e) => setLensQuery(e.target.value)} autoComplete="off" />
-        {searchLenses(lensQuery).filter((l) => !pickedLenses.includes(l.key)).map((l) => (
-          <button key={l.key} type="button" className="wb-lens-result" onClick={() => toggleLens(l.key)}>
-            <span className="wb-name">{l.name}</span>
-            <span className="wb-body">{l.text}</span>
-          </button>
-        ))}
-        <div className="wb-actions">
-          <button type="button" className="wb-link" onClick={() => toggleLens(randomLens().key, true)}>Draw one at random</button>
-        </div>
-      </fieldset>
+      <p className="wb-body wb-measure">In the order they make sense. Skip what you do not need.</p>
+      <ol className="wb-steps">
+        <li className="wb-step">
+          <p className="wb-name">Orient it</p>
+          <p className="wb-body wb-measure">These open on their own page. What you answer there comes back as a reading.</p>
+          {carryLinks(signal, ["breakground", "desert"])}
+        </li>
+        <li className="wb-step">
+          <p className="wb-name">Read it</p>
+          <fieldset className="wb-fieldset">
+            <legend className="wb-body">Here, on this page</legend>
+            {readerCheck("model")}
+            {pickedLenses.map((key) => (
+              <label key={key} className="wb-check">
+                <input type="checkbox" checked onChange={() => toggleLens(key)} />
+                <span>{lensFor(key)?.name}</span>
+              </label>
+            ))}
+          </fieldset>
+          <div className="wb-fieldset wb-lens-picker">
+            <label htmlFor="wb-lens-search" className="wb-label">Or through a lens: find a mental model, a pattern or a law pairing</label>
+            <input id="wb-lens-search" className="wb-field" type="search" value={lensQuery} onChange={(e) => setLensQuery(e.target.value)} autoComplete="off" />
+            {searchLenses(lensQuery).filter((l) => !pickedLenses.includes(l.key)).map((l) => (
+              <button key={l.key} type="button" className="wb-lens-result" onClick={() => toggleLens(l.key)}>
+                <span className="wb-name">{l.name}</span>
+                <span className="wb-body">{l.text}</span>
+              </button>
+            ))}
+            <div className="wb-actions">
+              <button type="button" className="wb-link" onClick={() => toggleLens(randomLens().key, true)}>Draw one at random</button>
+            </div>
+          </div>
+          <p className="wb-body">Or on its own page</p>
+          {carryLinks(signal, ["model", "console", "playbook"])}
+        </li>
+        <li className="wb-step">
+          <p className="wb-name">Make from it</p>
+          <fieldset className="wb-fieldset">
+            <legend className="wb-body">Here, on this page</legend>
+            {readerCheck("backstage")}
+            {readerCheck("foa")}
+          </fieldset>
+          <p className="wb-body">Or on its own page</p>
+          {carryLinks(signal, ["backstage", "foa"])}
+        </li>
+        <li className="wb-step">
+          <p className="wb-name">Ask Grace</p>
+          <p className="wb-body wb-measure">Grace reads the others and this signal's earlier readings. It can answer "Not yet."</p>
+          {readerCheck("grace")}
+        </li>
+      </ol>
       {canonicalRuns.length > 0 ? (
         <fieldset className="wb-fieldset">
           <label className="wb-check">
@@ -479,20 +547,8 @@ export default function Studio({ navigateTo, asu }) {
         </p>
       ) : null}
       <div className="wb-actions">
-        <button type="button" className="wb-button" onClick={() => onRead(signal)} disabled={(picked.size === 0 && pickedLenses.length === 0) || isRunning}>Read</button>
+        <button type="button" className="wb-button" onClick={() => onRead(signal)} disabled={(picked.size === 0 && pickedLenses.length === 0) || isRunning}>Read what is ticked</button>
         <button type="button" className="wb-link" onClick={() => setPickerFor(null)}>Cancel</button>
-      </div>
-      <div className="wb-block">
-        <p className="wb-name">Or take it into</p>
-        <div className="wb-actions">
-          <button type="button" className="wb-link" onClick={() => onCarry(signal, "breakground")}>Breakground</button>
-          <button type="button" className="wb-link" onClick={() => onCarry(signal, "desert")}>Desert</button>
-          <button type="button" className="wb-link" onClick={() => onCarry(signal, "console")}>Console</button>
-          <button type="button" className="wb-link" onClick={() => onCarry(signal, "model")}>Art of Model</button>
-          <button type="button" className="wb-link" onClick={() => onCarry(signal, "playbook")}>Playbook</button>
-          <button type="button" className="wb-link" onClick={() => onCarry(signal, "backstage")}>Backstage</button>
-          <button type="button" className="wb-link" onClick={() => onCarry(signal, "foa")}>FOA Generator</button>
-        </div>
       </div>
     </div>
   );
@@ -506,12 +562,13 @@ export default function Studio({ navigateTo, asu }) {
     const showOlder = earlierOpen.has(signal.id);
     return (
       <article key={signal.id} className="wb-item">
-        <span className="wb-mark" aria-hidden="true" />
+        <div className="wb-item-meta">
+          <p className="wb-meta-line"><span className="wb-mark" aria-hidden="true" />Held since {dayLabel(signal.ts)}</p>
+          {signal.origin?.source ? <p className="wb-meta-line wb-meta-soft">From {signal.origin.source}</p> : null}
+          {readers.length ? <p className="wb-meta-line wb-meta-soft">Read by {joinNames(readers)}</p> : null}
+        </div>
         <div className="wb-item-body">
           <h2 className="wb-headline">{signal.text}</h2>
-          <p className="wb-body">
-            Held since {dayLabel(signal.ts)}.{signal.origin?.source ? ` From ${signal.origin.source}.` : ""}{readers.length ? ` Read by ${joinNames(readers)}.` : ""}
-          </p>
 
           {running ? (
             <div className="wb-actions" role="status">
@@ -521,6 +578,7 @@ export default function Studio({ navigateTo, asu }) {
           ) : null}
 
           {signal.origin?.note && !latest ? <p className="wb-body wb-measure">{signal.origin.note}</p> : null}
+          {!latest && !running && pickerFor !== signal.id ? <p className="wb-body wb-measure">Nothing has read this yet. Most signals start in Breakground or Desert.</p> : null}
           {latest ? <Reading reading={latest} asu={asu} onCopy={onCopy} copied={copied} signal={signal} /> : null}
 
           {older.length > 0 ? (
@@ -554,9 +612,12 @@ export default function Studio({ navigateTo, asu }) {
     const showOlder = earlierOpen.has(signal.id);
     return (
       <article key={signal.id} className="wb-item wb-item-settled">
+        <div className="wb-item-meta">
+          <p className="wb-meta-line wb-meta-soft">Settled {dayLabel(signal.settledAt)}</p>
+          <p className="wb-meta-line wb-meta-soft">Held from {dayLabel(signal.ts)}</p>
+        </div>
         <div className="wb-item-body">
           <h2 className="wb-settled-line">{signal.text}</h2>
-          <p className="wb-body">Settled {dayLabel(signal.settledAt)}. Held from {dayLabel(signal.ts)}.</p>
           {readings.length > 0 ? (
             <div className="wb-older">
               <button type="button" className="wb-link" aria-expanded={showOlder} onClick={() => toggleEarlier(signal.id)}>
@@ -589,6 +650,7 @@ export default function Studio({ navigateTo, asu }) {
           </button>
         </header>
         {tab === "tools" ? toolsIndex : signalForm}
+        {tab === "tools" ? null : <p className="wb-body wb-measure wb-empty-line">Hold one line. Then orient it, read it, make from it, and ask Grace whether it is ready.</p>}
       </section>
     );
   }
@@ -659,9 +721,11 @@ export default function Studio({ navigateTo, asu }) {
               <h2 className="wb-name">Runs from before signals could be held</h2>
               {visibleEarlier.map((r) => (
                 <article key={r.id} className="wb-item wb-item-settled">
+                  <div className="wb-item-meta">
+                    <p className="wb-meta-line wb-meta-soft">Read {dayLabel(r.ts)}</p>
+                  </div>
                   <div className="wb-item-body">
                     <h2 className="wb-settled-line">{r.label}</h2>
-                    <p className="wb-body">Read {dayLabel(r.ts)}</p>
                     <Reading reading={r} asu={asu} onCopy={onCopy} copied={copied} />
                   </div>
                 </article>

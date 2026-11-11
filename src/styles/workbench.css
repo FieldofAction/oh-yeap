@@ -1,13 +1,18 @@
-/* Workbench — system type.
+/* Workbench — system type on the site's rules and columns.
    Two levels of text (headline, body) plus functional labels. One accent,
-   and it means "held". No boxes: structure comes from type, space and
-   hairlines. Colours are fixed here rather than taken from the theme
+   and it means "held". No boxes: structure comes from type, space, a left
+   column for state and names, and rules that are an impression, not a line.
+   Rules follow the site: always 1px, in two tints of ink (the Atlas's
+   --rule and --rule-strong), never a heavier weight. Colours are fixed here rather than taken from the theme
    variables so the instrument reads the same wherever it is mounted. */
 
 .wb {
   --wb-ink: #1D1D1F;
   --wb-soft: #6E6E73;
-  --wb-line: #D2D2D7;
+  --wb-line: rgba(29, 29, 31, 0.12);
+  --wb-line-strong: rgba(29, 29, 31, 0.28);
+  --wb-col: 220px;
+  --wb-gap: 32px;
   --wb-fill: #F5F5F7;
   --wb-held: #E63311;
   --wb-face: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -33,8 +38,8 @@
 .wb-segment[aria-pressed="true"] { font-weight: 600; background: #FFFFFF; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
 
 /* Text */
-.wb-headline { font-size: clamp(28px, 3.6vw, 44px); font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; overflow-wrap: anywhere; }
-.wb-reveal { font-size: clamp(28px, 3.6vw, 44px); font-weight: 400; letter-spacing: -0.03em; line-height: 1.1; overflow-wrap: anywhere; }
+.wb-headline { font-size: clamp(28px, 4vw, 52px); font-weight: 600; letter-spacing: -0.035em; line-height: 1.04; max-width: 17em; overflow-wrap: anywhere; }
+.wb-reveal { font-size: clamp(28px, 4vw, 52px); font-weight: 400; letter-spacing: -0.035em; line-height: 1.04; overflow-wrap: anywhere; }
 .wb-settled-line { font-size: 22px; font-weight: 400; letter-spacing: -0.01em; line-height: 1.25; overflow-wrap: anywhere; }
 .wb-body { font-size: 17px; line-height: 1.45; color: var(--wb-soft); }
 .wb-name { font-size: 17px; font-weight: 600; line-height: 1.45; color: var(--wb-ink); }
@@ -53,6 +58,8 @@
 
 /* The signal line */
 .wb-signal { display: flex; flex-direction: column; gap: 10px; max-width: 980px; }
+/* On the Workbench itself the line sits on the grid: its label in the left column. */
+.wb > form.wb-signal:not(.wb-signal-open) { display: grid; grid-template-columns: var(--wb-col) minmax(0, 1fr); column-gap: var(--wb-gap); row-gap: 8px; align-items: center; max-width: none; padding-top: 20px; border-top: 1px solid var(--wb-line-strong); }
 .wb-signal-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .wb-field { flex: 1 1 260px; min-width: 0; width: 100%; border: 0; border-radius: 14px; background: var(--wb-fill); padding: 0 20px; min-height: 56px; font: inherit; font-size: 19px; color: var(--wb-ink); }
 .wb-field::placeholder { color: var(--wb-soft); opacity: 1; }
@@ -67,19 +74,27 @@
 .wb-empty .wb-tools { padding-top: 56px; }
 
 /* Held and settled */
-.wb-list { display: flex; flex-direction: column; gap: 56px; max-width: 980px; }
-.wb-item { display: flex; gap: 20px; align-items: flex-start; }
-.wb-item-body { display: flex; flex-direction: column; gap: 12px; min-width: 0; flex: 1; }
-.wb-mark { flex: none; width: 12px; height: 12px; border-radius: 50%; margin-top: 18px; background: var(--wb-held); }
-.wb-list-settled { gap: 40px; }
-.wb-item-settled { padding-top: 40px; border-top: 1px solid var(--wb-line); }
+.wb-list { display: flex; flex-direction: column; }
+/* State and dates sit in a left column; the signal and its readings on the right. */
+.wb-item { display: grid; grid-template-columns: var(--wb-col) minmax(0, 1fr); column-gap: var(--wb-gap); row-gap: 12px; padding: 24px 0 56px; border-top: 1px solid var(--wb-line); }
+.wb-list > .wb-item:first-child, .wb-list > .wb-search + .wb-item { border-top-color: var(--wb-line-strong); }
+.wb-item-meta { display: flex; flex-direction: column; gap: 4px; padding-top: 10px; }
+.wb-meta-line { display: flex; align-items: baseline; gap: 10px; font-size: 15px; line-height: 1.4; color: var(--wb-ink); }
+.wb-meta-soft { color: var(--wb-soft); }
+.wb-item-meta .wb-mark + * , .wb-meta-line { min-width: 0; }
+.wb-item:not(.wb-item-settled) .wb-meta-soft { padding-left: 20px; }
+.wb-item-body { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.wb-mark { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--wb-held); }
+.wb-item-settled { padding: 24px 0 40px; }
+.wb-item-settled .wb-item-meta { padding-top: 4px; }
+.wb-search { padding-bottom: 32px; }
 .wb-search { display: flex; flex-direction: column; gap: 10px; }
 .wb-search .wb-field { flex: none; }
 .wb-earlier-runs { display: flex; flex-direction: column; gap: 40px; padding-top: 16px; }
 
 /* A reading */
 .wb-reading { display: flex; flex-direction: column; gap: 12px; padding-top: 28px; }
-.wb-grace { display: flex; flex-direction: column; gap: 8px; }
+.wb-grace { display: grid; grid-template-columns: 110px minmax(0, 1fr); column-gap: var(--wb-gap); row-gap: 6px; align-items: baseline; padding-top: 12px; }
 /* "Not yet" is followed by space on purpose: nothing has been named. */
 .wb-grace-notyet { padding-bottom: 120px; }
 .wb-block { display: flex; flex-direction: column; gap: 4px; padding-top: 8px; }
@@ -105,20 +120,43 @@
 .wb-check-nested { padding-left: 32px; color: var(--wb-soft); }
 
 /* Tools index */
-.wb-tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); column-gap: 48px; }
-.wb-tool { display: flex; flex-direction: column; gap: 4px; padding: 20px 0; min-height: 44px; font: inherit; text-align: left; color: var(--wb-ink); background: transparent; border: 0; border-top: 1px solid var(--wb-line); cursor: pointer; }
+.wb-tools { display: flex; flex-direction: column; gap: 24px; }
+.wb-stages { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; counter-reset: wb-stage; border-top: 1px solid var(--wb-line-strong); }
+.wb-stage { display: grid; grid-template-columns: var(--wb-col) minmax(0, 1fr); column-gap: var(--wb-gap); row-gap: 12px; padding: 20px 0 24px; border-bottom: 1px solid var(--wb-line); }
+.wb-stages .wb-stage { counter-increment: wb-stage; }
+.wb-stages .wb-stage .wb-name::before { content: counter(wb-stage) ". "; font-variant-numeric: tabular-nums; }
+.wb-stage-head { display: contents; }
+.wb-stage-head .wb-name { margin: 0; grid-column: 1; }
+.wb-stage-head .wb-body { margin: 0; grid-column: 2; max-width: 620px; }
+.wb-stage-tools { grid-column: 2; display: flex; flex-direction: column; border-top: 1px solid var(--wb-line); }
+.wb-stage-aside { border-top: 1px solid var(--wb-line-strong); }
+.wb-tool { display: grid; grid-template-columns: 180px minmax(0, 1fr); column-gap: 24px; row-gap: 2px; align-items: baseline; padding: 12px 0; min-height: 44px; font: inherit; text-align: left; color: var(--wb-ink); background: transparent; border: 0; border-bottom: 1px solid var(--wb-line); cursor: pointer; }
+.wb-stage-tools .wb-tool:last-child { border-bottom: 0; }
 .wb-tool-name { font-size: 17px; font-weight: 600; }
-.wb-tool-line { font-size: 15px; line-height: 1.45; color: var(--wb-soft); }
+.wb-tool-line { font-size: 17px; line-height: 1.45; color: var(--wb-soft); }
+.wb-steps { display: flex; flex-direction: column; margin: 0; padding: 0 0 0 28px; max-width: 720px; }
+.wb-step { padding: 14px 0 16px 8px; border-top: 1px solid var(--wb-line); }
+.wb-step::marker { font-size: 17px; font-weight: 600; color: var(--wb-ink); }
+.wb-step > * { margin: 0; }
+.wb-step > * + * { margin-top: 6px; }
+.wb-step .wb-fieldset legend { color: var(--wb-soft); }
+.wb-empty-line { padding-bottom: 40px; }
 .wb-tool:hover .wb-tool-name { text-decoration: underline; text-underline-offset: 4px; }
 
+/* Below a tablet's width the left column folds above the content. */
+@media (max-width: 760px) {
+  .wb-item, .wb-tool, .wb-stage, .wb > form.wb-signal:not(.wb-signal-open) { grid-template-columns: minmax(0, 1fr); }
+  .wb-stage-head .wb-body, .wb-stage-tools { grid-column: 1; }
+  .wb-item-meta { padding-top: 0; }
+  .wb-surface { padding-left: 0; }
+  .wb-grace { grid-template-columns: minmax(0, 1fr); }
+}
 @media (max-width: 560px) {
   .wb { gap: 40px; padding-bottom: 72px; }
   .wb-segments { width: 100%; }
   .wb-segment { flex: 1; padding: 0 8px; }
   .wb-field { font-size: 17px; padding: 0 16px; }
   .wb-signal-open .wb-field { font-size: 32px; padding: 0; }
-  .wb-item { gap: 12px; }
-  .wb-mark { margin-top: 12px; }
   .wb-grace-notyet { padding-bottom: 72px; }
   .wb .atrium-detail-key { flex-basis: 100%; }
 }
@@ -139,8 +177,11 @@
 .wb-lens-picker .wb-field { flex: none; max-width: 480px; margin: 6px 0; }
 .wb-lens-result { display: flex; flex-direction: column; gap: 2px; padding: 12px 0; min-height: 44px; max-width: 620px; font: inherit; text-align: left; color: var(--wb-ink); background: transparent; border: 0; border-top: 1px solid var(--wb-line); cursor: pointer; }
 .wb-lens-result:hover .wb-name { text-decoration: underline; text-underline-offset: 4px; }
-.wb-surface { display: flex; flex-direction: column; gap: 16px; max-width: 980px; margin-top: -32px; }
+.wb-surface { display: flex; flex-direction: column; gap: 16px; margin-top: -32px; padding-left: calc(var(--wb-col) + var(--wb-gap)); }
 .wb-surface-list { display: flex; flex-direction: column; gap: 0; }
 .wb-surface-list > .wb-body { padding-bottom: 16px; }
 .wb-surface-item { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; padding: 16px 0; border-top: 1px solid var(--wb-line); }
 @media (max-width: 560px) { .wb-surface-item { flex-direction: column; gap: 0; } .wb-surface { margin-top: -20px; } }
+
+/* Signal Surface sits under the field on a wide screen and under the label on a narrow one. */
+@media (max-width: 760px) { .wb-surface { padding-left: 0; } }

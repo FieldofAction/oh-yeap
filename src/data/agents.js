@@ -22,3 +22,24 @@ export const RING_LABELS = {
 };
 
 export const CORE_CYCLE = ["field","works-in-progress","action","cache","atlas","grace","open","art-practice","hotel","clssm","freedom-embassy"];
+
+// What each agent does, in one line, for anywhere an agent is offered as a choice.
+export const AGENT_ROLES = {
+  "field": "Senses the signals in the environment.",
+  "works-in-progress": "Investigates and prototypes the idea.",
+  "action": "Produces concrete artifacts.",
+  "cache": "Decides how the work is preserved.",
+  "atlas": "Maps where this idea has appeared before.",
+  "grace": "Decides how the work enters the world.",
+  "open": "Holds what has not yet taken form.",
+  "art-practice": "Experiments with the aesthetic material.",
+  "hotel": "Turns it into objects, rituals and places.",
+  "clssm": "Names the deep pattern underneath.",
+  "freedom-embassy": "Sets the boundaries and long-term direction.",
+};
+
+export const AGENT_RINGS = [
+  { ring: 1, name: "Operational cycle", line: "Makes the work and reads it." },
+  { ring: 2, name: "Practice layer", line: "Keeps the work alive and material." },
+  { ring: 3, name: "Governance layer", line: "Gives the work its source and its limits." },
+];
