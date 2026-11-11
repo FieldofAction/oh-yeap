@@ -489,6 +489,7 @@ function Drawer({ asOf, item, state, brand, items, act, actor, setOpenId, canWor
   const facts = [
     ['Work type', item.workType], ['Element', item.element], ['Canvas', item.canvas], ['Audience', item.audience], ['Meant to', item.intendedOutcome],
     ['Level', cap(item.level)], ['Dates', item.period?.from ? `${fmt(item.period.from)}${item.period.to ? ` to ${fmt(item.period.to)}` : ''}` : null],
+    ['About the dates', item.periodNote],
     ['Exposure', item.exposure], ['Made by', item.made?.by],
     ['Found in', item.provenance?.source ? `${item.provenance.source}${item.provenance.origin === 'generated' ? '. Written by a model.' : ''}${item.provenance.confidential ? '. Confidential.' : ''}` : null],
     ['Released', item.released && item.released !== 'public' ? cap(item.released) : null],
