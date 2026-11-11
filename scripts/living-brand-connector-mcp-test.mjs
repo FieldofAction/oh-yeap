@@ -27,7 +27,7 @@ for (const mode of [undefined, 'auto']) {
     const { client } = await connect(mode);
     try {
       const { tools } = await client.listTools();
-      assert.equal(tools.length, 22);
+      assert.equal(tools.length, 23);
       for (const t of tools) {
         assert.ok(t.title && t.description && t.inputSchema?.type === 'object', t.name);
         assert.equal(typeof t.annotations.readOnlyHint, 'boolean', t.name);
@@ -64,6 +64,12 @@ for (const mode of [undefined, 'auto']) {
       // Arguments that do not fit the schema are refused before any tool runs.
       const invalid = await client.callTool({ name: 'record_choice', arguments: { engagement_id: 'eng-fernway', subject: 'x', verdict: 'promote', rationale: 'x' } }).catch(e => ({ isError: true, content: [{ text: e.message }] }));
       assert.equal(invalid.isError, true);
+      // A damaged record is reported as a fault of the store, never as a refusal by the brand.
+      const { writeFileSync } = await import('node:fs');
+      writeFileSync(join(home, 'workbench.json'), '{"practitioner": ');
+      const damaged = await client.callTool({ name: 'list_engagements', arguments: {} });
+      assert.equal(damaged.isError, true);
+      assert.match(text(damaged), /workbench index cannot be read; the file is damaged/);
     } finally { await client.close(); }
   });
 }

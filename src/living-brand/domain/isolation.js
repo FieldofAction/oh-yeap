@@ -13,31 +13,46 @@ const deepFreeze = obj => {
 };
 
 // vault: { [brandId]: brand }. Credentials are the engagement's grant.
-export function openTenant(vault, engagement) {
+// asOf is today's date, supplied by whoever opens the engagement. A grant
+// with an end date cannot be opened without it.
+export function openTenant(vault, engagement, { asOf } = {}) {
   const tenant = engagement.brandId;
+  const today = asOf || engagement.asOf;
+  if (typeof tenant !== 'string' || !tenant) throw new IsolationError('The engagement names no brand.');
   if (!engagement.grant || engagement.grant.brandId !== tenant) throw new IsolationError('Engagement grant does not match its brand.');
   if (engagement.grant.revokedAt) throw new IsolationError('Access to this brand was revoked.');
-  if (engagement.grant.expires && engagement.asOf && engagement.asOf > engagement.grant.expires) throw new IsolationError('Access to this brand has expired.');
+  if (engagement.grant.expires) {
+    if (!today) throw new IsolationError('Cannot tell whether access to this brand has expired: no date was given.');
+    if (today > engagement.grant.expires) throw new IsolationError(`Access to this brand expired on ${engagement.grant.expires}.`);
+  }
+  if (!vault || !Object.hasOwn(vault, tenant)) throw new IsolationError(`No brand ${tenant}.`);
   const brand = vault[tenant];
-  if (!brand) throw new IsolationError(`No brand ${tenant}.`);
+  if (!brand || brand.id !== tenant) throw new IsolationError(`The record stored for ${tenant} is for a different brand.`);
   // Copy the partition. Nothing outside it is reachable from the returned object.
   const partition = JSON.parse(JSON.stringify(brand));
+  partition.items = partition.items || [];
   partition.items.forEach(i => { i._tenant = tenant; });
   partition.rules = partition.rules || [];
   partition.rules.forEach(r => { r._tenant = tenant; });
   return deepFreeze({ tenant, brand: partition, log: [] });
 }
 
+// Words of any script, two characters or longer.
+const termsOf = query => String(query || '').toLowerCase().split(/[^\p{L}\p{N}-]+/u).filter(t => t.length > 1);
+
 export function search(tenantIndex, query, purpose = {}) {
-  const terms = String(query || '').toLowerCase().split(/[^a-z0-9-]+/).filter(t => t.length > 2);
+  const terms = termsOf(query);
   const results = [];
   for (const item of tenantIndex.brand.items) {
     if (item._tenant !== tenantIndex.tenant) throw new IsolationError('Foreign record in tenant index.');
     const hay = [item.title, item.text, (item.tags || []).join(' '), item.rationale, item.kind, item.element, item.workType].filter(Boolean).join(' ').toLowerCase();
-    const score = terms.reduce((s, t) => s + (hay.includes(t) ? 1 : 0), 0);
-    if (!terms.length || score > 0) {
-      const matched = terms.filter(t => hay.includes(t));
-      results.push({ item, score, standing: assessStanding(item, { ...purpose, terms: matched.length ? matched : undefined }) });
+    const matched = terms.filter(t => hay.includes(t));
+    if (!terms.length || matched.length) {
+      // Relevance is decided here, once, over the same text that was searched.
+      const standing = assessStanding(item, { ...purpose, terms: undefined }, tenantIndex.brand);
+      standing.relevant = true;
+      standing.reasons.relevant = [matched.length ? `Matches ${matched.join(', ')}.` : 'No query given.'];
+      results.push({ item, score: matched.length, standing });
     }
   }
   return results.sort((a, b) => b.score - a.score || a.item.title.localeCompare(b.item.title));

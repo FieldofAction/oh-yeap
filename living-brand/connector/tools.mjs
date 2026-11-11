@@ -3,11 +3,11 @@
 // (with the same content as structured data). The connector acts as one
 // person: the practitioner whose workbench this is. It cannot decide as anyone
 // else, because this build has no sign-in to prove who they are.
-import { readFileSync } from 'node:fs';
+import { readFileSync, lstatSync } from 'node:fs';
 import {
   search, assessStanding, findTensions, carryForward, changeLedger, organizationalHypotheses, orientation,
   propose, decide, retire, recordReuse, recordChoice, verifyItem, approveItem, addSourceNote, nameAuthority,
-  buildBrief, buildContextPackage, revokePackage, packageValid, buildHandoff, toPacket, readPacket,
+  buildBrief, buildContextPackage, revokePackage, packageValid, buildHandoff, toPacket, readPacket, packetAssertions, timeline, unnamedPowers,
   deciders, powerFor, isPublicStudy, STANDING_CLASSES, CHOICES, POWERS, BASES, PIPELINE,
 } from '../../src/living-brand/domain/index.js';
 
@@ -15,14 +15,22 @@ const today = () => process.env.LIVING_BRAND_AS_OF || new Date().toISOString().s
 const yn = v => (v ? 'yes' : 'no');
 const person = (brand, id) => brand.people?.[id]?.name || (id === 'practitioner' ? 'the practitioner' : id);
 const who = (brand, ids) => (ids?.length ? ids.map(id => person(brand, id)).join(' or ') : 'no one named');
-const lines = list => list.filter(l => l !== null && l !== undefined && l !== false).join('\n');
+// Every line of a result is one line. Text that came from a record (a title, a
+// note, a statement) can never start a new line and pass for something the
+// connector said. A leading newline on an entry is kept as a blank line.
+// eslint-disable-next-line no-control-regex
+const flat = v => String(v).replace(/[\u0000-\u001f\u007f]+/g, ' ');
+const lines = list => list.flat().filter(l => l !== null && l !== undefined && l !== false && l !== 0)
+  .flatMap(l => { const text = String(l); return text.startsWith('\n') ? ['', flat(text.slice(1))] : [flat(text)]; }).join('\n');
 const basisLine = brand => `${brand.name}: ${BASES[brand.basis || 'company-record'].name}. ${BASES[brand.basis || 'company-record'].note}`;
 
 const standingLine = (item, st) =>
   `relevant ${yn(st.relevant)}; authorized ${yn(st.authorized)}; reusable here ${yn(st.reusable)}; authoritative ${yn(st.authoritative)}`;
 
-const itemLine = (item, st) =>
-  `- ${item.title} [${item.id}] (${[item.kind, item.period?.from?.slice(0, 4)].filter(Boolean).join(', ')}; ${STANDING_CLASSES[item.standing].name.toLowerCase()}; ${item.pipeline})${st ? `\n  ${standingLine(item, st)}` : ''}`;
+const itemLine = (item, st) => [
+  `- ${item.title} [${item.id}] (${[item.kind, item.period?.from?.slice(0, 4)].filter(Boolean).join(', ')}; ${STANDING_CLASSES[item.standing].name.toLowerCase()}; ${item.pipeline})`,
+  st ? `  ${standingLine(item, st)}` : null,
+];
 
 const ENG = { type: 'string', description: 'Engagement id from list_engagements, for example "eng-fernway".' };
 const ITEM = { type: 'string', description: 'Item id, shown in square brackets by search_material and get_item.' };
@@ -40,8 +48,11 @@ export function createTools(store) {
     return actor;
   };
 
+  // Access that has ended cannot be opened, except to export the record or end the engagement.
+  const open = (id, options = {}) => store.load(id, { asOf: today(), ...options });
+
   const change = (id, entry, fn) => {
-    const state = store.load(id);
+    const state = open(id);
     const next = fn(state, actorOf(state));
     store.save(next, { by: actorOf(state), ...entry });
     return next;
@@ -58,7 +69,7 @@ export function createTools(store) {
         return {
           text: lines([
             `Workbench of ${b.practitioner.name}. ${rows.length} engagement${rows.length === 1 ? '' : 's'}.`,
-            ...rows.map(e => `- ${e.client} [${e.id}]: ${e.role}${e.project ? `, ${e.project}` : ''}. ${BASES[e.basis]?.name || e.basis}. ${e.status === 'ended' ? `Ended${e.endedOn ? ` ${e.endedOn}` : ''}; its material is no longer held.` : 'Open.'}`),
+            ...rows.map(e => `- ${e.client} [${e.id}]: ${e.role}${e.project ? `, ${e.project}` : ''}. ${BASES[e.basis]?.name || e.basis}. ${e.status === 'ended' ? `Ended${e.endedOn ? ` ${e.endedOn}` : ''}; its material is no longer held.` : e.status === 'unreadable' ? 'Its record cannot be read; it can only be ended.' : 'Open.'}`),
             'Each engagement is a separate folder. Opening one never loads another.',
           ]),
           data: { practitioner: b.practitioner.name, engagements: rows },
@@ -70,11 +81,12 @@ export function createTools(store) {
       description: 'Orient in one engagement: the company\'s stated intent, your role and what you may and may not do, who decides what, what is canon, what needs attention first, what is not known, and how far the material has been understood.',
       input: { type: 'object', properties: { engagement_id: ENG }, required: ['engagement_id'] },
       run({ engagement_id }) {
-        const state = store.load(engagement_id);
+        const state = open(engagement_id);
         const { brand, engagement: e } = state;
         const asOf = today();
         const o = orientation(brand, e, { asOf });
-        const areas = Object.entries(POWERS).filter(([p]) => p in (brand.authority || {}));
+        const areas = Object.entries(POWERS);
+        const gaps = unnamedPowers(brand);
         const urgent = o.tensions.filter(t => t.severity !== 'investigate' || t.kind === 'Unknown rights').slice(0, 6);
         return {
           text: lines([
@@ -89,7 +101,7 @@ export function createTools(store) {
             o.intent?.statement && `Stated intent: ${o.intent.statement}`,
             '',
             'Who decides:',
-            ...(areas.length ? areas.map(([p, label]) => `- ${label}: ${who(brand, brand.authority[p])}`) : ['- Nothing recorded.']),
+            ...areas.map(([p, label]) => `- ${label}: ${gaps.includes(p) ? 'no one named' : deciders(brand, p).map(d => d.name).join(' or ')}`),
             '',
             `Canon in force (${o.canon.length}):`,
             ...(o.canon.length ? o.canon.map(i => `- ${i.title} [${i.id}]`) : ['- Nothing has been adopted as canon yet.']),
@@ -112,7 +124,7 @@ export function createTools(store) {
       description: 'Search the material of ONE engagement. Every result answers four separate questions for this project: relevant, authorized, reusable here, authoritative. A result being relevant never means it may be used or that it governs anything. Other clients\' material is never searched.',
       input: { type: 'object', properties: { engagement_id: ENG, query: { type: 'string', description: 'Words to look for. Empty returns everything.' }, channels: { type: 'array', items: { type: 'string' }, description: 'Where the work would run, to test rights: for example paid-media, owned-web, owned-social, email. Defaults to the engagement\'s channels.' } }, required: ['engagement_id'] },
       run({ engagement_id, query = '', channels }) {
-        const state = store.load(engagement_id);
+        const state = open(engagement_id);
         const results = search(state, query, purposeOf(state, channels ? { channels } : {}));
         return {
           text: lines([
@@ -129,10 +141,10 @@ export function createTools(store) {
       description: 'Everything recorded about one piece of material: what it was for (work type, canvas, audience, intended outcome, dates), its standing and why, rights, evidence split into intended impact, observed outcome, this element\'s own contribution and transfer, sources with links, and what it relates to. Use before citing or reusing anything.',
       input: { type: 'object', properties: { engagement_id: ENG, item_id: ITEM }, required: ['engagement_id', 'item_id'] },
       run({ engagement_id, item_id }) {
-        const state = store.load(engagement_id);
+        const state = open(engagement_id);
         const item = state.brand.items.find(i => i.id === item_id);
         if (!item) throw new Error(`No item "${item_id}" in ${state.brand.name}'s material.`);
-        const st = assessStanding(item, purposeOf(state));
+        const st = assessStanding(item, purposeOf(state), state.brand);
         const ev = type => (item.evidence || []).filter(x => x.type === type);
         const evLines = (label, type) => [`${label}:`, ...(ev(type).length ? ev(type).map(x => `- ${x.statement} (${String(x.basis).replace(/_/g, ' ')}${x.url ? `; ${x.url}` : ''}) [${x.id}]`) : ['- None recorded.'])];
         const rec = item.standingRecord;
@@ -175,16 +187,20 @@ export function createTools(store) {
       description: 'What the record shows when read against itself: what replaced what, what carries forward into the current brief (if a precedent is set), conflicting rules, drift from canon, claims in tension with later facts, unknown rights, impact claims without established attribution, missing evidence, decisions nobody is named to make, and written hypotheses about the organisation with their uncertainty. Deterministic; not a judgment.',
       input: { type: 'object', properties: { engagement_id: ENG }, required: ['engagement_id'] },
       run({ engagement_id }) {
-        const state = store.load(engagement_id);
+        const state = open(engagement_id);
         const { brand, engagement: e } = state;
         const asOf = today();
         const tensions = findTensions(brand, { asOf, workTypes: e.workTypes || [], channels: e.channels || [] });
         const ledger = changeLedger(brand, { asOf });
         const cf = carryForward(brand, e, { asOf });
         const hyps = organizationalHypotheses(brand, e);
+        const events = timeline(brand, { asOf });
         return {
           text: lines([
             `${brand.name}, as of ${asOf}.`,
+            events.length ? '\nWhat happened, in order:' : null,
+            ...events.slice(0, 60).map(f => `- ${f.date || 'Undated'}: ${f.statement}${f.source ? ` [${f.source}]` : ''}`),
+            events.length > 60 ? `…and ${events.length - 60} more.` : null,
             ledger.length ? '\nWhat replaced what:' : null,
             ...ledger.map(c => c.kind === 'material'
               ? `- ${c.when || 'Undated'}: ${c.before.title} gave way to ${c.after.title}.${c.rationale ? ` ${c.rationale}` : ''}`
@@ -306,11 +322,7 @@ export function createTools(store) {
       description: 'Record who decides an area (visual, verbal, sonic or product standing, public claims, usage rights, the offer, publishing). Only the company can say this, so it works only in an engagement where the practitioner holds the steward power, and never in a public-source study.',
       input: { type: 'object', properties: { engagement_id: ENG, area: { type: 'string', enum: Object.keys(POWERS) }, person_name: { type: 'string' }, person_title: { type: 'string' } }, required: ['engagement_id', 'area', 'person_name'] },
       run({ engagement_id, area, person_name, person_title }) {
-        const next = change(engagement_id, { action: 'name-authority', area }, (state, by) => {
-          const existing = Object.entries(state.brand.people || {}).find(([, p]) => p.name.toLowerCase() === person_name.trim().toLowerCase());
-          const id = existing ? existing[0] : person_name.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
-          return nameAuthority(state, { power: area, person: { id, name: person_name.trim(), title: person_title }, by, asOf: today() });
-        });
+        const next = change(engagement_id, { action: 'name-authority', area }, (state, by) => nameAuthority(state, { power: area, person: { name: person_name, title: person_title }, by, asOf: today() }));
         return { text: `${person_name.trim()} now decides ${POWERS[area]} at ${next.brand.name}. Choices and proposals that were waiting in that area are routed to them.`, data: { authority: next.brand.authority } };
       },
     },
@@ -319,7 +331,7 @@ export function createTools(store) {
       description: 'Assemble the brief for this engagement: objective, audience, the choices recorded so far, the rules that apply, how the work will be judged (set before the work), and the exact sources it rests on, each with a fingerprint so later changes can be detected.',
       input: { type: 'object', properties: { engagement_id: ENG }, required: ['engagement_id'] },
       run({ engagement_id }) {
-        const state = store.load(engagement_id);
+        const state = open(engagement_id);
         const brief = buildBrief(state.brand, state.engagement, state.choices, { asOf: today() });
         return {
           text: lines([
@@ -339,14 +351,16 @@ export function createTools(store) {
       description: 'Give a partner (an agency, a freelancer, another agent) only what one assignment needs: rules that apply and material that is approved and licensed for the assignment\'s channels. Research, strategy, unreleased and unapproved material are withheld, and the partner is not told what was withheld. Read-only, expiring and revocable. Not available for a public-source study.',
       input: { type: 'object', properties: { engagement_id: ENG, partner_name: { type: 'string' }, assignment: { type: 'string' }, channels: { type: 'array', items: { type: 'string' } }, work_types: { type: 'array', items: { type: 'string' } }, expires: { type: 'string', description: 'YYYY-MM-DD' } }, required: ['engagement_id', 'partner_name', 'assignment', 'channels', 'expires'] },
       run({ engagement_id, partner_name, assignment, channels, work_types, expires }) {
-        const state = store.load(engagement_id);
-        const id = partner_name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-        const { package: pkg, audit } = buildContextPackage(state, { partner: { id, name: partner_name }, assignment, channels, workTypes: work_types || state.engagement.workTypes || [], powers: ['read'], expires, asOf: today() });
-        store.savePackages(engagement_id, [...store.packages(engagement_id).filter(p => p.package.id !== pkg.id), { package: pkg, audit }]);
+        const state = open(engagement_id);
+        const existing = store.packages(engagement_id);
+        const id = String(partner_name).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'partner';
+        const { package: pkg, audit } = buildContextPackage(state, { partner: { id, name: flat(partner_name).trim() }, assignment: flat(assignment).trim(), channels, workTypes: work_types || state.engagement.workTypes || [], powers: ['read'], expires, asOf: today(), seq: existing.length + 1 });
+        // Every package issued is kept, including revoked ones: the list is the audit.
+        store.savePackages(engagement_id, [...existing, { package: pkg, audit }]);
         store.log(engagement_id, { action: 'issue-package', partner: partner_name });
         return {
           text: lines([
-            `Package ${pkg.id} issued to ${partner_name} for "${assignment}". Read-only, expires ${expires}.`,
+            `Package ${pkg.id} issued to ${pkg.partner.name} for "${pkg.assignment}". Read-only, expires ${expires}.`,
             `Included (${pkg.included.length}):`, ...pkg.included.map(i => `- ${i.title}`),
             `Withheld (${audit.withheld.length}); this list stays with you and is not in the package:`, ...audit.withheld.map(w => `- ${w.title}: ${w.reasons[0]}`),
             pkg.open.length ? 'Unresolved, travelling with the package:' : null, ...pkg.open.map(o => `- ${o.title}. Ask ${o.ask}.`),
@@ -374,7 +388,7 @@ export function createTools(store) {
       description: 'The record to leave behind: sources with provenance and fingerprints, choices, proposals, decisions, open tensions, open questions, and what this engagement did and did not complete. For a company engagement it belongs to the company. A public-source study stays with the practitioner. Set include_packet to also get the portable packet that the page and this connector can reopen.',
       input: { type: 'object', properties: { engagement_id: ENG, include_packet: { type: 'boolean' } }, required: ['engagement_id'] },
       run({ engagement_id, include_packet }) {
-        const state = store.load(engagement_id);
+        const state = open(engagement_id, { allowExpired: true });
         const asOf = today();
         const handoff = buildHandoff(state, { brief: buildBrief(state.brand, state.engagement, state.choices, { asOf }), asOf });
         return {
@@ -391,37 +405,107 @@ export function createTools(store) {
       },
     },
     {
+      name: 'save_engagement_package', title: 'Save the handoff package to a file',
+      description: 'Write the engagement\'s handoff package and its portable packet to one file in the workbench\'s exports folder and return the path, for records too large to pass through a conversation. The file holds that client\'s material; it is the practitioner\'s to hand over or delete.',
+      input: { type: 'object', properties: { engagement_id: ENG }, required: ['engagement_id'] },
+      run({ engagement_id }) {
+        const state = open(engagement_id, { allowExpired: true });
+        const asOf = today();
+        const handoff = buildHandoff(state, { brief: buildBrief(state.brand, state.engagement, state.choices, { asOf }), asOf });
+        const { expired, ...clean } = state; void expired;
+        const path = store.saveOutside('exports', `${engagement_id}-${asOf}.json`, { handoff, packet: toPacket(clean) });
+        store.log(engagement_id, { action: 'save-package', by: actorOf(state) });
+        return { text: `Saved to ${path}. It holds ${state.brand.name}'s material: ${handoff.sources.length} sources, ${handoff.choices.length} choices, ${handoff.proposals.length} proposals, ${handoff.decisions.length} decisions.`, data: { path } };
+      },
+    },
+    {
       name: 'import_packet', title: 'Open a brand packet', destructive: true,
-      description: 'Add an engagement from a brand packet: one brand partition and its engagement in plain JSON (format living-brand.packet/0.2), as exported by the workbench page or by export_engagement_package. Give either the path of a file the practitioner supplied or the JSON text. The packet is checked and refused if inconsistent. It never replaces another client\'s engagement, and replaces the same client\'s open engagement only when replace is true.',
-      input: { type: 'object', properties: { path: { type: 'string', description: 'Path to a .packet.json file.' }, json: { type: 'string', description: 'The packet as JSON text.' }, replace: { type: 'boolean', description: 'Set true to overwrite the same client\'s engagement that is already open here.' } } },
+      description: 'Add an engagement from a brand packet: one brand partition and its engagement in plain JSON (format living-brand.packet/0.2), as exported by the workbench page or by export_engagement_package. Give either the path of a .json file the practitioner supplied, or the JSON text. The packet is checked and refused if inconsistent. It never replaces another client\'s engagement. It replaces the same client\'s open engagement only when replace is true, and never if that would change who may decide. A packet is believed as written: the result says what it asserts.',
+      input: { type: 'object', properties: { path: { type: 'string', description: 'Path to a .packet.json file the practitioner supplied.' }, json: { type: 'string', description: 'The packet as JSON text.' }, replace: { type: 'boolean', description: 'Set true to overwrite the same client\'s engagement that is already open here.' } } },
       run({ path, json, replace }) {
         if (!path && !json) throw new Error('Give a path or the JSON text of a packet.');
-        let packet;
-        try { packet = JSON.parse(path ? readFileSync(path, 'utf8') : json); } catch (e) { throw new Error(`Could not read the packet: ${e.message}`); }
-        const { brand, engagement } = readPacket(packet);
-        const existing = store.bench().engagements.find(e => e.id === engagement.id && e.status !== 'ended');
-        if (existing) {
-          const current = store.load(engagement.id);
-          if (current.brand.id !== brand.id) throw new Error(`An engagement with the id "${engagement.id}" is already open here for ${existing.client}. A packet for ${brand.name} cannot replace another client's record. Give this packet's engagement a different id.`);
-          if (replace !== true) throw new Error(`The ${existing.client} engagement is already open here with its own record (${current.choices.length} choices, ${current.proposals.length} proposals, ${current.decisions.length} decisions). Importing would replace it. Export it first if it matters, then call again with replace set to true.`);
+        if (path && json) throw new Error('Give a path or the JSON text, not both.');
+        let raw = json;
+        if (path) {
+          // Only an ordinary .json file of a sensible size is read, and nothing of its content is echoed on failure.
+          let info;
+          try { info = lstatSync(path); } catch { throw new Error('There is no file at that path.'); }
+          if (!info.isFile() || !/\.json$/i.test(path)) throw new Error('A packet is an ordinary file whose name ends in .json.');
+          if (info.size > 25 * 1024 * 1024) throw new Error('That file is larger than 25 MB, which is more than a packet should be.');
+          try { raw = readFileSync(path, 'utf8'); } catch { throw new Error('That file could not be read.'); }
         }
-        const row = store.savePacket(packet, { note: existing ? 'Imported, replacing the previous record.' : 'Imported.' });
-        return { text: `Opened ${brand.name} as engagement [${engagement.id}]: ${brand.items.length} items, ${(brand.rules || []).length} rules. ${basisLine(brand)} It is stored in its own folder.`, data: row };
+        let packet;
+        try { packet = JSON.parse(raw); } catch { throw new Error('That is not a packet: it is not valid JSON.'); }
+        const { brand, engagement } = readPacket(packet);
+        const rows = store.bench().engagements;
+        const taken = rows.find(e => e.id === engagement.id);
+        let replacing = false;
+        const notes = [];
+        if (taken && (taken.brandId ? taken.brandId !== brand.id : taken.client !== brand.name)) {
+          throw new Error(`The id "${engagement.id}" belongs to the ${taken.client} engagement here${taken.status === 'ended' ? ', which has ended' : ''}. A packet for ${brand.name} cannot take another client's place. Give this packet's engagement a different id.`);
+        }
+        if (taken && taken.status === 'open') {
+          let current = null;
+          try { current = open(engagement.id, { allowExpired: true }); } catch { /* the stored record cannot be read */ }
+          if (replace !== true) {
+            throw new Error(current
+              ? `The ${taken.client} engagement is already open here with its own record (${current.choices.length} choices, ${current.proposals.length} proposals, ${current.decisions.length} decisions). Importing would replace it. Export it first if it matters, then call again with replace set to true.`
+              : `The ${taken.client} engagement is already here, though its record cannot be read. Call again with replace set to true to put this packet in its place.`);
+          }
+          if (current) {
+            // Who may decide is never changed by swapping the file. That goes through name_authority, on the record.
+            const same = (a, b) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+            const was = toPacket(current);
+            if (!same(was.brand.authority, brand.authority) || !same(was.engagement.grant, engagement.grant) || !same(was.engagement.actor, engagement.actor) || was.brand.basis !== brand.basis) {
+              throw new Error(`This packet changes who may decide at ${brand.name}, or what this engagement may do. That is never changed by replacing a record. Use name_authority for the first; the second is the company's to grant.`);
+            }
+            const before = new Map(was.brand.items.map(i => [i.id, i]));
+            const moved = brand.items.filter(i => before.has(i.id) && (before.get(i.id).standing !== i.standing || before.get(i.id).approval?.status !== i.approval?.status)).length;
+            if (moved) notes.push(`It changes the standing or approval of ${moved} item${moved === 1 ? '' : 's'} compared with the record it replaces.`);
+          }
+          replacing = true;
+        }
+        const says = packetAssertions(packet);
+        const text = lines([
+          `Opened ${brand.name} as engagement [${engagement.id}]: ${brand.items.length} items, ${(brand.rules || []).length} rules. ${basisLine(brand)} It is stored in its own folder.`,
+          `On its own say-so the packet states ${says.canon} item${says.canon === 1 ? '' : 's'} as canon and ${says.approved} as approved, and carries ${says.decisions} recorded decision${says.decisions === 1 ? '' : 's'}. This connector cannot check who wrote it.`,
+          says.deciders.length ? `It names who decides: ${says.deciders.join('; ')}.` : 'It names no one as deciding anything.',
+          ...notes,
+        ]);
+        const row = store.savePacket(packet, { note: replacing ? 'Imported, replacing the previous record.' : 'Imported.' });
+        return { text, data: { ...row, asserts: says } };
       },
     },
     {
       name: 'end_engagement', title: 'End an engagement and remove its material', destructive: true,
-      description: 'End a company engagement: returns the final handoff package and portable packet to give to the company, then deletes that client\'s material from this workbench. This cannot be undone. A public-source study is the practitioner\'s own and is not ended this way.',
+      description: 'End a company engagement. The whole final record (handoff package, portable packet, context packages issued, and the log) is first written to one file in the workbench\'s handed-over folder, and its path is returned; then that client\'s folder is deleted from the workbench. The deletion cannot be undone. The file is the practitioner\'s to give to the company and then delete. A public-source study is the practitioner\'s own and is not ended this way.',
       input: { type: 'object', properties: { engagement_id: ENG, confirm: { type: 'boolean', description: 'Must be true, after the practitioner has agreed.' } }, required: ['engagement_id', 'confirm'] },
       run({ engagement_id, confirm }) {
-        const state = store.load(engagement_id);
-        if (isPublicStudy(state.brand)) throw new Error(`The ${state.brand.name} study is your own reading of public material. There is nothing of ${state.brand.name}'s to hand back or remove.`);
-        if (confirm !== true) throw new Error('Not ended. Ask the practitioner to confirm, then call again with confirm set to true.');
         const asOf = today();
+        const row = store.row(engagement_id);
+        if (row.status === 'ended') throw new Error(`The ${row.client} engagement already ended${row.endedOn ? ` on ${row.endedOn}` : ''}.`);
+        let state = null;
+        try { state = open(engagement_id, { allowExpired: true }); } catch (error) { if (row.status !== 'unreadable' && !/cannot be read|no record on disk|Packet refused/.test(error.message)) throw error; }
+        if (state && isPublicStudy(state.brand)) throw new Error(`The ${state.brand.name} study is your own reading of public material. There is nothing of ${state.brand.name}'s to hand back or remove.`);
+        if (confirm !== true) throw new Error('Not ended. Ask the practitioner to confirm, then call again with confirm set to true.');
+        if (!state) {
+          const path = store.endUnreadable(engagement_id, asOf);
+          return { text: `The ${row.client} engagement's record could not be read. Its files were kept as they were in ${path}, and its folder has been removed from the workbench.`, data: { path } };
+        }
         const handoff = buildHandoff(state, { brief: buildBrief(state.brand, state.engagement, state.choices, { asOf }), asOf });
-        const packet = toPacket(state);
-        store.end(engagement_id, asOf);
-        return { text: `The ${state.brand.name} engagement ended on ${asOf}. Its material has been removed from this workbench. The final package and packet are in the structured result: give them to ${state.brand.name} now; they are not kept here.`, data: { handoff, packet } };
+        const { expired, ...clean } = state; void expired;
+        let log = '';
+        try { log = readFileSync(`${store.home}/engagements/${engagement_id}/log.jsonl`, 'utf8'); } catch { /* no log yet */ }
+        const path = store.end(engagement_id, asOf, { handoff, packet: toPacket(clean), packages: store.packages(engagement_id), log: log.split('\n').filter(Boolean) });
+        return {
+          text: lines([
+            `The ${state.brand.name} engagement ended on ${asOf}. Its folder has been removed from this workbench.`,
+            `The final record is in one file: ${path}`,
+            `It holds ${handoff.sources.length} sources, ${handoff.choices.length} choices, ${handoff.proposals.length} proposals, ${handoff.decisions.length} decisions and ${handoff.openTensions.length} open tensions. Give it to ${state.brand.name}, then delete it: it is the last copy here.`,
+            'Copies made earlier (exports, a private page, this conversation) are not removed by this.',
+          ]),
+          data: { path, sources: handoff.sources.length, choices: handoff.choices.length, proposals: handoff.proposals.length, decisions: handoff.decisions.length },
+        };
       },
     },
     {
@@ -435,14 +519,16 @@ export function createTools(store) {
     },
     {
       name: 'add_method', title: 'Add a method to the workbench',
-      description: 'Add a general working method to the practitioner\'s portable workbench. Methods are the practitioner\'s own and travel between clients, so a method must not contain any client\'s name, material, numbers or plans.',
+      description: 'Add a general working method to the practitioner\'s portable workbench. Methods travel between clients, so a method must not contain any client\'s name, material, numbers or plans. The connector refuses a method that names a client or a project; it cannot recognise client material in other words, so the wording has to be general before it is saved.',
       input: { type: 'object', properties: { method: { type: 'string' } }, required: ['method'] },
       run({ method }) {
-        const text = String(method || '').trim();
+        const text = flat(method ?? '').replace(/\s+/g, ' ').trim();
         if (!text) throw new Error('Say what the method is.');
+        if (text.length > 300) throw new Error('A method is a sentence or two. Keep it under 300 characters.');
         const b = store.bench();
-        const named = b.engagements.find(e => text.toLowerCase().includes(e.client.toLowerCase()));
-        if (named) throw new Error(`That names ${named.client}. Methods travel between clients, so they cannot carry a client's name or material. Say it as a general practice.`);
+        const names = b.engagements.flatMap(e => [[e.client, 'names'], [e.project, 'names the project']]).filter(([n]) => typeof n === 'string' && n.trim().length > 2);
+        const hit = names.find(([n]) => new RegExp(`(^|[^\\p{L}\\p{N}])${n.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}([^\\p{L}\\p{N}]|$)`, 'iu').test(text));
+        if (hit) throw new Error(`That ${hit[1]} ${hit[0]}. Methods travel between clients, so they cannot carry a client's name or material. Say it as a general practice.`);
         store.updateBench(x => { if (!x.practitioner.methods.includes(text)) x.practitioner.methods.push(text); });
         return { text: `Added to your methods: ${text}`, data: { methods: store.bench().practitioner.methods } };
       },

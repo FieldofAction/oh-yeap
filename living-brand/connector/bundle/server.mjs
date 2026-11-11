@@ -14142,12 +14142,12 @@ var require_applicability = /* @__PURE__ */ __commonJSMin(((exports) => {
   Object.defineProperty(exports, "__esModule", { value: true });
   exports.shouldUseRule = exports.shouldUseGroup = exports.schemaHasRulesForType = void 0;
   function schemaHasRulesForType({ schema, self }, type) {
-    const group = self.RULES.types[type];
-    return group && group !== true && shouldUseGroup(schema, group);
+    const group2 = self.RULES.types[type];
+    return group2 && group2 !== true && shouldUseGroup(schema, group2);
   }
   exports.schemaHasRulesForType = schemaHasRulesForType;
-  function shouldUseGroup(schema, group) {
-    return group.rules.some((rule) => shouldUseRule(schema, rule));
+  function shouldUseGroup(schema, group2) {
+    return group2.rules.some((rule) => shouldUseRule(schema, rule));
   }
   exports.shouldUseGroup = shouldUseGroup;
   function shouldUseRule(schema, rule) {
@@ -15018,28 +15018,28 @@ var require_validate = /* @__PURE__ */ __commonJSMin(((exports) => {
     }
     if (!opts.jtd) checkStrictTypes(it, types);
     gen.block(() => {
-      for (const group of RULES.rules) groupKeywords(group);
+      for (const group2 of RULES.rules) groupKeywords(group2);
       groupKeywords(RULES.post);
     });
-    function groupKeywords(group) {
-      if (!(0, applicability_1.shouldUseGroup)(schema, group)) return;
-      if (group.type) {
-        gen.if((0, dataType_2.checkDataType)(group.type, data, opts.strictNumbers));
-        iterateKeywords(it, group);
-        if (types.length === 1 && types[0] === group.type && typeErrors) {
+    function groupKeywords(group2) {
+      if (!(0, applicability_1.shouldUseGroup)(schema, group2)) return;
+      if (group2.type) {
+        gen.if((0, dataType_2.checkDataType)(group2.type, data, opts.strictNumbers));
+        iterateKeywords(it, group2);
+        if (types.length === 1 && types[0] === group2.type && typeErrors) {
           gen.else();
           (0, dataType_2.reportTypeError)(it);
         }
         gen.endIf();
-      } else iterateKeywords(it, group);
+      } else iterateKeywords(it, group2);
       if (!allErrors) gen.if((0, codegen_1._)`${names_1.default.errors} === ${errsCount || 0}`);
     }
   }
-  function iterateKeywords(it, group) {
+  function iterateKeywords(it, group2) {
     const { gen, schema, opts: { useDefaults } } = it;
-    if (useDefaults) (0, defaults_1.assignDefaults)(it, group.type);
+    if (useDefaults) (0, defaults_1.assignDefaults)(it, group2.type);
     gen.block(() => {
-      for (const rule of group.rules) if ((0, applicability_1.shouldUseRule)(schema, rule)) keywordCode(it, rule.keyword, rule.definition, group.type);
+      for (const rule of group2.rules) if ((0, applicability_1.shouldUseRule)(schema, rule)) keywordCode(it, rule.keyword, rule.definition, group2.type);
     });
   }
   function checkStrictTypes(it, types) {
@@ -16808,9 +16808,9 @@ var require_core$3 = /* @__PURE__ */ __commonJSMin(((exports) => {
       const { RULES } = this;
       delete RULES.keywords[keyword];
       delete RULES.all[keyword];
-      for (const group of RULES.rules) {
-        const i = group.rules.findIndex((rule) => rule.keyword === keyword);
-        if (i >= 0) group.rules.splice(i, 1);
+      for (const group2 of RULES.rules) {
+        const i = group2.rules.findIndex((rule) => rule.keyword === keyword);
+        if (i >= 0) group2.rules.splice(i, 1);
       }
       return this;
     }
@@ -24091,7 +24091,8 @@ var SkillCatalog = class SkillCatalog2 extends SkillsExtension {
 var SKILL_default = "---\nname: living-brand\ndescription: Run a brand engagement with the Living Brand connector - enter a company with a role and a project, orient from its material, examine actual work in context, surface tensions, record choices and proposals, build a brief, and leave a handoff package. Use when the user asks to understand a brand, audit or investigate its work, find what carries forward from past work, decide what should influence future work, brief a partner or agent, or hand an engagement over. Also use when the user mentions Living Brand, a brand workbench, brand standing, canon or precedent, or names one of their engagements.\n---\n\n# Running a brand engagement\n\nYou are working with a practitioner (a creative director, an agency lead, an in-house creative, a founder) inside ONE engagement at a time. The connector's tools hold the record. Your job is to help them see the brand clearly and act with intention, and to keep the record honest.\n\nThe tools come from a server called `living-brand`. Depending on the client their names carry a prefix, for example `mcp__living-brand__open_engagement`, or `mcp__plugin_living-brand_living-brand__open_engagement` when installed as a plugin; the last part is always the tool name used below. If they are not available, say so; do not improvise the record from memory.\n\n## The one idea\n\nEvery piece of material carries its **context** (what it was for) and its **standing** (what it may do now). Standing is four separate answers, and they are never merged:\n\n- **Relevant**: it bears on the question.\n- **Authorized**: the company sanctioned it, someone checked it, and it has not been replaced.\n- **Reusable here**: rights cover this use, on these channels, for these dates.\n- **Authoritative**: it is canon in force.\n\nRelevant is not authorized. Authorized is not reusable. Reusable is not authoritative. When you cite material, say which of the four you are relying on.\n\nStanding changes only when a person the company has named decides it. Retrieval, reuse, popularity, repetition and anything a model wrote can never raise it. You may propose. You never decide for someone else.\n\n## How an engagement moves\n\nFollow the practitioner's lead; do not march them through stages. These are the moves, in the order they usually make sense.\n\n1. **Enter.** `list_engagements`, then `open_engagement`. Establish the role, what they may and may not do, who decides what, and when access ends. If the engagement is a public-source study, say so plainly and keep saying so: it is the practitioner's reading of public material, not the company's record.\n2. **Orient.** From `open_engagement`: stated intent, canon in force, what needs attention first, what is not known. Name the unknowns; do not fill them.\n3. **Investigate.** `search_material` and `get_item`. Look at the actual work before the guidelines. For each piece, read what it was for before judging it: a campaign film, a product screen and a sales deck serve different purposes.\n4. **Interpret.** `get_interpretation`: what replaced what, what carries forward into the current brief, conflicting rules, drift, claims in tension with later facts, unknown rights, impact without established attribution, missing evidence, decisions nobody is named to make.\n5. **Choose.** `record_choice` for the practitioner's judgment (preserve, investigate, repair, evolve, invent). `propose_standing` when something should change standing. If a choice needs someone's authority, pass `needs` so it is routed. Where the practitioner is the named authority, they can `approve_item` and `decide_proposal` themselves; ask before doing either, and never do it unprompted.\n6. **Organize.** `build_brief`. `issue_context_package` for a partner or another agent.\n7. **Transfer.** `export_engagement_package`. `end_engagement` only when the practitioner confirms.\n\nOrientation, a full audit, a creative investigation and execution planning are different pieces of work. Finishing one does not finish the others; say which one you did.\n\n## Rules you do not bend\n\n- **One client at a time.** Every tool takes one `engagement_id`. Never carry a fact, a number, a name, a plan or a phrase from one engagement into another, including in your own summaries. If the practitioner asks you to compare two clients' material, decline and explain that the separation is the point; offer to compare dates and workload only.\n- **Say only what the record supports.** If a tool result does not contain it, you do not know it. \"Not recorded\" is a complete answer.\n- **Keep evidence in its four kinds.** Intended impact, observed outcome, this element's own contribution, and transfer to other situations. A campaign's reach is not proof that its illustration worked. A result without a comparison is a report, not a finding. Never produce a single impact score.\n- **A success is not a rule.** Work that did well in its context is a contextual success until someone with authority adopts it more widely. Say what was different about its context.\n- **Hypotheses stay hypotheses.** When the evidence points beyond the creative work (to price, product, service, organisation), say so, state the uncertainty and a way to test it, and name who decides. A recommendation is not authority to act.\n- **Never decide as someone else.** `approve_item`, `decide_proposal` and `retire_item` work only where this practitioner has been named. If they ask you to adopt something on behalf of a colleague, record a proposal and tell them it waits.\n- **Never name an authority yourself.** `name_authority` records what the company says. Ask the practitioner who decides; do not infer it from a job title.\n- **Public is not permission.** Material on a public website has unknown or restricted rights until someone shows otherwise.\n- **Do not present drafts as the brand's voice.** Anything you write is a proposal until someone with authority says otherwise.\n\n## Bringing in material from other connectors\n\nThe practitioner may have other connectors attached (a guidelines portal, a drive, a design tool, a website CMS). When you read brand material through one of them:\n\n1. Read only what the practitioner pointed you to, and only read.\n2. Record what you found with `add_source_note`: a title, where it was found, what it is, and the link. It enters as `discovered` or `extracted`, with unknown rights and no approval. That is correct; do not argue it higher.\n3. If the material was itself written by a model (a generated style guide, a prompt, an auto-summary), set `origin` to `generated`. Model defaults are not brand evidence.\n4. Use `verify_item` only after the practitioner, or you in this conversation, actually checked the record against its source. Say what was checked.\n5. Do not copy a whole library. Record what the project needs.\n\nSome vendors restrict taking brand data out of their product (for example, using a design tool's brand kit outside that tool). If a connector's terms are unclear, record that the material exists and where, and ask the practitioner before recording its contents.\n\n## Answering \"what carries forward?\"\n\nWhen the practitioner says something like \"we did something similar before, but the goals are different now\":\n\n1. Find the earlier work with `search_material` and read it with `get_item`, including its original goal, audience and canvas.\n2. Call `get_interpretation`. If a precedent is set on the engagement, it returns a verdict for each element (preserve, adapt, reverse, retire, investigate first) with the brief change behind it.\n3. If no precedent is set, reason it through in the open: list what changed between the two briefs, then for each element say what job it did and whether that job still exists. State where rights or stale claims block reuse.\n4. Say what the earlier results can and cannot tell you about the new brief.\n5. Offer to record the outcome with `record_choice`.\n\n## What to leave behind\n\nBefore the practitioner closes an engagement, make sure the record holds: the choices made and why, proposals still waiting and who they wait for, tensions not resolved, questions only the company can answer, and what kind of work was and was not done. Then `export_engagement_package`.\n\nThe practitioner's methods are theirs and travel with them (`get_workbench`, `add_method`). A method must be general. If it names a client or contains their material, it is not a method; it belongs in that engagement's record.\n";
 
 // living-brand/connector/store.mjs
-import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync, renameSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync, appendFileSync, renameSync, rmSync, readdirSync, chmodSync, statSync, rmdirSync, lstatSync } from "node:fs";
+import { randomBytes } from "node:crypto";
 import { homedir } from "node:os";
 import { join } from "node:path";
 
@@ -24119,11 +24120,16 @@ var isEffective = (window, asOf) => {
   return true;
 };
 var human = (c) => c.replace("-", " ");
-function assessStanding(item, purpose = {}) {
+function uncoveredChannels(rights, wanted = []) {
+  const allowed = rights?.channels || [];
+  if (allowed.includes("all")) return [];
+  return wanted.filter((c) => !allowed.includes(c));
+}
+function assessStanding(item, purpose = {}, brand = null) {
   const asOf = purpose.asOf;
   const reasons = { relevant: [], authorized: [], reusable: [], authoritative: [] };
-  const hay = `${item.title} ${item.text || ""} ${(item.tags || []).join(" ")} ${item.rationale || ""}`.toLowerCase();
-  const matched = (purpose.terms || []).filter((t) => hay.includes(t.toLowerCase()));
+  const hay = [item.title, item.text, (item.tags || []).join(" "), item.rationale, item.kind, item.element, item.workType].filter(Boolean).join(" ").toLowerCase();
+  const matched = (purpose.terms || []).filter((t) => hay.includes(String(t).toLowerCase()));
   const relevant = !purpose.terms?.length || matched.length > 0;
   reasons.relevant.push(relevant ? matched.length ? `Matches ${matched.join(", ")}.` : "No query given." : "Does not match the question.");
   let authorized = true;
@@ -24134,11 +24140,19 @@ function assessStanding(item, purpose = {}) {
   }
   if (pipelineRank(item.pipeline) < pipelineRank("verified")) {
     authorized = false;
-    reasons.authorized.push(`Only ${item.pipeline}; not checked against its source.`);
+    reasons.authorized.push(`Only ${item.pipeline || "found"}; not checked against its source.`);
+  }
+  if (item.retired) {
+    authorized = false;
+    reasons.authorized.push(`Retired on ${item.retired.date}.`);
   }
   if (item.supersededBy) {
-    authorized = false;
-    reasons.authorized.push(`Superseded by ${item.supersededBy}.`);
+    const successor = brand?.items?.find((i) => i.id === item.supersededBy);
+    const pending = successor?.period?.from && asOf && asOf < successor.period.from;
+    if (!pending) {
+      authorized = false;
+      reasons.authorized.push(`Superseded by ${successor?.title || item.supersededBy}.`);
+    }
   }
   if (asOf && item.standing === "canon" && item.period && !isEffective(item.period, asOf)) {
     authorized = false;
@@ -24148,23 +24162,26 @@ function assessStanding(item, purpose = {}) {
     reasons.authorized.push(status === "published" ? `Published by ${item.approval.by || "the company"}${item.approval.date ? ` on ${item.approval.date}` : ""}. No internal approval record seen.` : `Approved by ${item.approval.by} on ${item.approval.date}.`);
   }
   const rights = item.rights || { status: "unknown" };
+  const wanted = purpose.channels || [];
   let reusable = false;
-  if (rights.status === "unknown") reasons.reusable.push("Rights unknown." + (rights.note ? ` ${rights.note}` : ""));
-  else if (rights.status === "expired") reasons.reusable.push("Rights expired.");
-  else {
-    const allowed = rights.channels || [];
-    const wanted = purpose.channels || [];
-    const missing = wanted.filter((c) => !allowed.includes(c) && !allowed.includes("all"));
+  if (rights.status === "cleared" || rights.status === "restricted") {
+    const missing = uncoveredChannels(rights, wanted);
     const expired = rights.until && asOf && asOf > rights.until;
     const lapsesDuring = rights.until && purpose.until && purpose.until > rights.until;
+    const scope = (rights.channels || []).includes("all") ? "every channel" : (rights.channels || []).map(human).join(", ") || "no channel";
     if (expired) reasons.reusable.push(`Licence ended ${rights.until}.`);
     else if (missing.length) reasons.reusable.push(`Not licensed for ${missing.map(human).join(", ")}.`);
     else if (lapsesDuring) reasons.reusable.push(`Licence ends ${rights.until}, before the work would finish.`);
+    else if (!wanted.length && rights.status === "restricted") reasons.reusable.push(`No channel named for this use. Licensed for ${scope} only.`);
     else {
       reusable = true;
-      reasons.reusable.push(wanted.length ? `Licensed for ${wanted.map(human).join(", ")}.` : "Rights cleared.");
+      reasons.reusable.push(wanted.length ? `Licensed for ${wanted.map(human).join(", ")}.` : `Rights cleared for ${scope}.`);
     }
     if (rights.note && !reusable) reasons.reusable.push(rights.note);
+  } else if (rights.status === "expired") {
+    reasons.reusable.push("Rights expired.");
+  } else {
+    reasons.reusable.push((rights.status && rights.status !== "unknown" ? `Rights recorded as "${rights.status}", which is not a status this record recognises.` : "Rights unknown.") + (rights.note ? ` ${rights.note}` : ""));
   }
   const authoritative = item.standing === "canon" && authorized;
   const record2 = item.standingRecord;
@@ -24172,8 +24189,12 @@ function assessStanding(item, purpose = {}) {
   return { relevant, authorized, reusable, authoritative, reasons };
 }
 function effectiveRules(brand) {
-  const items = Object.fromEntries((brand.items || []).map((i) => [i.id, i]));
-  return (brand.rules || []).map((r) => r.standing ? r : { ...r, standing: items[r.source]?.standing || "operational", inherited: true });
+  const items = new Map((brand.items || []).map((i) => [i.id, i]));
+  return (brand.rules || []).map((r) => {
+    const source = items.get(r.source);
+    if (source?.retired) return { ...r, standing: "archive", inherited: true };
+    return r.standing ? r : { ...r, standing: source?.standing || "operational", inherited: true };
+  });
 }
 function rulesInForce(rules, asOf) {
   return rules.filter((r) => isEffective(r.effective, asOf) && r.standing !== "retired" && r.standing !== "archive");
@@ -24188,14 +24209,21 @@ var deepFreeze2 = (obj) => {
   });
   return Object.freeze(obj);
 };
-function openTenant(vault, engagement) {
+function openTenant(vault, engagement, { asOf } = {}) {
   const tenant = engagement.brandId;
+  const today2 = asOf || engagement.asOf;
+  if (typeof tenant !== "string" || !tenant) throw new IsolationError("The engagement names no brand.");
   if (!engagement.grant || engagement.grant.brandId !== tenant) throw new IsolationError("Engagement grant does not match its brand.");
   if (engagement.grant.revokedAt) throw new IsolationError("Access to this brand was revoked.");
-  if (engagement.grant.expires && engagement.asOf && engagement.asOf > engagement.grant.expires) throw new IsolationError("Access to this brand has expired.");
+  if (engagement.grant.expires) {
+    if (!today2) throw new IsolationError("Cannot tell whether access to this brand has expired: no date was given.");
+    if (today2 > engagement.grant.expires) throw new IsolationError(`Access to this brand expired on ${engagement.grant.expires}.`);
+  }
+  if (!vault || !Object.hasOwn(vault, tenant)) throw new IsolationError(`No brand ${tenant}.`);
   const brand = vault[tenant];
-  if (!brand) throw new IsolationError(`No brand ${tenant}.`);
+  if (!brand || brand.id !== tenant) throw new IsolationError(`The record stored for ${tenant} is for a different brand.`);
   const partition = JSON.parse(JSON.stringify(brand));
+  partition.items = partition.items || [];
   partition.items.forEach((i) => {
     i._tenant = tenant;
   });
@@ -24205,23 +24233,32 @@ function openTenant(vault, engagement) {
   });
   return deepFreeze2({ tenant, brand: partition, log: [] });
 }
+var termsOf = (query) => String(query || "").toLowerCase().split(/[^\p{L}\p{N}-]+/u).filter((t) => t.length > 1);
 function search(tenantIndex, query, purpose = {}) {
-  const terms = String(query || "").toLowerCase().split(/[^a-z0-9-]+/).filter((t) => t.length > 2);
+  const terms = termsOf(query);
   const results = [];
   for (const item of tenantIndex.brand.items) {
     if (item._tenant !== tenantIndex.tenant) throw new IsolationError("Foreign record in tenant index.");
     const hay = [item.title, item.text, (item.tags || []).join(" "), item.rationale, item.kind, item.element, item.workType].filter(Boolean).join(" ").toLowerCase();
-    const score = terms.reduce((s, t) => s + (hay.includes(t) ? 1 : 0), 0);
-    if (!terms.length || score > 0) {
-      const matched = terms.filter((t) => hay.includes(t));
-      results.push({ item, score, standing: assessStanding(item, { ...purpose, terms: matched.length ? matched : void 0 }) });
+    const matched = terms.filter((t) => hay.includes(t));
+    if (!terms.length || matched.length) {
+      const standing = assessStanding(item, { ...purpose, terms: void 0 }, tenantIndex.brand);
+      standing.relevant = true;
+      standing.reasons.relevant = [matched.length ? `Matches ${matched.join(", ")}.` : "No query given."];
+      results.push({ item, score: matched.length, standing });
     }
   }
   return results.sort((a, b) => b.score - a.score || a.item.title.localeCompare(b.item.title));
 }
 
 // src/living-brand/domain/inquiry.js
-var byId = (brand) => Object.fromEntries(brand.items.map((i) => [i.id, i]));
+var byId = (brand) => Object.assign(/* @__PURE__ */ Object.create(null), Object.fromEntries((brand.items || []).map((i) => [i.id, i])));
+var group = (list, key) => {
+  const out = /* @__PURE__ */ Object.create(null);
+  for (const x of list) (out[key(x)] ||= []).push(x);
+  return out;
+};
+var decidersOf = (brand, power) => isPublicStudy(brand) ? [] : Array.isArray(brand.authority?.[power]) ? brand.authority[power] : [];
 var names = (brand, ids) => (ids || []).map((id) => brand.people?.[id]?.name || id);
 var appliesTo = (rule, workTypes) => !rule.scope || rule.scope.includes("all") || rule.scope.some((s) => workTypes.includes(s));
 function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
@@ -24230,9 +24267,8 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
   const allRules = effectiveRules(brand);
   const live = rulesInForce(allRules, asOf);
   const study = isPublicStudy(brand);
-  const authority = brand.authority || {};
-  const topics = {};
-  for (const r of live) if (appliesTo(r, workTypes)) (topics[r.topic] ||= []).push(r);
+  const authority = new Proxy({}, { get: (_, power) => decidersOf(brand, power) });
+  const topics = group(live.filter((r) => appliesTo(r, workTypes)), (r) => r.topic);
   for (const [topic, rs] of Object.entries(topics)) {
     const values = new Set(rs.map((r) => r.value));
     if (values.size > 1) {
@@ -24253,7 +24289,7 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
     if (item.standing === "archive") continue;
     const departs = [];
     for (const [topic, value] of Object.entries(item.uses || {})) {
-      const onTopic = live.filter((r) => r.topic === topic);
+      const onTopic = live.filter((r) => r.topic === topic && (!r.scope || r.scope.includes("all") || r.scope.includes(item.workType)));
       if (!onTopic.length || onTopic.some((r) => r.value === value)) continue;
       const canon = onTopic.find((r) => r.standing === "canon");
       if (!canon) {
@@ -24261,15 +24297,15 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         continue;
       }
       if (canon.value !== value) {
-        const retired = allRules.find((r) => r.topic === topic && r.value === value && !isEffective(r.effective, asOf));
+        const retired = allRules.find((r) => r.topic === topic && r.value === value && r.effective?.to && asOf && r.effective.to <= asOf);
         out.push({
           id: `t-drift-${item.id}-${topic}`,
           kind: "Drift from canon",
           severity: "repair",
-          title: `${item.title} still follows a ${retired ? "retired" : "non-canon"} rule`,
-          detail: `${retired ? `It matches "${retired.statement}", retired ${retired.effective.to}. ` : ""}Canon: "${canon.statement}"${item.provenance?.origin === "generated" ? " This file was written by a model; its defaults are not brand evidence." : ""}`,
+          title: retired ? `${item.title} still follows a retired rule` : `${item.title} departs from canon`,
+          detail: `${retired ? `It matches "${retired.statement}", retired ${retired.effective.to}. ` : `It has ${String(value).replace(/[+]/g, ", ")}. `}Canon: "${canon.statement}"${item.provenance?.origin === "generated" ? " This file was written by a model; its defaults are not brand evidence." : ""}`,
           sources: [item.id, canon.source],
-          owners: authority[`standing.${canon.domain || "visual"}`] || []
+          owners: authority[`standing.${canon.domain || "visual"}`]
         });
       }
     }
@@ -24284,14 +24320,15 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         detail: `None of these rules is canon${byModel ? ", and some were written by a model" : ""}, so neither side is wrong yet. Someone has to decide which stands.`,
         points: departs.map((d) => ({ rule: d.rule.statement, has: d.has, ruleId: d.rule.id })),
         sources: [item.id, ...sourcesOfRules],
-        owners: [...new Set(departs.flatMap((d) => authority[`standing.${d.rule.domain || "visual"}`] || []))]
+        owners: [...new Set(departs.flatMap((d) => authority[`standing.${d.rule.domain || "visual"}`]))]
       });
     }
   }
   for (const c of brand.claims || []) {
     const fact = (brand.facts || []).find((f) => f.id === c.contradictedBy);
     const usedIn = (c.usedIn || []).map((id) => items[id]?.title || id).join(", ");
-    if (fact && fact.date <= asOf) {
+    const disputed = [...c.disputedBy || [], ...fact && !fact.date ? [fact.id] : []];
+    if (fact && fact.date && fact.date <= asOf) {
       out.push({
         id: `t-stale-${c.id}`,
         kind: study ? "Claim in tension with a later fact" : "Stale claim",
@@ -24299,10 +24336,10 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         title: study ? `"${c.statement}" sits uneasily with a later public fact` : `"${c.statement}" is no longer true`,
         detail: `${fact.statement}${usedIn ? ` The claim ${study ? "appeared" : "still appears"} in ${usedIn}.` : ""}${c.tensionNote ? ` ${c.tensionNote}` : ""}`,
         sources: [...c.usedIn || [], fact.source].filter(Boolean),
-        owners: authority.claims || []
+        owners: authority.claims
       });
-    } else if ((c.disputedBy || []).length) {
-      const others = (brand.facts || []).filter((f) => c.disputedBy.includes(f.id));
+    } else if (disputed.length) {
+      const others = (brand.facts || []).filter((f) => disputed.includes(f.id));
       out.push({
         id: `t-disputed-${c.id}`,
         kind: "Records disagree",
@@ -24310,7 +24347,7 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         title: `"${c.statement}" does not match another record`,
         detail: `${others.map((f) => f.statement).join(" ")}${usedIn ? ` The claim appears in ${usedIn}.` : ""}${c.tensionNote ? ` ${c.tensionNote}` : ""} Nothing recorded says which is right.`,
         sources: [...c.usedIn || [], ...others.map((f) => f.source)].filter(Boolean),
-        owners: authority.claims || []
+        owners: authority.claims
       });
     } else if (!study && !c.verifiedOn) {
       out.push({
@@ -24320,7 +24357,7 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         title: `"${c.statement}" has no substantiation on file`,
         detail: `${usedIn ? `Used in ${usedIn}. ` : ""}No one has recorded checking it.${c.tensionNote ? ` ${c.tensionNote}` : ""}`,
         sources: c.usedIn || [],
-        owners: authority.claims || []
+        owners: authority.claims
       });
     }
   }
@@ -24328,19 +24365,20 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
     if (item.standing === "archive" && item.approval?.status === "rejected") continue;
     const r = item.rights || {};
     const isUsedNow = (item.relations || []).some((rel) => rel.type === "derived from") || item.reuse?.length || item.inUse;
-    if (r.status === "unknown" && (isUsedNow || pipelineRank(item.pipeline) >= pipelineRank("verified"))) {
+    const known = ["cleared", "restricted", "expired"].includes(r.status);
+    if (!known && (isUsedNow || pipelineRank(item.pipeline) >= pipelineRank("verified"))) {
       out.push({
         id: `t-rights-${item.id}`,
-        kind: "Unknown rights",
+        kind: study ? "Rights not established" : "Unknown rights",
         severity: "investigate",
-        title: `${item.title} is in use with unreviewed rights`,
-        detail: r.note || "No licence on file.",
+        title: study ? `${item.title}: the terms for using it are not visible from public sources` : isUsedNow ? `${item.title} is in use with unreviewed rights` : `${item.title}: its rights have not been reviewed`,
+        detail: r.note || (study ? "Nothing found says what others may do with it." : "No licence on file."),
         sources: [item.id],
-        owners: authority.rights || []
+        owners: authority.rights
       });
     }
     if (r.until && r.until >= asOf && channels.length && (item.functions || []).length) {
-      const missing = channels.filter((ch) => !(r.channels || []).includes(ch));
+      const missing = uncoveredChannels(r, channels);
       if (missing.length) out.push({
         id: `t-licence-${item.id}`,
         kind: "Licence does not cover the plan",
@@ -24348,7 +24386,7 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         title: `${item.title} is not licensed for ${missing.map((c) => c.replace("-", " ")).join(", ")}`,
         detail: r.note || `Ends ${r.until}.`,
         sources: [item.id],
-        owners: authority.rights || []
+        owners: authority.rights
       });
     }
   }
@@ -24377,7 +24415,7 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
       sources: [item.id]
     });
   }
-  const unnamed = Object.entries(POWERS).filter(([power]) => power in authority && !(authority[power] || []).length).map(([, label]) => label);
+  const unnamed = unnamedPowers(brand).map((power) => POWERS[power]);
   if (unnamed.length) {
     out.push({
       id: "t-authority-unnamed",
@@ -24391,6 +24429,7 @@ function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
   }
   return out;
 }
+var unnamedPowers = (brand) => Object.keys(POWERS).filter((power) => !decidersOf(brand, power).length);
 var POWERS = {
   "standing.visual": "visual standing",
   "standing.verbal": "verbal standing",
@@ -24403,21 +24442,25 @@ var POWERS = {
 };
 function changeLedger(brand, { asOf } = {}) {
   const items = byId(brand);
-  const replaced = brand.items.filter((i) => i.supersededBy && items[i.supersededBy]).map((i) => {
+  const replaced = (brand.items || []).filter((i) => i.supersededBy && items[i.supersededBy]).map((i) => {
     const next = items[i.supersededBy];
     return { kind: "material", before: i, after: next, when: next.period?.from || next.made?.date || null, rationale: next.rationale || "" };
-  });
-  const byTopic = {};
-  for (const r of brand.rules || []) (byTopic[r.topic] ||= []).push(r);
+  }).filter((c) => !asOf || !c.when || c.when <= asOf);
   const rules = [];
-  for (const [topic, rs] of Object.entries(byTopic)) {
+  for (const [topic, rs] of Object.entries(group(brand.rules || [], (r) => r.topic))) {
     const ended = rs.filter((r) => r.effective?.to && (!asOf || r.effective.to <= asOf));
     for (const old of ended) {
-      const next = rs.find((r) => r !== old && r.value !== old.value && r.effective?.from && r.effective.from >= old.effective.to);
+      const next = rs.filter((r) => r !== old && r.value !== old.value && r.effective?.from && r.effective.from >= old.effective.to).sort((a, b) => a.effective.from.localeCompare(b.effective.from))[0];
       if (next) rules.push({ kind: "rule", topic, before: old, after: next, when: next.effective.from });
     }
   }
   return [...replaced, ...rules].sort((a, b) => String(a.when || "").localeCompare(String(b.when || "")));
+}
+function timeline(brand, { asOf } = {}) {
+  const items = byId(brand);
+  const facts = (brand.facts || []).map((f) => ({ id: f.id, date: f.date || "", statement: f.statement, source: items[f.source] ? f.source : null, links: f.links || [], ahead: Boolean(asOf && f.date && f.date > asOf) }));
+  const dated = facts.filter((f) => f.date).sort((a, b) => a.date.localeCompare(b.date));
+  return [...dated, ...facts.filter((f) => !f.date)];
 }
 function organizationalHypotheses(brand, engagement = {}) {
   const ev = Object.fromEntries(brand.items.flatMap((i) => (i.evidence || []).map((e) => [e.id, { ...e, item: i.id }])));
@@ -24440,19 +24483,20 @@ function carryForward(brand, engagement, { asOf }) {
   if (!carry) return null;
   const items = byId(brand);
   const old = items[carry.precedentId]?.brief;
-  if (!old) throw new Error("Precedent has no recorded brief.");
   const newBrief = engagement.newBrief;
+  if (!old || !newBrief) return null;
   const also = new Set(carry.also || []);
   const parts = brand.items.filter((i) => also.has(i.id) || (i.relations || []).some((r) => r.type === "part of" && r.to === carry.precedentId));
+  if (!parts.length) return null;
   const changes = Object.keys(old).filter((k) => JSON.stringify(old[k]) !== JSON.stringify(newBrief[k])).map((k) => ({ field: k, before: old[k], after: newBrief[k] }));
-  const staleFacts = {};
+  const staleFacts = /* @__PURE__ */ Object.create(null);
   for (const c of brand.claims || []) {
     const fact = (brand.facts || []).find((f) => f.id === c.contradictedBy);
-    if (fact && fact.date <= asOf) for (const id of c.usedIn || []) staleFacts[id] = fact;
+    if (fact && fact.date && fact.date <= asOf) for (const id of c.usedIn || []) staleFacts[id] = fact;
   }
   const rows = parts.map((item) => {
     const fn = item.functions || (item.standing === "canon" ? ["recognition"] : []);
-    const st = assessStanding(item, { channels: newBrief.channels, asOf, until: newBrief.until });
+    const st = assessStanding(item, { channels: newBrief.channels, asOf, until: newBrief.until }, brand);
     const evidence = (item.evidence || []).filter((e) => e.type === "contribution");
     let verdict, why;
     if (fn.includes("trust-claim") && staleFacts[item.id]) {
@@ -24462,8 +24506,8 @@ function carryForward(brand, engagement, { asOf }) {
       verdict = "reverse";
       why = carry.reverseReason || `Made for ${old.goal}. This brief is for ${newBrief.goal}, so the message has to turn around.`;
     } else if (fn.includes("recognition")) {
-      verdict = st.reusable ? "preserve" : "investigate";
-      why = `Recognition carries over to people who have seen it before${evidence.length ? `: ${evidence.map((e) => e.statement).join(" ")}` : "."}${st.reusable ? "" : ` Rights block it for this plan: ${st.reasons.reusable.join(" ")}`}`;
+      verdict = st.authorized && st.reusable ? "preserve" : "investigate";
+      why = `Recognition carries over to people who have seen it before${evidence.length ? `: ${evidence.map((e) => e.statement).join(" ")}` : "."}${st.authorized ? "" : ` It is not authorized: ${st.reasons.authorized.join(" ")}`}${st.reusable ? "" : ` Rights block it for this plan: ${st.reasons.reusable.join(" ")}`}`;
     } else {
       verdict = "adapt";
       why = "Context changed; transfer needs an argument.";
@@ -24516,12 +24560,13 @@ function flatKeys(o, acc = {}) {
 }
 function orientation(brand, engagement, { asOf }) {
   const items = byId(brand);
-  const canon = brand.items.filter((i) => i.standing === "canon" && assessStanding(i, { asOf }).authoritative);
+  const canon = brand.items.filter((i) => i.standing === "canon" && assessStanding(i, { asOf }, brand).authoritative);
   const stages = brand.items.reduce((acc, i) => ({ ...acc, [i.pipeline]: (acc[i.pipeline] || 0) + 1 }), {});
   const tensions = findTensions(brand, { asOf, workTypes: engagement.workTypes || [], channels: engagement.channels || [] });
-  const strengths = (engagement.strengths || []).filter((st) => st.sources.every((id) => items[id]));
+  const strengths = (engagement.strengths || []).filter((st) => Array.isArray(st.sources) && st.sources.length && st.sources.every((id) => items[id]));
   const unknowns = [...brand.unknowns || []];
-  for (const [power, label] of Object.entries(POWERS)) if (power in (brand.authority || {}) && !brand.authority[power].length) unknowns.push(`Who decides ${label}.`);
+  const gaps = unnamedPowers(brand);
+  if (gaps.length) unknowns.push(`Who decides ${gaps.map((p) => POWERS[p]).join(", ")}.`);
   return { intent: brand.intent, canon, stages, strengths, tensions, unknowns, owners: names(brand, brand.intent?.owner ? [brand.intent.owner] : []) };
 }
 
@@ -24530,36 +24575,65 @@ var AuthorityError = class extends Error {
 };
 var clone2 = (s) => JSON.parse(JSON.stringify(s));
 var nextId = (s, prefix, asOf) => {
-  s.seq = (s.seq || 0) + 1;
-  return `${prefix}-${asOf}-${s.seq.toString(36)}`;
+  const used = new Set([...s.choices, ...s.proposals, ...s.decisions, ...s.brand.items].map((x) => x.id));
+  let id;
+  do {
+    s.seq = (s.seq || 0) + 1;
+    id = `${prefix}-${asOf}-${s.seq.toString(36)}`;
+  } while (used.has(id));
+  return id;
 };
 function canDecide(brand, personId, power) {
-  return ((brand.authority || {})[power] || []).includes(personId);
+  if (isPublicStudy(brand)) return false;
+  const list = (brand.authority || {})[power];
+  return Array.isArray(list) && list.includes(personId);
 }
 var powerFor = (item) => `standing.${item.domain || "visual"}`;
 function deciders(brand, power) {
-  return ((brand.authority || {})[power] || []).map((id) => ({ id, name: brand.people?.[id]?.name || id }));
+  if (isPublicStudy(brand)) return [];
+  const list = (brand.authority || {})[power];
+  return (Array.isArray(list) ? list : []).map((id) => ({ id, name: brand.people?.[id]?.name || id }));
 }
-var refusal = (brand, by, item) => {
-  const power = powerFor(item);
-  const who2 = deciders(brand, power).map((p) => p.name);
-  const area = `${(item.domain || "visual").replace(/^./, (c) => c.toUpperCase())} standing at ${brand.name}`;
-  const actor = brand.people?.[by]?.name || (by === "practitioner" ? "The practitioner" : "This viewer");
-  if (!who2.length) {
-    return `${actor} cannot change the standing of ${item.title}. No one has been named to decide ${area.toLowerCase()}${isPublicStudy(brand) ? `, and a public-source study cannot name them. Only ${brand.name} can.` : "."}`;
+var actorName = (brand, by) => brand.people?.[by]?.name || (by === "practitioner" ? "The practitioner" : "This viewer");
+var refusal = (brand, by, item, verb = "change the standing of") => {
+  const area = `${item.domain || "visual"} standing at ${brand.name}`;
+  if (isPublicStudy(brand)) {
+    return `${actorName(brand, by)} cannot ${verb} ${item.title}. No one can decide ${area} from outside, and a public-source study cannot name them. Only ${brand.name} can.`;
   }
-  return `${actor} cannot change the standing of ${item.title}. ${area} is decided by ${who2.join(" or ")}.`;
+  const who2 = deciders(brand, powerFor(item)).map((p) => p.name);
+  if (!who2.length) return `${actorName(brand, by)} cannot ${verb} ${item.title}. No one has been named to decide ${area}.`;
+  return `${actorName(brand, by)} cannot ${verb} ${item.title}. ${area.replace(/^./, (c) => c.toUpperCase())} is decided by ${who2.join(" or ")}.`;
+};
+var requireWrite = (state, doing) => {
+  if (!state.engagement.grant?.powers?.includes("propose")) throw new AuthorityError(`This engagement may read, not ${doing}.`);
+};
+var findItem = (s, itemId) => {
+  const item = s.brand.items.find((i) => i.id === itemId);
+  if (!item) throw new Error(`No item ${itemId}.`);
+  return item;
+};
+var closeStale = (s, item, decisionId, asOf) => {
+  for (const p of s.proposals) {
+    if (p.itemId === item.id && p.status === "open") {
+      p.status = "superseded";
+      p.closedBy = decisionId;
+      p.closedOn = asOf;
+    }
+  }
 };
 function propose(state, { itemId, to, rationale, evidenceIds = [], by, scope, asOf }) {
   const s = clone2(state);
-  const item = s.brand.items.find((i) => i.id === itemId);
-  if (!item) throw new Error(`No item ${itemId}.`);
+  const item = findItem(s, itemId);
   if (!STANDING_CLASSES[to]) throw new Error(`Unknown standing ${to}.`);
-  if (!s.engagement.grant?.powers?.includes("propose")) throw new AuthorityError("This engagement may read, not propose.");
-  if (s.proposals.some((p) => p.itemId === itemId && p.to === to && p.status === "open")) throw new Error(`An open proposal already asks for ${item.title} to become ${STANDING_CLASSES[to].name.toLowerCase()}.`);
+  requireWrite(s, "propose");
   if (item.standing === to) throw new Error(`${item.title} already has that standing.`);
+  for (const p of s.proposals) if (p.itemId === itemId && p.status === "open" && p.from !== item.standing) {
+    p.status = "superseded";
+    p.closedOn = asOf;
+  }
+  if (s.proposals.some((p) => p.itemId === itemId && p.to === to && p.status === "open")) throw new Error(`An open proposal already asks for ${item.title} to become ${STANDING_CLASSES[to].name.toLowerCase()}.`);
   const allEvidence = s.brand.items.flatMap((i) => (i.evidence || []).map((e) => ({ ...e, on: i.id, origin: i.provenance?.origin })));
-  const cited = allEvidence.filter((e) => evidenceIds.includes(e.id));
+  const cited = allEvidence.filter((e) => (evidenceIds || []).includes(e.id));
   const warnings = [];
   const independent = cited.filter((e) => e.origin !== "generated" && e.basis !== "reuse");
   if (to === "canon") {
@@ -24568,16 +24642,17 @@ function propose(state, { itemId, to, rationale, evidenceIds = [], by, scope, as
     if (item.rights?.status !== "cleared") warnings.push(`Rights are ${item.rights?.status || "unknown"}; canon that cannot be used is a trap.`);
     if (item.reuse?.length && !independent.length) warnings.push(`Reused ${item.reuse.length} times. Frequency is a reason to review, not a reason to adopt.`);
     if (pipelineRank(item.pipeline) < pipelineRank("verified")) warnings.push(`Only ${item.pipeline}. Check it against its source before it governs anything.`);
+    if (item.provenance?.origin === "generated") warnings.push("This was written by a model. Its wording is a description, not a decision.");
   }
-  const reviewer = (s.brand.authority || {})[powerFor(item)] || [];
-  if (!reviewer.length) warnings.push("No one is named to decide this. The proposal waits until someone is.");
+  const reviewer = deciders(s.brand, powerFor(item)).map((p) => p.id);
+  if (!reviewer.length) warnings.push(isPublicStudy(s.brand) ? `No one is named to decide this, and only ${s.brand.name} can name them. In a study this is a note to yourself.` : "No one is named to decide this. The proposal waits until someone is.");
   s.proposals.push({
     id: nextId(s, "p", asOf),
     itemId,
     from: item.standing,
     to,
     rationale,
-    evidenceIds,
+    evidenceIds: cited.map((e) => e.id),
     by,
     scope,
     date: asOf,
@@ -24591,45 +24666,50 @@ function decide(state, proposalId, { by, outcome, note, effectiveFrom, asOf }) {
   const s = clone2(state);
   const p = s.proposals.find((x) => x.id === proposalId);
   if (!p) throw new Error("No such proposal.");
-  if (p.status !== "open") throw new Error("Proposal already decided.");
-  const item = s.brand.items.find((i) => i.id === p.itemId);
-  if (!canDecide(s.brand, by, powerFor(item))) throw new AuthorityError(refusal(s.brand, by, item));
-  if (item.standing !== p.from) throw new Error(`${item.title} changed standing after this proposal was made. Review it again.`);
+  if (p.status !== "open") throw new Error(p.status === "superseded" ? "That proposal was closed when the item's standing changed." : "Proposal already decided.");
   if (!["adopt", "reject", "revise"].includes(outcome)) throw new Error("Outcome must be adopt, reject or revise.");
+  const item = findItem(s, p.itemId);
+  if (!canDecide(s.brand, by, powerFor(item))) throw new AuthorityError(refusal(s.brand, by, item));
+  if (outcome === "adopt" && item.standing !== p.from) throw new Error(`${item.title} changed standing after this proposal was made. Review it again.`);
   const decision = { id: nextId(s, "d", asOf), proposalId, itemId: item.id, outcome, by, note, date: asOf, from: item.standing, to: outcome === "adopt" ? p.to : item.standing, evidenceIds: p.evidenceIds, scope: p.scope };
+  p.status = outcome === "adopt" ? "adopted" : outcome === "reject" ? "rejected" : "revise";
   if (outcome === "adopt") {
     item.standingHistory = [...item.standingHistory || [], { standing: item.standing, record: item.standingRecord || null, until: effectiveFrom || asOf }];
     item.standing = p.to;
     item.standingRecord = { by, date: effectiveFrom || asOf, scope: p.scope, decisionId: decision.id, evidenceIds: p.evidenceIds, rationale: p.rationale, basis: "decision" };
+    if (p.to !== "archive") delete item.retired;
+    closeStale(s, item, decision.id, asOf);
   }
-  p.status = outcome === "adopt" ? "adopted" : outcome === "reject" ? "rejected" : "revise";
   s.decisions.push(decision);
   return s;
 }
 function retire(state, itemId, { by, reason, asOf }) {
   const s = clone2(state);
-  const item = s.brand.items.find((i) => i.id === itemId);
-  if (!item) throw new Error(`No item ${itemId}.`);
+  const item = findItem(s, itemId);
   if (!canDecide(s.brand, by, powerFor(item))) throw new AuthorityError(refusal(s.brand, by, item));
+  if (item.retired) throw new Error(`${item.title} is already retired.`);
+  const id = nextId(s, "d", asOf);
   item.standingHistory = [...item.standingHistory || [], { standing: item.standing, record: item.standingRecord || null, until: asOf }];
   item.standing = "archive";
-  item.standingRecord = { by, date: asOf, scope: `Retired: ${reason}`, basis: "decision" };
-  s.decisions.push({ id: nextId(s, "d", asOf), itemId, outcome: "retire", by, note: reason, date: asOf });
+  item.retired = { by, date: asOf, reason: String(reason || "").trim() };
+  item.standingRecord = { by, date: asOf, scope: `Retired: ${item.retired.reason}`, decisionId: id, basis: "decision" };
+  closeStale(s, item, id, asOf);
+  s.decisions.push({ id, itemId, outcome: "retire", by, note: item.retired.reason, date: asOf });
   return s;
 }
 function recordReuse(state, itemId, { where, asOf }) {
   if (!String(where || "").trim()) throw new Error("Say where it was reused.");
+  requireWrite(state, "record reuse");
   const s = clone2(state);
-  const item = s.brand.items.find((i) => i.id === itemId);
-  if (!item) throw new Error(`No item ${itemId}.`);
+  const item = findItem(s, itemId);
   item.reuse = [...item.reuse || [], { date: asOf, where: String(where).trim() }];
   return s;
 }
 function verifyItem(state, itemId, { by, how, asOf }) {
   if (!String(how || "").trim()) throw new Error("Say what you checked it against.");
+  requireWrite(state, "mark material as checked");
   const s = clone2(state);
-  const item = s.brand.items.find((i) => i.id === itemId);
-  if (!item) throw new Error(`No item ${itemId}.`);
+  const item = findItem(s, itemId);
   if (pipelineRank(item.pipeline) >= pipelineRank("verified")) throw new Error(`${item.title} is already ${item.pipeline}.`);
   if (item.pipeline === "discovered") throw new Error(`${item.title} has only been found. Record what it is before checking it.`);
   item.pipelineHistory = [...item.pipelineHistory || [], { stage: item.pipeline, until: asOf }];
@@ -24639,10 +24719,10 @@ function verifyItem(state, itemId, { by, how, asOf }) {
 }
 function approveItem(state, itemId, { by, note, asOf }) {
   const s = clone2(state);
-  const item = s.brand.items.find((i) => i.id === itemId);
-  if (!item) throw new Error(`No item ${itemId}.`);
-  if (!canDecide(s.brand, by, powerFor(item))) throw new AuthorityError(refusal(s.brand, by, item).replace("change the standing of", "approve"));
+  const item = findItem(s, itemId);
+  if (!canDecide(s.brand, by, powerFor(item))) throw new AuthorityError(refusal(s.brand, by, item, "approve"));
   if (item.pipeline === "discovered") throw new Error(`${item.title} has only been found. Record what it is before approving it.`);
+  if (item.retired) throw new Error(`${item.title} is retired.`);
   if (item.approval?.status === "approved") throw new Error(`${item.title} is already approved.`);
   item.pipelineHistory = [...item.pipelineHistory || [], { stage: item.pipeline, until: asOf }];
   item.pipeline = "approved";
@@ -24651,58 +24731,77 @@ function approveItem(state, itemId, { by, note, asOf }) {
   return s;
 }
 var INTAKE_STAGES = ["discovered", "extracted", "interpreted"];
+var INTAKE_STANDINGS = ["archive", "experiment", "operational"];
+var oneLine = (v) => String(v ?? "").replace(/[\u0000-\u001f\u007f]+/g, " ").replace(/\s+/g, " ").trim();
 function addSourceNote(state, note, { by, asOf }) {
-  const title = String(note.title || "").trim();
-  const source = String(note.foundIn || "").trim();
+  requireWrite(state, "add material");
+  const title = oneLine(note.title);
+  const source = oneLine(note.foundIn);
   if (!title) throw new Error("A source note needs a title.");
+  if (title.length > 160) throw new Error("Keep the title under 160 characters; put the rest in the description.");
   if (!source) throw new Error("Say where it was found.");
   const pipeline = note.pipeline || "discovered";
   if (!INTAKE_STAGES.includes(pipeline)) throw new Error(`New material enters as ${INTAKE_STAGES.join(", ")}; ${pipeline} has to be earned.`);
   const standing = note.standing || "archive";
   if (standing === "canon") throw new Error("New material cannot arrive as canon. Propose it once it is understood.");
-  if (!STANDING_CLASSES[standing]) throw new Error(`Unknown standing ${standing}.`);
+  if (!INTAKE_STANDINGS.includes(standing)) throw new Error(`New material enters as ${INTAKE_STANDINGS.join(", ")}. Anything more is proposed and decided.`);
   const s = clone2(state);
   const id = nextId(s, `${s.tenant}-note`, asOf);
   s.brand.items.push({
     id,
     _tenant: s.tenant,
     title,
-    kind: note.kind || "Source note",
-    workType: note.workType || "Unknown",
-    element: note.element || "Unknown",
-    canvas: note.canvas || "Unknown",
-    audience: note.audience || "Unknown",
-    intendedOutcome: note.intendedOutcome || "Unknown",
-    level: note.level || "execution",
-    period: note.from ? { from: note.from } : {},
-    exposure: note.exposure || "Unknown",
-    made: { by: note.madeBy || "Unknown", date: note.from || null },
-    rationale: note.rationale || "",
+    kind: oneLine(note.kind) || "Source note",
+    workType: oneLine(note.workType) || "Unknown",
+    element: oneLine(note.element) || "Unknown",
+    canvas: oneLine(note.canvas) || "Unknown",
+    audience: oneLine(note.audience) || "Unknown",
+    intendedOutcome: oneLine(note.intendedOutcome) || "Unknown",
+    level: ["company", "brand", "product", "campaign", "execution"].includes(note.level) ? note.level : "execution",
+    period: note.from ? { from: oneLine(note.from) } : {},
+    exposure: oneLine(note.exposure) || "Unknown",
+    made: { by: oneLine(note.madeBy) || "Unknown", date: note.from ? oneLine(note.from) : null },
+    rationale: oneLine(note.rationale),
     provenance: { source, origin: note.origin === "generated" ? "generated" : "human", addedBy: by, addedOn: asOf },
     pipeline,
     standing,
-    domain: note.domain || "visual",
-    rights: { status: "unknown", channels: [], note: note.rightsNote || "Not reviewed." },
+    domain: ["visual", "verbal", "sonic", "product"].includes(note.domain) ? note.domain : "visual",
+    rights: { status: "unknown", channels: [], note: oneLine(note.rightsNote) || "Not reviewed." },
     approval: { status: "none" },
     evidence: [],
     relations: [],
-    tags: note.tags || [],
-    sources: note.url ? [{ url: note.url, publisher: note.publisher || "", date: note.sourceDate || "", basis: "recorded-by-practitioner" }] : [],
+    tags: (Array.isArray(note.tags) ? note.tags : []).map(oneLine).filter(Boolean),
+    sources: /^https?:\/\//.test(note.url || "") ? [{ url: oneLine(note.url), publisher: oneLine(note.publisher), date: oneLine(note.sourceDate), basis: "recorded-by-practitioner" }] : [],
     visual: { motif: "document", tone: "paper" },
-    text: String(note.text || "").trim()
+    text: oneLine(note.text)
   });
   return s;
 }
 function nameAuthority(state, { power, person: person2, by, asOf }) {
   if (!POWERS[power]) throw new Error(`Unknown area ${power}.`);
+  if (isPublicStudy(state.brand)) throw new AuthorityError(`Only ${state.brand.name} can name who decides ${POWERS[power]}. A public-source study cannot.`);
   if (!state.engagement.grant?.powers?.includes("steward")) throw new AuthorityError(`Only ${state.brand.name} can name who decides ${POWERS[power]}. This engagement cannot.`);
-  if (!person2?.id || !person2?.name) throw new Error("Name the person.");
+  const name = oneLine(person2?.name);
+  if (!name) throw new Error("Name the person.");
   const s = clone2(state);
-  s.brand.people = { ...s.brand.people || {}, [person2.id]: { ...s.brand.people?.[person2.id] || {}, name: person2.name, title: person2.title || s.brand.people?.[person2.id]?.title || "" } };
+  const people = { ...s.brand.people || {} };
+  const same = (k) => oneLine(people[k].name).toLowerCase() === name.toLowerCase();
+  if (person2.id && Object.hasOwn(people, person2.id) && !same(person2.id)) throw new Error(`That id already belongs to ${people[person2.id].name}. Name a different person.`);
+  let id = person2.id && Object.hasOwn(people, person2.id) ? person2.id : Object.keys(people).find(same);
+  if (!id) {
+    let n = Object.keys(people).length;
+    do {
+      n += 1;
+      id = `person-${n}`;
+    } while (Object.hasOwn(people, id));
+  }
+  people[id] = { ...people[id] || {}, name: people[id]?.name || name, title: oneLine(person2.title) || people[id]?.title || "" };
+  s.brand.people = people;
   s.brand.authority = { ...s.brand.authority || {} };
-  s.brand.authority[power] = [.../* @__PURE__ */ new Set([...s.brand.authority[power] || [], person2.id])];
-  s.decisions.push({ id: nextId(s, "d", asOf), outcome: "name-authority", power, person: person2.id, by, date: asOf, note: `${person2.name} named to decide ${POWERS[power]}.` });
-  for (const c of s.choices) if (c.needs === power && !c.owner) c.owner = person2.id;
+  const current = Array.isArray(s.brand.authority[power]) ? s.brand.authority[power] : [];
+  s.brand.authority[power] = [.../* @__PURE__ */ new Set([...current, id])];
+  s.decisions.push({ id: nextId(s, "d", asOf), outcome: "name-authority", power, person: id, by, date: asOf, note: `${people[id].name} named to decide ${POWERS[power]}.` });
+  for (const c of s.choices) if (c.needs === power && !c.owner) c.owner = id;
   for (const p of s.proposals) {
     const item = s.brand.items.find((i) => i.id === p.itemId);
     if (p.status === "open" && item && powerFor(item) === power) {
@@ -24721,22 +24820,29 @@ var CHOICES = {
 };
 function recordChoice(state, { subject, verdict, rationale, sources = [], by, needs, asOf }) {
   if (!CHOICES[verdict]) throw new Error(`Unknown choice ${verdict}.`);
-  subject = String(subject || "").trim();
+  if (needs && !POWERS[needs]) throw new Error(`Unknown area ${needs}.`);
+  subject = oneLine(subject);
   if (!subject) throw new Error("A choice needs a subject.");
+  requireWrite(state, "record choices");
   const s = clone2(state);
-  const owner = needs ? (s.brand.authority || {})[needs]?.[0] || null : null;
-  s.choices.push({ id: nextId(s, "c", asOf), subject, verdict, rationale, sources, by, date: asOf, needs: needs || null, owner, status: needs ? "awaiting decision" : "recorded" });
+  const owner = needs ? deciders(s.brand, needs)[0]?.id || null : null;
+  s.choices.push({ id: nextId(s, "c", asOf), subject, verdict, rationale: String(rationale || "").trim(), sources: Array.isArray(sources) ? sources : [], by, date: asOf, needs: needs || null, owner, status: needs ? "awaiting decision" : "recorded" });
   return s;
 }
 
 // src/living-brand/domain/transfer.js
-function buildContextPackage(state, { partner, assignment, channels, workTypes, powers = ["read"], expires, asOf }) {
-  if (powers.includes("decide") || powers.includes("publish")) throw new Error("Context packages cannot carry decision or publishing powers.");
+function buildContextPackage(state, { partner, assignment, channels = [], workTypes = [], powers = ["read"], expires, asOf, seq }) {
+  if (!Array.isArray(powers) || powers.some((p) => p !== "read")) throw new Error("A context package carries the power to read, and nothing else.");
   if (isPublicStudy(state.brand)) throw new Error(`A public-source study holds nothing of ${state.brand.name}'s to share. A context package needs the company's grant.`);
+  if (!state.engagement.grant?.powers?.includes("share")) throw new Error(`This engagement may not share ${state.brand.name}'s material with anyone else.`);
+  if (!partner?.id || !partner?.name) throw new Error("Name the partner.");
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(expires || ""))) throw new Error("A context package needs an end date, as YYYY-MM-DD.");
+  if (asOf && expires < asOf) throw new Error(`That end date, ${expires}, has already passed.`);
+  if (state.engagement.grant.expires && expires > state.engagement.grant.expires) throw new Error(`A package cannot outlast the engagement, which ends ${state.engagement.grant.expires}.`);
   const included = [];
   const withheld = [];
   for (const item of state.brand.items) {
-    const st = assessStanding(item, { channels, asOf });
+    const st = assessStanding(item, { channels, asOf, until: expires }, state.brand);
     const reasons = [];
     if (item.provenance?.confidential) reasons.push("Confidential");
     if (item.released && item.released !== "public") reasons.push(item.released === "unreleased" ? "Unreleased" : "Internal");
@@ -24749,11 +24855,11 @@ function buildContextPackage(state, { partner, assignment, channels, workTypes, 
   const open = findTensions(state.brand, { asOf, workTypes, channels }).filter((t) => t.kind === "Conflicting guidance" || t.kind === "Stale claim").map((t) => ({ title: t.title, ask: (t.owners || []).map((o) => state.brand.people?.[o]?.name).filter(Boolean).join(" or ") || "whoever the company names" }));
   const reviewer = state.brand.people?.[state.brand.authority?.publish?.[0]]?.name || null;
   const pkg = {
-    id: `pkg-${partner.id}-${asOf}`,
+    id: `pkg-${partner.id}-${asOf}${seq ? `-${seq}` : ""}`,
     brand: state.brand.name,
     partner,
     assignment,
-    powers,
+    powers: ["read"],
     issued: asOf,
     expires,
     revokedAt: null,
@@ -24827,53 +24933,152 @@ function toPacket(state) {
     record: { choices: state.choices, proposals: state.proposals, decisions: state.decisions, seq: state.seq || 0 }
   };
 }
+var isText = (v) => typeof v === "string" && v.trim().length > 0;
+var hasControl = (v) => /[\u0000-\u001f\u007f]/.test(v);
+var isList = (v) => Array.isArray(v);
+var GRANT_POWERS = ["read", "propose", "share", "steward"];
+var APPROVALS = ["approved", "published", "pending", "rejected", "none"];
 function readPacket(packet) {
   const problems = [];
-  if (!packet || typeof packet !== "object") throw new Error("Not a packet.");
-  if (packet.format !== PACKET_FORMAT) problems.push(`Format is ${packet.format || "missing"}; expected ${PACKET_FORMAT}.`);
+  const bad = (message) => {
+    if (problems.length < 12) problems.push(message);
+  };
+  if (!packet || typeof packet !== "object" || isList(packet)) throw new Error("Not a packet.");
+  if (packet.format !== PACKET_FORMAT) bad(`Format is ${isText(packet.format) ? String(packet.format).slice(0, 40) : "missing"}; expected ${PACKET_FORMAT}.`);
   const { brand, engagement } = packet;
-  if (!brand?.id || !brand?.name) problems.push("The brand needs an id and a name.");
-  if (!Array.isArray(brand?.items)) problems.push("The brand needs a list of items.");
-  if (!engagement?.id) problems.push("The engagement needs an id.");
-  if (engagement?.brandId !== brand?.id) problems.push("The engagement is for a different brand than the packet holds.");
-  if (engagement?.grant?.brandId !== brand?.id) problems.push("The engagement's grant is for a different brand.");
+  if (!brand || typeof brand !== "object") throw new Error("Packet refused: it holds no brand.");
+  if (!engagement || typeof engagement !== "object") throw new Error("Packet refused: it holds no engagement.");
+  if (!isText(brand.id) || !isText(brand.name) || hasControl(brand.id + brand.name)) bad("The brand needs an id and a name, as plain text.");
+  if (!Object.hasOwn(BASES, brand.basis)) bad(`The brand's basis must be one of ${Object.keys(BASES).join(", ")}.`);
+  if (!isList(brand.items)) bad("The brand needs a list of items.");
+  for (const key of ["rules", "claims", "facts", "unknowns"]) if (brand[key] !== void 0 && !isList(brand[key])) bad(`The brand's ${key} must be a list.`);
+  for (const key of ["people", "authority"]) if (brand[key] !== void 0 && (typeof brand[key] !== "object" || brand[key] === null || isList(brand[key]))) bad(`The brand's ${key} must be a record of entries.`);
+  const people = brand.people && typeof brand.people === "object" ? brand.people : {};
+  for (const [id, p] of Object.entries(people)) if (!p || !isText(p.name) || hasControl(p.name)) bad(`Person ${id} needs a name.`);
+  const authority = brand.authority && typeof brand.authority === "object" ? brand.authority : {};
+  for (const [power, list] of Object.entries(authority)) {
+    if (!Object.hasOwn(POWERS, power)) bad(`"${String(power).slice(0, 40)}" is not an area of decision.`);
+    else if (!isList(list)) bad(`Who decides ${POWERS[power]} must be a list.`);
+    else for (const id of list) if (!Object.hasOwn(people, id)) bad(`${POWERS[power]} names ${String(id).slice(0, 40)}, who is not among the brand's people.`);
+  }
+  const study = brand.basis === "public-source";
+  if (study && Object.values(authority).some((list) => isList(list) && list.length)) bad("A public-source study cannot name anyone as deciding for the company.");
+  if (!isText(engagement.id)) bad("The engagement needs an id.");
+  for (const key of ["project", "role"]) if (!isText(engagement[key]) || hasControl(engagement[key])) bad(`The engagement needs a ${key}.`);
+  if (engagement.brandId !== brand.id) bad("The engagement is for a different brand than the packet holds.");
+  const grant = engagement.grant;
+  if (!grant || grant.brandId !== brand.id) bad("The engagement's grant is for a different brand.");
+  if (!isList(grant?.powers) || grant.powers.some((p) => !GRANT_POWERS.includes(p))) bad(`The grant's powers must be a list drawn from ${GRANT_POWERS.join(", ")}.`);
+  else if (study && (grant.powers.includes("steward") || grant.powers.includes("share"))) bad("A public-source study cannot hold the power to name deciders or to share the company's material.");
+  if (engagement.actor !== void 0 && engagement.actor !== "practitioner" && !Object.hasOwn(people, engagement.actor)) bad("The engagement acts as someone who is not among the brand's people.");
+  for (const key of ["workTypes", "channels", "constraints", "materials", "questions", "strengths", "hypotheses", "suggestedChoices", "evaluation"]) if (engagement[key] !== void 0 && !isList(engagement[key])) bad(`The engagement's ${key} must be a list.`);
+  for (const st of isList(engagement.strengths) ? engagement.strengths : []) if (!st || !isText(st.statement) || !isList(st.sources)) bad("Each strength needs a statement and a list of sources.");
   const ids = /* @__PURE__ */ new Set();
-  for (const item of brand?.items || []) {
-    if (!item.id || !item.title) problems.push("Every item needs an id and a title.");
-    if (ids.has(item.id)) problems.push(`Duplicate item ${item.id}.`);
+  const items = isList(brand.items) ? brand.items : [];
+  for (const item of items) {
+    if (!item || typeof item !== "object") {
+      bad("Every item must be a record.");
+      continue;
+    }
+    if (!isText(item.id) || !isText(item.title) || hasControl(item.id + item.title)) {
+      bad("Every item needs an id and a title, as plain text on one line.");
+      continue;
+    }
+    if (ids.has(item.id)) bad(`Duplicate item ${item.id}.`);
     ids.add(item.id);
-    if (!item.pipeline || !item.standing) problems.push(`${item.id} needs a pipeline stage and a standing.`);
+    if (!Object.hasOwn(STANDING_CLASSES, item.standing)) bad(`${item.id}: standing must be one of ${Object.keys(STANDING_CLASSES).join(", ")}.`);
+    if (!PIPELINE.includes(item.pipeline)) bad(`${item.id}: stage must be one of ${PIPELINE.join(", ")}.`);
+    for (const key of ["tags", "evidence", "relations", "sources", "reuse"]) if (item[key] !== void 0 && !isList(item[key])) bad(`${item.id}: ${key} must be a list.`);
+    const approval = item.approval?.status;
+    if (approval !== void 0 && !APPROVALS.includes(approval)) bad(`${item.id}: approval must be one of ${APPROVALS.join(", ")}.`);
+    if (approval === "approved" && (!isText(item.approval.by) || !isText(item.approval.date))) bad(`${item.id} is marked approved without saying by whom and when.`);
+    if (approval === "approved" && study) bad(`${item.id}: nothing in a public-source study can be marked approved; at most it was published.`);
+    if (item.standing === "canon" && !study && !(isText(item.standingRecord?.by) && isText(item.standingRecord?.date))) bad(`${item.id} is marked canon without saying who decided it and when.`);
+    if (item.standing === "canon" && study && item.standingRecord?.basis !== "reading") bad(`${item.id}: canon in a public-source study can only be a reading of public material.`);
+    if (item.brief !== void 0 && (typeof item.brief !== "object" || item.brief === null)) bad(`${item.id}: its brief must be a record.`);
   }
-  for (const item of brand?.items || []) {
-    if (item.supersededBy && !ids.has(item.supersededBy)) problems.push(`${item.id} is superseded by ${item.supersededBy}, which is not in the packet.`);
-    for (const r of item.relations || []) if (!ids.has(r.to)) problems.push(`${item.id} relates to ${r.to}, which is not in the packet.`);
+  for (const item of items) {
+    if (!item || typeof item !== "object" || !isText(item.id)) continue;
+    if (item.supersededBy && !ids.has(item.supersededBy)) bad(`${item.id} is superseded by ${item.supersededBy}, which is not in the packet.`);
+    for (const r of isList(item.relations) ? item.relations : []) if (!r || !ids.has(r.to)) bad(`${item.id} relates to ${r?.to}, which is not in the packet.`);
   }
-  for (const r of brand?.rules || []) if (r.source && !ids.has(r.source)) problems.push(`Rule ${r.id} cites ${r.source}, which is not in the packet.`);
-  for (const c of brand?.claims || []) for (const id of c.usedIn || []) if (!ids.has(id)) problems.push(`Claim ${c.id} is used in ${id}, which is not in the packet.`);
+  const factIds = /* @__PURE__ */ new Set();
+  for (const f of isList(brand.facts) ? brand.facts : []) {
+    if (!f || !isText(f.id) || !isText(f.statement)) {
+      bad("Every fact needs an id and a statement.");
+      continue;
+    }
+    factIds.add(f.id);
+  }
+  for (const r of isList(brand.rules) ? brand.rules : []) {
+    if (!r || !isText(r.id) || !isText(r.topic) || !isText(r.statement) || r.value === void 0) {
+      bad("Every rule needs an id, a topic, a value and a statement.");
+      continue;
+    }
+    if (r.source && !ids.has(r.source)) bad(`Rule ${r.id} cites ${r.source}, which is not in the packet.`);
+    if (r.scope !== void 0 && !isList(r.scope)) bad(`Rule ${r.id}: scope must be a list.`);
+    if (r.standing !== void 0 && r.standing !== "retired" && !Object.hasOwn(STANDING_CLASSES, r.standing)) bad(`Rule ${r.id}: unknown standing.`);
+  }
+  for (const c of isList(brand.claims) ? brand.claims : []) {
+    if (!c || !isText(c.id) || !isText(c.statement)) {
+      bad("Every claim needs an id and a statement.");
+      continue;
+    }
+    if (c.usedIn !== void 0 && !isList(c.usedIn)) bad(`Claim ${c.id}: usedIn must be a list.`);
+    for (const id of isList(c.usedIn) ? c.usedIn : []) if (!ids.has(id)) bad(`Claim ${c.id} is used in ${id}, which is not in the packet.`);
+    if (c.contradictedBy && !factIds.has(c.contradictedBy)) bad(`Claim ${c.id} cites a fact that is not in the packet.`);
+    for (const id of isList(c.disputedBy) ? c.disputedBy : []) if (!factIds.has(id)) bad(`Claim ${c.id} cites a fact that is not in the packet.`);
+  }
+  if (engagement.carry !== void 0) {
+    const precedent = items.find((i) => i && i.id === engagement.carry?.precedentId);
+    if (!precedent?.brief || !engagement.newBrief || typeof engagement.newBrief !== "object") bad("A carry-forward needs a precedent with a recorded brief, and a new brief.");
+  }
+  const record2 = packet.record === void 0 ? { choices: [], proposals: [], decisions: [], seq: 0 } : packet.record;
+  if (!record2 || typeof record2 !== "object" || ["choices", "proposals", "decisions"].some((k) => !isList(record2[k]))) bad("The record must hold lists of choices, proposals and decisions.");
+  else {
+    for (const p of record2.proposals) {
+      if (!p || !isText(p.id) || !ids.has(p.itemId) || !Object.hasOwn(STANDING_CLASSES, p.from) || !Object.hasOwn(STANDING_CLASSES, p.to) || !isList(p.evidenceIds) || !isList(p.warnings) || !isList(p.reviewer) || !isText(p.status)) bad("A proposal in the record is incomplete or points at an item that is not in the packet.");
+    }
+    for (const c of record2.choices) if (!c || !isText(c.id) || !isText(c.subject) || !isText(c.verdict)) bad("A choice in the record is incomplete.");
+    for (const d of record2.decisions) if (!d || !isText(d.id) || !isText(d.outcome)) bad("A decision in the record is incomplete.");
+    if (study && record2.decisions.some((d) => d && ["adopt", "retire", "approve", "name-authority"].includes(d.outcome))) bad("A public-source study cannot carry decisions made for the company.");
+  }
   if (problems.length) throw new Error(`Packet refused: ${[...new Set(problems)].join(" ")}`);
   return {
     brand: { rules: [], claims: [], facts: [], people: {}, authority: {}, ...JSON.parse(JSON.stringify(brand)) },
     engagement: JSON.parse(JSON.stringify(engagement)),
-    record: packet.record || { choices: [], proposals: [], decisions: [], seq: 0 }
+    record: { choices: [], proposals: [], decisions: [], seq: 0, ...JSON.parse(JSON.stringify(record2)) }
+  };
+}
+function packetAssertions(packet) {
+  const { brand, record: record2 } = readPacket(packet);
+  const decided = new Set((record2.decisions || []).map((d) => d.id));
+  const canon = brand.items.filter((i) => i.standing === "canon");
+  return {
+    canon: canon.length,
+    canonDecidedHere: canon.filter((i) => decided.has(i.standingRecord?.decisionId)).length,
+    approved: brand.items.filter((i) => i.approval?.status === "approved").length,
+    deciders: Object.entries(brand.authority || {}).filter(([, l]) => l.length).map(([power, l]) => `${POWERS[power]}: ${l.map((id) => brand.people?.[id]?.name || id).join(", ")}`),
+    decisions: (record2.decisions || []).length
   };
 }
 
 // src/living-brand/domain/index.js
-function startEngagement(vault, engagement, record2 = {}) {
-  const tenant = openTenant(vault, engagement);
+function startEngagement(vault, engagement, record2 = {}, { asOf } = {}) {
+  const tenant = openTenant(vault, engagement, { asOf });
   return {
     tenant: tenant.tenant,
     brand: JSON.parse(JSON.stringify(tenant.brand)),
     engagement: JSON.parse(JSON.stringify(engagement)),
-    choices: record2.choices || [],
-    proposals: record2.proposals || [],
-    decisions: record2.decisions || [],
-    seq: record2.seq || 0
+    choices: record2?.choices || [],
+    proposals: record2?.proposals || [],
+    decisions: record2?.decisions || [],
+    seq: record2?.seq || 0
   };
 }
-function startFromPacket(packet) {
+function startFromPacket(packet, { asOf } = {}) {
   const { brand, engagement, record: record2 } = readPacket(packet);
-  return startEngagement({ [brand.id]: brand }, engagement, record2);
+  return startEngagement({ [brand.id]: brand }, engagement, record2, { asOf });
 }
 
 // src/living-brand/data/fernway.js
@@ -25511,7 +25716,7 @@ var engagements = {
     constraints: ["Launch 12 January 2027", "Owned channels plus paid social", "Budget roughly a third of 2025"],
     started: "2026-11-02",
     asOf: "2026-11-11",
-    grant: { brandId: "fernway", powers: ["read", "propose"], expires: "2027-03-31", revokedAt: null },
+    grant: { brandId: "fernway", powers: ["read", "propose", "share"], expires: "2027-03-31", revokedAt: null },
     workTypes: ["Brand campaign", "Customer campaign"],
     channels: ["owned-social", "owned-web", "email", "paid-media"],
     objective: "Reactivate lapsed subscribers and keep them past 90 days.",
@@ -25597,105 +25802,242 @@ var engagements = {
 
 // living-brand/connector/store.mjs
 var SAFE_ID = /^[a-z0-9][a-z0-9-]{0,62}$/;
+var PRIVATE_DIR = 448;
+var PRIVATE_FILE = 384;
 var StoreError = class extends Error {
 };
 function openStore(home = process.env.LIVING_BRAND_HOME || join(homedir(), ".living-brand")) {
   const benchPath = join(home, "workbench.json");
+  const engagementsDir = join(home, "engagements");
   const dir = (id) => {
-    if (!SAFE_ID.test(String(id))) throw new StoreError(`"${id}" is not an engagement id.`);
-    return join(home, "engagements", id);
+    if (typeof id !== "string" || !SAFE_ID.test(id)) throw new StoreError(`"${String(id).slice(0, 40)}" is not an engagement id.`);
+    const path = join(engagementsDir, id);
+    try {
+      if (lstatSync(path).isSymbolicLink()) throw new StoreError("That engagement's folder is a link to another place. The connector will not read or write through it.");
+    } catch (error2) {
+      if (error2 instanceof StoreError) throw error2;
+    }
+    return path;
+  };
+  const privateDir = (path) => {
+    mkdirSync(path, { recursive: true, mode: PRIVATE_DIR });
+    try {
+      chmodSync(path, PRIVATE_DIR);
+    } catch {
+    }
   };
   const writeJson = (path, value) => {
-    const tmp = `${path}.tmp`;
-    writeFileSync(tmp, JSON.stringify(value, null, 1));
+    const tmp = `${path}.${process.pid}.${randomBytes(4).toString("hex")}.tmp`;
+    writeFileSync(tmp, JSON.stringify(value, null, 1), { mode: PRIVATE_FILE });
     renameSync(tmp, path);
   };
-  const readJson = (path) => JSON.parse(readFileSync(path, "utf8"));
+  const readJson = (path, what) => {
+    try {
+      return JSON.parse(readFileSync(path, "utf8"));
+    } catch {
+      throw new StoreError(`${what} cannot be read; the file is damaged or missing.`);
+    }
+  };
+  const lockPath = join(home, ".lock");
+  const withLock = (fn) => {
+    const started = Date.now();
+    for (; ; ) {
+      try {
+        mkdirSync(lockPath);
+        break;
+      } catch {
+        try {
+          if (Date.now() - statSync(lockPath).mtimeMs > 1e4) rmdirSync(lockPath);
+        } catch {
+        }
+        if (Date.now() - started > 5e3) throw new StoreError("The workbench folder is busy in another process. Try again.");
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 20);
+      }
+    }
+    try {
+      return fn();
+    } finally {
+      try {
+        rmdirSync(lockPath);
+      } catch {
+      }
+    }
+  };
+  privateDir(home);
+  privateDir(engagementsDir);
+  const rowFor = (id, status) => {
+    const packet = readJson(join(dir(id), "packet.json"), "That engagement's record");
+    const { brand, engagement } = readPacket(packet);
+    return { id: engagement.id, client: brand.name, brandId: brand.id, role: engagement.role, project: engagement.project, basis: brand.basis, status };
+  };
   if (!existsSync(benchPath)) {
-    mkdirSync(join(home, "engagements"), { recursive: true });
-    writeJson(benchPath, {
-      format: "living-brand.workbench/0.2",
-      practitioner: { name: process.env.LIVING_BRAND_PRACTITIONER || "Practitioner", methods: practitioner.methods, preferences: practitioner.preferences },
-      engagements: []
+    withLock(() => {
+      if (existsSync(benchPath)) return;
+      const folders = readdirSync(engagementsDir).filter((name) => SAFE_ID.test(name));
+      const practitioner2 = { name: process.env.LIVING_BRAND_PRACTITIONER || "Practitioner", methods: [...practitioner.methods], preferences: { ...practitioner.preferences } };
+      if (folders.length) {
+        const rows = folders.map((id) => {
+          try {
+            return rowFor(id, "open");
+          } catch {
+            return { id, client: "Unreadable record", role: "", project: "", basis: "company-record", status: "unreadable" };
+          }
+        });
+        writeJson(benchPath, { format: "living-brand.workbench/0.2", practitioner: practitioner2, engagements: rows, rebuiltOn: (/* @__PURE__ */ new Date()).toISOString().slice(0, 10) });
+        return;
+      }
+      const state = startEngagement({ fernway }, engagements["eng-fernway"], {}, { asOf: engagements["eng-fernway"].asOf });
+      privateDir(dir(state.engagement.id));
+      writeJson(join(dir(state.engagement.id), "packet.json"), toPacket(state));
+      writeJson(benchPath, {
+        format: "living-brand.workbench/0.2",
+        practitioner: practitioner2,
+        engagements: [
+          { id: "eng-fernway", client: "Fernway", brandId: "fernway", role: engagements["eng-fernway"].role, project: engagements["eng-fernway"].project, basis: "fictional", status: "open" },
+          // An ended engagement is remembered by name alone; its material is gone.
+          { id: "eng-brightloop", client: "Brightloop", brandId: "brightloop", role: engagements["eng-brightloop"].role, basis: "fictional", status: "ended", endedOn: engagements["eng-brightloop"].grant.revokedAt }
+        ]
+      });
     });
-    const state = startEngagement({ fernway }, engagements["eng-fernway"]);
-    savePacket(toPacket(state), { note: "Fictional sample, installed on first run." });
-    const bench2 = readJson(benchPath);
-    bench2.engagements.push({ id: "eng-brightloop", client: "Brightloop", role: engagements["eng-brightloop"].role, basis: "fictional", status: "ended", endedOn: engagements["eng-brightloop"].grant.revokedAt });
-    writeJson(benchPath, bench2);
   }
   function bench() {
-    return readJson(benchPath);
+    const b = readJson(benchPath, "The workbench index");
+    if (!b || !Array.isArray(b.engagements) || !b.practitioner) throw new StoreError("The workbench index is damaged. Move workbench.json aside and start the connector again; it rebuilds the index from the engagement folders.");
+    return b;
+  }
+  function log(id, entry) {
+    appendFileSync(join(dir(id), "log.jsonl"), JSON.stringify({ at: (/* @__PURE__ */ new Date()).toISOString(), ...entry }) + "\n", { mode: PRIVATE_FILE });
   }
   function savePacket(packet, { note } = {}) {
     const { brand, engagement } = readPacket(packet);
     const d = dir(engagement.id);
-    mkdirSync(d, { recursive: true });
-    writeJson(join(d, "packet.json"), packet);
-    const b = bench();
-    const row = { id: engagement.id, client: brand.name, role: engagement.role, project: engagement.project, basis: brand.basis || "company-record", status: "open" };
-    b.engagements = [...b.engagements.filter((e) => e.id !== engagement.id), row];
-    writeJson(benchPath, b);
-    if (note) log(engagement.id, { action: "packet-saved", note });
-    return row;
+    return withLock(() => {
+      privateDir(d);
+      writeJson(join(d, "packet.json"), packet);
+      const b = bench();
+      const row2 = { id: engagement.id, client: brand.name, brandId: brand.id, role: engagement.role, project: engagement.project, basis: brand.basis, status: "open" };
+      b.engagements = [...b.engagements.filter((e) => e.id !== engagement.id), row2];
+      writeJson(benchPath, b);
+      if (note) log(engagement.id, { action: "packet-saved", note });
+      return row2;
+    });
   }
-  function load(id) {
-    const row = bench().engagements.find((e) => e.id === id);
-    if (!row) throw new StoreError(`No engagement "${id}". Use list_engagements to see what can be opened.`);
-    if (row.status === "ended") throw new StoreError(`The ${row.client} engagement ended${row.endedOn ? ` on ${row.endedOn}` : ""}. Its material is no longer held here.`);
+  const row = (id) => {
+    const found = bench().engagements.find((e) => e.id === id);
+    if (!found) throw new StoreError(`No engagement "${String(id).slice(0, 40)}". Use list_engagements to see what can be opened.`);
+    return found;
+  };
+  function load(id, { asOf, allowExpired = false } = {}) {
+    const found = row(id);
+    if (found.status === "ended") throw new StoreError(`The ${found.client} engagement ended${found.endedOn ? ` on ${found.endedOn}` : ""}. Its material is no longer held here.`);
     const path = join(dir(id), "packet.json");
-    if (!existsSync(path)) throw new StoreError(`The ${row.client} engagement has no packet on disk.`);
-    const state = startFromPacket(readJson(path));
-    if (state.tenant !== state.engagement.brandId) throw new StoreError("Packet does not match its engagement.");
+    if (!existsSync(path)) throw new StoreError(`The ${found.client} engagement has no record on disk.`);
+    const packet = readJson(path, `The ${found.client} engagement's record`);
+    let state;
+    try {
+      state = startFromPacket(packet, { asOf });
+    } catch (error2) {
+      if (!(allowExpired && /expired on/.test(error2.message))) throw error2;
+      state = startFromPacket(packet, { asOf: packet.engagement.grant.expires });
+      state.expired = packet.engagement.grant.expires;
+    }
+    if (state.engagement.id !== id || state.tenant !== state.engagement.brandId) throw new StoreError("The record in that folder belongs to a different engagement.");
     return state;
   }
   function save(state, entry) {
-    writeJson(join(dir(state.engagement.id), "packet.json"), toPacket(state));
-    if (entry) log(state.engagement.id, entry);
-  }
-  function log(id, entry) {
-    appendFileSync(join(dir(id), "log.jsonl"), JSON.stringify({ at: (/* @__PURE__ */ new Date()).toISOString(), ...entry }) + "\n");
+    withLock(() => {
+      const { expired, ...clean } = state;
+      void expired;
+      writeJson(join(dir(state.engagement.id), "packet.json"), toPacket(clean));
+      if (entry) log(state.engagement.id, entry);
+    });
   }
   function packages(id) {
     const path = join(dir(id), "packages.json");
-    return existsSync(path) ? readJson(path) : [];
+    if (!existsSync(path)) return [];
+    const list = readJson(path, "That engagement's context packages");
+    if (!Array.isArray(list)) throw new StoreError("That engagement's context packages cannot be read; the file is damaged.");
+    return list;
   }
   function savePackages(id, list) {
-    writeJson(join(dir(id), "packages.json"), list);
+    withLock(() => writeJson(join(dir(id), "packages.json"), list));
   }
-  function end(id, endedOn) {
-    const b = bench();
-    const row = b.engagements.find((e) => e.id === id);
-    if (!row) throw new StoreError(`No engagement "${id}".`);
-    row.status = "ended";
-    row.endedOn = endedOn;
-    writeJson(benchPath, b);
-    rmSync(dir(id), { recursive: true, force: true });
-    return row;
+  const saveOutside = (folder, name, value) => {
+    const target = join(home, folder);
+    privateDir(target);
+    const path = join(target, name);
+    writeJson(path, value);
+    return path;
+  };
+  function end(id, endedOn, finalRecord) {
+    return withLock(() => {
+      const path = saveOutside("handed-over", `${id}-${endedOn}.json`, finalRecord);
+      if (!existsSync(path)) throw new StoreError("The final record could not be written, so nothing was removed.");
+      rmSync(dir(id), { recursive: true, force: true });
+      const b = bench();
+      const found = b.engagements.find((e) => e.id === id);
+      if (found) {
+        found.status = "ended";
+        found.endedOn = endedOn;
+      }
+      writeJson(benchPath, b);
+      return path;
+    });
+  }
+  function endUnreadable(id, endedOn) {
+    return withLock(() => {
+      const d = dir(id);
+      const raw = {};
+      for (const name of existsSync(d) ? readdirSync(d) : []) {
+        try {
+          raw[name] = readFileSync(join(d, name), "utf8");
+        } catch {
+          raw[name] = null;
+        }
+      }
+      const path = saveOutside("handed-over", `${id}-${endedOn}-unreadable.json`, { note: "This engagement's record could not be read. Its files are kept here as they were.", files: raw });
+      rmSync(d, { recursive: true, force: true });
+      const b = bench();
+      const found = b.engagements.find((e) => e.id === id);
+      if (found) {
+        found.status = "ended";
+        found.endedOn = endedOn;
+      }
+      writeJson(benchPath, b);
+      return path;
+    });
   }
   function updateBench(fn) {
-    const b = bench();
-    fn(b);
-    writeJson(benchPath, b);
-    return b;
+    return withLock(() => {
+      const b = bench();
+      fn(b);
+      writeJson(benchPath, b);
+      return b;
+    });
   }
-  return { home, bench, load, save, savePacket, log, packages, savePackages, end, updateBench, PACKET_FORMAT };
+  return { home, bench, row, load, save, savePacket, log, packages, savePackages, saveOutside, end, endUnreadable, updateBench, PACKET_FORMAT };
 }
 
 // living-brand/connector/tools.mjs
-import { readFileSync as readFileSync2 } from "node:fs";
+import { readFileSync as readFileSync2, lstatSync as lstatSync2 } from "node:fs";
 var today = () => process.env.LIVING_BRAND_AS_OF || (/* @__PURE__ */ new Date()).toISOString().slice(0, 10);
 var yn = (v) => v ? "yes" : "no";
 var person = (brand, id) => brand.people?.[id]?.name || (id === "practitioner" ? "the practitioner" : id);
 var who = (brand, ids) => ids?.length ? ids.map((id) => person(brand, id)).join(" or ") : "no one named";
-var lines = (list) => list.filter((l) => l !== null && l !== void 0 && l !== false).join("\n");
+var flat = (v) => String(v).replace(/[\u0000-\u001f\u007f]+/g, " ");
+var lines = (list) => list.flat().filter((l) => l !== null && l !== void 0 && l !== false && l !== 0).flatMap((l) => {
+  const text = String(l);
+  return text.startsWith("\n") ? ["", flat(text.slice(1))] : [flat(text)];
+}).join("\n");
 var basisLine = (brand) => `${brand.name}: ${BASES[brand.basis || "company-record"].name}. ${BASES[brand.basis || "company-record"].note}`;
 var standingLine = (item, st) => `relevant ${yn(st.relevant)}; authorized ${yn(st.authorized)}; reusable here ${yn(st.reusable)}; authoritative ${yn(st.authoritative)}`;
-var itemLine = (item, st) => `- ${item.title} [${item.id}] (${[item.kind, item.period?.from?.slice(0, 4)].filter(Boolean).join(", ")}; ${STANDING_CLASSES[item.standing].name.toLowerCase()}; ${item.pipeline})${st ? `
-  ${standingLine(item, st)}` : ""}`;
+var itemLine = (item, st) => [
+  `- ${item.title} [${item.id}] (${[item.kind, item.period?.from?.slice(0, 4)].filter(Boolean).join(", ")}; ${STANDING_CLASSES[item.standing].name.toLowerCase()}; ${item.pipeline})`,
+  st ? `  ${standingLine(item, st)}` : null
+];
 var ENG = { type: "string", description: 'Engagement id from list_engagements, for example "eng-fernway".' };
 var ITEM = { type: "string", description: "Item id, shown in square brackets by search_material and get_item." };
-function createTools(store2) {
+function createTools(store) {
   const purposeOf = (state, extra = {}) => ({ channels: state.engagement.channels || [], asOf: today(), until: state.engagement.newBrief?.until, ...extra });
   const actorOf = (state) => state.engagement.actor || "practitioner";
   const onlyAsSelf = (state, actingAs) => {
@@ -25705,10 +26047,11 @@ function createTools(store2) {
     }
     return actor;
   };
+  const open = (id, options = {}) => store.load(id, { asOf: today(), ...options });
   const change = (id, entry, fn) => {
-    const state = store2.load(id);
+    const state = open(id);
     const next = fn(state, actorOf(state));
-    store2.save(next, { by: actorOf(state), ...entry });
+    store.save(next, { by: actorOf(state), ...entry });
     return next;
   };
   const tools2 = [
@@ -25719,12 +26062,12 @@ function createTools(store2) {
       description: "List the practitioner's engagements: which client each is for, the role, whether it is a company record or a public-source study, and whether it can still be opened.",
       input: { type: "object", properties: {} },
       run() {
-        const b = store2.bench();
+        const b = store.bench();
         const rows = b.engagements;
         return {
           text: lines([
             `Workbench of ${b.practitioner.name}. ${rows.length} engagement${rows.length === 1 ? "" : "s"}.`,
-            ...rows.map((e) => `- ${e.client} [${e.id}]: ${e.role}${e.project ? `, ${e.project}` : ""}. ${BASES[e.basis]?.name || e.basis}. ${e.status === "ended" ? `Ended${e.endedOn ? ` ${e.endedOn}` : ""}; its material is no longer held.` : "Open."}`),
+            ...rows.map((e) => `- ${e.client} [${e.id}]: ${e.role}${e.project ? `, ${e.project}` : ""}. ${BASES[e.basis]?.name || e.basis}. ${e.status === "ended" ? `Ended${e.endedOn ? ` ${e.endedOn}` : ""}; its material is no longer held.` : e.status === "unreadable" ? "Its record cannot be read; it can only be ended." : "Open."}`),
             "Each engagement is a separate folder. Opening one never loads another."
           ]),
           data: { practitioner: b.practitioner.name, engagements: rows }
@@ -25738,11 +26081,12 @@ function createTools(store2) {
       description: "Orient in one engagement: the company's stated intent, your role and what you may and may not do, who decides what, what is canon, what needs attention first, what is not known, and how far the material has been understood.",
       input: { type: "object", properties: { engagement_id: ENG }, required: ["engagement_id"] },
       run({ engagement_id }) {
-        const state = store2.load(engagement_id);
+        const state = open(engagement_id);
         const { brand, engagement: e } = state;
         const asOf = today();
         const o = orientation(brand, e, { asOf });
-        const areas = Object.entries(POWERS).filter(([p]) => p in (brand.authority || {}));
+        const areas = Object.entries(POWERS);
+        const gaps = unnamedPowers(brand);
         const urgent = o.tensions.filter((t) => t.severity !== "investigate" || t.kind === "Unknown rights").slice(0, 6);
         return {
           text: lines([
@@ -25757,7 +26101,7 @@ function createTools(store2) {
             o.intent?.statement && `Stated intent: ${o.intent.statement}`,
             "",
             "Who decides:",
-            ...areas.length ? areas.map(([p, label]) => `- ${label}: ${who(brand, brand.authority[p])}`) : ["- Nothing recorded."],
+            ...areas.map(([p, label]) => `- ${label}: ${gaps.includes(p) ? "no one named" : deciders(brand, p).map((d) => d.name).join(" or ")}`),
             "",
             `Canon in force (${o.canon.length}):`,
             ...o.canon.length ? o.canon.map((i) => `- ${i.title} [${i.id}]`) : ["- Nothing has been adopted as canon yet."],
@@ -25782,7 +26126,7 @@ function createTools(store2) {
       description: "Search the material of ONE engagement. Every result answers four separate questions for this project: relevant, authorized, reusable here, authoritative. A result being relevant never means it may be used or that it governs anything. Other clients' material is never searched.",
       input: { type: "object", properties: { engagement_id: ENG, query: { type: "string", description: "Words to look for. Empty returns everything." }, channels: { type: "array", items: { type: "string" }, description: "Where the work would run, to test rights: for example paid-media, owned-web, owned-social, email. Defaults to the engagement's channels." } }, required: ["engagement_id"] },
       run({ engagement_id, query = "", channels }) {
-        const state = store2.load(engagement_id);
+        const state = open(engagement_id);
         const results = search(state, query, purposeOf(state, channels ? { channels } : {}));
         return {
           text: lines([
@@ -25801,10 +26145,10 @@ function createTools(store2) {
       description: "Everything recorded about one piece of material: what it was for (work type, canvas, audience, intended outcome, dates), its standing and why, rights, evidence split into intended impact, observed outcome, this element's own contribution and transfer, sources with links, and what it relates to. Use before citing or reusing anything.",
       input: { type: "object", properties: { engagement_id: ENG, item_id: ITEM }, required: ["engagement_id", "item_id"] },
       run({ engagement_id, item_id }) {
-        const state = store2.load(engagement_id);
+        const state = open(engagement_id);
         const item = state.brand.items.find((i) => i.id === item_id);
         if (!item) throw new Error(`No item "${item_id}" in ${state.brand.name}'s material.`);
-        const st = assessStanding(item, purposeOf(state));
+        const st = assessStanding(item, purposeOf(state), state.brand);
         const ev = (type) => (item.evidence || []).filter((x) => x.type === type);
         const evLines = (label, type) => [`${label}:`, ...ev(type).length ? ev(type).map((x) => `- ${x.statement} (${String(x.basis).replace(/_/g, " ")}${x.url ? `; ${x.url}` : ""}) [${x.id}]`) : ["- None recorded."]];
         const rec = item.standingRecord;
@@ -25853,16 +26197,20 @@ Related: ${item.relations.map((r) => `${r.type} ${r.to}`).join("; ")}.` : null,
       description: "What the record shows when read against itself: what replaced what, what carries forward into the current brief (if a precedent is set), conflicting rules, drift from canon, claims in tension with later facts, unknown rights, impact claims without established attribution, missing evidence, decisions nobody is named to make, and written hypotheses about the organisation with their uncertainty. Deterministic; not a judgment.",
       input: { type: "object", properties: { engagement_id: ENG }, required: ["engagement_id"] },
       run({ engagement_id }) {
-        const state = store2.load(engagement_id);
+        const state = open(engagement_id);
         const { brand, engagement: e } = state;
         const asOf = today();
         const tensions = findTensions(brand, { asOf, workTypes: e.workTypes || [], channels: e.channels || [] });
         const ledger = changeLedger(brand, { asOf });
         const cf = carryForward(brand, e, { asOf });
         const hyps = organizationalHypotheses(brand, e);
+        const events = timeline(brand, { asOf });
         return {
           text: lines([
             `${brand.name}, as of ${asOf}.`,
+            events.length ? "\nWhat happened, in order:" : null,
+            ...events.slice(0, 60).map((f) => `- ${f.date || "Undated"}: ${f.statement}${f.source ? ` [${f.source}]` : ""}`),
+            events.length > 60 ? `\u2026and ${events.length - 60} more.` : null,
             ledger.length ? "\nWhat replaced what:" : null,
             ...ledger.map((c) => c.kind === "material" ? `- ${c.when || "Undated"}: ${c.before.title} gave way to ${c.after.title}.${c.rationale ? ` ${c.rationale}` : ""}` : `- ${c.when}: "${c.before.statement}" became "${c.after.statement}"`),
             cf ? "\nWhat carries forward into this brief:" : null,
@@ -26018,11 +26366,7 @@ Related: ${item.relations.map((r) => `${r.type} ${r.to}`).join("; ")}.` : null,
       description: "Record who decides an area (visual, verbal, sonic or product standing, public claims, usage rights, the offer, publishing). Only the company can say this, so it works only in an engagement where the practitioner holds the steward power, and never in a public-source study.",
       input: { type: "object", properties: { engagement_id: ENG, area: { type: "string", enum: Object.keys(POWERS) }, person_name: { type: "string" }, person_title: { type: "string" } }, required: ["engagement_id", "area", "person_name"] },
       run({ engagement_id, area, person_name, person_title }) {
-        const next = change(engagement_id, { action: "name-authority", area }, (state, by) => {
-          const existing = Object.entries(state.brand.people || {}).find(([, p]) => p.name.toLowerCase() === person_name.trim().toLowerCase());
-          const id = existing ? existing[0] : person_name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
-          return nameAuthority(state, { power: area, person: { id, name: person_name.trim(), title: person_title }, by, asOf: today() });
-        });
+        const next = change(engagement_id, { action: "name-authority", area }, (state, by) => nameAuthority(state, { power: area, person: { name: person_name, title: person_title }, by, asOf: today() }));
         return { text: `${person_name.trim()} now decides ${POWERS[area]} at ${next.brand.name}. Choices and proposals that were waiting in that area are routed to them.`, data: { authority: next.brand.authority } };
       }
     },
@@ -26033,7 +26377,7 @@ Related: ${item.relations.map((r) => `${r.type} ${r.to}`).join("; ")}.` : null,
       description: "Assemble the brief for this engagement: objective, audience, the choices recorded so far, the rules that apply, how the work will be judged (set before the work), and the exact sources it rests on, each with a fingerprint so later changes can be detected.",
       input: { type: "object", properties: { engagement_id: ENG }, required: ["engagement_id"] },
       run({ engagement_id }) {
-        const state = store2.load(engagement_id);
+        const state = open(engagement_id);
         const brief = buildBrief(state.brand, state.engagement, state.choices, { asOf: today() });
         return {
           text: lines([
@@ -26058,14 +26402,15 @@ Sources frozen on ${brief.frozenAt}:`,
       description: "Give a partner (an agency, a freelancer, another agent) only what one assignment needs: rules that apply and material that is approved and licensed for the assignment's channels. Research, strategy, unreleased and unapproved material are withheld, and the partner is not told what was withheld. Read-only, expiring and revocable. Not available for a public-source study.",
       input: { type: "object", properties: { engagement_id: ENG, partner_name: { type: "string" }, assignment: { type: "string" }, channels: { type: "array", items: { type: "string" } }, work_types: { type: "array", items: { type: "string" } }, expires: { type: "string", description: "YYYY-MM-DD" } }, required: ["engagement_id", "partner_name", "assignment", "channels", "expires"] },
       run({ engagement_id, partner_name, assignment, channels, work_types, expires }) {
-        const state = store2.load(engagement_id);
-        const id = partner_name.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-        const { package: pkg, audit } = buildContextPackage(state, { partner: { id, name: partner_name }, assignment, channels, workTypes: work_types || state.engagement.workTypes || [], powers: ["read"], expires, asOf: today() });
-        store2.savePackages(engagement_id, [...store2.packages(engagement_id).filter((p) => p.package.id !== pkg.id), { package: pkg, audit }]);
-        store2.log(engagement_id, { action: "issue-package", partner: partner_name });
+        const state = open(engagement_id);
+        const existing = store.packages(engagement_id);
+        const id = String(partner_name).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "partner";
+        const { package: pkg, audit } = buildContextPackage(state, { partner: { id, name: flat(partner_name).trim() }, assignment: flat(assignment).trim(), channels, workTypes: work_types || state.engagement.workTypes || [], powers: ["read"], expires, asOf: today(), seq: existing.length + 1 });
+        store.savePackages(engagement_id, [...existing, { package: pkg, audit }]);
+        store.log(engagement_id, { action: "issue-package", partner: partner_name });
         return {
           text: lines([
-            `Package ${pkg.id} issued to ${partner_name} for "${assignment}". Read-only, expires ${expires}.`,
+            `Package ${pkg.id} issued to ${pkg.partner.name} for "${pkg.assignment}". Read-only, expires ${expires}.`,
             `Included (${pkg.included.length}):`,
             ...pkg.included.map((i) => `- ${i.title}`),
             `Withheld (${audit.withheld.length}); this list stays with you and is not in the package:`,
@@ -26083,12 +26428,12 @@ Sources frozen on ${brief.frozenAt}:`,
       description: "Revoke a context package issued earlier. After this it is no longer valid.",
       input: { type: "object", properties: { engagement_id: ENG, package_id: { type: "string" } }, required: ["engagement_id", "package_id"] },
       run({ engagement_id, package_id }) {
-        const list = store2.packages(engagement_id);
+        const list = store.packages(engagement_id);
         const entry = list.find((p) => p.package.id === package_id);
         if (!entry) throw new Error(`No package "${package_id}" in this engagement.`);
         entry.package = revokePackage(entry.package, today());
-        store2.savePackages(engagement_id, list);
-        store2.log(engagement_id, { action: "revoke-package", package: package_id });
+        store.savePackages(engagement_id, list);
+        store.log(engagement_id, { action: "revoke-package", package: package_id });
         return { text: `Package ${package_id} revoked on ${entry.package.revokedAt}. Valid: ${yn(packageValid(entry.package, today()))}.`, data: { id: package_id, revokedAt: entry.package.revokedAt } };
       }
     },
@@ -26099,7 +26444,7 @@ Sources frozen on ${brief.frozenAt}:`,
       description: "The record to leave behind: sources with provenance and fingerprints, choices, proposals, decisions, open tensions, open questions, and what this engagement did and did not complete. For a company engagement it belongs to the company. A public-source study stays with the practitioner. Set include_packet to also get the portable packet that the page and this connector can reopen.",
       input: { type: "object", properties: { engagement_id: ENG, include_packet: { type: "boolean" } }, required: ["engagement_id"] },
       run({ engagement_id, include_packet }) {
-        const state = store2.load(engagement_id);
+        const state = open(engagement_id, { allowExpired: true });
         const asOf = today();
         const handoff = buildHandoff(state, { brief: buildBrief(state.brand, state.engagement, state.choices, { asOf }), asOf });
         return {
@@ -26118,45 +26463,132 @@ Sources frozen on ${brief.frozenAt}:`,
       }
     },
     {
+      name: "save_engagement_package",
+      title: "Save the handoff package to a file",
+      description: "Write the engagement's handoff package and its portable packet to one file in the workbench's exports folder and return the path, for records too large to pass through a conversation. The file holds that client's material; it is the practitioner's to hand over or delete.",
+      input: { type: "object", properties: { engagement_id: ENG }, required: ["engagement_id"] },
+      run({ engagement_id }) {
+        const state = open(engagement_id, { allowExpired: true });
+        const asOf = today();
+        const handoff = buildHandoff(state, { brief: buildBrief(state.brand, state.engagement, state.choices, { asOf }), asOf });
+        const { expired, ...clean } = state;
+        void expired;
+        const path = store.saveOutside("exports", `${engagement_id}-${asOf}.json`, { handoff, packet: toPacket(clean) });
+        store.log(engagement_id, { action: "save-package", by: actorOf(state) });
+        return { text: `Saved to ${path}. It holds ${state.brand.name}'s material: ${handoff.sources.length} sources, ${handoff.choices.length} choices, ${handoff.proposals.length} proposals, ${handoff.decisions.length} decisions.`, data: { path } };
+      }
+    },
+    {
       name: "import_packet",
       title: "Open a brand packet",
       destructive: true,
-      description: "Add an engagement from a brand packet: one brand partition and its engagement in plain JSON (format living-brand.packet/0.2), as exported by the workbench page or by export_engagement_package. Give either the path of a file the practitioner supplied or the JSON text. The packet is checked and refused if inconsistent. It never replaces another client's engagement, and replaces the same client's open engagement only when replace is true.",
-      input: { type: "object", properties: { path: { type: "string", description: "Path to a .packet.json file." }, json: { type: "string", description: "The packet as JSON text." }, replace: { type: "boolean", description: "Set true to overwrite the same client's engagement that is already open here." } } },
+      description: "Add an engagement from a brand packet: one brand partition and its engagement in plain JSON (format living-brand.packet/0.2), as exported by the workbench page or by export_engagement_package. Give either the path of a .json file the practitioner supplied, or the JSON text. The packet is checked and refused if inconsistent. It never replaces another client's engagement. It replaces the same client's open engagement only when replace is true, and never if that would change who may decide. A packet is believed as written: the result says what it asserts.",
+      input: { type: "object", properties: { path: { type: "string", description: "Path to a .packet.json file the practitioner supplied." }, json: { type: "string", description: "The packet as JSON text." }, replace: { type: "boolean", description: "Set true to overwrite the same client's engagement that is already open here." } } },
       run({ path, json: json2, replace }) {
         if (!path && !json2) throw new Error("Give a path or the JSON text of a packet.");
+        if (path && json2) throw new Error("Give a path or the JSON text, not both.");
+        let raw = json2;
+        if (path) {
+          let info;
+          try {
+            info = lstatSync2(path);
+          } catch {
+            throw new Error("There is no file at that path.");
+          }
+          if (!info.isFile() || !/\.json$/i.test(path)) throw new Error("A packet is an ordinary file whose name ends in .json.");
+          if (info.size > 25 * 1024 * 1024) throw new Error("That file is larger than 25 MB, which is more than a packet should be.");
+          try {
+            raw = readFileSync2(path, "utf8");
+          } catch {
+            throw new Error("That file could not be read.");
+          }
+        }
         let packet;
         try {
-          packet = JSON.parse(path ? readFileSync2(path, "utf8") : json2);
-        } catch (e) {
-          throw new Error(`Could not read the packet: ${e.message}`);
+          packet = JSON.parse(raw);
+        } catch {
+          throw new Error("That is not a packet: it is not valid JSON.");
         }
         const { brand, engagement } = readPacket(packet);
-        const existing = store2.bench().engagements.find((e) => e.id === engagement.id && e.status !== "ended");
-        if (existing) {
-          const current = store2.load(engagement.id);
-          if (current.brand.id !== brand.id) throw new Error(`An engagement with the id "${engagement.id}" is already open here for ${existing.client}. A packet for ${brand.name} cannot replace another client's record. Give this packet's engagement a different id.`);
-          if (replace !== true) throw new Error(`The ${existing.client} engagement is already open here with its own record (${current.choices.length} choices, ${current.proposals.length} proposals, ${current.decisions.length} decisions). Importing would replace it. Export it first if it matters, then call again with replace set to true.`);
+        const rows = store.bench().engagements;
+        const taken = rows.find((e) => e.id === engagement.id);
+        let replacing = false;
+        const notes = [];
+        if (taken && (taken.brandId ? taken.brandId !== brand.id : taken.client !== brand.name)) {
+          throw new Error(`The id "${engagement.id}" belongs to the ${taken.client} engagement here${taken.status === "ended" ? ", which has ended" : ""}. A packet for ${brand.name} cannot take another client's place. Give this packet's engagement a different id.`);
         }
-        const row = store2.savePacket(packet, { note: existing ? "Imported, replacing the previous record." : "Imported." });
-        return { text: `Opened ${brand.name} as engagement [${engagement.id}]: ${brand.items.length} items, ${(brand.rules || []).length} rules. ${basisLine(brand)} It is stored in its own folder.`, data: row };
+        if (taken && taken.status === "open") {
+          let current = null;
+          try {
+            current = open(engagement.id, { allowExpired: true });
+          } catch {
+          }
+          if (replace !== true) {
+            throw new Error(current ? `The ${taken.client} engagement is already open here with its own record (${current.choices.length} choices, ${current.proposals.length} proposals, ${current.decisions.length} decisions). Importing would replace it. Export it first if it matters, then call again with replace set to true.` : `The ${taken.client} engagement is already here, though its record cannot be read. Call again with replace set to true to put this packet in its place.`);
+          }
+          if (current) {
+            const same = (a, b) => JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+            const was = toPacket(current);
+            if (!same(was.brand.authority, brand.authority) || !same(was.engagement.grant, engagement.grant) || !same(was.engagement.actor, engagement.actor) || was.brand.basis !== brand.basis) {
+              throw new Error(`This packet changes who may decide at ${brand.name}, or what this engagement may do. That is never changed by replacing a record. Use name_authority for the first; the second is the company's to grant.`);
+            }
+            const before = new Map(was.brand.items.map((i) => [i.id, i]));
+            const moved = brand.items.filter((i) => before.has(i.id) && (before.get(i.id).standing !== i.standing || before.get(i.id).approval?.status !== i.approval?.status)).length;
+            if (moved) notes.push(`It changes the standing or approval of ${moved} item${moved === 1 ? "" : "s"} compared with the record it replaces.`);
+          }
+          replacing = true;
+        }
+        const says = packetAssertions(packet);
+        const text = lines([
+          `Opened ${brand.name} as engagement [${engagement.id}]: ${brand.items.length} items, ${(brand.rules || []).length} rules. ${basisLine(brand)} It is stored in its own folder.`,
+          `On its own say-so the packet states ${says.canon} item${says.canon === 1 ? "" : "s"} as canon and ${says.approved} as approved, and carries ${says.decisions} recorded decision${says.decisions === 1 ? "" : "s"}. This connector cannot check who wrote it.`,
+          says.deciders.length ? `It names who decides: ${says.deciders.join("; ")}.` : "It names no one as deciding anything.",
+          ...notes
+        ]);
+        const row = store.savePacket(packet, { note: replacing ? "Imported, replacing the previous record." : "Imported." });
+        return { text, data: { ...row, asserts: says } };
       }
     },
     {
       name: "end_engagement",
       title: "End an engagement and remove its material",
       destructive: true,
-      description: "End a company engagement: returns the final handoff package and portable packet to give to the company, then deletes that client's material from this workbench. This cannot be undone. A public-source study is the practitioner's own and is not ended this way.",
+      description: "End a company engagement. The whole final record (handoff package, portable packet, context packages issued, and the log) is first written to one file in the workbench's handed-over folder, and its path is returned; then that client's folder is deleted from the workbench. The deletion cannot be undone. The file is the practitioner's to give to the company and then delete. A public-source study is the practitioner's own and is not ended this way.",
       input: { type: "object", properties: { engagement_id: ENG, confirm: { type: "boolean", description: "Must be true, after the practitioner has agreed." } }, required: ["engagement_id", "confirm"] },
       run({ engagement_id, confirm }) {
-        const state = store2.load(engagement_id);
-        if (isPublicStudy(state.brand)) throw new Error(`The ${state.brand.name} study is your own reading of public material. There is nothing of ${state.brand.name}'s to hand back or remove.`);
-        if (confirm !== true) throw new Error("Not ended. Ask the practitioner to confirm, then call again with confirm set to true.");
         const asOf = today();
+        const row = store.row(engagement_id);
+        if (row.status === "ended") throw new Error(`The ${row.client} engagement already ended${row.endedOn ? ` on ${row.endedOn}` : ""}.`);
+        let state = null;
+        try {
+          state = open(engagement_id, { allowExpired: true });
+        } catch (error2) {
+          if (row.status !== "unreadable" && !/cannot be read|no record on disk|Packet refused/.test(error2.message)) throw error2;
+        }
+        if (state && isPublicStudy(state.brand)) throw new Error(`The ${state.brand.name} study is your own reading of public material. There is nothing of ${state.brand.name}'s to hand back or remove.`);
+        if (confirm !== true) throw new Error("Not ended. Ask the practitioner to confirm, then call again with confirm set to true.");
+        if (!state) {
+          const path2 = store.endUnreadable(engagement_id, asOf);
+          return { text: `The ${row.client} engagement's record could not be read. Its files were kept as they were in ${path2}, and its folder has been removed from the workbench.`, data: { path: path2 } };
+        }
         const handoff = buildHandoff(state, { brief: buildBrief(state.brand, state.engagement, state.choices, { asOf }), asOf });
-        const packet = toPacket(state);
-        store2.end(engagement_id, asOf);
-        return { text: `The ${state.brand.name} engagement ended on ${asOf}. Its material has been removed from this workbench. The final package and packet are in the structured result: give them to ${state.brand.name} now; they are not kept here.`, data: { handoff, packet } };
+        const { expired, ...clean } = state;
+        void expired;
+        let log = "";
+        try {
+          log = readFileSync2(`${store.home}/engagements/${engagement_id}/log.jsonl`, "utf8");
+        } catch {
+        }
+        const path = store.end(engagement_id, asOf, { handoff, packet: toPacket(clean), packages: store.packages(engagement_id), log: log.split("\n").filter(Boolean) });
+        return {
+          text: lines([
+            `The ${state.brand.name} engagement ended on ${asOf}. Its folder has been removed from this workbench.`,
+            `The final record is in one file: ${path}`,
+            `It holds ${handoff.sources.length} sources, ${handoff.choices.length} choices, ${handoff.proposals.length} proposals, ${handoff.decisions.length} decisions and ${handoff.openTensions.length} open tensions. Give it to ${state.brand.name}, then delete it: it is the last copy here.`,
+            "Copies made earlier (exports, a private page, this conversation) are not removed by this."
+          ]),
+          data: { path, sources: handoff.sources.length, choices: handoff.choices.length, proposals: handoff.proposals.length, decisions: handoff.decisions.length }
+        };
       }
     },
     {
@@ -26166,25 +26598,27 @@ Sources frozen on ${brief.frozenAt}:`,
       description: "What travels with the practitioner between clients: their methods and preferences, and a list of engagements. It holds no client material.",
       input: { type: "object", properties: {} },
       run() {
-        const b = store2.bench();
+        const b = store.bench();
         return { text: lines([`${b.practitioner.name}'s workbench.`, "Methods:", ...b.practitioner.methods.map((m) => `- ${m}`), `Engagements: ${b.engagements.map((e) => `${e.client} (${e.status})`).join(", ") || "none"}.`, "No client material is kept here; each engagement has its own folder."]), data: { practitioner: b.practitioner, engagements: b.engagements.map((e) => ({ client: e.client, role: e.role, status: e.status })) } };
       }
     },
     {
       name: "add_method",
       title: "Add a method to the workbench",
-      description: "Add a general working method to the practitioner's portable workbench. Methods are the practitioner's own and travel between clients, so a method must not contain any client's name, material, numbers or plans.",
+      description: "Add a general working method to the practitioner's portable workbench. Methods travel between clients, so a method must not contain any client's name, material, numbers or plans. The connector refuses a method that names a client or a project; it cannot recognise client material in other words, so the wording has to be general before it is saved.",
       input: { type: "object", properties: { method: { type: "string" } }, required: ["method"] },
       run({ method }) {
-        const text = String(method || "").trim();
+        const text = flat(method ?? "").replace(/\s+/g, " ").trim();
         if (!text) throw new Error("Say what the method is.");
-        const b = store2.bench();
-        const named = b.engagements.find((e) => text.toLowerCase().includes(e.client.toLowerCase()));
-        if (named) throw new Error(`That names ${named.client}. Methods travel between clients, so they cannot carry a client's name or material. Say it as a general practice.`);
-        store2.updateBench((x) => {
+        if (text.length > 300) throw new Error("A method is a sentence or two. Keep it under 300 characters.");
+        const b = store.bench();
+        const names2 = b.engagements.flatMap((e) => [[e.client, "names"], [e.project, "names the project"]]).filter(([n]) => typeof n === "string" && n.trim().length > 2);
+        const hit = names2.find(([n]) => new RegExp(`(^|[^\\p{L}\\p{N}])${n.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^\\p{L}\\p{N}]|$)`, "iu").test(text));
+        if (hit) throw new Error(`That ${hit[1]} ${hit[0]}. Methods travel between clients, so they cannot carry a client's name or material. Say it as a general practice.`);
+        store.updateBench((x) => {
           if (!x.practitioner.methods.includes(text)) x.practitioner.methods.push(text);
         });
-        return { text: `Added to your methods: ${text}`, data: { methods: store2.bench().practitioner.methods } };
+        return { text: `Added to your methods: ${text}`, data: { methods: store.bench().practitioner.methods } };
       }
     }
   ];
@@ -26201,8 +26635,16 @@ var INSTRUCTIONS = [
   "If a result does not contain a fact, it is not recorded. Say so rather than filling it in.",
   "A public-source study is the practitioner's reading, never the company's record."
 ].join(" ");
-var store = openStore();
-var tools = createTools(store);
+var tools = [];
+var unavailable = null;
+try {
+  tools = createTools(openStore());
+} catch (error2) {
+  unavailable = `The workbench folder could not be opened: ${error2.message}`;
+  console.error(`living-brand: ${unavailable}`);
+}
+var FAULTS = /* @__PURE__ */ new Set(["TypeError", "ReferenceError", "RangeError", "SyntaxError"]);
+var failure = (error2) => FAULTS.has(error2?.name) ? `The connector failed while doing this, and nothing was changed by this call: ${error2.message}. This is a fault in the connector or a damaged record, not a refusal.` : `Refused: ${error2.message}`;
 var skills = null;
 try {
   skills = await SkillsExtension.load(memorySkillFiles({ "living-brand/SKILL.md": SKILL_default }));
@@ -26214,6 +26656,13 @@ serveStdio(() => {
     { name: "living-brand", title: "Living Brand workbench", version: VERSION },
     { capabilities: { tools: {} }, instructions: INSTRUCTIONS }
   );
+  if (unavailable) {
+    server.registerTool(
+      "list_engagements",
+      { title: "List engagements", description: "List the practitioner's engagements.", inputSchema: fromJsonSchema2({ type: "object", properties: {} }), annotations: { title: "List engagements", readOnlyHint: true, openWorldHint: false } },
+      async () => ({ content: [{ type: "text", text: unavailable }], isError: true })
+    );
+  }
   for (const tool of tools) {
     server.registerTool(tool.name, {
       title: tool.title,
@@ -26225,14 +26674,14 @@ serveStdio(() => {
         destructiveHint: Boolean(tool.destructive),
         idempotentHint: Boolean(tool.readOnly),
         openWorldHint: false
-        // it reads and writes only the practitioner's own folder
+        // no network; it reads and writes the practitioner's own folder, and a packet file they point it to
       }
     }, async (args) => {
       try {
         const result = tool.run(args || {});
         return { content: [{ type: "text", text: result.text }], structuredContent: result.data };
       } catch (error2) {
-        return { content: [{ type: "text", text: `Refused: ${error2.message}` }], isError: true };
+        return { content: [{ type: "text", text: failure(error2) }], isError: true };
       }
     });
   }

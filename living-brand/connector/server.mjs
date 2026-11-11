@@ -22,8 +22,19 @@ const INSTRUCTIONS = [
   'A public-source study is the practitioner\'s reading, never the company\'s record.',
 ].join(' ');
 
-const store = openStore();
-const tools = createTools(store);
+// If the workbench folder cannot be opened the server still starts, and every
+// tool says why, instead of the connection simply dying.
+let tools = [];
+let unavailable = null;
+try { tools = createTools(openStore()); }
+catch (error) { unavailable = `The workbench folder could not be opened: ${error.message}`; console.error(`living-brand: ${unavailable}`); }
+
+// A refusal is the record saying no, and the assistant should relay it. A
+// fault is the connector failing, and must not be mistaken for a refusal.
+const FAULTS = new Set(['TypeError', 'ReferenceError', 'RangeError', 'SyntaxError']);
+const failure = error => (FAULTS.has(error?.name)
+  ? `The connector failed while doing this, and nothing was changed by this call: ${error.message}. This is a fault in the connector or a damaged record, not a refusal.`
+  : `Refused: ${error.message}`);
 
 // The skill travels with the connector for clients that read skills from servers.
 let skills = null;
@@ -35,6 +46,10 @@ serveStdio(() => {
     { name: 'living-brand', title: 'Living Brand workbench', version: VERSION },
     { capabilities: { tools: {} }, instructions: INSTRUCTIONS },
   );
+  if (unavailable) {
+    server.registerTool('list_engagements', { title: 'List engagements', description: 'List the practitioner\'s engagements.', inputSchema: fromJsonSchema({ type: 'object', properties: {} }), annotations: { title: 'List engagements', readOnlyHint: true, openWorldHint: false } },
+      async () => ({ content: [{ type: 'text', text: unavailable }], isError: true }));
+  }
   for (const tool of tools) {
     server.registerTool(tool.name, {
       title: tool.title,
@@ -45,15 +60,14 @@ serveStdio(() => {
         readOnlyHint: Boolean(tool.readOnly),
         destructiveHint: Boolean(tool.destructive),
         idempotentHint: Boolean(tool.readOnly),
-        openWorldHint: false, // it reads and writes only the practitioner's own folder
+        openWorldHint: false, // no network; it reads and writes the practitioner's own folder, and a packet file they point it to
       },
     }, async args => {
       try {
         const result = tool.run(args || {});
         return { content: [{ type: 'text', text: result.text }], structuredContent: result.data };
       } catch (error) {
-        // A refusal is an answer the model should read and relay, not a crash.
-        return { content: [{ type: 'text', text: `Refused: ${error.message}` }], isError: true };
+        return { content: [{ type: 'text', text: failure(error) }], isError: true };
       }
     });
   }

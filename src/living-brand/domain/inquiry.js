@@ -4,9 +4,12 @@
 // Interpretation that a person wrote (strengths, hypotheses, reasons) lives on
 // the engagement and is only shown when the evidence it cites exists.
 
-import { assessStanding, effectiveRules, isEffective, isPublicStudy, pipelineRank, rulesInForce } from './standing.js';
+import { assessStanding, effectiveRules, isPublicStudy, pipelineRank, rulesInForce, uncoveredChannels } from './standing.js';
 
-const byId = brand => Object.fromEntries(brand.items.map(i => [i.id, i]));
+// Lookups are built without a prototype, so an id or topic such as "constructor" is only ever a key.
+const byId = brand => Object.assign(Object.create(null), Object.fromEntries((brand.items || []).map(i => [i.id, i])));
+const group = (list, key) => { const out = Object.create(null); for (const x of list) (out[key(x)] ||= []).push(x); return out; };
+const decidersOf = (brand, power) => (isPublicStudy(brand) ? [] : (Array.isArray(brand.authority?.[power]) ? brand.authority[power] : []));
 const names = (brand, ids) => (ids || []).map(id => brand.people?.[id]?.name || id);
 const appliesTo = (rule, workTypes) => !rule.scope || rule.scope.includes('all') || rule.scope.some(s => workTypes.includes(s));
 
@@ -19,11 +22,10 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
   const allRules = effectiveRules(brand);
   const live = rulesInForce(allRules, asOf);
   const study = isPublicStudy(brand);
-  const authority = brand.authority || {};
+  const authority = new Proxy({}, { get: (_, power) => decidersOf(brand, power) });
 
   // Contradictory rules in force for this project's work types.
-  const topics = {};
-  for (const r of live) if (appliesTo(r, workTypes)) (topics[r.topic] ||= []).push(r);
+  const topics = group(live.filter(r => appliesTo(r, workTypes)), r => r.topic);
   for (const [topic, rs] of Object.entries(topics)) {
     const values = new Set(rs.map(r => r.value));
     if (values.size > 1) {
@@ -44,17 +46,18 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
     if (item.standing === 'archive') continue;
     const departs = [];
     for (const [topic, value] of Object.entries(item.uses || {})) {
-      const onTopic = live.filter(r => r.topic === topic);
+      // A rule binds a piece of work only if its scope covers that kind of work.
+      const onTopic = live.filter(r => r.topic === topic && (!r.scope || r.scope.includes('all') || r.scope.includes(item.workType)));
       if (!onTopic.length || onTopic.some(r => r.value === value)) continue;
       const canon = onTopic.find(r => r.standing === 'canon');
       if (!canon) { departs.push({ rule: onTopic[0], has: String(value).replace(/[+]/g, ', ') }); continue; }
       if (canon.value !== value) {
-        const retired = allRules.find(r => r.topic === topic && r.value === value && !isEffective(r.effective, asOf));
+        const retired = allRules.find(r => r.topic === topic && r.value === value && r.effective?.to && asOf && r.effective.to <= asOf);
         out.push({
           id: `t-drift-${item.id}-${topic}`, kind: 'Drift from canon', severity: 'repair',
-          title: `${item.title} still follows a ${retired ? 'retired' : 'non-canon'} rule`,
-          detail: `${retired ? `It matches "${retired.statement}", retired ${retired.effective.to}. ` : ''}Canon: "${canon.statement}"${item.provenance?.origin === 'generated' ? ' This file was written by a model; its defaults are not brand evidence.' : ''}`,
-          sources: [item.id, canon.source], owners: authority[`standing.${canon.domain || 'visual'}`] || [],
+          title: retired ? `${item.title} still follows a retired rule` : `${item.title} departs from canon`,
+          detail: `${retired ? `It matches "${retired.statement}", retired ${retired.effective.to}. ` : `It has ${String(value).replace(/[+]/g, ', ')}. `}Canon: "${canon.statement}"${item.provenance?.origin === 'generated' ? ' This file was written by a model; its defaults are not brand evidence.' : ''}`,
+          sources: [item.id, canon.source], owners: authority[`standing.${canon.domain || 'visual'}`],
         });
       }
     }
@@ -67,7 +70,7 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         detail: `None of these rules is canon${byModel ? ', and some were written by a model' : ''}, so neither side is wrong yet. Someone has to decide which stands.`,
         points: departs.map(d => ({ rule: d.rule.statement, has: d.has, ruleId: d.rule.id })),
         sources: [item.id, ...sourcesOfRules],
-        owners: [...new Set(departs.flatMap(d => authority[`standing.${d.rule.domain || 'visual'}`] || []))],
+        owners: [...new Set(departs.flatMap(d => authority[`standing.${d.rule.domain || 'visual'}`]))],
       });
     }
   }
@@ -76,27 +79,29 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
   for (const c of brand.claims || []) {
     const fact = (brand.facts || []).find(f => f.id === c.contradictedBy);
     const usedIn = (c.usedIn || []).map(id => items[id]?.title || id).join(', ');
-    if (fact && fact.date <= asOf) {
+    // A fact with no date cannot be said to come later. It is a disagreement, not a stale claim.
+    const disputed = [...(c.disputedBy || []), ...(fact && !fact.date ? [fact.id] : [])];
+    if (fact && fact.date && fact.date <= asOf) {
       out.push({
         id: `t-stale-${c.id}`, kind: study ? 'Claim in tension with a later fact' : 'Stale claim', severity: 'repair',
         title: study ? `"${c.statement}" sits uneasily with a later public fact` : `"${c.statement}" is no longer true`,
         detail: `${fact.statement}${usedIn ? ` The claim ${study ? 'appeared' : 'still appears'} in ${usedIn}.` : ''}${c.tensionNote ? ` ${c.tensionNote}` : ''}`,
-        sources: [...(c.usedIn || []), fact.source].filter(Boolean), owners: authority.claims || [],
+        sources: [...(c.usedIn || []), fact.source].filter(Boolean), owners: authority.claims,
       });
-    } else if ((c.disputedBy || []).length) {
+    } else if (disputed.length) {
       // Two records say different things. Nothing here says which is right.
-      const others = (brand.facts || []).filter(f => c.disputedBy.includes(f.id));
+      const others = (brand.facts || []).filter(f => disputed.includes(f.id));
       out.push({
         id: `t-disputed-${c.id}`, kind: 'Records disagree', severity: 'decide',
         title: `"${c.statement}" does not match another record`,
         detail: `${others.map(f => f.statement).join(' ')}${usedIn ? ` The claim appears in ${usedIn}.` : ''}${c.tensionNote ? ` ${c.tensionNote}` : ''} Nothing recorded says which is right.`,
-        sources: [...(c.usedIn || []), ...others.map(f => f.source)].filter(Boolean), owners: authority.claims || [],
+        sources: [...(c.usedIn || []), ...others.map(f => f.source)].filter(Boolean), owners: authority.claims,
       });
     } else if (!study && !c.verifiedOn) {
       out.push({
         id: `t-unsupported-${c.id}`, kind: 'Unsupported claim', severity: 'repair',
         title: `"${c.statement}" has no substantiation on file`, detail: `${usedIn ? `Used in ${usedIn}. ` : ''}No one has recorded checking it.${c.tensionNote ? ` ${c.tensionNote}` : ''}`,
-        sources: c.usedIn || [], owners: authority.claims || [],
+        sources: c.usedIn || [], owners: authority.claims,
       });
     }
   }
@@ -106,14 +111,16 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
     if (item.standing === 'archive' && item.approval?.status === 'rejected') continue;
     const r = item.rights || {};
     const isUsedNow = (item.relations || []).some(rel => rel.type === 'derived from') || item.reuse?.length || item.inUse;
-    if (r.status === 'unknown' && (isUsedNow || pipelineRank(item.pipeline) >= pipelineRank('verified'))) {
-      out.push({ id: `t-rights-${item.id}`, kind: 'Unknown rights', severity: 'investigate',
-        title: `${item.title} is in use with unreviewed rights`, detail: r.note || 'No licence on file.', sources: [item.id], owners: authority.rights || [] });
+    const known = ['cleared', 'restricted', 'expired'].includes(r.status);
+    if (!known && (isUsedNow || pipelineRank(item.pipeline) >= pipelineRank('verified'))) {
+      out.push({ id: `t-rights-${item.id}`, kind: study ? 'Rights not established' : 'Unknown rights', severity: 'investigate',
+        title: study ? `${item.title}: the terms for using it are not visible from public sources` : isUsedNow ? `${item.title} is in use with unreviewed rights` : `${item.title}: its rights have not been reviewed`,
+        detail: r.note || (study ? 'Nothing found says what others may do with it.' : 'No licence on file.'), sources: [item.id], owners: authority.rights });
     }
     if (r.until && r.until >= asOf && channels.length && (item.functions || []).length) {
-      const missing = channels.filter(ch => !(r.channels || []).includes(ch));
+      const missing = uncoveredChannels(r, channels);
       if (missing.length) out.push({ id: `t-licence-${item.id}`, kind: 'Licence does not cover the plan', severity: 'investigate',
-        title: `${item.title} is not licensed for ${missing.map(c => c.replace('-', ' ')).join(', ')}`, detail: r.note || `Ends ${r.until}.`, sources: [item.id], owners: authority.rights || [] });
+        title: `${item.title} is not licensed for ${missing.map(c => c.replace('-', ' ')).join(', ')}`, detail: r.note || `Ends ${r.until}.`, sources: [item.id], owners: authority.rights });
     }
   }
 
@@ -137,7 +144,7 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
   }
 
   // Decisions nobody has been named to make, kept as one visible gap.
-  const unnamed = Object.entries(POWERS).filter(([power]) => power in authority && !(authority[power] || []).length).map(([, label]) => label);
+  const unnamed = unnamedPowers(brand).map(power => POWERS[power]);
   if (unnamed.length) {
     out.push({ id: 't-authority-unnamed', kind: 'No one named to decide', severity: 'decide',
       title: `No one is named to decide ${unnamed.join(', ')} at ${brand.name}`,
@@ -146,6 +153,10 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
   }
   return out;
 }
+
+// Every area of decision is either held by a named person or it is a gap.
+// A brand that records no authority at all has every gap.
+export const unnamedPowers = brand => Object.keys(POWERS).filter(power => !decidersOf(brand, power).length);
 
 export const POWERS = {
   'standing.visual': 'visual standing', 'standing.verbal': 'verbal standing', 'standing.sonic': 'sonic standing',
@@ -156,21 +167,30 @@ export const POWERS = {
 // material, and rules whose value changed over time.
 export function changeLedger(brand, { asOf } = {}) {
   const items = byId(brand);
-  const replaced = brand.items.filter(i => i.supersededBy && items[i.supersededBy]).map(i => {
+  const replaced = (brand.items || []).filter(i => i.supersededBy && items[i.supersededBy]).map(i => {
     const next = items[i.supersededBy];
     return { kind: 'material', before: i, after: next, when: next.period?.from || next.made?.date || null, rationale: next.rationale || '' };
-  });
-  const byTopic = {};
-  for (const r of brand.rules || []) (byTopic[r.topic] ||= []).push(r);
+  }).filter(c => !asOf || !c.when || c.when <= asOf); // a replacement that has not happened yet is not history
   const rules = [];
-  for (const [topic, rs] of Object.entries(byTopic)) {
+  for (const [topic, rs] of Object.entries(group(brand.rules || [], r => r.topic))) {
     const ended = rs.filter(r => r.effective?.to && (!asOf || r.effective.to <= asOf));
     for (const old of ended) {
-      const next = rs.find(r => r !== old && r.value !== old.value && r.effective?.from && r.effective.from >= old.effective.to);
+      // The rule that took over is the earliest one to start at or after the old one's end.
+      const next = rs.filter(r => r !== old && r.value !== old.value && r.effective?.from && r.effective.from >= old.effective.to)
+        .sort((a, b) => a.effective.from.localeCompare(b.effective.from))[0];
       if (next) rules.push({ kind: 'rule', topic, before: old, after: next, when: next.effective.from });
     }
   }
   return [...replaced, ...rules].sort((a, b) => String(a.when || '').localeCompare(String(b.when || '')));
+}
+
+// What happened, in order: the dated facts on record, then the undated ones.
+// A change is easier to read against the events around it.
+export function timeline(brand, { asOf } = {}) {
+  const items = byId(brand);
+  const facts = (brand.facts || []).map(f => ({ id: f.id, date: f.date || '', statement: f.statement, source: items[f.source] ? f.source : null, links: f.links || [], ahead: Boolean(asOf && f.date && f.date > asOf) }));
+  const dated = facts.filter(f => f.date).sort((a, b) => a.date.localeCompare(b.date));
+  return [...dated, ...facts.filter(f => !f.date)];
 }
 
 // Hypotheses about the organisation are written by a person on the engagement.
@@ -197,20 +217,22 @@ export function carryForward(brand, engagement, { asOf }) {
   if (!carry) return null;
   const items = byId(brand);
   const old = items[carry.precedentId]?.brief;
-  if (!old) throw new Error('Precedent has no recorded brief.');
   const newBrief = engagement.newBrief;
+  // Without both briefs there is nothing to compare, and nothing is invented.
+  if (!old || !newBrief) return null;
   const also = new Set(carry.also || []);
   const parts = brand.items.filter(i => also.has(i.id) || (i.relations || []).some(r => r.type === 'part of' && r.to === carry.precedentId));
+  if (!parts.length) return null;
   const changes = Object.keys(old).filter(k => JSON.stringify(old[k]) !== JSON.stringify(newBrief[k])).map(k => ({ field: k, before: old[k], after: newBrief[k] }));
-  const staleFacts = {};
+  const staleFacts = Object.create(null);
   for (const c of brand.claims || []) {
     const fact = (brand.facts || []).find(f => f.id === c.contradictedBy);
-    if (fact && fact.date <= asOf) for (const id of c.usedIn || []) staleFacts[id] = fact;
+    if (fact && fact.date && fact.date <= asOf) for (const id of c.usedIn || []) staleFacts[id] = fact;
   }
 
   const rows = parts.map(item => {
     const fn = item.functions || (item.standing === 'canon' ? ['recognition'] : []);
-    const st = assessStanding(item, { channels: newBrief.channels, asOf, until: newBrief.until });
+    const st = assessStanding(item, { channels: newBrief.channels, asOf, until: newBrief.until }, brand);
     const evidence = (item.evidence || []).filter(e => e.type === 'contribution');
     let verdict, why;
     if (fn.includes('trust-claim') && staleFacts[item.id]) {
@@ -218,8 +240,9 @@ export function carryForward(brand, engagement, { asOf }) {
     } else if (fn.includes('discovery') && old.goal !== newBrief.goal) {
       verdict = 'reverse'; why = carry.reverseReason || `Made for ${old.goal}. This brief is for ${newBrief.goal}, so the message has to turn around.`;
     } else if (fn.includes('recognition')) {
-      verdict = st.reusable ? 'preserve' : 'investigate';
-      why = `Recognition carries over to people who have seen it before${evidence.length ? `: ${evidence.map(e => e.statement).join(' ')}` : '.'}${st.reusable ? '' : ` Rights block it for this plan: ${st.reasons.reusable.join(' ')}`}`;
+      // Recognition is only worth carrying if the thing may be used: sanctioned, and licensed for this plan.
+      verdict = st.authorized && st.reusable ? 'preserve' : 'investigate';
+      why = `Recognition carries over to people who have seen it before${evidence.length ? `: ${evidence.map(e => e.statement).join(' ')}` : '.'}${st.authorized ? '' : ` It is not authorized: ${st.reasons.authorized.join(' ')}`}${st.reusable ? '' : ` Rights block it for this plan: ${st.reasons.reusable.join(' ')}`}`;
     } else {
       verdict = 'adapt'; why = 'Context changed; transfer needs an argument.';
     }
@@ -268,13 +291,14 @@ function flatKeys(o, acc = {}) {
 
 export function orientation(brand, engagement, { asOf }) {
   const items = byId(brand);
-  const canon = brand.items.filter(i => i.standing === 'canon' && assessStanding(i, { asOf }).authoritative);
+  const canon = brand.items.filter(i => i.standing === 'canon' && assessStanding(i, { asOf }, brand).authoritative);
   const stages = brand.items.reduce((acc, i) => ({ ...acc, [i.pipeline]: (acc[i.pipeline] || 0) + 1 }), {});
   const tensions = findTensions(brand, { asOf, workTypes: engagement.workTypes || [], channels: engagement.channels || [] });
   // Strengths are the practitioner's interpretation, not extracted fact; each must cite sources that exist.
-  const strengths = (engagement.strengths || []).filter(st => st.sources.every(id => items[id]));
+  const strengths = (engagement.strengths || []).filter(st => Array.isArray(st.sources) && st.sources.length && st.sources.every(id => items[id]));
   // What the record cannot answer yet. Kept visible rather than filled in.
   const unknowns = [...(brand.unknowns || [])];
-  for (const [power, label] of Object.entries(POWERS)) if (power in (brand.authority || {}) && !brand.authority[power].length) unknowns.push(`Who decides ${label}.`);
+  const gaps = unnamedPowers(brand);
+  if (gaps.length) unknowns.push(`Who decides ${gaps.map(p => POWERS[p]).join(', ')}.`);
   return { intent: brand.intent, canon, stages, strengths, tensions, unknowns, owners: names(brand, brand.intent?.owner ? [brand.intent.owner] : []) };
 }

@@ -29,7 +29,7 @@ export const engagements = {
     scope: 'Campaign concept and brief. Brand knowledge may be read and proposals made; nothing is adopted or published from this engagement.',
     constraints: ['Launch 12 January 2027', 'Owned channels plus paid social', 'Budget roughly a third of 2025'],
     started: '2026-11-02', asOf: '2026-11-11',
-    grant: { brandId: 'fernway', powers: ['read', 'propose'], expires: '2027-03-31', revokedAt: null },
+    grant: { brandId: 'fernway', powers: ['read', 'propose', 'share'], expires: '2027-03-31', revokedAt: null },
     workTypes: ['Brand campaign', 'Customer campaign'],
     channels: ['owned-social', 'owned-web', 'email', 'paid-media'],
     objective: 'Reactivate lapsed subscribers and keep them past 90 days.',

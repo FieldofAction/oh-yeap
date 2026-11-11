@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Component, useEffect, useMemo, useRef, useState } from 'react';
 import {
   startEngagement, openTenant, search, assessStanding, findTensions, carryForward, changeLedger, organizationalHypotheses,
   propose, decide, retire, recordReuse, recordChoice, verifyItem, approveItem, nameAuthority, viewFor, buildBrief, buildContextPackage,
   revokePackage, packageValid, buildHandoff, toPacket, coordinationView, exportWorkbench, orientation, canDecide, powerFor,
-  deciders, effectiveRules, fingerprint, isPublicStudy, pipelineRank, STANDING_CLASSES, PIPELINE, CHOICES, POWERS, BASES,
+  deciders, effectiveRules, rulesInForce, timeline, fingerprint, isPublicStudy, pipelineRank, STANDING_CLASSES, PIPELINE, CHOICES, POWERS, BASES,
 } from './domain/index.js';
 import Plate from './Plate.jsx';
 
@@ -34,7 +34,22 @@ const read = key => { try { return JSON.parse(localStorage.getItem(key)); } catc
 const write = (key, value) => { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* storage unavailable */ } };
 
 // A packet may arrive with a record already in it (proposals waiting, choices made).
-const begin = entry => ({ state: startEngagement({ [entry.brand.id]: entry.brand }, entry.engagement, entry.record), pkg: null });
+// Opening is refused when access has ended; the refusal is shown, not worked around.
+const begin = (entry, asOf) => {
+  try { return { state: startEngagement({ [entry.brand.id]: entry.brand }, entry.engagement, entry.record, { asOf }), pkg: null }; }
+  catch (error) { return { state: null, pkg: null, refused: error.message }; }
+};
+
+// One stage failing to draw must not blank the page or hide the others.
+class StageBoundary extends Component {
+  constructor(props) { super(props); this.state = { error: null }; }
+  static getDerivedStateFromError(error) { return { error }; }
+  componentDidUpdate(prev) { if (prev.resetKey !== this.props.resetKey && this.state.error) this.setState({ error: null }); }
+  render() {
+    if (!this.state.error) return this.props.children;
+    return (<article><h1>This part of the record could not be shown</h1><p className="lb-deck">Something in the record is not in a shape this page can read: {this.state.error.message}. The other stages still work, and nothing was changed.</p></article>);
+  }
+}
 
 export default function Workbench({ catalog }) {
   const asOf = catalog.asOf;
@@ -43,9 +58,10 @@ export default function Workbench({ catalog }) {
   const entry = catalog.open.find(e => e.engagement.id === engId);
   // Saved work is tied to the exact data it was made from, so corrected records never hide behind stale state.
   const storeKey = `${STORE}:${engId}:${fingerprint({ b: entry.brand, e: entry.engagement, r: entry.record || null })}`;
-  const [all, setAll] = useState(() => { const saved = read(storeKey); return saved?.state ? saved : begin(entry); });
+  const restore = () => { const fresh = begin(entry, asOf); const saved = fresh.refused ? null : read(storeKey); return saved?.state ? saved : fresh; };
+  const [all, setAll] = useState(restore);
   const [loadedKey, setLoadedKey] = useState(storeKey);
-  if (loadedKey !== storeKey) { const saved = read(storeKey); setAll(saved?.state ? saved : begin(entry)); setLoadedKey(storeKey); }
+  if (loadedKey !== storeKey) { setAll(restore()); setLoadedKey(storeKey); }
   const { state, pkg } = all;
 
   const [viewer, setViewer] = useState(place.viewer || 'practitioner');
@@ -53,12 +69,35 @@ export default function Workbench({ catalog }) {
   const [openId, setOpenId] = useState(null);
   const [notice, setNotice] = useState(null);
 
-  useEffect(() => { if (loadedKey === storeKey) write(storeKey, { state, pkg }); }, [state, pkg, storeKey, loadedKey]);
+  useEffect(() => { if (loadedKey === storeKey && state) write(storeKey, { state, pkg }); }, [state, pkg, storeKey, loadedKey]);
   useEffect(() => { write(PLACE_KEY, { engagement: engId, viewer, stage }); }, [engId, viewer, stage]);
 
-  const brand = state.brand;
-  const actor = state.engagement.actor || 'practitioner';
-  const holders = useMemo(() => [...new Set(Object.values(brand.authority || {}).flat())].filter(id => id !== actor), [brand, actor]);
+  // Hooks run on every render, including when access has been refused and there is no state.
+  const brand = state?.brand || null;
+  const actor = state?.engagement.actor || 'practitioner';
+  const holders = useMemo(() => (brand ? [...new Set(Object.keys(POWERS).flatMap(power => deciders(brand, power).map(d => d.id)))].filter(id => id !== actor) : []), [brand, actor]);
+  const items = useMemo(() => Object.assign(Object.create(null), Object.fromEntries((brand?.items || []).map(i => [i.id, i]))), [brand]);
+  const tensions = useMemo(() => (state ? findTensions(state.brand, { asOf, workTypes: state.engagement.workTypes || [], channels: state.engagement.channels || [] }) : []), [state, asOf]);
+
+  if (!state) {
+    return (
+      <div className="lb">
+        <header className="lb-top">
+          <span className="lb-home lb-home-plain">{catalog.homeLabel || 'Living Brand workbench'}</span>
+          {catalog.open.length > 1 && (
+            <label className="lb-viewer"><span>Engagement</span>
+              <select value={engId} onChange={e => setEngId(e.target.value)}>{catalog.open.map(e => <option key={e.engagement.id} value={e.engagement.id}>{e.brand.name}: {e.engagement.project}</option>)}</select>
+            </label>
+          )}
+        </header>
+        <main className="lb-main lb-solo"><article>
+          <h1>{entry.brand.name} cannot be opened</h1>
+          <p className="lb-deck">{all.refused} Its material is not shown. Ask {entry.brand.name} to renew the access, or for the engagement package if the work has ended.</p>
+        </article></main>
+      </div>
+    );
+  }
+
   const viewers = [
     ['practitioner', state.engagement.practitioner || 'The practitioner'],
     ...holders.map(id => [`person:${id}`, `${person(brand, id)}${brand.people?.[id]?.title ? `, ${lower(brand.people[id].title)}` : ''}`]),
@@ -72,11 +111,9 @@ export default function Workbench({ catalog }) {
     catch (e) { setNotice({ kind: 'refused', text: e.message }); return false; }
   };
   const setPkg = p => setAll(a => ({ ...a, pkg: p }));
-  const reset = () => { setAll(begin(entry)); setNotice({ kind: 'ok', text: 'Engagement reset to its starting material.' }); };
+  const reset = () => { setAll(begin(entry, asOf)); setNotice({ kind: 'ok', text: 'Engagement reset to its starting material.' }); };
   const switchTo = id => { setEngId(id); setOpenId(null); setNotice(null); setViewer('practitioner'); setStage('enter'); window.scrollTo(0, 0); };
 
-  const items = useMemo(() => Object.fromEntries(brand.items.map(i => [i.id, i])), [brand]);
-  const tensions = useMemo(() => findTensions(brand, { asOf, workTypes: state.engagement.workTypes || [], channels: state.engagement.channels || [] }), [brand, state.engagement, asOf]);
   const open = openId ? items[openId] : null;
   const go = k => { setStage(k); window.scrollTo(0, 0); };
   const ctx = { catalog, asOf, state, brand, items, tensions, act, actor, setOpenId, go, pkg, setPkg, setNotice, switchTo };
@@ -125,7 +162,7 @@ export default function Workbench({ catalog }) {
               <button key={k} className={stage === k ? 'is-on' : ''} aria-current={stage === k ? 'step' : undefined} onClick={() => go(k)}>{n}</button>
             ))}
           </nav>
-          <main className="lb-main">
+          <main className="lb-main"><StageBoundary resetKey={`${engId}:${stage}`}>
             {stage === 'enter' && <Enter {...ctx} reset={reset} />}
             {stage === 'orient' && <Orient {...ctx} />}
             {stage === 'investigate' && <Investigate {...ctx} />}
@@ -133,12 +170,16 @@ export default function Workbench({ catalog }) {
             {stage === 'choose' && <Choose {...ctx} />}
             {stage === 'organize' && <Organize {...ctx} />}
             {stage === 'transfer' && <Transfer {...ctx} />}
-          </main>
+          </StageBoundary></main>
         </div>
       )}
-      {view.startsWith('person:') && <main className="lb-main lb-solo"><PersonView {...ctx} personId={view.slice(7)} /></main>}
-      {view === 'partner' && <main className="lb-main lb-solo"><Partner {...ctx} /></main>}
-      {view === 'agency' && <main className="lb-main lb-solo"><Agency {...ctx} /></main>}
+      {view !== 'practitioner' && (
+        <main className="lb-main lb-solo"><StageBoundary resetKey={`${engId}:${view}`}>
+          {view.startsWith('person:') && <PersonView {...ctx} personId={view.slice(7)} />}
+          {view === 'partner' && <Partner {...ctx} />}
+          {view === 'agency' && <Agency {...ctx} />}
+        </StageBoundary></main>
+      )}
 
       {open && <Drawer key={open.id} item={open} {...ctx} canWork={view === 'practitioner'} actingAs={view === 'practitioner' ? actor : view.startsWith('person:') ? view.slice(7) : null} />}
     </div>
@@ -162,8 +203,8 @@ function Enter({ catalog, asOf, state, brand, items, act, actor, setOpenId, go, 
     try { openTenant({}, { ...closed, asOf }); setNotice({ kind: 'ok', text: 'Opened.' }); }
     catch (err) { setNotice({ kind: 'refused', text: err.message }); }
   };
-  const areas = Object.entries(POWERS).filter(([power]) => power in (brand.authority || {}));
-  const unnamed = areas.filter(([power]) => !brand.authority[power].length);
+  const areas = Object.entries(POWERS);
+  const unnamed = areas.filter(([power]) => !deciders(brand, power).length);
   const done = e.modesCompleted || [];
   return (
     <article>
@@ -206,7 +247,7 @@ function Enter({ catalog, asOf, state, brand, items, act, actor, setOpenId, go, 
           <h2>Who decides at {brand.name}</h2>
           <table className="lb-table">
             <thead><tr><th>Decision</th><th>Decided by</th></tr></thead>
-            <tbody>{areas.map(([power, label]) => <tr key={power}><td>{cap(label)}</td><td>{who(brand, brand.authority[power])}</td></tr>)}</tbody>
+            <tbody>{areas.map(([power, label]) => <tr key={power}><td>{cap(label)}</td><td>{who(brand, deciders(brand, power).map(d => d.id))}</td></tr>)}</tbody>
           </table>
           {study && <p className="lb-body">A public-source study cannot establish any of this. It is the first thing to ask {brand.name}.</p>}
           {canName && unnamed.length > 0 && (
@@ -214,9 +255,7 @@ function Enter({ catalog, asOf, state, brand, items, act, actor, setOpenId, go, 
               ev.preventDefault();
               const name = naming.name.trim(); const power = naming.power || unnamed[0][0];
               if (!name) return;
-              const existing = Object.entries(brand.people || {}).find(([, p]) => p.name.toLowerCase() === name.toLowerCase());
-              const id = existing ? existing[0] : name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-              if (act(s => nameAuthority(s, { power, person: { id, name }, by: actor, asOf }), `${name} now decides ${POWERS[power]}.`)) setNaming({ power: '', name: '' });
+              if (act(s => nameAuthority(s, { power, person: { name }, by: actor, asOf }), `${name} now decides ${POWERS[power]}.`)) setNaming({ power: '', name: '' });
             }}>
               <h3>Name who decides</h3>
               <label>Decision<select value={naming.power || unnamed[0][0]} onChange={ev => setNaming({ ...naming, power: ev.target.value })}>{unnamed.map(([power, label]) => <option key={power} value={power}>{cap(label)}</option>)}</select></label>
@@ -301,7 +340,7 @@ function Orient({ asOf, state, brand, items, setOpenId, tensions, go }) {
   const o = orientation(brand, state.engagement, { asOf });
   const reading = state.engagement.reading?.orient || {};
   const urgent = tensions.filter(t => t.severity !== 'investigate' || t.kind === 'Unknown rights').slice(0, 5);
-  const rules = effectiveRules(brand).filter(r => !r.effective?.to && r.standing !== 'archive');
+  const rules = rulesInForce(effectiveRules(brand), asOf);
   const canonRules = rules.filter(r => r.standing === 'canon');
   const otherRules = rules.filter(r => r.standing !== 'canon');
   return (
@@ -428,7 +467,7 @@ const SOURCE_BASIS = {
 
 function Drawer({ asOf, item, state, brand, items, act, actor, setOpenId, canWork, actingAs }) {
   const e = state.engagement;
-  const st = assessStanding(item, { channels: e.channels || [], asOf, until: e.newBrief?.until });
+  const st = assessStanding(item, { channels: e.channels || [], asOf, until: e.newBrief?.until }, brand);
   const [to, setTo] = useState(item.standing === 'canon' ? 'precedent' : 'canon');
   const [why, setWhy] = useState('');
   const [ev, setEv] = useState([]);
@@ -564,6 +603,7 @@ function Interpret({ asOf, state, brand, items, setOpenId, tensions }) {
   const reading = e.reading?.interpret || {};
   const cf = carryForward(brand, e, { asOf });
   const ledger = changeLedger(brand, { asOf });
+  const events = timeline(brand, { asOf });
   const hyps = organizationalHypotheses(brand, e);
   const groups = tensions.reduce((a, t) => ({ ...a, [t.kind]: [...(a[t.kind] || []), t] }), {});
   return (
@@ -625,6 +665,24 @@ function Interpret({ asOf, state, brand, items, setOpenId, tensions }) {
               <p><strong>Decided by</strong> {h.owner ? person(brand, h.owner) : `no one named yet at ${brand.name}`}. A recommendation from this engagement is not authority to act.</p>
             </div>
           ))}
+        </section>
+      )}
+
+      {events.length > 0 && (
+        <section className="lb-section">
+          <h2>What happened, in order</h2>
+          <ol className="lb-timeline">
+            {events.map(f => (
+              <li key={f.id}>
+                <time>{f.date ? fmt(f.date) : 'Undated'}</time>
+                <div>
+                  <p>{f.statement}{f.ahead ? ' This is still ahead.' : ''}</p>
+                  {f.source && <Cite id={f.source} items={items} setOpenId={setOpenId} />}
+                  {f.links.filter(u => /^https?:/.test(u)).slice(0, 2).map(u => <a key={u} className="lb-cite" href={u} target="_blank" rel="noreferrer noopener">{u.replace(/^https?:\/\/(www\.)?/, '').split('/')[0]}</a>)}
+                </div>
+              </li>
+            ))}
+          </ol>
         </section>
       )}
 
@@ -744,9 +802,14 @@ function Organize({ asOf, state, brand, items, setOpenId, pkg, setPkg, setNotice
   const study = isPublicStudy(brand);
   const partner = e.partner;
   const issue = () => {
-    try { setPkg(buildContextPackage(state, { partner: { id: partner.id, name: partner.name }, assignment: partner.assignment, channels: partner.channels, workTypes: partner.workTypes, powers: ['read'], expires: partner.expires, asOf })); setNotice({ kind: 'ok', text: `Context package issued. Switch the viewer to ${partner.name} to see what it receives.` }); }
-    catch (err) { setNotice({ kind: 'refused', text: err.message }); }
+    try {
+      const issued = (pkg?.issued || 0) + 1;
+      const made = buildContextPackage(state, { partner: { id: partner.id, name: partner.name }, assignment: partner.assignment, channels: partner.channels, workTypes: partner.workTypes, powers: ['read'], expires: partner.expires, asOf, seq: issued });
+      setPkg({ ...made, issued });
+      setNotice({ kind: 'ok', text: `Context package issued. Switch the viewer to ${partner.name} to see what it receives.` });
+    } catch (err) { setNotice({ kind: 'refused', text: err.message }); }
   };
+  const lapsed = pkg && !pkg.package.revokedAt && !packageValid(pkg.package, asOf);
   return (
     <article>
       <h1>{e.reading?.organize?.headline || `${brief.title}: the brief`}</h1>
@@ -792,15 +855,16 @@ function Organize({ asOf, state, brand, items, setOpenId, pkg, setPkg, setNotice
         </section>
       )}
 
-      {partner && !study && (
+      {partner && !study && e.grant?.powers?.includes('share') && (
         <section className="lb-section">
           <h2>Collaborators</h2>
           <p className="lb-body">{partner.name} needs the rules and cleared material for its assignment, not the research or the strategy. Its package is read-only, expires on {fmt(partner.expires)}, and can be revoked.</p>
           <div className="lb-actions">
             {!pkg && <button className="lb-primary" onClick={issue}>Issue a context package</button>}
-            {pkg && !pkg.package.revokedAt && <button onClick={() => { setPkg({ ...pkg, package: revokePackage(pkg.package, asOf) }); setNotice({ kind: 'ok', text: 'Package revoked.' }); }}>Revoke the package</button>}
-            {pkg?.package.revokedAt && <button onClick={issue}>Issue a new package</button>}
+            {pkg && !pkg.package.revokedAt && !lapsed && <button onClick={() => { setPkg({ ...pkg, package: revokePackage(pkg.package, asOf) }); setNotice({ kind: 'ok', text: 'Package revoked.' }); }}>Revoke the package</button>}
+            {(pkg?.package.revokedAt || lapsed) && <button onClick={issue}>Issue a new package</button>}
           </div>
+          {lapsed && <p className="lb-body">The package issued earlier ended on {fmt(pkg.package.expires)}. The partner can no longer read it.</p>}
           {pkg && (
             <div className="lb-two">
               <div><h3>Included ({pkg.package.included.length})</h3><ul className="lb-list">{pkg.package.included.map(i => <li key={i.id}>{i.title}</li>)}</ul></div>
@@ -948,7 +1012,8 @@ function PersonView({ asOf, state, brand, items, act, setOpenId, personId }) {
 function Partner({ asOf, pkg: issued, brand }) {
   const pkg = issued?.package;
   if (!pkg) return (<article><h1>No context package has been issued to you</h1><p className="lb-deck">{brand.name}'s material is reachable only through a package the engagement issues. Switch back to the practitioner and issue one in Organize.</p></article>);
-  if (!packageValid(pkg, asOf)) return (<article><h1>Your access to {brand.name} was revoked</h1><p className="lb-deck">Revoked on {fmt(pkg.revokedAt)}. Nothing from the package remains readable here.</p></article>);
+  if (pkg.revokedAt) return (<article><h1>Your access to {brand.name} was revoked</h1><p className="lb-deck">Revoked on {fmt(pkg.revokedAt)}. Nothing from the package remains readable here.</p></article>);
+  if (!packageValid(pkg, asOf)) return (<article><h1>Your access to {brand.name} has ended</h1><p className="lb-deck">The package ended on {fmt(pkg.expires)}. Nothing from it remains readable here.</p></article>);
   return (
     <article>
       <h1>{pkg.assignment}</h1>

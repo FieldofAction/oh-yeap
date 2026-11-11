@@ -170,6 +170,11 @@ h4 { font-family: var(--lb-sans); font-weight: 600; font-size: 1rem; letter-spac
 .lb-form .lb-check { display: flex; gap: .5rem; align-items: flex-start; font-size: .9375rem; }
 
 .lb-inline { max-width: 26rem; }
+.lb-timeline { list-style: none; padding: 0; margin: 0; display: grid; gap: .875rem; }
+.lb-timeline li { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: 1rem; padding-bottom: .875rem; border-bottom: 1px solid var(--lb-line); }
+.lb-timeline time { color: var(--lb-muted); font-variant-numeric: tabular-nums; }
+.lb-timeline p { margin: 0 0 .25rem; }
+.lb-timeline .lb-cite { margin-right: .75rem; }
 .lb-export { width: 100%; font-family: ui-monospace, Menlo, monospace; font-size: .8125rem; background: var(--lb-surface); color: var(--lb-fg); border: 1px solid var(--lb-line); border-radius: 8px; padding: .75rem; }
 .lb-drawer a, .lb-main a { color: inherit; text-decoration-color: var(--lb-accent); text-underline-offset: .2em; }
 .lb-carry td:first-child { color: var(--lb-muted); }
@@ -195,6 +200,7 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .875rem; }
   .lb-main { padding-top: 1.5rem; }
   .lb-pipeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .lb-carry-rows li { grid-template-columns: 5.5rem minmax(0, 1fr); }
+  .lb-timeline li { grid-template-columns: minmax(0, 1fr); gap: .125rem; }
   .lb-facts { grid-template-columns: minmax(0, 1fr); }
   .lb-facts dd { margin-bottom: .5rem; }
 }
