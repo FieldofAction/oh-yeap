@@ -1,0 +1,14 @@
+{
+  "name": "field-of-action",
+  "description": "Tools from Field of Action. Living Brand is a portable brand workbench.",
+  "owner": {
+    "name": "Field of Action"
+  },
+  "plugins": [
+    {
+      "name": "living-brand",
+      "source": "./living-brand",
+      "description": "A portable brand workbench: a connector that keeps one folder of records per engagement, and a skill for running an engagement with it."
+    }
+  ]
+}

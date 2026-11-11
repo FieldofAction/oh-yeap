@@ -30,7 +30,10 @@ export default defineConfig(({ mode }) => {
   const buildTarget = env.BUILD_TARGET || process.env.BUILD_TARGET || 'public'
   const input = buildTarget === 'studio'
     ? { studio: path.resolve(process.cwd(), 'studio.html') }
-    : { index: path.resolve(process.cwd(), 'index.html') }
+    : {
+        index: path.resolve(process.cwd(), 'index.html'),
+        'living-brand': path.resolve(process.cwd(), 'living-brand.html'),
+      }
 
   return {
     build: {
@@ -46,7 +49,7 @@ export default defineConfig(({ mode }) => {
         configureServer(server) {
           server.middlewares.use((req, res, next) => {
             const path = (req.url || '').split('?')[0]
-            for (const slug of ['world-cup-atlas', 'oz-index', 'signal-surface']) {
+            for (const slug of ['world-cup-atlas', 'oz-index', 'signal-surface', 'living-brand']) {
               if (path === `/${slug}` || path === `/${slug}/`) {
                 req.url = `/${slug}.html`
                 break

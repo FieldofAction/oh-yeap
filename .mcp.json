@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "living-brand": {
+      "command": "node",
+      "args": [
+        "${CLAUDE_PROJECT_DIR:-.}/living-brand/connector/bundle/server.mjs"
+      ]
+    }
+  }
+}
