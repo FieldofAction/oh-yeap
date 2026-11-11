@@ -144,7 +144,7 @@ export default function Sidebar({ view, navigateTo, filter, setFilter, hiddenCou
           <span className="sb-toggle-bar" />
         </button>
         <div className="sb-brand" onClick={() => { navigateTo("public"); setFilter("All"); setMobileOpen(false); window.scrollTo(0, 0); }}>
-          Field of Action
+          <span className="sb-brand-logo" role="img" aria-label="Field of Action" />
         </div>
       </div>
 
