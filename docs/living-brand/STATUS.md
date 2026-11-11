@@ -55,13 +55,18 @@ act, the reader's own first; a decision that is the reader's to make is the
 one bordered thing, with its notes above its buttons and again above "Adopt
 it"; what is waiting comes first on each stage and reference is closed under
 its heading; a choice is recorded where the reader is; a piece's sheet opens
-on whether it may be used. Nothing the house rule on page text forbids was
-taken from the references: no label above a heading, no small second line,
-no count as ornament, no arrow on a link.
+on whether it may be used. After an action, focus goes to what it changed or
+back to the button that opened the form, and the notice that confirms it
+sits over the top bar, where nothing is being read; with a piece's sheet
+open it sits at the foot. A refusal is said at the field it is about.
+Nothing the house rule on page text forbids was taken from the references:
+no label above a heading, no small second line, no count as ornament, no
+arrow on a link.
 
 On the fictional brand the longest stage, Interpret, went from 6.0 screens
-to 2.7 on a laptop and from 9.7 to 3.8 on a phone, with no information
-removed.
+to 2.8 on a laptop and from 9.7 to 3.8 on a phone, with no information
+removed. Investigate and Transfer are slightly longer on a laptop than they
+were (3.5 screens against 3.2, and 1.4 against 1.2).
 
 **The connector** (`living-brand/`). A local MCP server with 27 tools, a
 skill that tells an assistant how to run an engagement, and a plugin manifest
@@ -155,8 +160,32 @@ repository and had to prove a finding by running it:
    rebalanced; rights sat below an action on a piece's sheet; a person's own
    seat said nothing was waiting while the record named them four times;
    focus was lost on every change of stage; and enlarged text crushed the
-   reading column. That second pass was checked by the automated suites and
-   scripted browser runs, not by a further independent round.
+   reading column.
+
+10. **The second pass, re-checked**: three reviewers re-ran all 51 findings
+    of the five-seat review against the page as it then stood. 19 no longer
+    occurred, 25 occurred in part, 5 still occurred and 2 were not re-run.
+    They reported 15 new findings, none high. Most were about the moment
+    after an action: focus fell to the top of the document after a form was
+    cancelled or submitted; the notice covered the heading or the row just
+    changed; a person's own seat still opened on an empty section; an
+    adopted proposal's row did not say what the adoption had done.
+
+11. **The third pass, attacked**: two reviewers were given 27 claims about
+    what the third pass had fixed and asked to make each false, by keyboard
+    and from the founder's and an executive's seats. 21 held. Six broke:
+    with a sheet open, Tab from the notice left the sheet, and the mark on
+    the open piece was hidden under the sheet; a long notice ran past the
+    top bar and over a heading; a notice at the foot could land on the row
+    just adopted; the sheet's header did not restack with text enlarged on a
+    phone; an executive's headline promised a decision the page gave no way
+    to make; and two forms open at once showed two filled buttons. The Tab
+    order, both placements of the notice and the sheet's header were fixed
+    and the headline was reworded, each with a scripted check, along with
+    focus being dropped when a notice was dismissed by keyboard. The hidden
+    mark and the two open forms stand, and are listed under known gaps.
+    These last fixes were checked by the automated suites and scripted
+    browser runs, not by a further independent round.
 
 The findings that changed the product most:
 
@@ -272,7 +301,28 @@ The findings that changed the product most:
 - Rows show a small drawn mark to say they open. It is not a text arrow on a
   link, which the house rule forbids, but it is the nearest thing on the page
   to one.
-- A notice can still sit over a field it is asking for until the next tap.
+- Headings and text are set in two type families, the site's own. The
+  International Style would use one.
+- On Orient and Interpret the headline and the paragraph under it take about
+  half of the first screen on a laptop and more on a phone. The first entry
+  that waits is still on the first screen.
+- Inside a list, a group's heading is the size of the text under it, in the
+  heavier weight. The reader's own entries are heavier; nothing else in a
+  list is larger than anything else.
+- A person named for an entry can read it from their own seat. They cannot
+  record a decision about it there: that is done through a proposal or a
+  choice put to them.
+- Accepting a choice that was routed to someone takes one press and asks for
+  no reason. Declining asks for one.
+- Two forms can be open in one stage at once, each with its own filled
+  button.
+- The piece whose sheet is open is marked in the list behind it. On a
+  laptop the sheet covers all but the first column, so the mark is seen only
+  there.
+- On a phone the switch between seats cuts a long name short. The list it
+  opens shows the whole name.
+- With a piece's sheet open, a notice sits at the foot of the screen and can
+  cover a line of the sheet until the next tap.
 - Someone holding the power to name deciders can name themselves for any
   area. The page says so; it does not stop it.
 - After the records behind a private page are rebuilt, answers and choices

@@ -165,7 +165,8 @@ h4 { font-family: var(--lb-sans); font-weight: 600; font-size: var(--lb-t-body);
 /* A heading is the line above its list. */
 .lb-section :is(h2, h3) + .lb-findings { border-top: 0; }
 /* Where focus is sent after an action, the thing it lands on clears the bars that stay at the top. */
-.lb-row > details > summary, .lb [tabindex="-1"] { scroll-margin-top: calc(var(--lb-top-h, 3.6rem) + 5rem); scroll-margin-bottom: 6rem; }
+.lb :is(button, a, input, select, textarea, summary, [tabindex="-1"]) { scroll-margin-top: calc(var(--lb-top-h, 3.6rem) + 5rem); scroll-margin-bottom: 6rem; }
+.lb-drawer :is(button, a, input, select, textarea, summary, [tabindex="-1"]) { scroll-margin-top: 4rem; }
 .lb-row > details > summary {
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 15rem) 1rem; align-items: baseline; gap: var(--lb-1) var(--lb-5);
   padding: var(--lb-4) var(--lb-2) var(--lb-4) 0; min-height: 44px; cursor: pointer; list-style: none; margin: 0;
@@ -286,13 +287,13 @@ strong > .lb-cite { font-size: inherit; font-weight: inherit; }
 /* What an action did is said where it can be seen: over the page and over an open drawer. */
 .lb-notice {
   position: fixed; left: 50%; bottom: max(1rem, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 40;
-  width: min(40rem, calc(100vw - 2rem)); max-height: 60vh; overflow-y: auto;
-  display: flex; justify-content: space-between; align-items: flex-start; gap: var(--lb-4);
-  padding: var(--lb-3) var(--lb-4); border-radius: var(--lb-radius); background: var(--lb-fg); color: var(--lb-bg);
+  width: min(52rem, calc(100vw - 2rem)); max-height: 60vh; overflow-y: auto;
+  display: flex; justify-content: space-between; align-items: center; gap: var(--lb-4);
+  padding: var(--lb-2) var(--lb-4); border-radius: var(--lb-radius); background: var(--lb-fg); color: var(--lb-bg);
   box-shadow: 0 8px 28px rgb(0 0 0 / .22);
 }
-/* Placed away from the control just used: when the action was in the lower half it sits over the bar at the top, which nobody is reading. */
-.lb-notice.is-top { bottom: auto; top: var(--lb-2); }
+/* Over the bar at the top, which nobody is reading. With a piece's sheet open it stays at the foot, in the room the sheet leaves. */
+.lb-notice.is-top { bottom: auto; top: var(--lb-1); }
 @media (pointer: coarse) { .lb-notice button { min-height: 44px; } }
 /* A notice never takes a tap meant for what is under it; only its own button does. */
 .lb-notice { pointer-events: none; }
@@ -318,6 +319,7 @@ strong > .lb-cite { font-size: inherit; font-weight: inherit; }
 code { font-family: ui-monospace, Menlo, monospace; font-size: .875rem; }
 
 @media (max-width: 47.5em) {
+  .lb-notice { font-size: var(--lb-t-support); padding: var(--lb-1) var(--lb-3); gap: var(--lb-3); }
   .lb-shell { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .lb-stages {
     position: sticky; top: var(--lb-top-h, 3.6rem); z-index: 4; margin: 0 calc(-1 * var(--lb-gutter)); padding: var(--lb-2) var(--lb-gutter);
@@ -374,12 +376,6 @@ article:has(.lb-form .lb-primary) > .lb-next .lb-primary { background: var(--lb-
 /* One piece: a small picture beside its name, so what it may do comes on the first screen. */
 .lb-piece { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: var(--lb-2) var(--lb-5); align-items: center; margin: var(--lb-2) 0 var(--lb-5); clear: both; }
 .lb-piece .lb-figure { display: contents; }
-.lb-drawer { container-type: inline-size; }
-@container (max-width: 17rem) {
-  .lb-piece { grid-template-columns: minmax(0, 1fr); }
-  .lb-piece .lb-plate { max-width: 6.5rem; }
-  .lb-piece h2 { grid-column: 1; grid-row: 2; overflow-wrap: break-word; }
-}
 .lb-piece .lb-plate { grid-column: 1; grid-row: 1; }
 .lb-piece h2 { grid-column: 2; grid-row: 1; margin: 0; min-width: 0; overflow-wrap: anywhere; }
 .lb-drawer h3 { margin-top: var(--lb-6); padding-top: var(--lb-4); border-top: 1px solid var(--lb-line); }
@@ -436,3 +432,11 @@ article:has(.lb-form .lb-primary) > .lb-next .lb-primary { background: var(--lb-
 /* In dark the drawn stand-ins are held back, so they are not the brightest thing on the page. */
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lb-plate { filter: brightness(.62); } }
 :root[data-theme="dark"] .lb-plate { filter: brightness(.62); }
+
+/* In a very narrow sheet (a phone with text enlarged) the picture goes above the name, so the name keeps whole words. */
+.lb-drawer { container-type: inline-size; }
+@container (max-width: 17rem) {
+  .lb-drawer .lb-piece { grid-template-columns: minmax(0, 1fr); }
+  .lb-drawer .lb-piece .lb-plate { max-width: 6.5rem; }
+  .lb-drawer .lb-piece h2 { grid-column: 1; grid-row: 2; overflow-wrap: break-word; }
+}

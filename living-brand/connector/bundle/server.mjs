@@ -24604,7 +24604,8 @@ function timeline(brand, { asOf } = {}) {
   return [...dated, ...facts.filter((f) => !f.date)];
 }
 function organizationalHypotheses(brand, engagement = {}) {
-  const ev = Object.fromEntries(brand.items.flatMap((i) => (i.evidence || []).map((e) => [e.id, { ...e, item: i.id }])));
+  const known = new Set(brand.items.map((i) => i.id));
+  const ev = Object.fromEntries(brand.items.flatMap((i) => (i.evidence || []).map((e) => [e.id, { ...e, item: known.has(e.source) ? e.source : i.id }])));
   return (engagement.hypotheses || []).map((h) => {
     const evidence = (h.evidenceIds || []).filter((id) => ev[id]).map((id) => ({ id, statement: ev[id].statement, item: ev[id].item, basis: ev[id].basis }));
     const required2 = h.requires || [];

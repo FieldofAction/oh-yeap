@@ -36,11 +36,14 @@ const whoFor = (brand, ids, me) => (ids?.length ? ids.map(id => nameFor(brand, i
 const plural = (n, one, many) => (n === 1 ? one : many.replace('%', n));
 const listAnd = a => (a.length > 1 ? `${a.slice(0, -1).join(', ')} and ${a.at(-1)}` : a[0] || '');
 // When an action removes the control that was used, focus goes to what it changed, or back to what opened it.
+const giveFocus = el => {
+  if (!el.matches('button, a[href], input, select, textarea, summary')) el.tabIndex = -1;
+  el.focus({ preventScroll: true });
+  el.scrollIntoView({ block: 'nearest' });
+};
 const focusAt = selector => requestAnimationFrame(() => {
   const el = document.querySelector(selector);
-  if (!el) return;
-  if (!el.matches('button, a[href], input, select, textarea, summary')) el.tabIndex = -1;
-  el.focus();
+  if (el) giveFocus(el);
 });
 // What kind of work this engagement is, what came before it, and what it is not.
 const MODES = { orientation: 'a rapid orientation', audit: 'a brand audit', investigation: 'a creative investigation', planning: 'execution planning' };
@@ -127,17 +130,19 @@ export default function Workbench({ catalog }) {
   const [viewer, setViewer] = useState(place.viewer || 'practitioner');
   const [stage, setStage] = useState(STAGES.some(s => s[0] === place.stage) ? place.stage : 'enter');
   const [openId, setOpenId] = useState(null);
-  // A notice is put in the half of the screen the last action was not in, so it never sits on the control just used.
-  const lastY = useRef(null);
+  // A notice sits over the top bar, which nobody is reading. While a piece's sheet is open the bar is
+  // not there to sit on, so it goes to the foot of the screen, in the room the sheet leaves for it.
   const [notice, setNoticeRaw] = useState(null);
-  const setNotice = useCallback(n => setNoticeRaw(typeof n === 'function' ? n : n ? { ...n, top: lastY.current != null && lastY.current > window.innerHeight / 2 } : null), []);
+  const setNotice = useCallback(n => setNoticeRaw(typeof n === 'function' ? n : n ? { ...n, top: !document.querySelector('.lb-drawer') } : null), []);
+  // What had focus before the notice's own button took it, so dismissing gives it back.
+  const before = useRef(null);
   useEffect(() => {
     // The next tap anywhere else ends a notice; the tap itself still does what it was meant to.
-    const point = e => { lastY.current = e.clientY; if (!e.target?.closest?.('.lb-notice')) setNoticeRaw(null); };
-    const key = () => { const r = document.activeElement?.getBoundingClientRect?.(); if (r && r.height) lastY.current = r.top + r.height / 2; };
+    const point = e => { if (!e.target?.closest?.('.lb-notice')) setNoticeRaw(null); };
+    const focus = e => { if (!e.target?.closest?.('.lb-notice')) before.current = e.target; };
     document.addEventListener('pointerdown', point, true);
-    document.addEventListener('keydown', key, true);
-    return () => { document.removeEventListener('pointerdown', point, true); document.removeEventListener('keydown', key, true); };
+    document.addEventListener('focusin', focus, true);
+    return () => { document.removeEventListener('pointerdown', point, true); document.removeEventListener('focusin', focus, true); };
   }, []);
   // Whether this browser keeps anything at all is known at once; a write that fails later is reported when it fails.
   const [unsaved, setUnsaved] = useState(() => { const ok = write(`${STORE}:probe`, 1); drop(`${STORE}:probe`); return !ok; });
@@ -332,7 +337,16 @@ export default function Workbench({ catalog }) {
       {notice && (
         <div className={`lb-notice lb-notice-${notice.kind}${notice.top ? ' is-top' : ''}`} role="status">
           <p>{notice.text}</p>
-          <button onClick={() => setNotice(null)}>Dismiss</button>
+          <button
+            onClick={() => { setNotice(null); const to = before.current?.isConnected ? before.current : document.querySelector('.lb-drawer .lb-close, .lb-main h1'); if (to) giveFocus(to); }}
+            onKeyDown={k => {
+              // With a sheet open, Tab from here goes back into the sheet, never to the page behind it.
+              const sheet = k.key === 'Tab' && document.querySelector('.lb-drawer');
+              if (!sheet) return;
+              const f = [...sheet.querySelectorAll('button, a[href], input, select, textarea, summary')].filter(x => !x.disabled);
+              if (!f.length) return;
+              k.preventDefault(); (k.shiftKey ? f.at(-1) : f[0]).focus();
+            }}>Dismiss</button>
         </div>
       )}
     </div>
@@ -823,9 +837,10 @@ function Drawer({ asOf, item, state, brand, items, tensions, act, actor, me, set
         {proposals.some(p => p.status === 'superseded') && <p className="lb-body">{plural(proposals.filter(p => p.status === 'superseded').length, 'One earlier proposal was', '% earlier proposals were')} closed when its standing changed.</p>}
         {proposals.some(p => p.status !== 'superseded') && (
           <ul className="lb-list">{proposals.filter(p => p.status !== 'superseded').map(p => (
-            <li key={p.id}>{p.status === 'open'
-              ? (study ? `Your note: ${lower(classOf(p.to, brand).name)}. ${p.rationale}` : `A proposal to make it ${lower(classOf(p.to, brand).name)} is waiting for ${whoFor(brand, p.reviewer, me)}.`)
-              : proposalOutcome(p, brand, me)}</li>
+            <li key={p.id} id={`lb-sheet-p-${p.id}`}>{p.status === 'open'
+              ? (study ? `Your note: ${lower(classOf(p.to, brand).name)}. ${p.rationale}` : `A proposal to make it ${lower(classOf(p.to, brand).name)} ${p.reviewer.length ? `is waiting for ${whoFor(brand, p.reviewer, me)}` : 'is waiting. No one is named to decide it'}.`)
+              : proposalOutcome(p, brand, me)}
+              {p.status === 'open' && !study && p.warnings.length > 0 && <ul className="lb-warnings">{p.warnings.map(w => <li key={w}>{w}</li>)}</ul>}</li>
           ))}</ul>
         )}
 
@@ -879,7 +894,12 @@ function Drawer({ asOf, item, state, brand, items, tensions, act, actor, me, set
         )}
 
         {canWork && !noStanding && doing === 'propose' && (
-          <form className="lb-form" onSubmit={x => { x.preventDefault(); if (act(s => propose(s, { itemId: item.id, to, rationale: why, evidenceIds: ev, by: actor, scope, asOf }), next => { const p = next.proposals.at(-1); return study ? `Noted for yourself. Nothing about ${brand.name}'s material has changed.` : `Proposal recorded${p.reviewer.length ? `. It waits for ${whoFor(brand, p.reviewer, me)}` : ''}. Nothing has changed yet.${p.warnings.length ? ` Noted: ${p.warnings.join(' ')}` : ''}`; })) { setWhy(''); setScope(''); setEv([]); setDoing(null); focusAt('.lb-drawer [data-opens="propose"]'); } }}>
+          <form className="lb-form" onSubmit={x => {
+            x.preventDefault();
+            // The notice stays short. The notes about the proposal are listed with it, above, and focus goes there.
+            let made = null;
+            if (act(s => propose(s, { itemId: item.id, to, rationale: why, evidenceIds: ev, by: actor, scope, asOf }), next => { const p = next.proposals.at(-1); made = p.id; return study ? `Noted for yourself. Nothing about ${brand.name}'s material has changed.` : `Proposal recorded${p.reviewer.length ? `. It waits for ${whoFor(brand, p.reviewer, me)}` : ''}. Nothing has changed yet.`; })) { setWhy(''); setScope(''); setEv([]); setDoing(null); focusAt(made ? `[id="lb-sheet-p-${made}"]` : '.lb-drawer [data-opens="propose"]'); }
+          }}>
             <h3>{study ? 'Note a different reading' : 'Propose a change of standing'}</h3>
             <p className="lb-body">{study ? `This is a note to yourself. Only ${brand.name} can decide what its material is.` : reviewers.length ? (reviewers.includes(me) ? 'This is yours to decide. A proposal puts it in front of you in Choose, with what adopting it would change.' : `Decided by ${who(brand, reviewers)}.`) : `No one is named to decide this at ${brand.name}. A proposal will wait.`}</p>
             <label>{study ? 'Your reading' : 'New standing'}
@@ -946,7 +966,9 @@ const show = v => v == null ? 'Not set' : Array.isArray(v) ? v.map(c => CHANNEL_
 
 const choiceStatus = (c, brand, me) => {
   if (c.status === 'withdrawn') return `Withdrawn on ${fmt(c.withdrawn?.date || c.date)}`;
-  if (c.status === 'accepted' || c.status === 'declined') return `${cap(c.status)} by ${nameFor(brand, c.answer?.by || c.owner, me)} on ${fmt(c.answer?.date || c.date)}${c.answer?.note ? `: ${stop(c.answer.note)}` : ''}`;
+  // Someone who records a choice in an area they decide has decided it. "Accepted" is for a choice someone else put to them.
+  const own = c.status === 'accepted' && c.by === (c.answer?.by || c.owner);
+  if (c.status === 'accepted' || c.status === 'declined') return `${own ? 'Decided' : cap(c.status)} by ${nameFor(brand, c.answer?.by || c.owner, me)} on ${fmt(c.answer?.date || c.date)}${c.answer?.note ? `: ${stop(c.answer.note)}` : ''}`;
   if (c.needs) return c.owner ? `Waiting for ${nameFor(brand, c.owner, me)}` : `Needs a decision on ${POWERS[c.needs]}; no one is named`;
   return 'Recorded';
 };
@@ -1037,14 +1059,14 @@ function Tension({ t, state, brand, items, me, actor, act, asOf, study, setOpenI
   // Who it waits for is the heading it sits under. The closed line adds only what has been recorded about it.
   const who = last ? `${last.by === me ? 'Your choice' : 'Choice'}: ${lower(CHOICES[last.verdict])}. ${choiceStatus(last, brand, me)}` : '';
   return (
-    <Entry title={`${stop(title)}.`} who={who}>
+    <Entry id={`lb-t-${t.id}`} title={`${stop(title)}.`} who={who}>
       <p>{t.detail}</p>
       {t.points?.length > 0 && <ul className="lb-list">{t.points.map(pt => <li key={pt.ruleId}>{pt.rule} {pt.says || `It has ${pt.has}.`}</li>)}</ul>}
       <Cites ids={t.sources} items={items} setOpenId={setOpenId} />
       {answered.map(a => <p key={a.id}><strong>{a.by === me ? 'Your answer' : `Answered by ${nameFor(brand, a.by, me)}`}, {fmt(a.date)}.</strong> {a.answer}</p>)}
       {chosen.map(c => <p key={c.id}><strong>{c.by === me ? 'Your choice' : 'Choice recorded'}: {lower(CHOICES[c.verdict])}.</strong> {c.rationale} {choiceStatus(c, brand, me)}.</p>)}
       {canWrite && !t.unnamed && !form.open && <div className="lb-actions"><button autoFocus={form.back} onClick={form.show}>{chosen.length ? 'Record another choice about this' : 'Record a choice about this'}</button></div>}
-      {form.open && <ChoiceForm start={{ subject: stop(t.title), sources: t.sources || [], about: t.id, needs: !study && t.power ? t.power : '' }} fixedSubject brand={brand} act={act} actor={actor} me={me} asOf={asOf} study={study} onDone={form.hide} onCancel={form.hide} />}
+      {form.open && <ChoiceForm start={{ subject: stop(t.title), sources: t.sources || [], about: t.id, needs: !study && t.power ? t.power : '' }} fixedSubject brand={brand} act={act} actor={actor} me={me} asOf={asOf} study={study} onDone={() => { form.hide(); focusAt(`[id="lb-t-${t.id}"] summary`); }} onCancel={form.hide} />}
       {onName && <div className="lb-actions"><button onClick={onName}>Name them in Enter</button></div>}
     </Entry>
   );
@@ -1216,17 +1238,17 @@ function Choose({ asOf, state, brand, items, act, actor, me, setOpenId, go, stan
         <section className="lb-section">
           <h2>Drawn from the interpretation</h2>
           <ul className="lb-findings">
-            {suggested.map(c => {
+            {suggested.map((c, k) => {
               const answers = (state.answers || []).filter(a => about[a.question] && (about[a.question] === c.subject || about[a.question] === c.about));
               const made = state.choices.findLast(x => x.subject === c.subject && x.status !== 'withdrawn');
               return (
-                <Entry key={c.subject} title={`${CHOICES[c.verdict]}: ${stop(c.subject)}.`} who={made ? `Your choice: ${lower(CHOICES[made.verdict])}. ${choiceStatus(made, brand, me)}` : ''}>
+                <Entry key={c.subject} id={`lb-s-${k}`} title={`${CHOICES[c.verdict]}: ${stop(c.subject)}.`} who={made ? `Your choice: ${lower(CHOICES[made.verdict])}. ${choiceStatus(made, brand, me)}` : ''}>
                   <p>{c.rationale}</p>
                   {answers.map(a => <p key={a.id}><strong>{a.by === me ? 'Your answer' : `Answered by ${nameFor(brand, a.by, me)}`}, {fmt(a.date)}.</strong> {a.answer}</p>)}
                   <Cites ids={c.sources || []} items={items} setOpenId={setOpenId} />
                   {/* A suggestion is a place to start. The verdict and the reason are the reader's to give. */}
                   {!recorded.has(c.subject) && starting !== c.subject && <div className="lb-actions"><button autoFocus={left === c.subject} onClick={() => { setLeft(null); setStarting(c.subject); }}>Record a choice from this</button></div>}
-                  {starting === c.subject && <ChoiceForm {...form} fixedSubject start={{ subject: c.subject, verdict: c.verdict, needs: c.needs || '', sources: c.sources || [], about: c.about || '' }} onDone={() => { setStarting(null); setLeft(c.subject); }} onCancel={() => { setStarting(null); setLeft(c.subject); }} />}
+                  {starting === c.subject && <ChoiceForm {...form} fixedSubject start={{ subject: c.subject, verdict: c.verdict, needs: c.needs || '', sources: c.sources || [], about: c.about || '' }} onDone={() => { setStarting(null); focusAt(`[id="lb-s-${k}"] summary`); }} onCancel={() => { setStarting(null); setLeft(c.subject); }} />}
                 </Entry>
               );
             })}
@@ -1692,7 +1714,7 @@ function PersonView({ asOf, state, brand, items, tensions, act, setOpenId, perso
   // The headline says what is theirs, whether it has been put to them or only sits in the record.
   const headline = waiting ? `${cap(countWord(waiting))} ${waiting === 1 ? 'decision is' : 'decisions are'} waiting for ${name}`
     : named.length ? `${cap(countWord(named.length))} ${named.length === 1 ? 'entry in the record is' : 'entries in the record are'} for ${name} to resolve`
-      : hyps.length ? `${cap(countWord(hyps.length))} ${hyps.length === 1 ? 'hypothesis in the record is' : 'hypotheses in the record are'} for ${name} to decide`
+      : hyps.length ? `The record raises ${countWord(hyps.length)} ${hyps.length === 1 ? 'hypothesis' : 'hypotheses'} for ${name}`
         : `Nothing is waiting for ${name}`;
   const theirs = state.proposals.filter(mine);
   const openTheirs = theirs.some(p => p.status === 'open');
