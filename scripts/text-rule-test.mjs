@@ -18,6 +18,9 @@ const targets = [
   { name: 'relational-design', path: '/#relational-design', ready: '.ph-h' },
   { name: 'materials', path: '/#materials-in-relation', ready: '.mir h1' },
   { name: 'experiment-index', path: '/experiments/index.html', ready: '.x-row' },
+  { name: 'living-brand', path: '/living-brand.html', ready: '.lb-main h1' },
+  { name: 'living-brand-interpret', path: '/living-brand.html', ready: '.lb-stages', click: '.lb-stages button:nth-child(4)', final: '.lb-carry-rows' },
+  { name: 'living-brand-investigate', path: '/living-brand.html', ready: '.lb-stages', click: '.lb-stages button:nth-child(3)', final: '.lb-grid' },
   { name: 'experiment-010', path: '/experiments/structural-afterimage.html', ready: '.x-prose' },
 ];
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));

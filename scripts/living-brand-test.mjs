@@ -1,0 +1,236 @@
+// Domain tests for the Living Brand workbench (src/living-brand).
+// Run: node --test scripts/living-brand-test.mjs
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {
+  startEngagement, openTenant, search, IsolationError, assessStanding, findTensions, carryForward,
+  organizationalHypotheses, propose, decide, retire, recordReuse, recordChoice, AuthorityError, viewFor,
+  buildBrief, buildContextPackage, revokePackage, packageValid, buildHandoff, coordinationView, exportWorkbench, orientation,
+} from '../src/living-brand/domain/index.js';
+import { fernway } from '../src/living-brand/data/fernway.js';
+import { brightloop } from '../src/living-brand/data/brightloop.js';
+import { engagements, agency, practitioner, AS_OF } from '../src/living-brand/data/workspace.js';
+
+const vault = { fernway, brightloop };
+const eng = engagements['eng-fernway'];
+const fresh = () => startEngagement(vault, eng);
+const asOf = AS_OF;
+const serialized = x => JSON.stringify(x);
+const BRIGHTLOOP_MARKERS = ['bl-', 'Brightloop', 'Lanterns', 'lantern', '4.2', 'Maya', 'Ravi', 'conquest', 'Conquest'];
+
+test('wrong-client retrieval: shared vocabulary never crosses tenants', () => {
+  const s = fresh();
+  for (const q of ['paper-cut bedtime moon', 'Lanterns', 'Brightloop conquest lapsed', 'lantern moon rooftops']) {
+    const results = search(s, q, { asOf });
+    for (const r of results) assert.ok(fernway.items.some(i => i.id === r.item.id) && r.item._tenant === 'fernway', `${q} returned ${r.item.id}`);
+    assert.ok(!results.some(r => r.item.id.startsWith('bl-')));
+  }
+  assert.equal(search(s, 'lanterns rooftops', { asOf }).length, 0);
+});
+
+test('wrong-client retrieval: a grant for one brand cannot open another', () => {
+  assert.throws(() => openTenant(vault, { ...eng, brandId: 'brightloop' }), IsolationError);
+  assert.throws(() => openTenant(vault, engagements['eng-brightloop']), /revoked/);
+  assert.throws(() => openTenant(vault, { ...eng, asOf: '2027-04-01' }), /expired/);
+});
+
+test('tenant index rejects a foreign record even if one is smuggled in', () => {
+  const s = fresh();
+  const poisoned = { ...s, brand: { ...s.brand, items: [...s.brand.items, { ...brightloop.items[0], _tenant: 'brightloop' }] } };
+  assert.throws(() => search(poisoned, 'paper-cut'), IsolationError);
+});
+
+test('exports and packages contain no other client material', () => {
+  let s = fresh();
+  s = recordChoice(s, { subject: 'Paper-cut language', verdict: 'preserve', rationale: 'Recognition', sources: ['fw-small-hours-hero'], by: 'practitioner', asOf });
+  const brief = buildBrief(s.brand, s.engagement, s.choices, { asOf });
+  const handoff = buildHandoff(s, { brief, asOf });
+  const pkg = buildContextPackage(s, { partner: { id: 'mp', name: 'Production agent' }, assignment: 'Landing page', channels: ['owned-web'], workTypes: ['Customer campaign'], expires: '2026-12-31', asOf });
+  for (const out of [handoff, pkg, brief]) for (const m of BRIGHTLOOP_MARKERS) assert.ok(!serialized(out).includes(m), `found ${m}`);
+});
+
+test('agency coordination shows dates and people, never strategy', () => {
+  const view = serialized(coordinationView(agency.engagements));
+  assert.ok(view.includes('2027-01-12'));
+  assert.ok(!view.includes('lapsed') && !view.includes('Conquest') && !view.includes('fernway') && !view.includes('brightloop'));
+});
+
+test('portable workbench carries methods, not client knowledge', () => {
+  const out = serialized(exportWorkbench(practitioner));
+  assert.ok(out.includes('Read the work before the guidelines.'));
+  for (const m of ['paper-cut', 'churn', 'price', 'Ad-free', 'Lanterns', 'interview']) assert.ok(!out.toLowerCase().includes(m.toLowerCase()), m);
+});
+
+test('relevant, authorized, reusable and authoritative are separate answers', () => {
+  const s = fresh();
+  const get = id => s.brand.items.find(i => i.id === id);
+  const hero = assessStanding(get('fw-small-hours-hero'), { terms: ['paper-cut'], channels: ['owned-web'], asOf });
+  assert.deepEqual([hero.relevant, hero.authorized, hero.reusable, hero.authoritative], [true, true, false, false]);
+  const onboarding = assessStanding(get('fw-onboarding-papercut'), { terms: ['paper-cut'], channels: ['owned-web'], asOf });
+  assert.equal(onboarding.reusable, false);
+  assert.match(onboarding.reasons.authoritative.join(' '), /reuse confers no authority/);
+  const chime = assessStanding(get('fw-sound-logo'), { channels: ['owned-web'], asOf });
+  assert.deepEqual([chime.authorized, chime.reusable, chime.authoritative], [true, true, true]);
+  const site = assessStanding(get('fw-website-home'), { channels: ['owned-web'], asOf });
+  assert.equal(site.reusable, false, 'public is not permission');
+  const v2 = assessStanding(get('fw-guidelines-v2'), { asOf });
+  assert.equal(v2.authoritative, false);
+  assert.match(v2.reasons.authorized.join(' '), /Superseded/);
+});
+
+test('licence lapsing before the work finishes is not reusable', () => {
+  const s = fresh();
+  const hero = s.brand.items.find(i => i.id === 'fw-small-hours-hero');
+  const st = assessStanding(hero, { channels: ['paid-media'], asOf, until: '2027-03-31' });
+  assert.equal(st.reusable, false);
+  assert.match(st.reasons.reusable.join(' '), /before the work would finish/);
+});
+
+test('tensions: contradictory rules, stale claims, drift, unknown rights, unsupported impact, missing evidence', () => {
+  const s = fresh();
+  const t = findTensions(s.brand, { asOf, workTypes: eng.workTypes, channels: eng.channels });
+  const kinds = new Set(t.map(x => x.kind));
+  for (const k of ['Conflicting guidance', 'Stale claim', 'Unsupported claim', 'Drift from canon', 'Unknown rights', 'Attribution not established', 'Missing evidence', 'Licence does not cover the plan']) assert.ok(kinds.has(k), k);
+  assert.ok(t.find(x => x.id === 't-conflict-hero.screens'));
+  assert.ok(t.find(x => x.id === 't-stale-c-ad-free'));
+  assert.ok(t.find(x => x.id === 't-stale-c-screen-free'));
+  assert.ok(!t.find(x => x.id === 't-stale-c-made-calm'));
+  assert.match(t.find(x => x.id === 't-drift-fw-voice-prompt-v1').detail, /written by a model/);
+  // The retired lowercase rule is not a live conflict with title case.
+  assert.ok(!t.find(x => x.id === 't-conflict-wordmark.case'));
+  // For product launches alone, there is no hero-screen conflict.
+  const launch = findTensions(s.brand, { asOf, workTypes: ['Product launch'] });
+  assert.ok(!launch.find(x => x.kind === 'Conflicting guidance'));
+});
+
+test('time matters: before the ad tier launched the claim was not stale', () => {
+  const s = fresh();
+  const t = findTensions(s.brand, { asOf: '2026-01-15', workTypes: eng.workTypes });
+  assert.ok(!t.find(x => x.id === 't-stale-c-ad-free'));
+});
+
+test('what carries forward: keep recognition, reverse discovery, retire the stale claim', () => {
+  const s = fresh();
+  const cf = carryForward(s.brand, 'fw-small-hours-brief', eng.newBrief, { asOf });
+  const v = Object.fromEntries(cf.rows.map(r => [r.item.id, r.verdict]));
+  assert.equal(v['fw-sound-logo'], 'preserve');
+  assert.equal(v['fw-small-hours-film'], 'reverse');
+  assert.equal(v['fw-small-hours-endcard'], 'retire');
+  assert.equal(v['fw-small-hours-hero'], 'investigate', 'recognition is worth keeping but the licence blocks owned channels');
+  assert.ok(cf.changes.find(c => c.field === 'goal' && c.before === 'acquisition' && c.after === 'retention'));
+  assert.match(cf.evidenceNote, /without a control/);
+});
+
+test('organizational hypotheses are hypotheses with an owner, not causes', () => {
+  const h = organizationalHypotheses(fresh().brand);
+  const offer = h.find(x => x.id === 'h-offer');
+  assert.match(offer.uncertainty, /Not proof of cause/);
+  assert.equal(offer.owner, 'tom');
+  assert.ok(offer.evidence.length >= 2 && offer.test);
+});
+
+test('accidental promotion: proposing does nothing; reuse never raises standing', () => {
+  let s = fresh();
+  for (let i = 0; i < 25; i++) s = recordReuse(s, 'fw-onboarding-papercut', { where: `Reuse ${i}`, asOf });
+  assert.equal(s.brand.items.find(i => i.id === 'fw-onboarding-papercut').standing, 'experiment');
+  s = propose(s, { itemId: 'fw-onboarding-papercut', to: 'canon', rationale: 'Used everywhere', evidenceIds: [], by: 'practitioner', scope: 'All illustration', asOf });
+  const p = s.proposals[0];
+  assert.equal(s.brand.items.find(i => i.id === 'fw-onboarding-papercut').standing, 'experiment');
+  assert.ok(p.warnings.some(w => /Repetition and reuse are not evidence/.test(w)));
+  assert.ok(p.warnings.some(w => /Rights are unknown/.test(w)));
+  assert.ok(p.warnings.some(w => /Frequency/.test(w)));
+});
+
+test('only the brand authority can adopt; the practitioner and other executives cannot', () => {
+  let s = fresh();
+  s = propose(s, { itemId: 'fw-small-hours-hero', to: 'canon', rationale: 'Recognition', evidenceIds: ['e-sh-recall'], by: 'practitioner', scope: 'Seasonal illustration', asOf });
+  const pid = s.proposals[0].id;
+  assert.throws(() => decide(s, pid, { by: 'practitioner', outcome: 'adopt', asOf }), AuthorityError);
+  assert.throws(() => decide(s, pid, { by: 'tom', outcome: 'adopt', asOf }), AuthorityError, 'the CEO decides the offer, not visual canon');
+  const s2 = decide(s, pid, { by: 'priya', outcome: 'adopt', note: 'Scoped to seasonal work', asOf });
+  const hero = s2.brand.items.find(i => i.id === 'fw-small-hours-hero');
+  assert.equal(hero.standing, 'canon');
+  assert.equal(hero.standingRecord.decisionId, s2.decisions[0].id);
+  assert.deepEqual(hero.standingRecord.evidenceIds, ['e-sh-recall']);
+  assert.equal(hero.standingHistory.at(-1).standing, 'precedent', 'prior standing kept');
+  assert.equal(s.brand.items.find(i => i.id === 'fw-small-hours-hero').standing, 'precedent', 'input state untouched');
+  assert.throws(() => decide(s2, pid, { by: 'priya', outcome: 'adopt', asOf }), /already decided/);
+});
+
+test('a read-only grant cannot propose', () => {
+  const s = fresh();
+  s.engagement.grant.powers = ['read'];
+  assert.throws(() => propose(s, { itemId: 'fw-sound-logo', to: 'archive', rationale: 'x', by: 'p', asOf }), AuthorityError);
+});
+
+test('retirement keeps history and requires authority', () => {
+  let s = fresh();
+  assert.throws(() => retire(s, 'fw-sound-logo', { by: 'lena', reason: 'x', asOf }), AuthorityError);
+  s = retire(s, 'fw-sound-logo', { by: 'priya', reason: 'Test', asOf });
+  const chime = s.brand.items.find(i => i.id === 'fw-sound-logo');
+  assert.equal(chime.standing, 'archive');
+  assert.equal(chime.standingHistory[0].standing, 'canon');
+});
+
+test('personal views reorder and never edit', () => {
+  const s = fresh();
+  const before = serialized(s.brand);
+  const exec = viewFor('executive', s.brand);
+  assert.equal(exec[0].level, 'company');
+  viewFor('steward', s.brand);
+  assert.equal(serialized(s.brand), before);
+});
+
+test('brief sets evaluation before work and freezes its sources', () => {
+  let s = fresh();
+  s = recordChoice(s, { subject: 'Copy strategy', verdict: 'evolve', rationale: 'Return, not discovery', sources: ['fw-small-hours-film'], by: 'practitioner', asOf });
+  const brief = buildBrief(s.brand, s.engagement, s.choices, { asOf });
+  assert.equal(brief.evaluation.length, 3);
+  assert.ok(brief.evaluation.every(e => e.limit));
+  const film = brief.snapshot.find(x => x.id === 'fw-small-hours-film');
+  assert.ok(film && /^[0-9a-f]{8}$/.test(film.fingerprint));
+  // A later edit to the source changes its fingerprint, so drift is detectable.
+  const edited = { ...s, brand: { ...s.brand, items: s.brand.items.map(i => i.id === 'fw-small-hours-film' ? { ...i, rationale: 'changed' } : i) } };
+  const later = buildBrief(edited.brand, edited.engagement, edited.choices, { asOf });
+  assert.notEqual(later.snapshot.find(x => x.id === 'fw-small-hours-film').fingerprint, film.fingerprint);
+});
+
+test('choices that need company authority are routed, not enacted', () => {
+  let s = fresh();
+  s = recordChoice(s, { subject: 'Test a reactivation offer', verdict: 'invent', rationale: 'Offer before campaign', by: 'practitioner', needs: 'offer', asOf });
+  assert.equal(s.choices[0].owner, 'tom');
+  assert.equal(s.choices[0].status, 'awaiting decision');
+});
+
+test('partner context package: scoped, rights-checked, expiring, revocable', () => {
+  const s = fresh();
+  const pkg = buildContextPackage(s, { partner: { id: 'agent', name: 'Landing page agent' }, assignment: 'Return-season landing page', channels: ['owned-web'], workTypes: ['Customer campaign'], expires: '2026-12-31', asOf });
+  const ids = pkg.included.map(i => i.id);
+  assert.ok(ids.includes('fw-guidelines-v3') && ids.includes('fw-sound-logo'));
+  for (const id of ['fw-interviews-2026', 'fw-strategy-2024', 'fw-small-hours-hero', 'fw-website-home', 'fw-shoot-2019', 'fw-guidelines-v2', 'fw-neon-night']) assert.ok(!ids.includes(id), id);
+  assert.ok(pkg.withheld.find(w => w.id === 'fw-interviews-2026').reasons.includes('Confidential'));
+  assert.deepEqual(pkg.powers, ['read']);
+  assert.ok(pkg.open.length > 0, 'unresolved conflicts travel with the package');
+  assert.ok(packageValid(pkg, '2026-12-01'));
+  assert.ok(!packageValid(pkg, '2027-01-02'));
+  assert.ok(!packageValid(revokePackage(pkg, '2026-11-12'), '2026-11-13'));
+  assert.throws(() => buildContextPackage(s, { partner: { id: 'x' }, powers: ['read', 'publish'], channels: [], workTypes: [], asOf }));
+});
+
+test('handoff records what was and was not completed', () => {
+  const s = fresh();
+  const h = buildHandoff(s, { brief: buildBrief(s.brand, s.engagement, [], { asOf }), asOf });
+  assert.deepEqual(h.completed, ['orientation']);
+  assert.ok(h.notCompleted.includes('audit') && h.notCompleted.includes('planning'));
+  assert.ok(h.sources.every(x => x.fingerprint && x.pipeline));
+  assert.ok(h.openTensions.length > 0);
+});
+
+test('orientation works with only a few materials and keeps missing evidence visible', () => {
+  const sparse = { ...fernway, items: fernway.items.filter(i => ['fw-guidelines-v3', 'fw-small-hours-hero', 'fw-shoot-2019'].includes(i.id)) };
+  const s = startEngagement({ fernway: sparse }, eng);
+  const o = orientation(s.brand, s.engagement, { asOf });
+  assert.ok(o.canon.find(i => i.id === 'fw-guidelines-v3'));
+  assert.equal(o.strengths.length, 0, 'no strength survives without its sources');
+  assert.ok(o.tensions.find(t => t.kind === 'Missing evidence'));
+});
