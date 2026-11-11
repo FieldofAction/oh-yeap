@@ -1,6 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import useASUStore from "../store/useASUStore";
 import { LAWS, PAIR_MECHANICS } from "../data/field-laws";
+import "../styles/workbench.css";
+import "../styles/workshop-tools.css";
 
 const getPairKey = (id1, id2) => {
   const order = LAWS.map(l => l.id);
@@ -19,7 +21,15 @@ function LawNode({ law, active, detected, onClick, cx, cy, radius }) {
   const isHighlighted = active || detected;
 
   return (
-    <g onClick={() => onClick(law.id)} style={{ cursor: "pointer" }}>
+    <g
+      role="button"
+      tabIndex={0}
+      aria-pressed={active}
+      aria-label={law.name}
+      onClick={() => onClick(law.id)}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(law.id); } }}
+      style={{ cursor: "pointer" }}
+    >
       {isHighlighted && (
         <circle cx={x} cy={y} r={nodeR + 16} fill="none"
           stroke={law.color}
@@ -40,16 +50,16 @@ function LawNode({ law, active, detected, onClick, cx, cy, radius }) {
           stroke={law.color} strokeWidth="1" opacity="0.25" strokeDasharray="2 7" />
       )}
       <text x={x} y={y - 6} textAnchor="middle"
-        fill={active ? law.color : detected ? `${law.color}cc` : "var(--bd)"}
+        fill={active ? law.color : detected ? `${law.color}cc` : "var(--fm)"}
         fontSize="22" fontFamily="var(--display)" fontWeight="600"
         style={{ transition: "fill 0.5s ease", userSelect: "none" }}>
         {law.glyph}
       </text>
       <text x={x} y={y + 14} textAnchor="middle"
-        fill={active ? law.color : detected ? `${law.color}88` : "var(--bd)"}
-        fontSize="10" fontFamily="var(--sans)" fontWeight="700" letterSpacing="1.5"
+        fill={active || detected ? "var(--fg)" : "var(--fm)"}
+        fontSize="13" fontFamily="var(--sans)" fontWeight="600"
         style={{ transition: "fill 0.5s ease", userSelect: "none" }}>
-        {law.name.toUpperCase()}
+        {law.name}
       </text>
     </g>
   );
@@ -109,7 +119,7 @@ function ConnectionLines({ active, detected, cx, cy, radius }) {
 
 /* ── Mechanics Grid ── */
 
-function MechanicsGrid({ combined, active, detected }) {
+function MechanicsGrid({ combined }) {
   const lawList = LAWS.filter(l => combined.has(l.id));
   if (lawList.length < 2) return null;
   const pairs = [];
@@ -123,19 +133,14 @@ function MechanicsGrid({ combined, active, detected }) {
   }
 
   return (
-    <div className="fl-mech en">
-      <div className="fl-mech-label">Field Mechanics: How They Operate Together</div>
-      <div className="fl-mech-grid">
+    <div className="tl-section">
+      <h2 className="bg-question-title">How they operate together</h2>
+      <div className="tl-list">
         {pairs.map(({ a, b, key, name, mechanic }) => (
-          <div key={key} className="fl-mech-card en">
-            <div className="fl-mech-bar" style={{ background: `linear-gradient(to right, ${a.color}, ${b.color})` }} />
-            <div className="fl-mech-pair">
-              <span style={{ color: a.color }}>{a.glyph} {a.name.toUpperCase()}</span>
-              <span className="fl-mech-x">×</span>
-              <span style={{ color: b.color }}>{b.glyph} {b.name.toUpperCase()}</span>
-            </div>
-            <div className="fl-mech-name">{name}</div>
-            <div className="fl-mech-body">{mechanic}</div>
+          <div key={key} className="tl-row">
+            <p className="wb-name">{name}</p>
+            <p className="wb-body">{a.name} and {b.name}</p>
+            <p className="wb-text wb-measure">{mechanic}</p>
           </div>
         ))}
       </div>
@@ -145,7 +150,7 @@ function MechanicsGrid({ combined, active, detected }) {
 
 /* ── Main Component ── */
 
-export default function FieldConsole() {
+export default function FieldConsole({ navigateTo }) {
   const asu = useASUStore();
   const [active, setActive] = useState(new Set());
   const [detected, setDetected] = useState(new Set());
@@ -262,148 +267,117 @@ export default function FieldConsole() {
   const combined = new Set([...active, ...detected]);
   const detectedLaws = LAWS.filter(l => detected.has(l.id));
 
+  const engagedNames = LAWS.filter(l => active.has(l.id)).map(l => l.name);
+  const detectedOnly = LAWS.filter(l => detected.has(l.id) && !active.has(l.id)).map(l => l.name);
+
   return (
-    <div className="fl en">
-      {/* Header */}
-      <div className="fl-header en d1">
-        <h1 className="fl-h">Console</h1>
-        <div className="fl-rule" />
-      </div>
+    <section className="wb wb-page">
+      <header className="wb-header">
+        <h1 className="wb-title">Console</h1>
+        <nav className="wb-actions" aria-label="Console">
+          <button type="button" className="wb-link" onClick={() => navigateTo?.("studio")}>Workbench</button>
+        </nav>
+      </header>
 
-      {/* Hidden Translation Key */}
-      {showKey && (
-        <div className="fl-key en">
-          <div className="fl-key-label">Translation Key</div>
-          <div className="fl-key-grid">
-            {LAWS.map(l => (
-              <div key={l.id} className="fl-key-row">
-                <span className="fl-key-source">{l.source}</span>
-                <span className="fl-key-arrow">→</span>
-                <span className="fl-key-name" style={{ color: l.color }}>{l.name}</span>
-              </div>
+      <div className="wb-tool-body">
+        {showKey ? (
+          <div className="tl-section">
+            <h2 className="wb-name">Where each law comes from</h2>
+            <div className="tl-list">
+              {LAWS.map(l => (
+                <div key={l.id} className="tl-pair">
+                  <span className="wb-name">{l.name}</span>
+                  <span className="wb-body">{l.source}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        <form className="tl-section" onSubmit={(e) => { e.preventDefault(); detectLaws(); }}>
+          <div className="wb-signal">
+            <label htmlFor="fl-name" className="wb-label">Name this moment</label>
+            <input id="fl-name" className="wb-field" value={situationName} onChange={e => setSituationName(e.target.value)} autoComplete="off" />
+          </div>
+          <div className="wb-signal">
+            <label htmlFor="fl-situation" className="wb-label">What are you navigating right now?</label>
+            <textarea id="fl-situation" className="wb-field tl-area" ref={textRef} rows={3}
+              value={situation}
+              onChange={e => { setSituation(e.target.value); setDetected(new Set()); setDetectionNote(null); setSynthesis(null); }}
+            />
+          </div>
+          <div className="wb-actions">
+            <button type="submit" className="wb-button" disabled={detecting || !situation.trim()}>Find the laws at work</button>
+            {detecting ? <p className="wb-body" role="status">Reading the field.</p> : null}
+            {!detecting && detectionNote ? <p className="wb-body">{detectionNote}</p> : null}
+          </div>
+        </form>
+
+        {detectedLaws.length > 0 ? (
+          <div className="tl-section">
+            <h2 className="wb-name">Laws at work here</h2>
+            <div className="tl-chips">
+              {detectedLaws.map(l => (
+                <button key={l.id} type="button" className="tl-chip" aria-pressed={active.has(l.id)} onClick={() => toggleLaw(l.id)}>
+                  <span className="tl-swatch" aria-hidden="true" style={{ background: l.color }} />
+                  {l.name}
+                </button>
+              ))}
+            </div>
+            <p className="wb-body">Select one to engage it, or choose any law on the ring.</p>
+          </div>
+        ) : null}
+
+        {combined.size === 0 && !situation ? (
+          <p className="wb-body wb-measure">Name your experience. Describe it. Let the field find you. Or choose any law on the ring to begin.</p>
+        ) : null}
+
+        <div className="fl-ring">
+          <svg viewBox={`0 0 ${W} ${H}`} className="fl-svg" role="group" aria-label="The seven Field Laws">
+            <ConnectionLines active={active} detected={detected} cx={cx} cy={cy} radius={radius} />
+            {LAWS.map(law => (
+              <LawNode key={law.id} law={law}
+                active={active.has(law.id)} detected={detected.has(law.id)}
+                onClick={toggleLaw} cx={cx} cy={cy} radius={radius} />
             ))}
-          </div>
+            <circle cx={cx} cy={cy} r={72} fill="var(--bg)" stroke="var(--bd)" strokeWidth="3" />
+            {combined.size > 0 && (
+              <>
+                <circle cx={cx} cy={cy} r={72} fill="none" stroke="var(--ac2)" strokeWidth="1" opacity={0.3} className="fl-breathe" />
+                <circle cx={cx} cy={cy} r={62} fill="none" stroke="var(--ac2)" strokeWidth="0.5" opacity={0.12}
+                  strokeDasharray="2 9" className="fl-spin" style={{ transformOrigin: `${cx}px ${cy}px` }} />
+              </>
+            )}
+            {combined.size > 0 && (
+              <text x={cx} y={cy + 12} textAnchor="middle" fill="var(--fg)"
+                fontSize={36} fontFamily="var(--display)" fontWeight="600" aria-hidden="true">
+                {combined.size}
+              </text>
+            )}
+          </svg>
         </div>
-      )}
 
-      {/* Situation Panel */}
-      <div className="fl-sit en d2">
-        <div className="fl-sit-header">
-          <span className="fl-sit-label">Name the Experience</span>
-          {situationName && <span className="fl-sit-echo">{situationName}</span>}
-        </div>
-        <div className="fl-sit-name-wrap">
-          <input className="fl-name-input" placeholder="Give this moment a name..."
-            value={situationName} onChange={e => setSituationName(e.target.value)} />
-        </div>
-        <textarea className="fl-sit-input" ref={textRef} rows={3}
-          placeholder="Describe what you're navigating right now..."
-          value={situation}
-          onChange={e => { setSituation(e.target.value); setDetected(new Set()); setDetectionNote(null); setSynthesis(null); }}
-        />
-        <div className="fl-sit-footer">
-          <span className="fl-sit-note" style={{ fontStyle: detecting ? "italic" : "normal" }}>
-            {detecting ? "Reading the field..." : detectionNote ? `${detectionNote}` : "Which laws are active in your field right now?"}
-          </span>
-          <button className="btn" onClick={detectLaws} disabled={detecting || !situation.trim()}>
-            {detecting ? "..." : "Detect"}
-          </button>
-        </div>
+        <MechanicsGrid combined={combined} />
+
+        {(combined.size >= 1 || situation) ? (
+          <div className="wb-actions">
+            {combined.size >= 1 ? (
+              <button type="button" className="wb-button" onClick={generateSynthesis} disabled={loading}>{loading ? "Reading the field" : "Synthesize the field"}</button>
+            ) : null}
+            <button type="button" className="wb-link" onClick={reset}>Clear everything</button>
+          </div>
+        ) : null}
+
+        {synthesis ? (
+          <div className="tl-section">
+            <h2 className="bg-question-title">{situationName || "Synthesis"}</h2>
+            <p className="wb-text wb-measure tl-prewrap">{synthesis}</p>
+            <p className="wb-body wb-measure">
+              {engagedNames.length ? `Engaged: ${engagedNames.join(", ")}.` : ""}{engagedNames.length && detectedOnly.length ? " " : ""}{detectedOnly.length ? `Detected: ${detectedOnly.join(", ")}.` : ""}
+            </p>
+          </div>
+        ) : null}
       </div>
-
-      {/* Detected laws strip */}
-      {detectedLaws.length > 0 && (
-        <div className="fl-detected en">
-          <div className="fl-detected-label">Field Laws Active in This Situation</div>
-          <div className="fl-detected-chips">
-            {detectedLaws.map(l => (
-              <span key={l.id} className="fl-law-chip" onClick={() => toggleLaw(l.id)}
-                style={{
-                  border: `1px solid ${active.has(l.id) ? l.color : l.color + "44"}`,
-                  color: active.has(l.id) ? l.color : l.color + "88",
-                  background: active.has(l.id) ? `${l.color}15` : "transparent",
-                }}>
-                {l.glyph} {l.name}{active.has(l.id) && <span style={{ opacity: 0.5 }}> ✓</span>}
-              </span>
-            ))}
-          </div>
-          <div className="fl-detected-hint">Tap to engage consciously, or activate any law on the console below.</div>
-        </div>
-      )}
-
-      {/* SVG Console */}
-      <div className="fl-ring en d3">
-        <svg viewBox={`0 0 ${W} ${H}`} className="fl-svg">
-          <ConnectionLines active={active} detected={detected} cx={cx} cy={cy} radius={radius} />
-          {LAWS.map(law => (
-            <LawNode key={law.id} law={law}
-              active={active.has(law.id)} detected={detected.has(law.id)}
-              onClick={toggleLaw} cx={cx} cy={cy} radius={radius} />
-          ))}
-          {/* Field Center */}
-          <circle cx={cx} cy={cy} r={72} fill="var(--bg)" stroke="var(--bd)" strokeWidth="3" />
-          {combined.size > 0 && (
-            <>
-              <circle cx={cx} cy={cy} r={72} fill="none" stroke="var(--ac2)" strokeWidth="1" opacity={0.3} className="fl-breathe" />
-              <circle cx={cx} cy={cy} r={62} fill="none" stroke="var(--ac2)" strokeWidth="0.5" opacity={0.12}
-                strokeDasharray="2 9" className="fl-spin" style={{ transformOrigin: `${cx}px ${cy}px` }} />
-            </>
-          )}
-          <text x={cx} y={cy + 6} textAnchor="middle"
-            fill={combined.size > 0 ? "var(--fg)" : "var(--bd)"}
-            fontSize={combined.size === 0 ? 18 : 36} fontFamily="var(--display)" fontWeight="600"
-            style={{ transition: "all 0.5s" }}>
-            {combined.size === 0 ? "○" : combined.size}
-          </text>
-          {combined.size > 0 && (
-            <text x={cx} y={cy + 30} textAnchor="middle" fill="var(--ff)"
-              fontSize="11" fontFamily="var(--sans)" fontWeight="500" letterSpacing="3">
-              {combined.size === 1 ? "LAW" : "LAWS"}
-            </text>
-          )}
-        </svg>
-      </div>
-
-      {/* Mechanics Grid */}
-      <MechanicsGrid combined={combined} active={active} detected={detected} />
-
-      {/* Controls */}
-      <div className="fl-controls">
-        {combined.size >= 1 && (
-          <button className="btn" onClick={generateSynthesis} disabled={loading}>
-            {loading ? "Reading the field..." : "Synthesize Field"}
-          </button>
-        )}
-        {(situation || combined.size > 0) && (
-          <button className="btn gh" onClick={reset}>Clear All</button>
-        )}
-      </div>
-
-      {/* Synthesis */}
-      {synthesis && (
-        <div className="fl-synth en">
-          <div className="fl-synth-header">
-            <div className="fl-synth-label">Field Synthesis</div>
-            {situationName && <div className="fl-synth-name">{situationName}</div>}
-          </div>
-          <div className="fl-synth-body">{synthesis}</div>
-          <div className="fl-synth-laws">
-            {LAWS.filter(l => combined.has(l.id)).map(l => (
-              <span key={l.id} className="fl-synth-tag" style={{ color: active.has(l.id) ? l.color : `${l.color}66` }}>
-                {l.glyph} {l.name.toUpperCase()}{active.has(l.id) ? " · engaged" : " · detected"}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Empty state */}
-      {combined.size === 0 && !situation && (
-        <div className="fl-empty">
-          <p>Name your experience. Describe it. Let the field find you.</p>
-          <p>Or activate any law directly to begin.</p>
-        </div>
-      )}
-    </div>
+    </section>
   );
 }

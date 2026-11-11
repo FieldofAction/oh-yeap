@@ -261,21 +261,21 @@ export default function App() {
         <DualLensBar modelActive={lens} patternActive={patternLens} onToggleModel={toggleLens} onTogglePattern={togglePatternLens} onOpenModels={() => navigateTo("models")} onOpenPatterns={() => navigateTo("patterns")} />
         <main className={`view-wrap${transitioning ? " view-leaving" : ""}`}>
           {view === "public" && <Public items={filtered} allItems={publicContent} filter={filter} setFilter={handleFilter} relFilter={relFilter} onRelation={handleRelation} theme={theme} nowState={asu.get_system_condition()} onOpen={openItem} lens={lens} patternLens={patternLens} showGraph={showGraph} hiddenCounts={hiddenCounts} />}
-          {view === "model" && <ArtOfModel asu={asu} />}
-          {view === "playbook" && <Playbook asu={asu} />}
-          {view === "backstage" && <Backstage content={content} themeKey={themeKey} onThemeChange={setThemeKey} onPublish={handlePublish} asu={asu} />}
+          {view === "model" && <ArtOfModel asu={asu} navigateTo={navigateTo} />}
+          {view === "playbook" && <Playbook asu={asu} navigateTo={navigateTo} />}
+          {view === "backstage" && <Backstage content={content} themeKey={themeKey} onThemeChange={setThemeKey} onPublish={handlePublish} asu={asu} navigateTo={navigateTo} />}
           {view === "models" && <Models content={publicContent} onOpen={openItem} fg={theme.fg} />}
           {view === "about" && <About theme={theme} />}
           {view === "colophon" && <Colophon />}
           {view === "canon" && <Canon />}
           {view === "materials" && <MaterialsDetail />}
-          {view === "console" && <FieldConsole />}
-          {view === "lab" && <IncandescantLab asu={asu} />}
+          {view === "console" && <FieldConsole navigateTo={navigateTo} />}
+          {view === "lab" && <IncandescantLab asu={asu} navigateTo={navigateTo} />}
           {view === "patterns" && <PatternLanguage content={publicContent} onOpen={openItem} fg={theme.fg} />}
-          {view === "foa" && <FOAGenerator />}
+          {view === "foa" && <FOAGenerator navigateTo={navigateTo} />}
           {view === "breakground" && <BreakgroundCard navigateTo={navigateTo} asu={asu} />}
           {view === "desert" && <DesertVisual navigateTo={navigateTo} asu={asu} />}
-          {view === "editor" && <ExplorationEditor />}
+          {view === "editor" && <ExplorationEditor navigateTo={navigateTo} />}
           {view === "studio" && <Studio navigateTo={navigateTo} asu={asu} />}
           {view === "patiobeach" && <PatioBeach />}
           {view === "superconscious" && <Superconscious />}

@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from "react";
 import { AGENTS } from "../data/agents";
+import "../styles/workbench.css";
+import "../styles/workshop-tools.css";
 
-export default function IncandescantLab({ asu }) {
+export default function IncandescantLab({ asu, navigateTo }) {
   const ideas = asu.get_ideas();
   const [expandedId, setExpandedId] = useState(null);
 
@@ -14,90 +16,67 @@ export default function IncandescantLab({ asu }) {
   const toggle = (id) => setExpandedId(prev => prev === id ? null : id);
 
   return (
-    <div className="il en">
-      <div className="il-header dc dc1">
-        <h1 className="il-title">Incandescent Lab</h1>
-        <p className="il-sub">Behind the scenes of the creative process. Completed idea runs from the Backstage pipeline, exhibited as process artifacts.</p>
-      </div>
+    <section className="wb wb-page">
+      <header className="wb-header">
+        <h1 className="wb-title">Incandescent Lab</h1>
+        <nav className="wb-actions" aria-label="Incandescent Lab">
+          <button type="button" className="wb-link" onClick={() => navigateTo?.("studio")}>Workbench</button>
+        </nav>
+      </header>
 
-      {completedIdeas.length === 0 ? (
-        <div className="il-empty dc dc2">
-          <div className="il-empty-icon">◇</div>
-          <p>No completed runs yet.</p>
-          <p className="il-empty-hint">Head to Backstage to run ideas through the agent pipeline. Completed runs appear here as process exhibitions.</p>
-        </div>
-      ) : (
-        <div className="il-grid">
-          {completedIdeas.map((idea, idx) => {
-            const lastComplete = [...(idea.runs || [])].reverse().find(r => r.status === "complete");
-            if (!lastComplete) return null;
-            const isOpen = expandedId === idea.id;
-            const agentCount = lastComplete.selection?.length || 0;
-            const runCount = idea.runs.filter(r => r.status === "complete").length;
+      <div className="wb-tool-body">
+        <p className="wb-body wb-measure">Finished runs from Backstage, shown as process.</p>
 
-            return (
-              <div key={idea.id} className={`il-card dc${isOpen ? " il-card-open" : ""}`} style={{ animationDelay: `${0.15 + idx * 0.06}s` }}>
-                <div className="il-card-head" onClick={() => toggle(idea.id)}>
-                  <div className="il-card-info">
-                    <div className="il-card-title">{idea.title}</div>
-                    {idea.desc && <div className="il-card-desc">{idea.desc}</div>}
-                    <div className="il-card-meta">
-                      <span>{agentCount} agent{agentCount !== 1 ? "s" : ""}</span>
-                      <span className="il-meta-sep">·</span>
-                      <span>{runCount} run{runCount !== 1 ? "s" : ""}</span>
-                      {lastComplete.mode && lastComplete.mode !== "free" && (
-                        <><span className="il-meta-sep">·</span><span>{lastComplete.mode}</span></>
-                      )}
-                    </div>
-                  </div>
-                  <span className={`il-card-arrow${isOpen ? " open" : ""}`}>↓</span>
-                </div>
+        {completedIdeas.length === 0 ? (
+          <div className="wb-actions">
+            <p className="wb-body">Nothing has finished a run yet.</p>
+            <button type="button" className="wb-link" onClick={() => navigateTo?.("backstage")}>Open Backstage</button>
+          </div>
+        ) : (
+          <div className="tl-list">
+            {completedIdeas.map((idea) => {
+              const lastComplete = [...(idea.runs || [])].reverse().find(r => r.status === "complete");
+              if (!lastComplete) return null;
+              const isOpen = expandedId === idea.id;
+              return (
+                <article key={idea.id} className="tl-row">
+                  <button type="button" className="tl-row-open" aria-expanded={isOpen} onClick={() => toggle(idea.id)}>
+                    <span className="bg-question-title">{idea.title}</span>
+                    {idea.desc ? <span className="wb-body">{idea.desc}</span> : null}
+                    {idea.tags?.length > 0 ? <span className="wb-body">{idea.tags.join(", ")}</span> : null}
+                  </button>
 
-                {idea.tags?.length > 0 && (
-                  <div className="il-card-tags">
-                    {idea.tags.map(t => <span key={t} className="card-tg">{t}</span>)}
-                  </div>
-                )}
-
-                {isOpen && (
-                  <div className="il-card-body">
-                    {lastComplete.selection.map(ak => {
-                      const out = lastComplete.outputs[ak];
-                      const ag = AGENTS.find(a => a.key === ak);
-                      if (!ag || !out) return null;
-                      return (
-                        <div key={ak} className="il-agent-block">
-                          <div className="il-agent-name">{ag.name}</div>
-                          {out.expansion && <p className="il-agent-exp">{out.expansion}</p>}
-                          {out.steps?.length > 0 && (
-                            <div className="il-agent-section">
-                              <div className="il-agent-section-h">Plan</div>
-                              <ol className="il-agent-steps">
-                                {out.steps.map((s, i) => <li key={i}>{s}</li>)}
+                  {isOpen ? (
+                    <div className="tl-row-body">
+                      {lastComplete.selection.map(ak => {
+                        const out = lastComplete.outputs[ak];
+                        const ag = AGENTS.find(a => a.key === ak);
+                        if (!ag || !out) return null;
+                        return (
+                          <div key={ak} className="wb-block">
+                            <h3 className="wb-name">{ag.name}</h3>
+                            {out.expansion ? <p className="wb-text wb-measure">{out.expansion}</p> : null}
+                            {out.steps?.length > 0 ? (
+                              <ol className="tl-ol">
+                                {out.steps.map((st, i) => <li key={i}>{st}</li>)}
                               </ol>
-                            </div>
-                          )}
-                          {out.tasks?.length > 0 && (
-                            <div className="il-agent-section">
-                              <div className="il-agent-section-h">Tasks</div>
-                              {out.tasks.map((t, i) => (
-                                <div key={i} className="il-agent-task">
-                                  <span className="il-task-status">{t.status === "done" ? "✓" : "○"}</span>
-                                  <span>{t.label}</span>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
+                            ) : null}
+                            {out.tasks?.length > 0 ? (
+                              <ul className="tl-ul">
+                                {out.tasks.map((t, i) => <li key={i}>{t.label}{t.status === "done" ? " (done)" : ""}</li>)}
+                              </ul>
+                            ) : null}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : null}
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
