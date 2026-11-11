@@ -171,10 +171,8 @@ Before it is used:
 
 - The owner has to say who decides visual, verbal, claims, rights and
   publishing. These must not be invented.
-- The repository holds unreleased work (a lager label and edition, a
-  collaboration beer), dormant sign-up copy, internal agent instructions and
-  account identifiers. A Soul Mega build has to be private, not on the
-  public site.
+- This repository is public. A real brand's records are kept out of it: they
+  live in packets on the practitioner's own machine and in a private page.
 
 ## 4. Recommended order
 

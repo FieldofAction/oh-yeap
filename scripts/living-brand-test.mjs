@@ -6,6 +6,7 @@ import {
   startEngagement, openTenant, search, IsolationError, assessStanding, findTensions, carryForward,
   organizationalHypotheses, propose, decide, retire, recordReuse, recordChoice, AuthorityError, viewFor,
   buildBrief, buildContextPackage, revokePackage, packageValid, buildHandoff, coordinationView, exportWorkbench, orientation,
+  verifyItem, addSourceNote, nameAuthority, changeLedger, toPacket, readPacket, startFromPacket, PACKET_FORMAT,
 } from '../src/living-brand/domain/index.js';
 import { fernway } from '../src/living-brand/data/fernway.js';
 import { brightloop } from '../src/living-brand/data/brightloop.js';
@@ -95,7 +96,7 @@ test('tensions: contradictory rules, stale claims, drift, unknown rights, unsupp
   assert.ok(t.find(x => x.id === 't-stale-c-ad-free'));
   assert.ok(t.find(x => x.id === 't-stale-c-screen-free'));
   assert.ok(!t.find(x => x.id === 't-stale-c-made-calm'));
-  assert.match(t.find(x => x.id === 't-drift-fw-voice-prompt-v1').detail, /written by a model/);
+  assert.match(t.find(x => x.id === 't-drift-fw-voice-prompt-v1-wordmark.case').detail, /written by a model/);
   // The retired lowercase rule is not a live conflict with title case.
   assert.ok(!t.find(x => x.id === 't-conflict-wordmark.case'));
   // For product launches alone, there is no hero-screen conflict.
@@ -111,7 +112,7 @@ test('time matters: before the ad tier launched the claim was not stale', () => 
 
 test('what carries forward: keep recognition, reverse discovery, retire the stale claim', () => {
   const s = fresh();
-  const cf = carryForward(s.brand, 'fw-small-hours-brief', eng.newBrief, { asOf });
+  const cf = carryForward(s.brand, s.engagement, { asOf });
   const v = Object.fromEntries(cf.rows.map(r => [r.item.id, r.verdict]));
   assert.equal(v['fw-sound-logo'], 'preserve');
   assert.equal(v['fw-small-hours-film'], 'reverse');
@@ -122,7 +123,7 @@ test('what carries forward: keep recognition, reverse discovery, retire the stal
 });
 
 test('organizational hypotheses are hypotheses with an owner, not causes', () => {
-  const h = organizationalHypotheses(fresh().brand);
+  const h = organizationalHypotheses(fresh().brand, eng);
   const offer = h.find(x => x.id === 'h-offer');
   assert.match(offer.uncertainty, /Not proof of cause/);
   assert.equal(offer.owner, 'tom');
@@ -260,8 +261,173 @@ test('empty reuse and whitespace choices are refused', () => {
   assert.throws(() => recordChoice(s, { subject: '   ', verdict: 'preserve', by: 'p', asOf }));
 });
 
-test('the browser bundle never imports another client', async () => {
+test('the public page never imports another client or a real brand', async () => {
   const { readFileSync } = await import('node:fs');
-  const src = readFileSync(new URL('../src/living-brand/Workbench.jsx', import.meta.url), 'utf8');
-  assert.ok(!/data\/brightloop/.test(src), 'Workbench must not import Brightloop data');
+  for (const file of ['Workbench.jsx', 'catalog.js', 'main.jsx', 'Plate.jsx']) {
+    const src = readFileSync(new URL(`../src/living-brand/${file}`, import.meta.url), 'utf8');
+    assert.ok(!/brightloop\.js|soul ?mega|reddit/i.test(src), `${file} must hold no other client's or real brand's material`);
+  }
+  const { publicCatalog } = await import('../src/living-brand/catalog.js');
+  assert.deepEqual(publicCatalog.open.map(o => o.brand.id), ['fernway']);
+  assert.equal(publicCatalog.open[0].brand.basis, 'fictional');
+  for (const m of ['Lanterns', 'Conquest', 'Maya', '4.2']) assert.ok(!JSON.stringify(publicCatalog).includes(m), m);
+});
+
+
+// --- Real brands: unknown authority, public-source studies, intake, packets ---
+
+// A small invented company, shaped the way a public-source study is shaped.
+const halden = {
+  id: 'halden', name: 'Halden', basis: 'public-source', summary: 'Invented for tests.',
+  intent: { statement: 'Stated on its own site.', source: 'h-about' },
+  people: {}, authority: { 'standing.visual': [], 'standing.verbal': [], claims: [], rights: [], publish: [] },
+  unknowns: ['Whether the 2025 mark is final.'],
+  facts: [{ id: 'hf-fee', statement: 'Halden began charging for its API on 1 June 2025.', date: '2025-06-01', source: 'h-pricing' }],
+  claims: [{ id: 'hc-open', statement: 'Open to everyone, always.', usedIn: ['h-about'], contradictedBy: 'hf-fee' }, { id: 'hc-fast', statement: 'The fastest.', usedIn: ['h-about'] }],
+  rules: [
+    { id: 'hr-old', topic: 'logo.colour', value: 'blue', statement: 'The mark is blue.', source: 'h-mark-old', scope: ['all'], effective: { from: '2019-01-01', to: '2025-03-01' }, standing: 'canon', domain: 'visual' },
+    { id: 'hr-new', topic: 'logo.colour', value: 'green', statement: 'The mark is green.', source: 'h-mark-new', scope: ['all'], effective: { from: '2025-03-01' }, standing: 'canon', domain: 'visual' },
+  ],
+  items: [
+    { id: 'h-mark-old', title: 'Mark, 2019', kind: 'Logo mark', level: 'brand', period: { from: '2019-01-01', to: '2025-03-01' }, pipeline: 'extracted', standing: 'archive', domain: 'visual', supersededBy: 'h-mark-new',
+      approval: { status: 'published', by: 'Halden' }, rights: { status: 'restricted', channels: [] }, evidence: [], relations: [], tags: ['mark'], text: 'Blue mark.', sources: [{ url: 'https://example.com/old', publisher: 'Example', basis: 'third_party' }] },
+    { id: 'h-mark-new', title: 'Mark, 2025', kind: 'Logo mark', level: 'brand', period: { from: '2025-03-01' }, pipeline: 'extracted', standing: 'canon', standingRecord: { basis: 'reading', scope: 'Shown as current on its site' }, domain: 'visual', rationale: 'A calmer colour.',
+      approval: { status: 'published', by: 'Halden', date: '2025-03-01' }, rights: { status: 'restricted', channels: [], note: 'Its terms allow editorial reference only.' }, evidence: [], relations: [], tags: ['mark'], text: 'Green mark.', sources: [{ url: 'https://example.com/new', publisher: 'Halden', basis: 'search_excerpt' }] },
+    { id: 'h-about', title: 'About page', kind: 'Web page', level: 'company', period: { from: '2024-01-01' }, pipeline: 'extracted', standing: 'operational', domain: 'verbal', uses: { 'logo.colour': 'blue' },
+      approval: { status: 'published', by: 'Halden' }, rights: { status: 'unknown', channels: [] }, evidence: [], relations: [], tags: [], text: 'Open to everyone, always.' },
+    { id: 'h-pricing', title: 'API pricing', kind: 'Offer record', level: 'company', period: { from: '2025-06-01' }, pipeline: 'extracted', standing: 'operational', domain: 'product',
+      approval: { status: 'published', by: 'Halden' }, rights: { status: 'unknown', channels: [] }, evidence: [], relations: [], tags: [], text: 'Paid API.' },
+  ],
+};
+const haldenEng = { id: 'eng-halden', brandId: 'halden', clientLabel: 'Halden', role: 'Independent study', project: 'Halden study', asOf,
+  grant: { brandId: 'halden', powers: ['read', 'propose'] }, workTypes: [], channels: [] };
+const study = () => startEngagement({ halden }, haldenEng);
+
+test('public-source study: published is not authorized until checked against its source', () => {
+  let s = study();
+  const mark = () => s.brand.items.find(i => i.id === 'h-mark-new');
+  let st = assessStanding(mark(), { asOf });
+  assert.equal(st.authorized, false);
+  assert.match(st.reasons.authorized.join(' '), /not checked against its source/);
+  assert.equal(st.authoritative, false, 'canon that is not authorized is not authoritative');
+  assert.throws(() => verifyItem(s, 'h-mark-new', { by: 'practitioner', how: ' ', asOf }), /what you checked/);
+  s = verifyItem(s, 'h-mark-new', { by: 'practitioner', how: 'Opened the brand page on 11 November 2026', asOf });
+  st = assessStanding(mark(), { asOf });
+  assert.equal(st.authorized, true);
+  assert.match(st.reasons.authorized.join(' '), /Published by Halden.*No internal approval record seen/);
+  assert.match(st.reasons.authoritative.join(' '), /Read as canon from public material/);
+  assert.equal(st.reusable, true, 'no channels asked for');
+  assert.equal(assessStanding(mark(), { asOf, channels: ['paid-media'] }).reusable, false, 'public is not permission');
+  assert.equal(mark().verification.by, 'practitioner');
+  assert.throws(() => verifyItem(s, 'h-mark-new', { by: 'practitioner', how: 'again', asOf }), /already verified/);
+  assert.equal(assessStanding(s.brand.items.find(i => i.id === 'h-mark-old'), { asOf }).authorized, false, 'superseded');
+});
+
+test('public-source study: no one can adopt or retire, and the refusal says why', () => {
+  let s = study();
+  s = propose(s, { itemId: 'h-about', to: 'precedent', rationale: 'x', by: 'practitioner', asOf });
+  assert.deepEqual(s.proposals[0].reviewer, []);
+  assert.ok(s.proposals[0].warnings.some(w => /No one is named/.test(w)));
+  assert.throws(() => decide(s, s.proposals[0].id, { by: 'practitioner', outcome: 'adopt', asOf }), /public-source study cannot name them. Only Halden can/);
+  assert.throws(() => retire(s, 'h-mark-new', { by: 'practitioner', reason: 'x', asOf }), AuthorityError);
+  assert.throws(() => nameAuthority(s, { power: 'standing.visual', person: { id: 'me', name: 'Me' }, by: 'practitioner', asOf }), /Only Halden can name/);
+  assert.throws(() => buildContextPackage(s, { partner: { id: 'a' }, channels: [], workTypes: [], asOf }), /public-source study holds nothing/);
+});
+
+test('public-source study: tensions are worded short of what only the company knows', () => {
+  const t = findTensions(study().brand, { asOf });
+  const claim = t.find(x => x.id === 't-stale-hc-open');
+  assert.equal(claim.kind, 'Claim in tension with a later fact');
+  assert.match(claim.title, /sits uneasily with a later public fact/);
+  assert.ok(!/no longer true/.test(claim.title));
+  assert.ok(!t.find(x => x.kind === 'Unsupported claim'), 'an outsider cannot know what is on file');
+  const who = t.find(x => x.kind === 'No one named to decide');
+  assert.match(who.detail, /Only Halden can say who decides/);
+  assert.ok(t.find(x => x.id === 't-drift-h-about-logo.colour'));
+  assert.ok(!t.find(x => x.kind === 'Conflicting guidance'), 'the retired rule is not a live conflict');
+});
+
+test('change ledger reads what replaced what from the record', () => {
+  const ledger = changeLedger(study().brand, { asOf });
+  const material = ledger.find(c => c.kind === 'material');
+  assert.equal(material.before.id, 'h-mark-old');
+  assert.equal(material.after.id, 'h-mark-new');
+  assert.equal(material.rationale, 'A calmer colour.');
+  const rule = ledger.find(c => c.kind === 'rule');
+  assert.deepEqual([rule.before.value, rule.after.value, rule.when], ['blue', 'green', '2025-03-01']);
+  const fw = changeLedger(fresh().brand, { asOf });
+  assert.ok(fw.find(c => c.kind === 'rule' && c.topic === 'wordmark.case'));
+  assert.ok(fw.find(c => c.kind === 'material' && c.before.id === 'fw-guidelines-v2'));
+});
+
+test('a company record with unnamed authority waits, and the company can name someone', () => {
+  const brand = { ...halden, basis: 'company-record', people: { dd: { name: 'Founder', title: 'Creative founder' } }, authority: { 'standing.visual': ['dd'], 'standing.verbal': ['dd'], claims: [], rights: [], publish: [] } };
+  let s = startEngagement({ halden: brand }, { ...haldenEng, grant: { brandId: 'halden', powers: ['read', 'propose', 'steward'] } });
+  assert.match(findTensions(s.brand, { asOf }).find(x => x.kind === 'No one named to decide').title, /public claims, usage rights, publishing/);
+  s = recordChoice(s, { subject: 'Fix the claim', verdict: 'repair', rationale: 'x', by: 'dd', needs: 'claims', asOf });
+  assert.equal(s.choices[0].owner, null);
+  assert.equal(s.choices[0].status, 'awaiting decision');
+  s = propose(s, { itemId: 'h-about', to: 'precedent', rationale: 'x', by: 'dd', asOf });
+  s = decide(s, s.proposals[0].id, { by: 'dd', outcome: 'adopt', asOf });
+  assert.equal(s.brand.items.find(i => i.id === 'h-about').standing, 'precedent', 'the founder decides verbal standing');
+  assert.throws(() => retire(s, 'h-pricing', { by: 'dd', reason: 'x', asOf }), /No one has been named to decide product standing/);
+  s = nameAuthority(s, { power: 'claims', person: { id: 'dd', name: 'Founder' }, by: 'dd', asOf });
+  assert.equal(s.choices[0].owner, 'dd');
+  assert.ok(!findTensions(s.brand, { asOf }).find(x => x.kind === 'No one named to decide').title.includes('public claims'));
+  assert.equal(s.decisions.at(-1).outcome, 'name-authority');
+});
+
+test('intake: new material arrives found or extracted, never verified, approved or canon', () => {
+  let s = fresh();
+  assert.throws(() => addSourceNote(s, { title: 'x', foundIn: '' }, { by: 'p', asOf }), /where it was found/);
+  assert.throws(() => addSourceNote(s, { title: 'x', foundIn: 'Drive', pipeline: 'approved' }, { by: 'p', asOf }), /has to be earned/);
+  assert.throws(() => addSourceNote(s, { title: 'x', foundIn: 'Drive', standing: 'canon' }, { by: 'p', asOf }), /cannot arrive as canon/);
+  s = addSourceNote(s, { title: 'Spring email header', foundIn: 'Drive, Lifecycle/2026', text: 'Paper-cut header.', pipeline: 'extracted', origin: 'generated' }, { by: 'practitioner', asOf });
+  const note = s.brand.items.at(-1);
+  assert.equal(note._tenant, 'fernway');
+  assert.deepEqual([note.pipeline, note.standing, note.rights.status, note.approval.status, note.provenance.origin], ['extracted', 'archive', 'unknown', 'none', 'generated']);
+  const st = assessStanding(note, { asOf });
+  assert.deepEqual([st.authorized, st.reusable, st.authoritative], [false, false, false]);
+  assert.ok(search(s, 'spring email header', { asOf }).some(r => r.item.id === note.id), 'searchable in its own tenant');
+  const found = addSourceNote(s, { title: 'Found only', foundIn: 'Box' }, { by: 'p', asOf });
+  assert.equal(found.brand.items.at(-1).pipeline, 'discovered');
+  assert.throws(() => verifyItem(found, found.brand.items.at(-1).id, { by: 'p', how: 'looked', asOf }), /only been found/);
+});
+
+test('packets round-trip one brand and refuse anything inconsistent', () => {
+  let s = fresh();
+  s = recordChoice(s, { subject: 'Chime', verdict: 'preserve', rationale: 'x', by: 'practitioner', asOf });
+  s = propose(s, { itemId: 'fw-small-hours-hero', to: 'canon', rationale: 'x', evidenceIds: ['e-sh-recall'], by: 'practitioner', asOf });
+  const packet = JSON.parse(JSON.stringify(toPacket(s)));
+  assert.equal(packet.format, PACKET_FORMAT);
+  assert.ok(!serialized(packet).includes('_tenant'));
+  for (const m of BRIGHTLOOP_MARKERS) assert.ok(!serialized(packet).includes(m), m);
+  const reopened = startFromPacket(packet);
+  assert.equal(reopened.choices.length, 1);
+  assert.equal(reopened.proposals[0].itemId, 'fw-small-hours-hero');
+  assert.ok(reopened.brand.items.every(i => i._tenant === 'fernway'));
+  const next = recordChoice(reopened, { subject: 'Another', verdict: 'evolve', rationale: 'x', by: 'practitioner', asOf });
+  assert.notEqual(next.choices[1].id, next.choices[0].id, 'ids continue after reopening');
+  assert.throws(() => readPacket({ ...packet, format: 'something-else' }), /Format is something-else/);
+  assert.throws(() => readPacket({ ...packet, engagement: { ...packet.engagement, brandId: 'brightloop' } }), /different brand/);
+  assert.throws(() => readPacket({ ...packet, brand: { ...packet.brand, items: [...packet.brand.items, { ...packet.brand.items[0] }] } }), /Duplicate item/);
+  assert.throws(() => readPacket({ ...packet, brand: { ...packet.brand, items: packet.brand.items.filter(i => i.id !== 'fw-guidelines-v3') } }), /not in the packet/);
+});
+
+test('written hypotheses appear only with the evidence they cite', () => {
+  const s = fresh();
+  assert.equal(organizationalHypotheses(s.brand, eng).length, 2);
+  const thin = { ...s.brand, items: s.brand.items.filter(i => i.id !== 'fw-interviews-2026') };
+  assert.equal(organizationalHypotheses(thin, eng).length, 0, 'no interviews, no hypothesis');
+  assert.equal(organizationalHypotheses(s.brand, {}).length, 0);
+  assert.equal(carryForward(s.brand, { ...eng, carry: undefined }, { asOf }), null);
+});
+
+test('the handoff of a study stays with whoever made it', () => {
+  const s = study();
+  const h = buildHandoff(s, { brief: buildBrief(s.brand, s.engagement, [], { asOf }), asOf });
+  assert.equal(h.basis, 'public-source');
+  assert.match(h.retained.company, /did not commission this/);
+  assert.deepEqual(h.unknowns, ['Whether the 2025 mark is final.']);
+  assert.ok(h.sources.find(x => x.id === 'h-mark-new').links.includes('https://example.com/new'));
 });

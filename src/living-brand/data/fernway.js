@@ -5,6 +5,7 @@
 export const fernway = {
   id: 'fernway',
   name: 'Fernway',
+  basis: 'fictional',
   summary: 'Family streaming service: animated series and audio bedtime stories for children aged 3 to 8.',
   intent: {
     statement: 'Become the calm, trusted part of a family evening, not another screen to negotiate.',

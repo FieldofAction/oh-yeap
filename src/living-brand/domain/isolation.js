@@ -23,6 +23,7 @@ export function openTenant(vault, engagement) {
   // Copy the partition. Nothing outside it is reachable from the returned object.
   const partition = JSON.parse(JSON.stringify(brand));
   partition.items.forEach(i => { i._tenant = tenant; });
+  partition.rules = partition.rules || [];
   partition.rules.forEach(r => { r._tenant = tenant; });
   return deepFreeze({ tenant, brand: partition, log: [] });
 }
@@ -32,7 +33,7 @@ export function search(tenantIndex, query, purpose = {}) {
   const results = [];
   for (const item of tenantIndex.brand.items) {
     if (item._tenant !== tenantIndex.tenant) throw new IsolationError('Foreign record in tenant index.');
-    const hay = `${item.title} ${item.text} ${(item.tags || []).join(' ')} ${item.rationale} ${item.kind} ${item.element}`.toLowerCase();
+    const hay = [item.title, item.text, (item.tags || []).join(' '), item.rationale, item.kind, item.element, item.workType].filter(Boolean).join(' ').toLowerCase();
     const score = terms.reduce((s, t) => s + (hay.includes(t) ? 1 : 0), 0);
     if (!terms.length || score > 0) {
       const matched = terms.filter(t => hay.includes(t));

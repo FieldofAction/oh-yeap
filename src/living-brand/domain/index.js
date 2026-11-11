@@ -5,14 +5,21 @@ export * from './governance.js';
 export * from './transfer.js';
 
 import { openTenant } from './isolation.js';
+import { readPacket } from './transfer.js';
 
 // The vault stands in for company-owned storage. Only openTenant reads it.
-export function startEngagement(vault, engagement) {
+export function startEngagement(vault, engagement, record = {}) {
   const tenant = openTenant(vault, engagement);
   return {
     tenant: tenant.tenant,
     brand: JSON.parse(JSON.stringify(tenant.brand)),
     engagement: JSON.parse(JSON.stringify(engagement)),
-    choices: [], proposals: [], decisions: [],
+    choices: record.choices || [], proposals: record.proposals || [], decisions: record.decisions || [], seq: record.seq || 0,
   };
+}
+
+// Open a packet: one brand partition and its engagement, and nothing else.
+export function startFromPacket(packet) {
+  const { brand, engagement, record } = readPacket(packet);
+  return startEngagement({ [brand.id]: brand }, engagement, record);
 }

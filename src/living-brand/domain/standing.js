@@ -13,16 +13,27 @@ export const STANDING_CLASSES = {
   archive: { name: 'Learning archive', job: 'Kept for what it teaches, including rejections.' },
 };
 
+// How the brand's knowledge was obtained. It changes what can be claimed.
+export const BASES = {
+  fictional: { name: 'Fictional', note: 'Invented for demonstration.' },
+  'company-record': { name: 'Company record', note: 'Entered with the company, by people who can speak for it.' },
+  'public-source': { name: 'Public-source study', note: 'Read from public material only. Not the company\'s own record.' },
+};
+
+export const isPublicStudy = brand => brand?.basis === 'public-source';
+
 export const pipelineRank = stage => PIPELINE.indexOf(stage);
 
 export const isEffective = (window, asOf) => {
   if (!window) return true;
-  if (window.from && asOf < window.from) return false;
-  if (window.to && asOf >= window.to) return false;
+  if (window.from && asOf && asOf < window.from) return false;
+  if (window.to && asOf && asOf >= window.to) return false;
   return true;
 };
 
-// Purpose: { channels: ['owned-web', ...], terms: ['paper-cut'], level, asOf }
+const human = c => c.replace('-', ' ');
+
+// Purpose: { channels: ['owned-web', ...], terms: ['paper-cut'], asOf, until }
 export function assessStanding(item, purpose = {}) {
   const asOf = purpose.asOf;
   const reasons = { relevant: [], authorized: [], reusable: [], authoritative: [] };
@@ -35,13 +46,24 @@ export function assessStanding(item, purpose = {}) {
     ? (matched.length ? `Matches ${matched.join(', ')}.` : 'No query given.')
     : 'Does not match the question.');
 
-  // Authorized: approved through the pipeline, not superseded, and current.
+  // Authorized: sanctioned by the company, checked, not superseded, and current.
+  // "Published" means the company put it out on its own channel: evidence of
+  // sanction, but not an approval anyone in this system recorded.
   let authorized = true;
-  if (item.approval?.status !== 'approved') { authorized = false; reasons.authorized.push(item.approval?.status === 'rejected' ? 'Rejected.' : 'Never approved.'); }
-  if (pipelineRank(item.pipeline) < pipelineRank('verified')) { authorized = false; reasons.authorized.push(`Only ${item.pipeline}; not verified.`); }
+  const status = item.approval?.status;
+  if (status !== 'approved' && status !== 'published') {
+    authorized = false;
+    reasons.authorized.push(status === 'rejected' ? 'Rejected.' : status === 'pending' ? 'Approval pending.' : 'Never approved.');
+  }
+  if (pipelineRank(item.pipeline) < pipelineRank('verified')) { authorized = false; reasons.authorized.push(`Only ${item.pipeline}; not checked against its source.`); }
   if (item.supersededBy) { authorized = false; reasons.authorized.push(`Superseded by ${item.supersededBy}.`); }
-  if (asOf && item.period && !isEffective(item.period, asOf) && item.standing === 'canon') { authorized = false; reasons.authorized.push('Outside its effective dates.'); }
-  if (authorized) reasons.authorized.push(`Approved by ${item.approval.by} on ${item.approval.date}.`);
+  // A campaign's flight ending does not withdraw its approval; canon leaving its effective dates does.
+  if (asOf && item.standing === 'canon' && item.period && !isEffective(item.period, asOf)) { authorized = false; reasons.authorized.push('Outside its effective dates.'); }
+  if (authorized) {
+    reasons.authorized.push(status === 'published'
+      ? `Published by ${item.approval.by || 'the company'}${item.approval.date ? ` on ${item.approval.date}` : ''}. No internal approval record seen.`
+      : `Approved by ${item.approval.by} on ${item.approval.date}.`);
+  }
 
   // Reusable: rights cover the intended channels on the intended date.
   const rights = item.rights || { status: 'unknown' };
@@ -54,7 +76,6 @@ export function assessStanding(item, purpose = {}) {
     const missing = wanted.filter(c => !allowed.includes(c) && !allowed.includes('all'));
     const expired = rights.until && asOf && asOf > rights.until;
     const lapsesDuring = rights.until && purpose.until && purpose.until > rights.until;
-    const human = c => c.replace('-', ' ');
     if (expired) reasons.reusable.push(`Licence ended ${rights.until}.`);
     else if (missing.length) reasons.reusable.push(`Not licensed for ${missing.map(human).join(', ')}.`);
     else if (lapsesDuring) reasons.reusable.push(`Licence ends ${rights.until}, before the work would finish.`);
@@ -64,9 +85,12 @@ export function assessStanding(item, purpose = {}) {
 
   // Authoritative: canon, in force. Reuse and popularity do not count.
   const authoritative = item.standing === 'canon' && authorized;
+  const record = item.standingRecord;
   reasons.authoritative.push(authoritative
-    ? `Canon since ${item.standingRecord?.date || 'unknown'}${item.standingRecord?.scope ? `: ${item.standingRecord.scope}` : ''}.`
-    : `${STANDING_CLASSES[item.standing]?.name || 'Unclassified'}${item.reuse?.length ? `, reused ${item.reuse.length} times; reuse confers no authority` : ''}.`);
+    ? (record?.basis === 'reading'
+      ? `Read as canon from public material${record.scope ? `: ${record.scope}` : ''}. The company has not confirmed it here.`
+      : `Canon since ${record?.date || 'unknown'}${record?.scope ? `: ${record.scope}` : ''}.`)
+    : `${STANDING_CLASSES[item.standing]?.name || 'Unclassified'}${item.standing === 'canon' ? ', but not authorized' : ''}${item.reuse?.length ? `, reused ${item.reuse.length} times; reuse confers no authority` : ''}.`);
 
   return { relevant, authorized, reusable, authoritative, reasons };
 }
