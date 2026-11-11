@@ -8,7 +8,7 @@ import {
   search, assessStanding, findTensions, carryForward, changeLedger, organizationalHypotheses, orientation,
   propose, decide, retire, recordReuse, recordChoice, answerChoice, recordAnswer, verifyItem, approveItem, addSourceNote, nameAuthority,
   buildBrief, buildContextPackage, revokePackage, packageValid, buildHandoff, toPacket, readPacket, packetAssertions, timeline, unnamedPowers,
-  deciders, powerFor, canDecide, rulesStatedBy, kindsOfWork, effectiveRules, basisNote, classOf, withdrawChoice, isPublicStudy, STANDING_CLASSES, CHOICES, POWERS, BASES, PIPELINE,
+  deciders, powerFor, canDecide, rulesStatedBy, kindsOfWork, describeItem, effectiveRules, basisNote, classOf, withdrawChoice, isPublicStudy, STANDING_CLASSES, CHOICES, POWERS, BASES, PIPELINE,
 } from '../../src/living-brand/domain/index.js';
 
 const today = () => process.env.LIVING_BRAND_AS_OF || new Date().toISOString().slice(0, 10);
@@ -22,6 +22,24 @@ const flat = v => String(v).replace(/[\u0000-\u001f\u007f]+/g, ' ');
 const lines = list => list.flat().filter(l => l !== null && l !== undefined && l !== false && l !== 0)
   .flatMap(l => { const text = String(l); return text.startsWith('\n') ? ['', flat(text.slice(1))] : [flat(text)]; }).join('\n');
 const basisLine = brand => `${brand.name}: ${BASES[brand.basis || 'company-record'].name}. ${basisNote({ ...brand, basis: brand.basis || 'company-record' })}`;
+
+// What a canon binds, and what its decider held back, said wherever canon is listed.
+const stopless = s => String(s || '').replace(/[.]+$/, '');
+const canonReach = (brand, i) => {
+  const covers = i.standingRecord?.covers;
+  const held = (brand.rules || []).filter(r => r.source === i.id && r.heldBack);
+  return `${covers?.length ? `. It binds: ${covers[0] === 'all' ? 'all work' : covers.join(', ')}` : ''}${held.length ? `. Held back and not in force: ${held.map(r => `"${stopless(r.statement)}" [${r.id}]`).join('; ')}` : ''}`;
+};
+// In a study a class name is never handed over on its own: wherever a standing
+// would travel in the structured half, it travels as the study's reading.
+const asReading = (brand, value) => {
+  if (!isPublicStudy(brand)) return value;
+  const key = { standing: 'readAs', from: 'readNowAs', to: 'wouldReadAs' };
+  const walk = v => (Array.isArray(v) ? v.map(walk) : v && typeof v === 'object'
+    ? Object.fromEntries(Object.entries(v).flatMap(([k, x]) => (key[k] && typeof x === 'string' && STANDING_CLASSES[x] ? [[key[k], classOf(x, brand).name]] : [[k, walk(x)]])))
+    : v);
+  return walk(value);
+};
 
 const standingLine = (item, st) =>
   `${st.asked ? `relevant ${yn(st.relevant)}; ` : ''}authorized ${yn(st.authorized)}; reusable here ${yn(st.reusable)}; authoritative ${yn(st.authoritative)}`;
@@ -110,18 +128,20 @@ export function createTools(store) {
             study ? 'What this study reads as current (its reading, not the company\'s classification):' : `Canon in force (${o.canon.length}):`,
             ...(study
               ? brand.items.filter(i => i.standing === 'canon').map(i => `- ${i.title} [${i.id}]`)
-              : o.canon.length ? o.canon.map(i => `- ${i.title} [${i.id}]`) : ['- Nothing has been adopted as canon yet.']),
+              : o.canon.length ? o.canon.map(i => `- ${i.title} [${i.id}]${canonReach(brand, i)}.`) : ['- Nothing has been adopted as canon yet.']),
             o.strengths.length ? `\nWhat holds (${study ? 'the study\'s' : 'the practitioner\'s'} reading, with sources):` : null,
             ...o.strengths.map(s => `- ${s.statement} [${s.sources.join(', ')}]`),
             urgent.length ? (study ? '\nTo look at first:' : '\nNeeds attention before anything is made:') : null,
             ...urgent.map(t => `- ${t.kind}: ${String(t.title).replace(/[.]+$/, '')}.`),
             o.unknowns.length ? '\nNot known:' : null,
             ...o.unknowns.map(u => `- ${u}`),
+            (state.answers || []).length ? '\nAnswered in this record (each is a note by the person named; it decides nothing):' : null,
+            ...(state.answers || []).map(a => `- ${a.question} ${person(brand, a.by)}, ${a.date}: ${a.answer}`),
             '',
             `Understanding: ${PIPELINE.filter(p => !study || p !== 'approved').map(p => `${o.stages[p] || 0} ${p}`).join(', ')}. Found is not understood; extracted is not verified${study ? '.' : '; verified is not approved.'}`,
             `${o.tensions.length} tensions in all. Use get_interpretation for the full list.`,
           ]),
-          data: { brand: brand.name, basis: brand.basis, role: e.role, powers: e.grant?.powers, authority: brand.authority, canon: o.canon.map(i => i.id), unknowns: o.unknowns, stages: o.stages, tensionCount: o.tensions.length },
+          data: { brand: brand.name, basis: brand.basis, role: e.role, powers: e.grant?.powers, authority: brand.authority, canon: o.canon.map(i => i.id), ...(study ? {} : { canonBinds: o.canon.map(i => ({ id: i.id, covers: i.standingRecord?.covers || null, heldBack: (brand.rules || []).filter(r => r.source === i.id && r.heldBack).map(r => r.id) })) }), unknowns: o.unknowns, answers: state.answers || [], stages: o.stages, tensionCount: o.tensions.length },
         };
       },
     },
@@ -165,7 +185,7 @@ export function createTools(store) {
             item.rationale || item.text,
             '',
             `Work type: ${item.workType || 'Unknown'}. Element: ${item.element || 'Unknown'}. Canvas: ${item.canvas || 'Unknown'}.`,
-            `Audience: ${item.audience || 'Unknown'}. Meant to: ${item.intendedOutcome || 'Unknown'}. Level: ${item.level || 'Unknown'}.`,
+            `Audience: ${stopless(item.audience || 'Unknown')}. Meant to: ${stopless(item.intendedOutcome || 'Unknown')}. Level: ${item.level || 'Unknown'}.`,
             `Dates: ${item.period?.from || 'Unknown'}${item.period?.to && item.period.to !== item.period.from ? ` to ${item.period.to}` : ''}. Exposure: ${String(item.exposure || 'Unknown').replace(/[.]+$/, '')}. Made by: ${String(item.made?.by || 'Unknown').replace(/[.]+$/, '')}.`,
             item.periodNote && `About the dates: ${item.periodNote}`,
             item.provenance?.source && `Found in: ${item.provenance.source}${item.provenance.origin === 'generated' ? '. Written by a model; its defaults are not brand evidence.' : ''}`,
@@ -178,7 +198,7 @@ export function createTools(store) {
             '',
             `${isPublicStudy(state.brand) ? 'How this study reads it' : 'Standing'}: ${classOf(item.standing, state.brand).name}. ${classOf(item.standing, state.brand).job}${isPublicStudy(state.brand) ? ` Not ${state.brand.name}'s own classification.` : item.retired ? ` Retired by ${person(state.brand, item.retired.by)} on ${item.retired.date}: ${item.retired.reason}` : rec ? ` Set by ${person(state.brand, rec.by)} on ${rec.date}${rec.scope ? `. It covers: ${rec.scope}` : ''}.` : ''}`,
             item.standingHistory?.length ? `Before: ${item.standingHistory.map(h => `${classOf(h.standing, state.brand).name} until ${h.until}`).join('; ')}.` : null,
-            `Stage: ${item.pipeline}.${item.verification ? ` Checked by ${person(state.brand, item.verification.by)} on ${item.verification.date}: ${item.verification.how}` : ''}`,
+            `Stage: ${item.pipeline}.${item.pipeline === 'discovered' ? ' Only found: nobody has recorded what it is, so it cannot be proposed for a standing yet. describe_item records what it is.' : ''}${item.described ? ` Described by ${person(state.brand, item.described.by)} on ${item.described.date}: ${stopless(item.described.what)}.` : ''}${item.verification ? ` Checked by ${person(state.brand, item.verification.by)} on ${item.verification.date}: ${item.verification.how}` : ''}`,
             study ? `Only ${state.brand.name} can decide its standing. Nothing here can.` : `Standing is decided by ${who(state.brand, deciders(state.brand, powerFor(item)).map(d => d.id))}.`,
             itsRules.length ? `\n${study ? 'What it is described as saying' : 'Rules it states'}:` : null,
             ...itsRules.map(r => `- [${r.id}] ${r.statement} (${classOf(r.standing, state.brand).name.toLowerCase()}${r.heldBack ? '; held back when its source was adopted' : ''}${Array.isArray(r.scope) && r.standing === 'canon' && !r.scope.includes('all') ? `; binds ${r.scope.join(', ')}` : ''})`),
@@ -223,6 +243,8 @@ export function createTools(store) {
             ...(cf ? cf.changes.map(c => `- Brief change, ${c.field}: ${[].concat(c.before).join(', ')} became ${[].concat(c.after ?? 'not set').join(', ')}`) : []),
             ...(cf ? cf.rows.map(r => `- ${r.verdictName}: ${r.item.title} [${r.item.id}]. ${r.why}`) : []),
             cf?.evidenceNote || null,
+            !isPublicStudy(brand) && brand.items.some(i => i.standing === 'canon' && !i.retired) ? '\nCanon, and what each binds:' : null,
+            ...(isPublicStudy(brand) ? [] : brand.items.filter(i => i.standing === 'canon' && !i.retired).map(i => `- ${i.title} [${i.id}]${canonReach(brand, i) || '. It binds what its rules say they cover'}.`)),
             tensions.length ? '\nTensions:' : '\nNo tensions found in what has been entered.',
             ...tensions.flatMap(t => [
               `- [${t.id}] ${t.kind}: ${String(t.title).replace(/[.]+$/, '')}. ${t.detail}${t.owners?.length ? ` For ${who(brand, t.owners)} to resolve.` : ''}${t.sources?.length ? ` [${[...new Set(t.sources)].join(', ')}]` : ''}`,
@@ -230,15 +252,15 @@ export function createTools(store) {
               ...(t.points || []).map(pt => `  - Rule: ${pt.rule} ${pt.says || `It has: ${pt.has}.`}`),
             ]),
             state.proposals.length ? '\nProposals on record:' : null,
-            ...state.proposals.map(p => `- ${p.id}: ${brand.items.find(i => i.id === p.itemId)?.title || p.itemId}, ${classOf(p.from, brand).name.toLowerCase()} to ${classOf(p.to, brand).name.toLowerCase()}. ${p.status === 'open' ? (isPublicStudy(brand) ? 'A note to themselves.' : `Waiting for ${who(brand, p.reviewer)}.`) : `${p.status}${p.decided ? ` by ${person(brand, p.decided.by)} on ${p.decided.date}${p.decided.note ? `: ${p.decided.note}` : ''}` : ''}.`}`),
+            ...state.proposals.map(p => `- ${p.id}: ${brand.items.find(i => i.id === p.itemId)?.title || p.itemId}, ${classOf(p.from, brand).name.toLowerCase()} to ${classOf(p.to, brand).name.toLowerCase()}. ${p.status === 'open' ? (isPublicStudy(brand) ? 'A note to themselves.' : `Waiting for ${who(brand, p.reviewer)}.`) : `${p.status.replace(/^./, x => x.toUpperCase())}${p.decided ? ` by ${person(brand, p.decided.by)} on ${p.decided.date}${p.decided.note ? `: ${stopless(p.decided.note)}` : ''}` : ''}.`}`),
             state.choices.length ? '\nChoices on record:' : null,
-            ...state.choices.map(c => `- ${c.id}: ${CHOICES[c.verdict]} ${c.subject}. ${c.status === 'withdrawn' ? 'Withdrawn.' : c.status === 'awaiting decision' ? `Waiting for ${c.owner ? person(brand, c.owner) : `someone to be named for ${POWERS[c.needs]}`}.` : c.answer ? `${c.status} by ${person(brand, c.answer.by)} on ${c.answer.date}.` : 'Recorded.'}`),
+            ...state.choices.map(c => `- ${c.id}: ${CHOICES[c.verdict]} ${c.subject}. ${c.status === 'withdrawn' ? 'Withdrawn.' : c.status === 'awaiting decision' ? (isPublicStudy(brand) ? 'The practitioner\'s own note; nobody can be named or decide it in a study.' : `Waiting for ${c.owner ? person(brand, c.owner) : `someone to be named for ${POWERS[c.needs]}`}.`) : c.answer ? `${c.status} by ${person(brand, c.answer.by)} on ${c.answer.date}.` : 'Recorded.'}`),
             (state.answers || []).length ? '\nAnswers on record:' : null,
             ...(state.answers || []).map(a => `- ${a.id}: ${a.question} Answered by ${person(brand, a.by)} on ${a.date}: ${a.answer}`),
             hyps.length ? '\nHypotheses beyond the creative work (written by whoever made this reading; never stated as causes):' : null,
             ...hyps.flatMap(h => [`- ${h.title}. ${h.statement}`, `  Uncertain because: ${h.uncertainty}`, h.test ? `  Could be tested by: ${h.test}` : null, isPublicStudy(brand) ? null : `  Decided by: ${h.owner ? person(brand, h.owner) : 'no one named'}.`]),
           ]),
-          data: { tensions, proposals: state.proposals, choices: state.choices, answers: state.answers || [], ledger: ledger.map(c => ({ kind: c.kind, when: c.when, before: c.before.id, after: c.after.id })), carryForward: cf ? cf.rows.map(r => ({ id: r.item.id, verdict: r.verdict, why: r.why })) : null, hypotheses: hyps },
+          data: { tensions, ...(isPublicStudy(brand) ? {} : { canon: brand.items.filter(i => i.standing === 'canon' && !i.retired).map(i => ({ id: i.id, covers: i.standingRecord?.covers || null, heldBack: (brand.rules || []).filter(r => r.source === i.id && r.heldBack).map(r => r.id) })) }), proposals: asReading(brand, state.proposals), choices: state.choices, answers: state.answers || [], ledger: ledger.map(c => ({ kind: c.kind, when: c.when, before: c.before.id, after: c.after.id })), carryForward: cf ? cf.rows.map(r => ({ id: r.item.id, verdict: r.verdict, why: r.why })) : null, hypotheses: hyps },
         };
       },
     },
@@ -268,11 +290,21 @@ export function createTools(store) {
       },
     },
     {
+      name: 'describe_item', title: 'Say what a found piece is',
+      description: 'Record what a piece of material is when the record holds it only as found: what was made, when, and for whom, in the practitioner\'s words. Until this is done the piece cannot be proposed for any standing but the archive. It moves the piece from "discovered" to "extracted" and changes nothing else: it is not a check against the source, and not approval. Ask before you write it in their name.',
+      input: { type: 'object', properties: { engagement_id: ENG, item_id: ITEM, what: { type: 'string', description: 'What was made, when, and for whom, as the practitioner told you.' } }, required: ['engagement_id', 'item_id', 'what'] },
+      run({ engagement_id, item_id, what }) {
+        const next = change(engagement_id, { action: 'describe', item: item_id }, (state, by) => describeItem(state, item_id, { what, by, asOf: today() }));
+        const item = next.brand.items.find(i => i.id === item_id);
+        return { text: `"${item.title}" is now described by ${person(next.brand, item.described.by)}: ${stopless(item.described.what)}. Its standing can be proposed. It has not been checked against its source, and its standing is unchanged.`, data: { id: item.id, pipeline: item.pipeline, described: item.described } };
+      },
+    },
+    {
       name: 'verify_item', title: 'Mark material as checked against its source',
       description: 'Record that a piece of material was checked against its source, and how. Moves it to "verified". Say who made the check in checked_by: "practitioner" if they did, "assistant" if you did in this conversation. A check you made is recorded as an assistant\'s, never as theirs. This is not approval: approval stays with whoever the company names.',
-      input: { type: 'object', properties: { engagement_id: ENG, item_id: ITEM, how: { type: 'string', description: 'What it was checked against, and when.' }, checked_by: { type: 'string', enum: ['practitioner', 'assistant'], description: 'Who actually compared the record with its source.' } }, required: ['engagement_id', 'item_id', 'how', 'checked_by'] },
+      input: { type: 'object', properties: { engagement_id: ENG, item_id: ITEM, how: { type: 'string', description: 'What it was checked against, and when.' }, checked_by: { type: 'string', enum: ['practitioner', 'assistant'], description: 'Who actually compared the record with its source.' } }, required: ['engagement_id', 'item_id', 'how'] },
       run({ engagement_id, item_id, how, checked_by }) {
-        if (!['practitioner', 'assistant'].includes(checked_by)) throw new Error('Say who made the check: practitioner or assistant.');
+        if (!['practitioner', 'assistant'].includes(checked_by)) throw new Error('Say who made the check in checked_by: "practitioner" if they compared the record with its source, "assistant" if you did.');
         const next = change(engagement_id, { action: 'verify', item: item_id }, (state, by) => verifyItem(state, item_id, { by: checked_by === 'assistant' ? 'an assistant session' : by, how, asOf: today() }));
         const item = next.brand.items.find(i => i.id === item_id);
         return { text: `"${item.title}" is now verified, checked by ${person(next.brand, item.verification.by)}: ${item.verification.how}.${isPublicStudy(next.brand) ? ` That changes what the study knows, not what ${next.brand.name} has allowed.` : ' It is not approved; that stays with whoever is named.'}`, data: { id: item.id, pipeline: item.pipeline, checkedBy: item.verification.by } };
@@ -285,7 +317,7 @@ export function createTools(store) {
       run({ engagement_id, item_id, note, acting_as }) {
         const next = change(engagement_id, { action: 'approve', item: item_id }, state => approveItem(state, item_id, { by: onlyAsSelf(state, acting_as), note, asOf: today() }));
         const item = next.brand.items.find(i => i.id === item_id);
-        return { text: `"${item.title}" is approved by ${person(next.brand, item.approval.by)}. It is still ${STANDING_CLASSES[item.standing].name.toLowerCase()}, and its rights are ${item.rights?.status || 'unknown'}.`, data: { id: item.id, approval: item.approval, standing: item.standing } };
+        return { text: `"${item.title}" is approved by ${person(next.brand, item.approval.by)}.${item.verification ? ` The approval rests on a check by ${person(next.brand, item.verification.by)} on ${item.verification.date}: ${stopless(item.verification.how)}.` : ''} It is still ${STANDING_CLASSES[item.standing].name.toLowerCase()}, and its rights are ${item.rights?.status || 'unknown'}.`, data: { id: item.id, approval: item.approval, checkedBy: item.verification?.by || null, standing: item.standing } };
       },
     },
     {
@@ -308,6 +340,7 @@ export function createTools(store) {
           return recordChoice(state, { subject, verdict, rationale, sources, needs, about, by, asOf: today() });
         });
         const c = next.choices.at(-1);
+        if (isPublicStudy(next.brand)) return { text: `Recorded: ${CHOICES[c.verdict]} ${c.subject}. It is the practitioner's own note. In a study nobody can be named, and nobody can decide it here.${c.about ? ` It is tied to the entry ${c.about}.` : ''}`, data: c };
         return { text: `Recorded: ${CHOICES[c.verdict]} ${c.subject}. ${c.status === 'accepted' ? `${POWERS[c.needs].replace(/^./, x => x.toUpperCase())} is theirs to decide here, so recording it decided it.` : c.needs ? (c.owner ? `Routed to ${person(next.brand, c.owner)}; it waits for their decision.` : `It needs a decision on ${POWERS[c.needs]}, and no one is named for that at ${next.brand.name} yet.`) : 'No one else\'s authority is needed.'}${c.about ? ` It is tied to the entry ${c.about}.` : ''}`, data: c };
       },
     },
@@ -338,7 +371,8 @@ export function createTools(store) {
       run({ engagement_id, question, answer }) {
         const next = change(engagement_id, { action: 'answer', question }, (state, by) => recordAnswer(state, { question, answer, by, asOf: today() }));
         const a = next.answers.at(-1);
-        return { text: `Answer recorded by ${person(next.brand, a.by)} on ${a.date}. It is a note in the record; nothing else changed.`, data: a };
+        const asked = [...(next.engagement.questions || []), ...(next.brand.unknowns || [])].includes(a.question);
+        return { text: `Answer recorded by ${person(next.brand, a.by)} on ${a.date}. It is a note in the record: it decides nothing and changes no standing. ${asked ? 'The question is no longer listed as open; open_engagement lists it with this answer.' : 'This is not a question the record asks, so it is kept as a note of its own. To answer one of the record\'s questions, give the question in the record\'s words.'}`, data: { ...a, askedByRecord: asked } };
       },
     },
     {
@@ -372,6 +406,7 @@ export function createTools(store) {
           ? lines([
             `Adopted. "${item.title}" is now ${STANDING_CLASSES[item.standing].name.toLowerCase()}; it was ${STANDING_CLASSES[d.from].name.toLowerCase()}, and that is kept in its history.`,
             d.to === 'canon' ? `Its rules bind: ${d.covers.includes('all') ? 'all work' : d.covers.join(', ')}.${d.scopeNote ? ` In their words: ${String(d.scopeNote).replace(/[.]+$/, '')}.` : ''} It is approved by ${person(next.brand, item.approval.by)}; its rights are ${item.rights?.status === 'own' ? 'the brand\'s own' : item.rights?.status || 'unknown'}.` : null,
+            d.to === 'canon' && item.verification ? `It rests on a check by ${person(next.brand, item.verification.by)} on ${item.verification.date}: ${stopless(item.verification.how)}.` : null,
             inForce.length ? 'Rules now in force:' : null, ...inForce.map(r => `- [${r.id}] ${r.statement}`),
             d.heldBack?.length ? 'Held back, not in force:' : null, ...(d.heldBack || []).map(id => `- ${next.brand.rules.find(r => r.id === id)?.statement || id}`),
           ])
@@ -411,10 +446,10 @@ export function createTools(store) {
             ...brief.evaluation.map(x => `- ${x.outcome}: ${x.measure}. Compared with ${x.baseline}. Limit: ${x.limit}`),
             '\nChoices it carries:', ...(brief.decisions.length ? brief.decisions.map(d => `- ${CHOICES[d.verdict]}: ${d.subject}. ${d.rationale} (${d.status})`) : ['- None recorded yet.']),
             brief.rules.length ? (isPublicStudy(state.brand) ? '\nWhat the public material describes:' : '\nRules, with the standing each has:') : null,
-            ...brief.rules.map(r => `- ${r.statement} (${r.readAs ? r.readAs.toLowerCase() : r.standing}${state.brand.rules.find(x => x.id === r.id)?.heldBack ? '; held back when its source was adopted, so not in force' : ''})`),
-            `\nSources frozen on ${brief.frozenAt}:`, ...brief.snapshot.map(s => `- ${s.title} [${s.id}] ${s.standing}, ${s.pipeline}, fingerprint ${s.fingerprint}`),
+            ...brief.rules.map(r => `- ${r.statement} (${r.readAs ? r.readAs.toLowerCase() : r.standing}${r.heldBack ? '; held back when its source was adopted, so not in force' : ''}${!r.readAs && r.standing === 'canon' && Array.isArray(r.covers) && !r.covers.includes('all') ? `; binds ${r.covers.join(', ')}` : ''})`),
+            `\nSources frozen on ${brief.frozenAt}:`, ...brief.snapshot.map(s => `- ${s.title} [${s.id}] ${classOf(s.standing, state.brand).name.toLowerCase()}, ${s.pipeline}, fingerprint ${s.fingerprint}`),
           ]),
-          data: brief,
+          data: asReading(state.brand, brief),
         };
       },
     },
@@ -470,7 +505,9 @@ export function createTools(store) {
         return {
           text: lines([
             `Engagement package for ${state.brand.name}, written ${asOf}. The engagement has not been ended. ${handoff.basisNote}`,
-            [[handoff.sources.length, 'source'], [handoff.choices.length, 'choice'], [handoff.proposals.length, 'proposal'], [handoff.decisions.length, 'decision'], [handoff.answers.length, 'answer'], [handoff.openTensions.length, 'open tension']].map(([n, w]) => `${n} ${w}${n === 1 ? '' : 's'}`).join(', ') + '.',
+            [[handoff.sources.length, 'source'], [handoff.choices.length, 'choice'], handoff.notes ? [handoff.notes.length, 'note on how to read a piece'] : [handoff.proposals.length, 'proposal'], [handoff.decisions.length, 'decision'], [handoff.answers.length, 'answer'], [handoff.openTensions.length, 'open tension']].map(([n, w]) => `${n} ${w.replace(/^note on/, n === 1 ? 'note on' : 'notes on')}${n === 1 || /^notes? on/.test(w) ? '' : 's'}`).join(', ') + '.',
+            handoff.sources.some(s => s.covers || s.rulesHeldBack) ? 'Canon, and what each binds:' : null,
+            ...state.brand.items.filter(i => i.standing === 'canon' && !i.retired && canonReach(state.brand, i)).map(i => `- ${i.title} [${i.id}]${canonReach(state.brand, i)}.`),
             live.length ? `Context packages still valid (${live.length}):` : packages.length ? 'No context package is still valid.' : null,
             ...live.map(p => `- ${p.id} to ${p.partner?.name}, for "${p.assignment}", expires ${p.expires}`),
             state.engagement.modeNote && `How this record was made: ${state.engagement.modeNote}`,
@@ -478,9 +515,10 @@ export function createTools(store) {
             `Kept by the company: ${handoff.retained.company}`, `Kept by the practitioner: ${handoff.retained.practitioner}`,
             `Completed: ${handoff.completed.join(', ') || 'nothing'}. Not done: ${handoff.notCompleted.join(', ')}.`,
             handoff.openQuestions.length ? 'Still open:' : null, ...handoff.openQuestions.map(q => `- ${q}`),
+            handoff.answers.length ? 'Answered (each a note by the person named; it decides nothing):' : null, ...handoff.answers.map(a => `- ${a.question} ${person(state.brand, a.by)}, ${a.date}: ${a.answer}`),
             'The full package is in the structured result.',
           ]),
-          data: include_packet ? { handoff, packet: toPacket(state) } : { handoff },
+          data: include_packet ? { handoff: asReading(state.brand, handoff), packet: toPacket(state) } : { handoff: asReading(state.brand, handoff) },
         };
       },
     },
@@ -495,7 +533,7 @@ export function createTools(store) {
         const { expired, ...clean } = state; void expired;
         const path = store.saveOutside('exports', `${engagement_id}-${asOf}.json`, { handoff, packet: toPacket(clean) });
         store.log(engagement_id, { action: 'save-package', by: actorOf(state) });
-        return { text: `Saved to ${path}. It holds ${state.brand.name}'s material: ${handoff.sources.length} sources, ${handoff.choices.length} choices, ${handoff.proposals.length} proposals, ${handoff.decisions.length} decisions.`, data: { path } };
+        return { text: `Saved to ${path}. It holds ${state.brand.name}'s material: ${handoff.sources.length} sources, ${handoff.choices.length} choices, ${handoff.notes ? `${handoff.notes.length} notes` : `${handoff.proposals.length} proposals`}, ${handoff.decisions.length} decisions.`, data: { path } };
       },
     },
     {

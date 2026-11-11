@@ -41,10 +41,12 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         ? `${brand.people?.[owners[0]]?.name || owners[0]} decides both: ${rs.map(from).join(' and ')}.`
         : `${rs.map(r => `${brand.people?.[r.owner]?.name || 'No named owner'} for ${from(r)}`).join('; ')}.`;
       // Written rules that nobody adopted are not in force; they still cannot both be followed.
-      const anyCanon = rs.some(r => r.standing === 'canon');
+      const canonCount = rs.filter(r => r.standing === 'canon').length;
+      const heading = canonCount === rs.length ? `${rs.length === 2 ? 'Two' : 'Several'} rules in force disagree`
+        : canonCount ? 'A rule in force and a written rule disagree' : `${rs.length === 2 ? 'Two' : 'Several'} written rules disagree`;
       out.push({
         id: `t-conflict-${topic}`, kind: 'Conflicting guidance', severity: 'decide',
-        title: `${anyCanon ? 'Two rules in force disagree' : 'Two written rules disagree'}: ${rs.map(r => quote(r.statement)).join(' and ')}`,
+        title: `${heading}: ${rs.map(r => quote(r.statement)).join(' and ')}`,
         detail: `${workTypes.length ? `Both apply to this project (${workTypes.join(', ')}). ` : ''}${whose} Neither outranks the other until someone with authority scopes them.`,
         sources: [...new Set(rs.map(r => r.source))], owners, ruleIds: rs.map(r => r.id), power: `standing.${rs[0].domain || 'visual'}`,
       });
@@ -58,10 +60,19 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
     if (item.standing === 'archive') continue;
     const departs = [];
     const drifts = [];
+    const outside = [];
     for (const [topic, raw] of Object.entries(item.uses || {})) {
       const { value, says } = usage(raw);
       // A rule binds a piece of work only if its scope covers that kind of work.
-      const onTopic = live.filter(r => r.topic === topic && (!r.scope || r.scope.includes('all') || r.scope.includes(item.workType)));
+      const reaches = r => !r.scope || r.scope.includes('all') || r.scope.includes(item.workType);
+      const onTopic = live.filter(r => r.topic === topic && reaches(r));
+      // Canon adopted for other kinds of work does not bind this piece. Where the
+      // piece differs from it, that is still worth seeing: it is how a decider
+      // learns the canon's reach was drawn short, or rightly.
+      if (!onTopic.length && !study) {
+        const elsewhere = live.filter(r => r.topic === topic && r.standing === 'canon' && !reaches(r) && r.value !== value);
+        if (elsewhere.length && !live.some(r => r.topic === topic && r.value === value)) outside.push({ rule: elsewhere[0], has: spoken(value), says });
+      }
       if (!onTopic.length || onTopic.some(r => r.value === value)) continue;
       const canon = onTopic.find(r => r.standing === 'canon');
       if (!canon) { departs.push({ rule: onTopic[0], has: spoken(value), says }); continue; }
@@ -80,6 +91,17 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
         points: drifts.length > 1 ? drifts.map(d => ({ rule: d.canon.statement, has: d.has, says: d.retired ? what(d) : d.says, ruleId: d.canon.id })) : undefined,
         sources: [...new Set([item.id, ...drifts.map(d => d.canon.source)])],
         owners: [...new Set(drifts.flatMap(d => authority[`standing.${d.canon.domain || 'visual'}`]))], power: `standing.${drifts[0].canon.domain || 'visual'}`,
+      });
+    }
+    if (outside.length) {
+      const kinds = [...new Set(outside.flatMap(d => d.rule.scope || []))];
+      out.push({
+        id: `t-outside-${item.id}`, kind: 'Outside what canon covers', severity: 'decide',
+        title: `${item.title} differs from canon that covers other work`,
+        detail: `${outside.length === 1 ? 'This rule is' : 'These rules are'} canon for ${kinds.join(', ').toLowerCase() || 'other work'} only, and this is ${String(item.workType || 'other work').toLowerCase()}. It is not a departure. Whoever adopted the canon decides whether it should reach this work too.`,
+        points: outside.map(d => ({ rule: d.rule.statement, has: d.has, says: d.says, ruleId: d.rule.id })),
+        sources: [...new Set([item.id, ...outside.map(d => d.rule.source)])],
+        owners: [...new Set(outside.flatMap(d => authority[`standing.${d.rule.domain || 'visual'}`]))], power: `standing.${outside[0].rule.domain || 'visual'}`,
       });
     }
     if (departs.length) {
@@ -148,10 +170,11 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
     // The record's own word on whether it is in use comes first. Otherwise recorded reuse, or being built on, counts.
     const isUsedNow = typeof item.inUse === 'boolean' ? item.inUse : Boolean((item.relations || []).some(rel => rel.type === 'derived from') || item.reuse?.length);
     const known = ['cleared', 'restricted', 'expired', 'own'].includes(r.status);
-    if (!known && (isUsedNow || pipelineRank(item.pipeline) >= pipelineRank('verified'))) {
-      out.push({ id: `t-rights-${item.id}`, kind: study ? 'Rights not established' : 'Unknown rights', severity: 'investigate',
-        title: study ? `${item.title}: the terms for using it are not visible from public sources` : isUsedNow ? `${item.title} is in use with unreviewed rights` : `${item.title}: its rights have not been reviewed`,
-        detail: r.note || (study ? 'Nothing found says what others may do with it.' : 'No licence on file.'), sources: [item.id], owners: authority.rights, power: 'rights' });
+    // A study may reuse nothing, so the terms for reusing a piece are not something it has to settle.
+    if (!study && !known && (isUsedNow || pipelineRank(item.pipeline) >= pipelineRank('verified'))) {
+      out.push({ id: `t-rights-${item.id}`, kind: 'Unknown rights', severity: 'investigate',
+        title: isUsedNow ? `${item.title} is in use with unreviewed rights` : `${item.title}: its rights have not been reviewed`,
+        detail: r.note || 'No licence on file.', sources: [item.id], owners: authority.rights, power: 'rights' });
     }
     if (r.until && r.until >= asOf && channels.length && (item.functions || []).length) {
       const missing = uncoveredChannels(r, channels);
@@ -199,8 +222,8 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
 }
 
 export const TENSION_ORDER = [
-  'Conflicting guidance', 'Records disagree', 'Stale claim', 'Statement set beside a later report', 'Drift from canon', 'Differs from what is read as current', 'Material and written rule disagree',
-  'Claim not yet confirmed', 'Licence does not cover the plan', 'Unknown rights', 'Rights not established', 'Attribution not established', 'Missing evidence', 'No one named to decide',
+  'Conflicting guidance', 'Records disagree', 'Stale claim', 'Statement set beside a later report', 'Drift from canon', 'Differs from what is read as current', 'Material and written rule disagree', 'Outside what canon covers',
+  'Claim not yet confirmed', 'Licence does not cover the plan', 'Unknown rights', 'Attribution not established', 'Missing evidence', 'No one named to decide',
 ];
 
 // Every area of decision is either held by a named person or it is a gap.
@@ -321,7 +344,8 @@ export function buildBrief(brand, engagement, decisions, { asOf }) {
     objective: engagement.objective,
     audience: engagement.audience,
     channels: engagement.channels,
-    rules: live.map(r => ({ id: r.id, statement: r.statement, standing: r.standing, ...(isPublicStudy(brand) ? { readAs: classOf(r.standing, brand).name } : {}) })),
+    // A rule carries what it binds and whether its decider held it back, so no reader takes it for more than it is.
+    rules: live.map(r => ({ id: r.id, statement: r.statement, standing: r.standing, ...(isPublicStudy(brand) ? { readAs: classOf(r.standing, brand).name } : {}), ...(Array.isArray(r.scope) ? { covers: r.scope } : {}), ...(r.heldBack ? { heldBack: true } : {}) })),
     decisions: decisions.map(d => ({ verdict: d.verdict, subject: d.subject, rationale: d.rationale, by: d.by, status: d.status })),
     evaluation: engagement.evaluation || [],
     snapshot, frozenAt: asOf,

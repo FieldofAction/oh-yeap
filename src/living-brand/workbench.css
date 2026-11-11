@@ -61,6 +61,8 @@ a { color: inherit; }
   padding: .75rem 1rem; border-radius: 8px; background: var(--lb-surface); border: 1px solid var(--lb-fg);
   box-shadow: 0 6px 24px rgb(0 0 0 / .18);
 }
+/* Placed away from the control just used: at the top when the action was in the lower half. */
+.lb-notice.is-top { bottom: auto; top: calc(var(--lb-top-h, 4rem) + .5rem); }
 .lb-notice p { margin: 0; overflow-wrap: anywhere; }
 .lb-notice-refused { border-color: var(--lb-no); }
 .lb-notice-refused p { color: var(--lb-no); }

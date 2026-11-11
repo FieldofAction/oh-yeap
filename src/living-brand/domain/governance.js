@@ -83,6 +83,11 @@ export function propose(state, { itemId, to, rationale, evidenceIds = [], by, sc
   // A proposal written against a standing the item no longer has is closed first.
   for (const p of s.proposals) if (p.itemId === itemId && p.status === 'open' && p.from !== item.standing) { p.status = 'superseded'; p.closedOn = asOf; }
   if (s.proposals.some(p => p.itemId === itemId && p.to === to && p.status === 'open')) throw new Error(`An open proposal already asks for ${item.title} to become ${STANDING_CLASSES[to].name.toLowerCase()}.`);
+  // What could never be adopted is not put in front of a decider.
+  if (to !== 'archive') {
+    const blocked = whyNoStanding(item);
+    if (blocked) throw new Error(blocked);
+  }
   const allEvidence = s.brand.items.flatMap(i => (i.evidence || []).map(e => ({ ...e, on: i.id, origin: i.provenance?.origin })));
   const cited = allEvidence.filter(e => (evidenceIds || []).includes(e.id));
   const unknown = (evidenceIds || []).filter(id => !allEvidence.some(e => e.id === id));
@@ -99,15 +104,13 @@ export function propose(state, { itemId, to, rationale, evidenceIds = [], by, sc
   const independent = own.filter(e => e.origin !== 'generated' && e.basis !== 'reuse' && e.type !== 'intended');
   // Anything that would have the material consulted or obeyed is a promotion.
   const promotion = ['canon', 'precedent', 'contextual'].includes(to);
-  if (to !== 'archive' && to !== 'canon') {
-    if (item.pipeline === 'discovered') warnings.push('Only found. Nobody has recorded what it is.');
-    if (item.approval?.status === 'rejected') warnings.push(`It was rejected${item.approval.date ? ` ${onDate(item.approval.date)}` : ''}.`);
-  }
   // What the reviewer needs to see about the case made is the same whatever is being asked for.
   if (promotion && to !== 'canon') {
     if (cited.length && !own.length && !related.length) warnings.push('The evidence cited was recorded on other material and does not bear on this.');
     if (related.length) warnings.push(`Some of the evidence cited was recorded on related material (${[...new Set(related.map(e => s.brand.items.find(i => i.id === e.on)?.title || e.on))].join(', ')}), not on this piece.`);
     if (item.reuse?.length) warnings.push(`Reused ${item.reuse.length} time${item.reuse.length === 1 ? '' : 's'}. Frequency is a reason to review, not a reason to adopt.`);
+    // What may be consulted may be copied, so its rights are the reviewer's business too.
+    if (!['cleared', 'own'].includes(item.rights?.status)) warnings.push(`Rights are ${item.rights?.status || 'unknown'}. Work that follows it may not be free to use what it shows.`);
   }
   if (to === 'canon') {
     if (cited.length && !own.length && !related.length) warnings.push('The evidence cited was recorded on other material and does not bear on this.');
@@ -118,12 +121,11 @@ export function propose(state, { itemId, to, rationale, evidenceIds = [], by, sc
     if (!['cleared', 'own'].includes(item.rights?.status)) warnings.push(`Rights are ${item.rights?.status || 'unknown'}; canon that cannot be used is a trap.`);
     // Recorded reuse is always put in front of the reviewer, whatever else is cited.
     if (item.reuse?.length) warnings.push(`Reused ${item.reuse.length} time${item.reuse.length === 1 ? '' : 's'}. Frequency is a reason to review, not a reason to adopt.`);
-    if (item.approval?.status === 'rejected') warnings.push(`It was rejected${item.approval.date ? ` ${onDate(item.approval.date)}` : ''}.`);
-    if (pipelineRank(item.pipeline) < pipelineRank('verified')) warnings.push(`Only ${item.pipeline}. Check it against its source before it governs anything.`);
+    if (pipelineRank(item.pipeline) < pipelineRank('verified')) warnings.push('Not yet checked against its source. Check it before it governs anything.');
     if (item.provenance?.origin === 'generated') warnings.push('This was written by a model. Its wording is a description, not a decision.');
   }
   const reviewer = deciders(s.brand, powerFor(item)).map(p => p.id);
-  if (!reviewer.length) warnings.push(isPublicStudy(s.brand) ? `No one is named to decide this, and only ${s.brand.name} can name them. In a study this is a note to yourself.` : 'No one is named to decide this. The proposal waits until someone is.');
+  if (!reviewer.length) warnings.push(isPublicStudy(s.brand) ? `A study cannot establish who decides at ${s.brand.name}. This is a note to yourself.` : 'No one is named to decide this. The proposal waits until someone is.');
   s.proposals.push({
     id: nextId(s, 'p', asOf), itemId, from: item.standing, to, rationale, evidenceIds: cited.map(e => e.id), by, scope, date: asOf,
     status: 'open', warnings, reviewer,
@@ -135,7 +137,36 @@ export function propose(state, { itemId, to, rationale, evidenceIds = [], by, sc
 // Every rule the material states that is not already canon, whether it carries
 // a standing of its own or takes the material's.
 export const rulesStatedBy = (brand, itemId) => (brand.rules || []).filter(r => r.source === itemId && !['canon', 'retired', 'archive'].includes(r.standing));
-export const kindsOfWork = brand => [...new Set((brand.items || []).map(i => i.workType).filter(Boolean))].sort();
+// Every kind of work the record knows: what its material is filed under, what
+// its rules were written for, and what the engagement at hand is making.
+export const kindsOfWork = (brand, engagement) => [...new Set([
+  ...(brand.items || []).map(i => i.workType),
+  ...(brand.rules || []).flatMap(r => r.scope || []),
+  ...(engagement?.workTypes || []),
+].filter(k => k && k !== 'all' && k !== 'Unknown'))].sort((a, b) => a.localeCompare(b));
+
+// Material that has only been found, or that was turned down, can be filed in
+// the archive and nothing else. The reason is the same wherever it is asked.
+export function whyNoStanding(item) {
+  if (item.pipeline === 'discovered') return `${item.title} has only been found. Nobody has recorded what it is, so it cannot be given a standing yet. Say what it is first.`;
+  if (item.approval?.status === 'rejected') return `${item.title} was rejected${item.approval.date ? ` ${onDate(item.approval.date)}` : ''}. It cannot be given a standing while that stands.`;
+  return '';
+}
+
+// Saying what a found piece is: the first thing anyone records about it.
+// It moves the piece from found to described, and changes nothing else.
+export function describeItem(state, itemId, { what, by, asOf }) {
+  what = String(what || '').trim();
+  if (!what) throw new Error('Say what it is: what was made, when, and for whom.');
+  requireWrite(state, 'describe material');
+  const s = clone(state);
+  const item = findItem(s, itemId);
+  if (item.pipeline !== 'discovered') throw new Error(`${item.title} has already been described.`);
+  item.pipelineHistory = [...(item.pipelineHistory || []), { stage: item.pipeline, until: asOf }];
+  item.pipeline = 'extracted';
+  item.described = { by, date: asOf, what };
+  return s;
+}
 
 // Only the brand's named authority can adopt, reject or revise.
 // Turning a proposal down, or sending it back, needs a reason in the decider's
@@ -157,20 +188,21 @@ export function decide(state, proposalId, { by, outcome, note, scope, covers, ho
   note = oneLine(note);
   if (outcome !== 'adopt' && !note) throw new Error(outcome === 'reject' ? 'Say why it is turned down.' : 'Say what needs to change.');
   covers = [...new Set((Array.isArray(covers) ? covers : []).map(oneLine).filter(Boolean))];
+  const namedKinds = covers.filter(k => k !== 'all');
   if (covers.includes('all')) covers = ['all'];
   checked = oneLine(checked);
   const toCanon = outcome === 'adopt' && p.to === 'canon';
-  if (outcome === 'adopt' && p.to !== 'archive' && item.pipeline === 'discovered') throw new Error(`${item.title} has only been found. Nobody has recorded what it is, so it cannot be given that standing yet.`);
-  if (outcome === 'adopt' && ['canon', 'precedent', 'contextual'].includes(p.to) && item.approval?.status === 'rejected') throw new Error(`${item.title} was rejected. It cannot be given that standing while that stands.`);
+  if (outcome === 'adopt' && p.to !== 'archive' && whyNoStanding(item)) throw new Error(whyNoStanding(item));
   // Canon binds the kinds of work its decider names, and nothing else. They
   // are named with the decision: a scope a proposal arrived with is the
   // proposer's suggestion, never the decider's word. What they say in their
   // own words is kept beside it as a note.
   const stated = toCanon ? rulesStatedBy(s.brand, item.id) : [];
   if (toCanon) {
-    const known = kindsOfWork(s.brand);
+    const known = kindsOfWork(s.brand, s.engagement);
     if (!covers.length) throw new Error(known.length ? `Say which kinds of work this canon covers: ${known.join(', ')}, or all of it.` : 'Say which kinds of work this canon covers. This record names no kinds of work, so the only choice is all of it.');
-    const strange = covers.filter(k => k !== 'all' && !known.includes(k));
+    // Every kind named is checked, also beside "all": a word that means nothing is not passed over.
+    const strange = namedKinds.filter(k => !known.includes(k));
     if (strange.length) throw new Error(`"${strange[0]}" is not a kind of work in ${s.brand.name}'s material. ${known.length ? `The kinds are: ${known.join(', ')}.` : 'It names none, so the only choice is all of it.'}`);
     const notStated = (Array.isArray(holdBack) ? holdBack : []).filter(id => !stated.some(r => r.id === id));
     if (notStated.length) throw new Error(`"${notStated[0]}" is not a rule ${item.title} states.`);
@@ -381,6 +413,8 @@ export function recordChoice(state, { subject, verdict, rationale, sources = [],
   if (!String(rationale || '').trim()) throw new Error('Say why. A choice is your judgment, and the reason is part of it.');
   requireWrite(state, 'record choices');
   const s = clone(state);
+  // In a study nobody can be named, so a choice waits for no one: it is the reader's own note.
+  if (isPublicStudy(s.brand)) needs = null;
   // A choice that needs someone's decision is routed to them. If the person
   // recording it is the one named to decide, recording it is the decision.
   const mine = Boolean(needs) && canDecide(s.brand, by, needs);

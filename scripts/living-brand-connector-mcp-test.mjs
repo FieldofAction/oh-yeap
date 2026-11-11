@@ -27,7 +27,7 @@ for (const mode of [undefined, 'auto']) {
     const { client } = await connect(mode);
     try {
       const { tools } = await client.listTools();
-      assert.equal(tools.length, 26);
+      assert.equal(tools.length, 27);
       for (const t of tools) {
         assert.ok(t.title && t.description && t.inputSchema?.type === 'object', t.name);
         assert.equal(typeof t.annotations.readOnlyHint, 'boolean', t.name);

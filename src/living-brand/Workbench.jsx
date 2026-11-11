@@ -1,10 +1,10 @@
-import { Component, useEffect, useMemo, useRef, useState } from 'react';
+import { Component, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   startEngagement, openTenant, search, assessStanding, findTensions, carryForward, changeLedger, organizationalHypotheses,
   propose, decide, retire, recordReuse, recordChoice, answerChoice, withdrawChoice, carryOver, recordAnswer, verifyItem, approveItem, nameAuthority, unnameAuthority,
   viewFor, buildBrief, buildContextPackage, revokePackage, packageValid, buildHandoff, toPacket, coordinationView, exportWorkbench,
   orientation, canDecide, powerFor, deciders, effectiveRules, rulesInForce, rulesStatedBy, timeline, fingerprint, isPublicStudy, basisNote,
-  pipelineRank, classOf, STANDING_CLASSES, PIPELINE, CHOICES, POWERS, BASES,
+  pipelineRank, classOf, kindsOfWork, whyNoStanding, describeItem, STANDING_CLASSES, PIPELINE, CHOICES, POWERS, BASES,
 } from './domain/index.js';
 import Plate from './Plate.jsx';
 
@@ -110,19 +110,30 @@ export default function Workbench({ catalog }) {
   const [viewer, setViewer] = useState(place.viewer || 'practitioner');
   const [stage, setStage] = useState(STAGES.some(s => s[0] === place.stage) ? place.stage : 'enter');
   const [openId, setOpenId] = useState(null);
-  const [notice, setNotice] = useState(null);
+  // A notice is put in the half of the screen the last action was not in, so it never sits on the control just used.
+  const lastY = useRef(null);
+  const [notice, setNoticeRaw] = useState(null);
+  const setNotice = useCallback(n => setNoticeRaw(typeof n === 'function' ? n : n ? { ...n, top: lastY.current != null && lastY.current > window.innerHeight / 2 } : null), []);
+  useEffect(() => {
+    const point = e => { lastY.current = e.clientY; };
+    const key = () => { const r = document.activeElement?.getBoundingClientRect?.(); if (r && r.height) lastY.current = r.top + r.height / 2; };
+    document.addEventListener('pointerdown', point, true);
+    document.addEventListener('keydown', key, true);
+    return () => { document.removeEventListener('pointerdown', point, true); document.removeEventListener('keydown', key, true); };
+  }, []);
   // Whether this browser keeps anything at all is known at once; a write that fails later is reported when it fails.
   const [unsaved, setUnsaved] = useState(() => { const ok = write(`${STORE}:probe`, 1); drop(`${STORE}:probe`); return !ok; });
   const [setAside, setSetAside] = useState(0);
   const [file, setFile] = useState(null);
   const [draft, setDraft] = useState(null);
   const [discarding, setDiscarding] = useState(false);
-  const [brought, setBrought] = useState(false);
   const topRef = useRef(null);
   const navRef = useRef(null);
 
   // Read after restore has run, so work set aside in this render is seen.
   const earlier = useMemo(() => { void setAside; void loadedKey; const saved = read(earlierKey); return usable(saved) ? saved : null; }, [earlierKey, setAside, loadedKey]);
+  // That it was brought across is kept with the earlier session, so the offer does not come back on a reload.
+  const brought = Boolean(earlier?.brought);
 
   useEffect(() => {
     if (loadedKey !== storeKey || !state) return;
@@ -133,7 +144,7 @@ export default function Workbench({ catalog }) {
     if (!notice) return undefined;
     const timer = setTimeout(() => setNotice(n => (n === notice ? null : n)), notice.kind === 'refused' ? 12000 : 6000);
     return () => clearTimeout(timer);
-  }, [notice]);
+  }, [notice, setNotice]);
   useEffect(() => { write(PLACE_KEY, { engagement: engId, viewer, stage }); }, [engId, viewer, stage]);
   // The stage strip sits under the header, however tall the header is.
   const shown = Boolean(state);
@@ -199,13 +210,13 @@ export default function Workbench({ catalog }) {
     try {
       const r = carryOver(state, earlier.state);
       setAll(a => ({ ...a, state: r.state }));
-      setBrought(true);
+      write(earlierKey, { ...earlier, brought: true }); setSetAside(n => n + 1);
       const came = [r.carried.answers ? plural(r.carried.answers, 'one answer', '% answers') : null, r.carried.choices ? plural(r.carried.choices, 'one choice', '% choices') : null].filter(Boolean).join(' and ');
       setNotice({ kind: 'ok', text: `${came ? `${cap(came)} brought across.` : 'There were no answers or choices to bring across.'}${r.left.decisions ? ' Decisions about material were not: make them again against these records.' : ''}` });
     } catch (e) { setNotice({ kind: 'refused', text: e.message }); }
   };
   const reset = () => { setAll(begin(entry, asOf)); setNotice({ kind: 'ok', text: 'Reset to the starting material.' }); };
-  const switchTo = id => { setEngId(id); setOpenId(null); setNotice(null); setFile(null); setDraft(null); setBrought(false); setViewer('practitioner'); setStage('enter'); window.scrollTo(0, 0); };
+  const switchTo = id => { setEngId(id); setOpenId(null); setNotice(null); setFile(null); setDraft(null); setViewer('practitioner'); setStage('enter'); window.scrollTo(0, 0); };
 
   const open = openId ? items[openId] : null;
   const go = k => { setStage(k); setNotice(null); window.scrollTo(0, 0); };
@@ -255,7 +266,7 @@ export default function Workbench({ catalog }) {
             <button onClick={() => setFile(save(`${brand.id}-earlier-session.packet.json`, toPacket(earlier.state)))}>Download the earlier session</button>
             {!discarding && <button onClick={() => setDiscarding(true)}>Discard it</button>}
             {discarding && (<>
-              <button autoFocus onClick={() => { drop(earlierKey); setSetAside(n => n + 1); setFile(null); setDiscarding(false); setBrought(false); setNotice({ kind: 'ok', text: 'The earlier session was discarded.' }); }}>Yes, discard the earlier session</button>
+              <button autoFocus onClick={() => { drop(earlierKey); setSetAside(n => n + 1); setFile(null); setDiscarding(false); setNotice({ kind: 'ok', text: 'The earlier session was discarded.' }); }}>Yes, discard the earlier session</button>
               <button onClick={() => setDiscarding(false)}>Keep it</button>
             </>)}
           </div>
@@ -292,7 +303,7 @@ export default function Workbench({ catalog }) {
       {open && <Drawer key={open.id} item={open} {...ctx} canWork={view === 'practitioner'} actingAs={view === 'practitioner' ? actor : view.startsWith('person:') ? view.slice(7) : null} />}
 
       {notice && (
-        <div className={`lb-notice lb-notice-${notice.kind}`} role="status">
+        <div className={`lb-notice lb-notice-${notice.kind}${notice.top ? ' is-top' : ''}`} role="status">
           <p>{notice.text}</p>
           <button onClick={() => setNotice(null)}>Dismiss</button>
         </div>
@@ -558,8 +569,9 @@ function RuleGroups({ rules, bare = [], brand, items, setOpenId, canon = false, 
     const item = items[source];
     if (canon) {
       const since = item?.standingRecord?.date || list.map(r => r.effective?.from).filter(Boolean).sort()[0];
-      const covers = item?.standingRecord?.decisionId && item.standingRecord.scope ? `It covers: ${lower(stop(item.standingRecord.scope))}` : null;
-      return [since ? `${study ? 'Read as current since' : 'Since'} ${fmt(since)}` : null, covers].filter(Boolean).join('. ');
+      const covers = item?.standingRecord?.decisionId && item.standingRecord.scope ? `It covers: ${stop(item.standingRecord.scope)}` : null;
+      const held = (brand.rules || []).filter(r => r.source === source && r.heldBack).length;
+      return [since ? `${study ? 'Read as current since' : 'Since'} ${fmt(since)}` : null, covers, held ? plural(held, 'One rule it states was held back', '% rules it states were held back') : null].filter(Boolean).join('. ');
     }
     if (study) return classOf(list[0]?.standing || item?.standing, brand).name;
     return item?.provenance?.origin === 'generated' ? 'Written by a model' : '';
@@ -696,6 +708,10 @@ function Drawer({ asOf, item, state, brand, items, tensions, act, actor, me, set
   const awaitingApproval = mine && item.pipeline !== 'discovered' && !item.retired && !['approved', 'published'].includes(item.approval?.status);
   const proposals = state.proposals.filter(p => p.itemId === item.id);
   const kind = classOf(item.standing, brand);
+  const heldBack = (brand.rules || []).filter(r => r.source === item.id && r.heldBack);
+  // Found or rejected material can be archived and nothing else; the drawer says why instead of offering a form that would fail.
+  const noStanding = study ? '' : whyNoStanding(item);
+  const [what, setWhat] = useState('');
   useEffect(() => {
     const opener = document.activeElement;
     closeRef.current?.focus();
@@ -738,7 +754,9 @@ function Drawer({ asOf, item, state, brand, items, tensions, act, actor, me, set
         <h3>{study ? 'How this study reads it' : 'Standing'}</h3>
         <p className="lb-body"><strong>{kind.name}.</strong> {kind.job}
           {!study && item.retired && ` Retired by ${nameFor(brand, item.retired.by, me)} on ${fmt(item.retired.date)}: ${stop(item.retired.reason)}.`}
-          {!study && !item.retired && record && record.basis !== 'reading' && ` Set by ${nameFor(brand, record.by, me)} on ${fmt(record.date)}${record.scope ? `. It covers: ${lower(stop(record.scope))}` : ''}.`}</p>
+          {!study && !item.retired && record && record.basis !== 'reading' && ` Set by ${nameFor(brand, record.by, me)} on ${fmt(record.date)}${record.scope ? `. It covers: ${stop(record.scope)}` : ''}.`}</p>
+        {heldBack.length > 0 && <p className="lb-body">{plural(heldBack.length, 'One rule it states was held back when it was adopted, and is not in force', '% rules it states were held back when it was adopted, and are not in force')}: {heldBack.map(r => stop(r.statement)).join('; ')}.</p>}
+        {item.described && <p className="lb-body">{cap(nameFor(brand, item.described.by, me))} said what it is on {fmt(item.described.date)}: {stop(item.described.what)}.</p>}
         {item.readingWhy && !record?.decisionId && <p className="lb-body">{item.readingWhy}</p>}
         {item.standingHistory?.length > 0 && <p className="lb-body">Before: {item.standingHistory.map(h => `${lower(classOf(h.standing, brand).name)} until ${fmt(h.until)}`).join('; ')}.</p>}
         <p className="lb-body">{stageLine(item, brand, study, me)}</p>
@@ -758,7 +776,7 @@ function Drawer({ asOf, item, state, brand, items, tensions, act, actor, me, set
         {item.sources?.length > 0 && (<>
           <h3>Sources</h3>
           <ul className="lb-list">{item.sources.map(s => (
-            <li key={s.url}>{/^https?:/.test(s.url) ? <a href={s.url} target="_blank" rel="noreferrer noopener">{s.publisher || s.url}</a> : (s.publisher || s.url)}{s.date ? `, ${s.date}` : ''} <span className="lb-meta">{SOURCE_BASIS[s.basis] || s.basis}</span></li>
+            <li key={s.url}>{/^https?:/.test(s.url) ? <a href={s.url} target="_blank" rel="noreferrer noopener">{s.publisher || s.url}</a> : (s.publisher || s.url)}{s.date ? `, ${fmt(s.date)}` : ''} <span className="lb-meta">{SOURCE_BASIS[s.basis] || s.basis}</span></li>
           ))}</ul>
         </>)}
 
@@ -789,7 +807,7 @@ function Drawer({ asOf, item, state, brand, items, tensions, act, actor, me, set
         ))}
 
         <h3>Rights</h3>
-        <p className="lb-body"><strong>{item.rights?.status === 'own' ? 'The brand\'s own' : `${cap(item.rights?.status || 'unknown')}${item.rights?.status === 'cleared' && item.rights.channels?.length && !item.rights.channels.includes('all') ? ` for ${item.rights.channels.map(c => c.replace('-', ' ')).join(', ')}` : ''}`}.</strong> {item.rights?.note || ''} {item.rights?.holder ? `Holder: ${item.rights.holder}.` : ''}</p>
+        <p className="lb-body"><strong>{item.rights?.status === 'own' ? 'The brand\'s own' : study && item.rights?.status === 'cleared' ? 'Open licence' : `${cap(item.rights?.status || 'unknown')}${item.rights?.status === 'cleared' && item.rights.channels?.length && !item.rights.channels.includes('all') ? ` for ${item.rights.channels.map(c => c.replace('-', ' ')).join(', ')}` : ''}`}.</strong> {item.rights?.note || ''} {item.rights?.holder ? `Holder: ${item.rights.holder}.` : ''}</p>
 
         {item.relations?.length > 0 && (<><h3>Related</h3>
           <ul className="lb-list">{item.relations.map(r => <li key={r.type + r.to}>{cap(r.type)} <Cite id={r.to} items={items} setOpenId={setOpenId} /></li>)}</ul></>)}
@@ -798,7 +816,22 @@ function Drawer({ asOf, item, state, brand, items, tensions, act, actor, me, set
         {item.reuse?.length > 0 && (<><h3>Reused</h3>
           <ul className="lb-list">{item.reuse.map((r, k) => <li key={k}>{r.where}, {fmt(r.date)}</li>)}</ul></>)}
 
-        {canWork && (
+        {canWork && noStanding && (
+          <div className="lb-form">
+            <h3>{item.pipeline === 'discovered' ? 'Say what it is' : 'Standing'}</h3>
+            <p className="lb-body">{noStanding}</p>
+            {item.pipeline === 'discovered' && (
+              <form onSubmit={x => { x.preventDefault(); if (act(s => describeItem(s, item.id, { what, by: actor, asOf }), 'Recorded. Its standing can now be proposed. It has still not been checked against its source.')) setWhat(''); }}>
+                <label>What was made, when, and for whom
+                  <textarea value={what} onChange={x => setWhat(x.target.value)} rows={2} />
+                </label>
+                <div className="lb-actions"><button className="lb-primary" type="submit">Record what it is</button></div>
+              </form>
+            )}
+          </div>
+        )}
+
+        {canWork && !noStanding && (
           <form className="lb-form" onSubmit={x => { x.preventDefault(); if (act(s => propose(s, { itemId: item.id, to, rationale: why, evidenceIds: ev, by: actor, scope, asOf }), next => { const p = next.proposals.at(-1); return study ? `Noted for yourself. Nothing about ${brand.name}'s material has changed.` : `Proposal recorded${p.reviewer.length ? `. It waits for ${whoFor(brand, p.reviewer, me)}` : ''}. Nothing has changed yet.${p.warnings.length ? ` Noted: ${p.warnings.join(' ')}` : ''}`; })) { setWhy(''); setScope(''); setEv([]); } }}>
             <h3>{study ? 'Note a different reading' : 'Propose a change of standing'}</h3>
             <p className="lb-body">{study ? `This is a note to yourself. Only ${brand.name} can decide what its material is.` : reviewers.length ? (reviewers.includes(me) ? 'This is yours to decide. A proposal puts it in front of you in Choose, with what adopting it would change.' : `Decided by ${who(brand, reviewers)}.`) : `No one is named to decide this at ${brand.name}. A proposal will wait.`}</p>
@@ -851,12 +884,16 @@ const choiceStatus = (c, brand, me) => {
 function Tension({ t, state, brand, items, me, setOpenId, shared, onChoose, onName }) {
   // A choice recorded about this entry is shown with it, so the entry and its answer are read together.
   const chosen = state.choices.filter(c => c.about === t.id && c.status !== 'withdrawn');
+  // An answer to a question the record ties to this entry is read with it. It is a note; the entry stays until it is decided.
+  const about = state.engagement.questionAbout || {};
+  const answered = (state.answers || []).filter(a => about[a.question] === t.id);
   const others = (t.owners || []).filter(id => id !== me);
   return (
     <li>
       <p><strong>{stop(t.title)}.</strong>{shared ? '' : ` ${t.detail}`}</p>
       {t.points?.length > 0 && <ul className="lb-list">{t.points.map(pt => <li key={pt.ruleId}>{pt.rule} <span className="lb-meta">{pt.says || `It has ${pt.has}.`}</span></li>)}</ul>}
       <Cites ids={t.sources} items={items} setOpenId={setOpenId} />{others.length > 0 && <span className="lb-meta"> For {who(brand, others)} to resolve</span>}
+      {answered.map(a => <p key={a.id}><strong>{a.by === me ? 'Your answer' : `Answered by ${nameFor(brand, a.by, me)}`}, {fmt(a.date)}.</strong> {a.answer}</p>)}
       {chosen.map(c => <p key={c.id}><strong>{c.by === me ? 'Your choice' : 'Choice recorded'}: {lower(CHOICES[c.verdict])}.</strong> {c.rationale} <span className="lb-meta">{choiceStatus(c, brand, me)}.</span></p>)}
       {onChoose && <div className="lb-actions"><button onClick={onChoose}>{chosen.length ? 'Record another choice about this' : 'Record a choice about this'}</button></div>}
       {onName && <div className="lb-actions"><button onClick={onName}>Name them in Enter</button></div>}
@@ -929,11 +966,16 @@ function Interpret({ asOf, state, brand, items, me, setOpenId, tensions, go, set
           // One entry of a kind says what it is in its own first sentence. Several get a heading,
           // and a caveat every entry shares is said once under it.
           const shared = list.length > 1 && list.every(t => t.detail === list[0].detail) ? list[0].detail : null;
+          const entry = t => <Tension key={t.id} t={t} state={state} brand={brand} items={items} me={me} setOpenId={setOpenId} shared={Boolean(shared)} onChoose={onChoose(t)} onName={t.unnamed && canName ? () => go('enter') : null} />;
+          // Past the third entry of one kind the pattern is clear; the rest open on request.
+          const first = list.length > 4 ? list.slice(0, 3) : list;
+          const rest = list.length > 4 ? list.slice(3) : [];
           return (
             <div key={kind} className="lb-tension-group">
               {list.length > 1 && <h3>{kind}</h3>}
               {shared && <p className="lb-body">{shared}</p>}
-              <ul className="lb-findings">{list.map(t => <Tension key={t.id} t={t} state={state} brand={brand} items={items} me={me} setOpenId={setOpenId} shared={Boolean(shared)} onChoose={onChoose(t)} onName={t.unnamed && canName ? () => go('enter') : null} />)}</ul>
+              <ul className="lb-findings">{first.map(entry)}</ul>
+              {rest.length > 0 && <details><summary>{plural(rest.length, 'One more', '% more')}: {rest.map(t => items[t.sources?.[0]]?.title || stop(t.title)).join('; ')}</summary><ul className="lb-findings">{rest.map(entry)}</ul></details>}
             </div>
           );
         })}
@@ -1112,12 +1154,16 @@ function Proposals({ asOf, state, brand, items, setOpenId, act, decider, me, onl
   if (!list.length) return <p className="lb-missing">{study ? 'No notes yet.' : 'No proposals.'}</p>;
   // A note every waiting proposal carries is said once, above them.
   const waiting = list.filter(p => p.status === 'open');
-  const common = !study && waiting.length > 1 ? waiting[0].warnings.filter(w => waiting.every(p => p.warnings.includes(w))) : [];
-  const kinds = [...new Set(brand.items.map(i => i.workType).filter(Boolean))].sort();
+  // A note that most waiting proposals carry is said once, above them, with the exceptions named.
+  const carriedBy = w => waiting.filter(p => p.warnings.includes(w));
+  const common = !study && waiting.length > 1 ? [...new Set(waiting.flatMap(p => p.warnings))].filter(w => carriedBy(w).length === waiting.length || (carriedBy(w).length >= 3 && carriedBy(w).length * 2 > waiting.length)) : [];
+  const except = w => waiting.filter(p => !p.warnings.includes(w)).map(p => items[p.itemId]?.title || p.itemId);
+  const everyOne = common.every(w => !except(w).length);
+  const kinds = kindsOfWork(brand, state.engagement);
   return (<>
     {common.length > 0 && (<>
-      <p className="lb-body">Every proposal waiting here carries these notes:</p>
-      <ul className="lb-warnings lb-warnings-common">{common.map(w => <li key={w}>{w}</li>)}</ul>
+      <p className="lb-body">{everyOne ? 'Every proposal waiting here carries these notes:' : 'Most proposals waiting here carry these notes:'}</p>
+      <ul className="lb-warnings lb-warnings-common">{common.map(w => <li key={w}>{w}{except(w).length ? ` Not ${except(w).join(' or ')}.` : ''}</li>)}</ul>
     </>)}
     <ul className="lb-findings">
       {list.map(p => {
@@ -1128,34 +1174,39 @@ function Proposals({ asOf, state, brand, items, setOpenId, act, decider, me, onl
         const open = p.status === 'open';
         const here = doing.id === p.id;
         const decision = state.decisions.find(d => d.proposalId === p.id);
-        // The kinds of work the rules were written for are where the choice starts; the decider can widen or narrow it.
+        // The decider names the kinds of work themselves. What the rules were written for is said beside the list, not ticked for them.
         const written = [...new Set(stated.flatMap(r => (r.scope || []).filter(x => x !== 'all')))].filter(k => kinds.includes(k));
-        const covers = doing.covers ?? written;
-        const blocked = item && p.to !== 'archive' && item.pipeline === 'discovered';
-        // What adopting it, as now filled in, would mark as departing from canon.
-        let departs = [];
+        const covers = doing.covers ?? [];
+        const blocked = item && p.to !== 'archive' ? whyNoStanding(item) : '';
+        // What adopting it, as now filled in, would add to this project's list and what it would take off it.
+        let adds = [];
+        let ends = [];
+        let turns = [];
         if (open && mine && here && doing.outcome === 'adopt' && p.to === 'canon' && covers.length) {
           try {
-            const preview = decide(state, p.id, { by: decider, outcome: 'adopt', scope: doing.scope, covers, holdBack: doing.hold, checked: doing.checked || 'preview', asOf });
+            const preview = decide(state, p.id, { by: decider, outcome: 'adopt', scope: doing.scope, covers, holdBack: doing.hold, checked: doing.checked.trim() || 'preview', asOf });
+            const opts = { asOf, workTypes: state.engagement.workTypes || [], channels: state.engagement.channels || [] };
+            const before = findTensions(state.brand, opts);
+            const after = findTensions(preview.brand, opts);
             const ruleIds = new Set(stated.map(r => r.id));
-            departs = findTensions(preview.brand, { asOf, workTypes: state.engagement.workTypes || [], channels: state.engagement.channels || [] })
-              .filter(t => t.kind === 'Drift from canon')
-              .map(t => ({ t, points: (t.points || []).filter(pt => ruleIds.has(pt.ruleId)) }))
-              .filter(d => d.points.length || (!d.t.points && d.t.sources.includes(item.id)));
-          } catch { departs = []; }
+            adds = after.filter(t => !before.some(b => b.id === t.id)).map(t => ({ t, points: (t.points || []).filter(pt => ruleIds.has(pt.ruleId)) }));
+            ends = before.filter(t => !after.some(a => a.id === t.id));
+            turns = after.filter(t => before.some(x => x.id === t.id && x.title !== t.title));
+          } catch { adds = []; ends = []; turns = []; }
         }
         return (
           <li key={p.id}>
             <p><strong><Cite id={p.itemId} items={items} setOpenId={setOpenId} />: {classOf(p.from, brand).name} to {classOf(p.to, brand).name}.</strong>{open ? ` ${p.rationale}` : ''}</p>
             {open && <p className="lb-meta">{p.by !== 'intake' ? `${study ? 'Noted' : 'Proposed'} by ${nameFor(brand, p.by, me)} on ${fmt(p.date)}. ` : ''}{study ? `A note to yourself. Only ${brand.name} could decide it.` : mine ? 'Yours to decide.' : `Waiting for ${whoFor(brand, p.reviewer, me)}.`}{p.scope && !study ? ` It would cover: ${lower(stop(p.scope))}.` : ''}</p>}
-            {!open && <p className="lb-body">{proposalOutcome(p, brand, me)}{p.status === 'adopted' && decision?.scope ? ` It covers: ${lower(stop(decision.scope))}.` : ''}{decision?.checked ? ` Checked against: ${lower(stop(decision.checked))}.` : ''}{decision?.heldBack?.length ? ` ${plural(decision.heldBack.length, 'One rule was', '% rules were')} held back.` : ''}</p>}
+            {!open && <p className="lb-body">{proposalOutcome(p, brand, me)}{p.status === 'adopted' && decision?.scope ? ` It covers: ${stop(decision.scope)}.` : ''}{decision?.checked ? ` Checked against: ${stop(decision.checked)}.` : ''}{decision?.heldBack?.length ? ` ${plural(decision.heldBack.length, 'One rule was', '% rules were')} held back.` : ''}</p>}
             {!open && <p className="lb-meta">The proposal read: {p.rationale}</p>}
             {p.evidenceIds.length > 0 && <ul className="lb-list">{brand.items.flatMap(i => i.evidence || []).filter(x => p.evidenceIds.includes(x.id)).map(x => <li key={x.id}>{x.statement} <span className="lb-meta">{EVIDENCE_BASIS[x.basis] || String(x.basis).replace(/_/g, ' ')}</span></li>)}</ul>}
             {open && !study && p.warnings.some(w => !common.includes(w)) && <ul className="lb-warnings">{p.warnings.filter(w => !common.includes(w)).map(w => <li key={w}>{w}</li>)}</ul>}
             {open && !here && stated.length > 0 && (
               <details><summary>The rules adopting it would put in force</summary><ul className="lb-list">{stated.map(r => <li key={r.id}>{r.statement}</li>)}</ul></details>
             )}
-            {open && mine && blocked && <p className="lb-body">It has only been found. Nobody has recorded what it is, so it cannot be given a standing yet; that is done with a source note through the connector.</p>}
+            {open && mine && blocked && <p className="lb-body">{blocked}</p>}
+            {open && mine && blocked && item.pipeline === 'discovered' && <div className="lb-actions"><button onClick={() => setOpenId(item.id)}>Say what it is</button></div>}
             {open && mine && !here && (
               <div className="lb-actions">
                 {!blocked && <button className="lb-primary" onClick={() => setDoing({ ...none, id: p.id, outcome: 'adopt', hold: stated.filter(r => r.disputed).map(r => r.id) })}>Adopt</button>}
@@ -1173,7 +1224,7 @@ function Proposals({ asOf, state, brand, items, setOpenId, act, decider, me, onl
                     ))}
                   </fieldset>
                 )}
-                {p.to === 'canon' && !covers.length && <p className="lb-body">Tick at least one. The kinds of work ticked are what its rules are then held to; nothing else is.</p>}
+                {p.to === 'canon' && !covers.length && <p className="lb-body">Tick at least one. The kinds of work ticked are what its rules are then held to; nothing else is.{written.length ? ` As written, its rules are for ${written.join(', ').toLowerCase()}.` : ''}</p>}
                 {p.to === 'canon' && <label>A note in your own words, kept beside it<input value={doing.scope} onChange={x => setDoing({ ...doing, scope: x.target.value })} /></label>}
                 {p.to === 'canon' && stated.length > 0 && (
                   <fieldset><legend>The rules it puts in force. Untick any you are not adopting</legend>
@@ -1182,9 +1233,17 @@ function Proposals({ asOf, state, brand, items, setOpenId, act, decider, me, onl
                     ))}
                   </fieldset>
                 )}
-                {p.to === 'canon' && departs.length > 0 && (<>
-                  <p className="lb-body">Adopting it as filled in marks this as departing from canon:</p>
-                  <ul className="lb-list">{departs.map(d => <li key={d.t.id}>{items[d.t.sources[0]]?.title || stop(d.t.title)}{d.points.length ? `: ${d.points.map(pt => pt.says || `it has ${pt.has}`).join(' ')}` : `. ${d.t.detail}`}</li>)}</ul>
+                {p.to === 'canon' && adds.length > 0 && (<>
+                  <p className="lb-body">Adopting it as filled in adds this to what needs deciding:</p>
+                  <ul className="lb-list">{adds.map(d => <li key={d.t.id}>{stop(d.t.title)}{d.points.length ? `. ${d.points.map(pt => pt.says || `It has ${pt.has}.`).join(' ')}` : d.t.points ? '.' : `. ${d.t.detail}`}</li>)}</ul>
+                </>)}
+                {p.to === 'canon' && ends.length > 0 && (<>
+                  <p className="lb-body">{adds.length ? 'And takes' : 'Adopting it as filled in takes'} this off the list for this project:</p>
+                  <ul className="lb-list">{ends.map(t => <li key={t.id}>{stop(t.title)}.</li>)}</ul>
+                </>)}
+                {p.to === 'canon' && turns.length > 0 && (<>
+                  <p className="lb-body">{adds.length || ends.length ? 'And this then reads' : 'Adopting it as filled in makes this read'}:</p>
+                  <ul className="lb-list">{turns.map(t => <li key={t.id}>{stop(t.title)}.</li>)}</ul>
                 </>)}
                 {p.to === 'canon' && unchecked && <label>What you checked this record against<input value={doing.checked} onChange={x => setDoing({ ...doing, checked: x.target.value })} placeholder="The live site, today" /></label>}
                 {p.to === 'canon' && <p className="lb-body">Adopting it as canon also records your approval of it.</p>}
@@ -1282,7 +1341,7 @@ function Organize({ asOf, state, brand, items, act, actor, me, setOpenId, pkg, p
       <section className="lb-section">
         <h2>Choices it carries</h2>
         {live.length ? <ul className="lb-list">{live.map(c => <li key={c.id}><strong>{CHOICES[c.verdict]}: {stop(c.subject)}.</strong> {c.rationale} {c.status !== 'recorded' && <em>({lower(choiceStatus(c, brand, me))})</em>}</li>)}</ul>
-          : <p className="lb-missing">No choices recorded yet. Record them in Choose.</p>}
+          : <p className="lb-missing">{state.choices.some(c => c.status === 'withdrawn') ? `${plural(state.choices.filter(c => c.status === 'withdrawn').length, 'One choice was recorded and withdrawn', '% choices were recorded and withdrawn')}. None stands.` : 'No choices recorded yet. Record them in Choose.'}</p>}
       </section>
 
       {canonRules.length > 0 && (
@@ -1372,7 +1431,7 @@ function Transfer({ catalog, asOf, state, brand, pkgs, stance }) {
             <button className="lb-primary" onClick={() => offer(`${slug}.packet.json`, toPacket(state))}>Download the packet</button>
             <button onClick={() => offer(`${slug}-engagement-package.json`, handoff)}>Download the engagement package</button>
           </div>
-          <p className="lb-body">What you record on this page is saved in this browser only. The packet is the whole record in one file: download it to keep your work, to move it, or to carry on in conversation through the connector. The engagement package is the same record arranged for handing over. Both are data files, not documents to read.</p>
+          <p className="lb-body">What you record on this page is saved in this browser only. The packet is the whole record in one file: download it to keep your work, to move it, or to open it with an assistant that has Living Brand connected. The engagement package is the same record arranged for handing over. Both are data files, not documents to read.</p>
         </div>
         {stance === 'visitor' && (
           <div>

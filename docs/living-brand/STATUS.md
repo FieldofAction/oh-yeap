@@ -32,7 +32,7 @@ fictional brand, Fernway, and lets a visitor try each seat: the contract
 creative director, the people named to decide, an outside partner and an
 agency lead with two competing clients.
 
-**The connector** (`living-brand/`). A local MCP server with 26 tools, a
+**The connector** (`living-brand/`). A local MCP server with 27 tools, a
 skill that tells an assistant how to run an engagement, and a plugin manifest
 so both install together. It keeps each client in its own folder on the
 practitioner's machine. Usage and limits are in
@@ -56,8 +56,8 @@ Automated, on every build:
 
 | Suite | Tests |
 |---|---|
-| Rules (`scripts/living-brand-test.mjs`) | 73 |
-| Connector (`scripts/living-brand-connector-test.mjs`) | 27 |
+| Rules (`scripts/living-brand-test.mjs`) | 75 |
+| Connector (`scripts/living-brand-connector-test.mjs`) | 30 |
 | Connector over the protocol, both protocol versions (`npm run living-brand:connector:test`) | 5 |
 | Page text audit, three states of the page at two widths in both themes | 12 scenarios |
 
@@ -96,7 +96,17 @@ repository and had to prove a finding by running it:
    study was "fair enough to show to one other person in confidence"; the
    founder's page was "not yet, but it is close"; the public page and the
    connector were not ready. Both serious findings are fixed and pinned by
-   tests; what was left open is under Known gaps.
+   tests.
+7. **A fourth round**, same four seats, same instruction. Nothing serious
+   was found. The founder's seat: "Yes, I would now put this in front of him
+   for a first session." The study: fair enough to show one person in
+   confidence on the page, with a warning not to hand over the downloaded
+   file yet, because it still recorded most pieces as "published by" the
+   company on dates that came from press reports. The public page and the
+   connector were each judged close and not ready, on a dozen medium
+   findings between them. Those were then fixed, and the fixes were checked
+   by the automated suites and by scripted browser runs, not yet by a fifth
+   independent round.
 
 The findings that changed the product most:
 
@@ -136,7 +146,25 @@ The findings that changed the product most:
 - A canon's scope could be inherited from the proposal. Only the decider's
   own answer counts now, through the connector and on the page.
 - Drawers in the study said the company "published this" on dates the record
-  only had from press reports. They no longer do.
+  only had from press reports. They no longer do, and the downloaded file no
+  longer records an approval for anything in a study.
+- Adopting canon for one kind of work made other work's differences from it
+  disappear. They are now listed as outside what the canon covers: not a
+  departure, and a question for whoever drew the scope.
+- A piece that had only been found could be proposed for a standing nobody
+  could then give it, and the page pointed to a tool the reader did not have.
+  The drawer now asks what the piece is, and that is the first step.
+- A notice sat on top of the button just pressed at phone width. It now
+  appears in the other half of the screen.
+- A rule the page listed as "not adopted" was called "in force" three lines
+  later. An entry is now worded from the standing each rule has.
+- The adopt form arrived with a kind of work already ticked and could not
+  name the project's own. Nothing is ticked for the decider now, every kind
+  the record knows is offered, and the form shows what adopting would add
+  to, take off and change on the project's list.
+- A rule held back at adoption was still handed to a partner as a rule to
+  follow. It is left out of every package, and every place that lists a
+  canon says what it binds and what was held back.
 
 ## What is real, simulated or missing
 
@@ -163,8 +191,13 @@ The findings that changed the product most:
 - Two choices that contradict each other are both accepted.
 - The connector can name who decides but cannot take a naming back; the page
   can. On the page, standing is decided in Choose; a drawer links there.
-- Material that has only been found can be described through the connector's
-  source notes, not on the page.
+- An answer to an open question is shown with the entry it is about, where
+  the record ties the two. It is a note and settles nothing by itself.
+- Interpret and Choose are still long on a brand with many open entries.
+  Groups past three entries fold, and notes most proposals share are said
+  once, but entries that depart from the same rule still repeat it.
+- A notice placed at the top of the screen can sit over a drawer's Close
+  button until it clears.
 - Someone holding the power to name deciders can name themselves for any
   area. The page says so; it does not stop it.
 - After the records behind a private page are rebuilt, answers and choices

@@ -12,6 +12,81 @@ import { bundle, BUNDLE, skillInSync } from './living-brand-connector-build.mjs'
 
 process.env.LIVING_BRAND_AS_OF = '2026-11-11';
 
+test('what a canon binds and what was held back is said wherever canon is listed, and never handed on as a rule', () => {
+  const { call } = fresh();
+  const r = rival();
+  r.brand.items[0].workType = 'Campaign'; r.brand.items[1].workType = 'Brand system';
+  r.brand.rules = [
+    { id: 'mh-r1', topic: 'mark.colour', value: 'silver', statement: 'The mark is silver.', source: 'mh-mark', scope: ['all'], effective: {}, domain: 'visual' },
+    { id: 'mh-r2', topic: 'mark.ground', value: 'plain', statement: 'The mark never sits on a photograph.', source: 'mh-mark', scope: ['all'], effective: {}, domain: 'visual' },
+  ];
+  r.engagement.workTypes = ['Campaign'];
+  call('import_packet', { json: JSON.stringify(r) });
+  const p = call('propose_standing', { engagement_id: 'eng-moonhouse', item_id: 'mh-mark', to: 'canon', rationale: 'It is the mark', scope: 'Everything' });
+  // The proposal's scope is the proposer's word. Without the decider's own covers nothing is adopted, and a word that names no kind of work is refused even beside "all".
+  assert.throws(() => call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: p.data.id, outcome: 'adopt' }), /Say which kinds of work this canon covers: Brand system, Campaign, or all of it/);
+  assert.throws(() => call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: p.data.id, outcome: 'adopt', covers: ['all', 'Nonsense type'] }), /"Nonsense type" is not a kind of work in Moonhouse's material/);
+  const d = call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: p.data.id, outcome: 'adopt', covers: ['Campaign'], hold_back_rule_ids: ['mh-r2'] });
+  assert.match(d.text, /Its rules bind: Campaign\./);
+  assert.match(d.text, /It rests on a check|It is approved by Founder Person/);
+  const reach = /Moon mark \[mh-mark\]\. It binds: Campaign\. Held back and not in force: "The mark never sits on a photograph" \[mh-r2\]\./;
+  const opened = call('open_engagement', { engagement_id: 'eng-moonhouse' });
+  assert.match(opened.text, reach);
+  assert.deepEqual(opened.data.canonBinds, [{ id: 'mh-mark', covers: ['Campaign'], heldBack: ['mh-r2'] }]);
+  const read = call('get_interpretation', { engagement_id: 'eng-moonhouse' });
+  assert.match(read.text, /Canon, and what each binds:/);
+  assert.match(read.text, reach);
+  assert.match(read.text, /Adopted by Founder Person on 2026-11-11\./, 'a sentence starts with a capital');
+  assert.match(call('export_engagement_package', { engagement_id: 'eng-moonhouse' }).text, reach);
+  const brief = call('build_brief', { engagement_id: 'eng-moonhouse' });
+  assert.match(brief.text, /The mark is silver\. \(canon; binds Campaign\)/);
+  assert.deepEqual(brief.data.rules.find(x => x.id === 'mh-r2').heldBack, true);
+  // A partner is handed the rule that was adopted, and not the one that was held back.
+  const pkg = call('issue_context_package', { engagement_id: 'eng-moonhouse', partner_name: 'Agent', assignment: 'Winter film', channels: ['owned-web'], work_types: ['Campaign'], expires: '2026-12-31' });
+  assert.match(pkg.text, /The mark is silver/);
+  assert.ok(!/never sits on a photograph/.test(JSON.stringify(pkg)), 'a held-back rule is in neither half');
+});
+
+test('a found piece is described before it is proposed, and a check always says who made it', () => {
+  const { call } = fresh();
+  const found = call('search_material', { engagement_id: 'eng-fernway' }).data.results.find(x => x.pipeline === 'discovered');
+  assert.ok(found, 'the sample holds a piece that has only been found');
+  assert.match(call('get_item', { engagement_id: 'eng-fernway', item_id: found.id }).text, /Stage: discovered\. Only found: nobody has recorded what it is.*describe_item records what it is\./);
+  assert.throws(() => call('propose_standing', { engagement_id: 'eng-fernway', item_id: found.id, to: 'precedent', rationale: 'x' }), /has only been found\. Nobody has recorded what it is.*Say what it is first/);
+  assert.throws(() => call('describe_item', { engagement_id: 'eng-fernway', item_id: found.id, what: ' ' }), /Say what it is: what was made, when, and for whom/);
+  const said = call('describe_item', { engagement_id: 'eng-fernway', item_id: found.id, what: 'Photographs from a 2019 shoot, made for the first site.' });
+  assert.match(said.text, /is now described by .*: Photographs from a 2019 shoot, made for the first site\. Its standing can be proposed\. It has not been checked against its source, and its standing is unchanged\./);
+  assert.equal(said.data.pipeline, 'extracted');
+  assert.match(call('propose_standing', { engagement_id: 'eng-fernway', item_id: found.id, to: 'precedent', rationale: 'It set the look' }).text, /Proposal .* recorded/);
+  // A check without a name on it is refused in the connector's own words, with both halves.
+  assert.throws(() => call('verify_item', { engagement_id: 'eng-fernway', item_id: found.id, how: 'Opened the folder' }), /Say who made the check in checked_by: "practitioner" if they compared the record with its source, "assistant" if you did\./);
+  // An answer to something the record never asked is kept, and said to be a note of its own.
+  const stray = call('record_answer', { engagement_id: 'eng-fernway', question: 'What colour is the sky?', answer: 'Blue' });
+  assert.match(stray.text, /This is not a question the record asks, so it is kept as a note of its own/);
+  assert.equal(stray.data.askedByRecord, false);
+  assert.match(call('open_engagement', { engagement_id: 'eng-fernway' }).text, /Answered in this record \(each is a note by the person named; it decides nothing\):\n- What colour is the sky\? .*: Blue/);
+});
+
+test('a study hands over no bare class name, in a brief, an export or a note', () => {
+  const { call } = fresh();
+  const s = study(); s.brand.items[1].standing = 'canon'; s.brand.items[1].standingRecord = { basis: 'reading' }; s.engagement.materials = ['tw-mark'];
+  call('import_packet', { json: JSON.stringify(s) });
+  const brief = call('build_brief', { engagement_id: 'eng-tidewater' });
+  assert.match(brief.text, /Moon mark \[tw-mark\] read as current, /);
+  assert.ok(!/"standing":/.test(JSON.stringify(brief.data)), 'the structured brief carries the reading, not a class');
+  assert.equal(brief.data.snapshot.find(x => x.id === 'tw-mark').readAs, 'Read as current');
+  call('propose_standing', { engagement_id: 'eng-tidewater', item_id: 'tw-mark', to: 'precedent', rationale: 'It looks like earlier work' });
+  const out = call('export_engagement_package', { engagement_id: 'eng-tidewater' });
+  assert.match(out.text, /1 note on how to read a piece/);
+  assert.ok(!/"standing":|"to":"|"from":"(canon|precedent)/.test(JSON.stringify(out.data.handoff)));
+  assert.deepEqual([out.data.handoff.notes[0].readNowAs, out.data.handoff.notes[0].wouldReadAs, out.data.handoff.proposals.length], ['Read as current', 'Read as earlier work', 0]);
+  assert.ok(!/"to":"precedent"/.test(JSON.stringify(call('get_interpretation', { engagement_id: 'eng-tidewater' }).data)));
+  // A choice in a study waits for no one, whatever area it is given.
+  const c = call('record_choice', { engagement_id: 'eng-tidewater', subject: 'The mark', verdict: 'investigate', rationale: 'Its date is unclear', needs: 'standing.visual' });
+  assert.match(c.text, /It is the practitioner's own note\. In a study nobody can be named, and nobody can decide it here\./);
+  assert.deepEqual([c.data.needs, c.data.status], [null, 'recorded']);
+});
+
 const fresh = () => {
   const home = mkdtempSync(join(tmpdir(), 'living-brand-'));
   const store = openStore(home);

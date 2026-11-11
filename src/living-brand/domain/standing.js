@@ -115,7 +115,7 @@ export function assessStanding(item, purpose = {}, brand = null) {
     authorized = false;
     reasons.authorized.push(status === 'rejected' ? 'Rejected.' : status === 'pending' ? 'Approval pending.' : 'Never approved.');
   }
-  if (pipelineRank(item.pipeline) < pipelineRank('verified')) { authorized = false; reasons.authorized.push(`Only ${item.pipeline || 'found'}; not checked against its source.`); }
+  if (pipelineRank(item.pipeline) < pipelineRank('verified')) { authorized = false; reasons.authorized.push(item.pipeline === 'discovered' || !item.pipeline ? 'Only found; nobody has recorded what it is.' : 'Not checked against its source.'); }
   if (item.retired) { authorized = false; reasons.authorized.push(`Retired ${onDate(item.retired.date)}.`); }
   if (item.supersededBy) {
     const successor = brand?.items?.find(i => i.id === item.supersededBy);
@@ -160,7 +160,9 @@ export function assessStanding(item, purpose = {}, brand = null) {
     if (expired) reasons.reusable.push(`Licence ended ${longDate(rights.until)}.`);
     // Cleared with no channel named is a clearance without channel limits.
     else if (rights.status === 'cleared' && !(rights.channels || []).length) { reusable = true; reasons.reusable.push(study ? 'A public licence covers it.' : 'Cleared, with no channel limits recorded.'); }
-    else if (missing.length) reasons.reusable.push(`Not licensed for ${missing.map(human).join(', ')}. ${rights.status === 'cleared' ? 'Cleared' : 'Licensed'} for ${scope} only.`);
+    // A document cleared for the people who work from it can be worked from; it is not artwork to publish.
+    else if (missing.length && rights.status === 'cleared' && (rights.channels || []).length && (rights.channels || []).every(c => c === 'internal' || c === 'agency')) reasons.reusable.push(`It can be worked from, not published. Cleared for ${scope} only.`);
+    else if (missing.length) reasons.reusable.push(`Not licensed for ${missing.map(human).join(', ')}.${(rights.channels || []).length ? ` ${rights.status === 'cleared' ? 'Cleared' : 'Licensed'} for ${scope} only.` : ''}`);
     else if (lapsesDuring) reasons.reusable.push(`Licence ends ${longDate(rights.until)}, before the work would finish.`);
     else if (rights.status === 'restricted' && !(rights.channels || []).length) reasons.reusable.push('Its use is restricted, and no permitted use is recorded.');
     else if (!wanted.length && rights.status === 'restricted') reasons.reusable.push(`No channel named for this use. Licensed for ${scope} only.`);

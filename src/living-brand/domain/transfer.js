@@ -34,7 +34,9 @@ export function buildContextPackage(state, { partner, assignment, channels = [],
     if (reasons.length) withheld.push({ id: item.id, title: item.title, reasons: [...new Set(reasons.map(r => String(r).replace(/[.]+$/, '')))] });
     else included.push({ id: item.id, title: item.title, standing: item.standing, rights: item.rights, fingerprint: fingerprint(item) });
   }
+  // A rule its decider held back when adopting its source is not handed to anyone as a rule to follow.
   const rules = rulesInForce(effectiveRules(state.brand), asOf)
+    .filter(r => !r.heldBack)
     .filter(r => !r.scope || r.scope.includes('all') || r.scope.some(s => workTypes.includes(s)))
     .map(r => ({ id: r.id, statement: r.statement, standing: r.standing }));
   const open = findTensions(state.brand, { asOf, workTypes, channels }).filter(t => t.kind === 'Conflicting guidance' || t.kind === 'Stale claim')
@@ -89,7 +91,10 @@ export function buildHandoff(state, { brief, asOf, ended = null, packages = [] }
     // Context handed to partners during the engagement, and whether each can still be read.
     contextPackages: (packages || []).map(p => ({ id: p.id, partner: p.partner?.name, assignment: p.assignment, issued: p.issued, expires: p.expires, revokedAt: p.revokedAt || null, included: (p.included || []).map(i => i.title) })),
     choices: state.choices,
-    proposals: state.proposals,
+    // In a study nobody can decide, so what was proposed is a note on how to read a piece, and is filed as one.
+    ...(study
+      ? { notes: state.proposals.map(p => ({ id: p.id, item: p.itemId, readNowAs: classOf(p.from, brand).name, wouldReadAs: classOf(p.to, brand).name, note: p.rationale, by: p.by, date: p.date })), proposals: [] }
+      : { proposals: state.proposals }),
     decisions: state.decisions,
     openTensions: tensions.map(t => ({ kind: t.kind, title: t.title, sources: t.sources })),
     // A question that has been answered is no longer open; the answer is below with who gave it.
@@ -98,7 +103,11 @@ export function buildHandoff(state, { brief, asOf, ended = null, packages = [] }
     unknowns: (brand.unknowns || []).filter(u => !answered.has(u)),
     sources: brand.items.map(i => ({
       id: i.id, title: i.title, pipeline: i.pipeline, standing: i.standing, ...(study ? { readAs: classOf(i.standing, brand).name } : {}), rights: i.rights?.status,
-      provenance: i.provenance?.source, origin: i.provenance?.origin, fingerprint: fingerprint(i),
+      // What a canon binds, and which of its rules its decider held back.
+      ...(i.standing === 'canon' && i.standingRecord?.covers ? { covers: i.standingRecord.covers } : {}),
+      ...((brand.rules || []).some(r => r.source === i.id && r.heldBack) ? { rulesHeldBack: (brand.rules || []).filter(r => r.source === i.id && r.heldBack).map(r => ({ id: r.id, statement: r.statement })) } : {}),
+      // How the work itself was made. Who drafted this record of it is said in interpretation.note.
+      provenance: i.provenance?.source, workOrigin: i.provenance?.origin, fingerprint: fingerprint(i),
       links: (i.sources || []).map(s => s.url), verification: i.verification || null,
     })),
     retained: study
@@ -122,7 +131,10 @@ export function toPacket(state) {
   brand.items = brand.items.map(strip);
   brand.rules = (brand.rules || []).map(strip);
   return {
-    format: PACKET_FORMAT, brand, engagement: JSON.parse(JSON.stringify(state.engagement)),
+    format: PACKET_FORMAT,
+    // A study's file says on its face what its standings are, for whoever opens it without the page.
+    ...(isPublicStudy(brand) ? { note: `Every standing in this file is this study's reading of public material. None of it is ${brand.name}'s own classification, approval or decision. "origin" on a record says how the work itself was made, not who drafted the record; the engagement's modeNote says that.` } : {}),
+    brand, engagement: JSON.parse(JSON.stringify(state.engagement)),
     record: { choices: state.choices, proposals: state.proposals, decisions: state.decisions, answers: state.answers || [], seq: state.seq || 0 },
   };
 }

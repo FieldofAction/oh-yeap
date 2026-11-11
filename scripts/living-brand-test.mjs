@@ -7,7 +7,7 @@ import {
   organizationalHypotheses, propose, decide, retire, recordReuse, recordChoice, AuthorityError, viewFor,
   buildBrief, buildContextPackage, revokePackage, packageValid, buildHandoff, coordinationView, exportWorkbench, orientation,
   verifyItem, approveItem, effectiveRules, timeline, packetAssertions, addSourceNote, nameAuthority, changeLedger, toPacket, readPacket, startFromPacket, PACKET_FORMAT,
-  rulesStatedBy, answerChoice, unnameAuthority, basisNote, longDate, classOf, withdrawChoice, carryOver, recordAnswer, powerFor,
+  rulesStatedBy, answerChoice, unnameAuthority, basisNote, longDate, classOf, withdrawChoice, carryOver, recordAnswer, powerFor, describeItem, kindsOfWork,
 } from '../src/living-brand/domain/index.js';
 import { fernway } from '../src/living-brand/data/fernway.js';
 import { brightloop, brightloopEngagement } from '../src/living-brand/data/brightloop.js';
@@ -335,7 +335,7 @@ test('public-source study: no one can adopt or retire, and the refusal says why'
   let s = study();
   s = propose(s, { itemId: 'h-about', to: 'precedent', rationale: 'x', by: 'practitioner', asOf });
   assert.deepEqual(s.proposals[0].reviewer, []);
-  assert.ok(s.proposals[0].warnings.some(w => /No one is named/.test(w)));
+  assert.ok(s.proposals[0].warnings.some(w => /A study cannot establish who decides at Halden\. This is a note to yourself\./.test(w)));
   assert.throws(() => decide(s, s.proposals[0].id, { by: 'practitioner', outcome: 'adopt', asOf }), /public-source study cannot name them. Only Halden can/);
   assert.throws(() => retire(s, 'h-mark-new', { by: 'practitioner', reason: 'x', asOf }), AuthorityError);
   assert.throws(() => nameAuthority(s, { power: 'standing.visual', person: { id: 'me', name: 'Me' }, by: 'practitioner', asOf }), /Only Halden can name/);
@@ -490,7 +490,7 @@ test('adopting a source as canon is what makes its rules canon', () => {
   assert.equal(effectiveRules(s.brand)[0].standing, 'operational');
   assert.ok(findTensions(s.brand, { asOf }).find(x => x.kind === 'Material and written rule disagree'));
   s = propose(s, { itemId: 'h-system', to: 'canon', rationale: 'This is the system', by: 'intake', asOf });
-  assert.ok(s.proposals[0].warnings.some(w => /Only extracted/.test(w)));
+  assert.ok(s.proposals[0].warnings.some(w => /Not yet checked against its source/.test(w)));
   assert.deepEqual(rulesStatedBy(s.brand, 'h-system').map(r => r.id), ['hr-type'], 'the decider can see which rules adoption puts in force');
   // Canon needs a scope, and material nobody has checked cannot govern.
   assert.throws(() => decide(s, s.proposals[0].id, { by: 'dd', outcome: 'adopt', covers: ['all'], asOf }), /has not been checked against its source. Say what you checked it against/);
@@ -707,17 +707,17 @@ test('a campaign piece adopted as canon is not put outside its dates by its own 
   assert.match(assessStanding(hero(), { asOf, me: 'priya' }, s.brand).reasons.authorized.join(' '), /Approved by you on/);
 });
 
-test('what was only found, or was rejected, cannot be adopted as canon', () => {
+test('what was only found, or was rejected, cannot be proposed for any standing but the archive', () => {
   let s = fresh();
   const found = s.brand.items.find(i => i.pipeline === 'discovered');
   const rejected = s.brand.items.find(i => i.approval?.status === 'rejected');
   assert.ok(found && rejected, 'the sample holds one of each');
-  s = propose(s, { itemId: found.id, to: 'canon', rationale: 'x', by: 'practitioner', asOf });
-  s = propose(s, { itemId: rejected.id, to: 'canon', rationale: 'x', by: 'practitioner', asOf });
-  assert.ok(s.proposals[1].warnings.some(w => /It was rejected/.test(w)));
-  const by = id => s.brand.authority[`standing.${s.brand.items.find(i => i.id === id).domain}`][0];
-  assert.throws(() => decide(s, s.proposals[0].id, { by: by(found.id), outcome: 'adopt', scope: 'x', checked: 'x', asOf }), /has only been found/);
-  assert.throws(() => decide(s, s.proposals[1].id, { by: by(rejected.id), outcome: 'adopt', scope: 'x', checked: 'x', asOf }), /was rejected/);
+  for (const to of ['canon', 'precedent', 'contextual', 'experiment', 'operational']) {
+    if (to !== found.standing) assert.throws(() => propose(s, { itemId: found.id, to, rationale: 'x', by: 'practitioner', asOf }), /has only been found\. Nobody has recorded what it is.*Say what it is first/);
+    if (to !== rejected.standing) assert.throws(() => propose(s, { itemId: rejected.id, to, rationale: 'x', by: 'practitioner', asOf }), /was rejected on .*It cannot be given a standing while that stands/);
+  }
+  assert.equal(s.proposals.length, 0, 'nothing that could never be adopted is put in front of a decider');
+  if (found.standing !== 'archive') s = propose(s, { itemId: found.id, to: 'archive', rationale: 'Nobody knows what it is', by: 'practitioner', asOf });
 });
 
 test('evidence counts only where it bears on the material, and recorded reuse is always shown', () => {
@@ -847,6 +847,13 @@ test('the kinds of work a decider names are what the canon then binds', () => {
   let s = open();
   s = decide(s, s.proposals[0].id, { by: 'dd', outcome: 'adopt', covers: ['Packaging'], checked: 'The live file', asOf });
   assert.deepEqual(drift(s), ['t-drift-h-can']);
+  // What the site does differently does not vanish: it is listed as outside the canon's reach, not as a departure.
+  const out = findTensions(s.brand, { asOf }).find(t => t.id === 't-outside-h-site');
+  assert.equal(out.kind, 'Outside what canon covers');
+  assert.match(out.title, /^Live site differs from canon that covers other work$/);
+  assert.match(out.detail, /These rules are canon for packaging only, and this is marketing website\. It is not a departure\./);
+  assert.deepEqual(out.points.map(x => x.ruleId), ['hr-face', 'hr-corner']);
+  assert.ok(!findTensions(s.brand, { asOf }).find(t => t.id === 't-outside-h-can'));
   assert.equal(s.brand.items[0].standingRecord.scope, 'Packaging');
   assert.deepEqual(effectiveRules(s.brand).map(r => r.scope), [['Packaging'], ['Packaging']]);
   // Covering the website, and holding one rule back: only the rule adopted is in force.
@@ -864,17 +871,16 @@ test('the kinds of work a decider names are what the canon then binds', () => {
   assert.equal(readPacket(toPacket(s)).brand.items[0].standingRecord.covers[0], 'Marketing website');
 });
 
-test('promotion is refused for what was only found or was rejected, at every level', () => {
+test('a proposal already on record for found or rejected material is still refused when decided', () => {
+  // A packet can arrive carrying such a proposal. The decision is where it stops.
   let s = fresh();
   const found = s.brand.items.find(i => i.pipeline === 'discovered');
   const rejected = s.brand.items.find(i => i.approval?.status === 'rejected');
   const by = id => s.brand.authority[powerFor(s.brand.items.find(i => i.id === id))][0];
-  s = propose(s, { itemId: found.id, to: 'precedent', rationale: 'x', by: 'practitioner', asOf });
-  s = propose(s, { itemId: rejected.id, to: 'contextual', rationale: 'x', by: 'practitioner', asOf });
-  assert.match(s.proposals[0].warnings.join(' '), /Only found/);
-  assert.match(s.proposals[1].warnings.join(' '), /It was rejected/);
-  assert.throws(() => decide(s, s.proposals[0].id, { by: by(found.id), outcome: 'adopt', asOf }), /has only been found/);
-  assert.throws(() => decide(s, s.proposals[1].id, { by: by(rejected.id), outcome: 'adopt', asOf }), /was rejected/);
+  s.proposals.push({ id: 'p-old-1', itemId: found.id, from: found.standing, to: 'precedent', rationale: 'x', evidenceIds: [], by: 'practitioner', date: asOf, status: 'open', warnings: [], reviewer: [by(found.id)] });
+  s.proposals.push({ id: 'p-old-2', itemId: rejected.id, from: rejected.standing, to: 'operational', rationale: 'x', evidenceIds: [], by: 'practitioner', date: asOf, status: 'open', warnings: [], reviewer: [by(rejected.id)] });
+  assert.throws(() => decide(s, 'p-old-1', { by: by(found.id), outcome: 'adopt', asOf }), /has only been found/);
+  assert.throws(() => decide(s, 'p-old-2', { by: by(rejected.id), outcome: 'adopt', asOf }), /was rejected/);
 });
 
 test('evidence on a related piece speaks for the family, not for the piece', () => {
@@ -965,6 +971,32 @@ test('rules written with a standing of their own are offered at adoption, and co
   assert.equal(effectiveRules(held.brand).find(r => r.id === 'r-lead-with-screen').standing, 'operational');
 });
 
+test('a rule in force set against a written one is called that, and every kind of work named is checked', () => {
+  let s = fresh();
+  const conflict = st => findTensions(st.brand, { asOf, workTypes: ['Brand campaign', 'Customer campaign'] }).find(t => t.kind === 'Conflicting guidance');
+  assert.match(conflict(s).title, /^A rule in force and a written rule disagree: /, 'the playbook rule is written down, not adopted');
+  // Every kind the record knows can be named: what material is filed under, what rules were written for, what this project makes.
+  const kinds = kindsOfWork(s.brand, s.engagement);
+  for (const k of ['Customer campaign', 'Product launch', 'Brand campaign']) assert.ok(kinds.includes(k), `${k} can be named`);
+  assert.ok(!kinds.includes('all'));
+  s = propose(s, { itemId: 'fw-pm-playbook-2025', to: 'canon', rationale: 'Launch work follows it', by: 'practitioner', asOf });
+  const decider = s.brand.authority[powerFor(s.brand.items.find(i => i.id === 'fw-pm-playbook-2025'))][0];
+  assert.throws(() => decide(s, s.proposals[0].id, { by: decider, outcome: 'adopt', covers: ['all', 'Nonsense type'], asOf }), /"Nonsense type" is not a kind of work in Fernway's material/);
+  const both = decide(s, s.proposals[0].id, { by: decider, outcome: 'adopt', covers: ['Customer campaign'], asOf });
+  assert.match(conflict(both).title, /^Two rules in force disagree: /);
+});
+
+test('a study raises no question of rights, checked or not, and a proposal to precedent shows the rights', () => {
+  let s = startEngagement({ halden }, haldenEng);
+  const before = findTensions(s.brand, { asOf }).length;
+  for (const i of s.brand.items) if (i.pipeline !== 'verified' && i.pipeline !== 'approved') s = verifyItem(s, i.id, { by: 'practitioner', how: 'Opened the page', asOf });
+  const after = findTensions(s.brand, { asOf });
+  assert.ok(!after.some(t => /^t-rights-/.test(t.id)), 'a study may reuse nothing, so it does not ask what the terms are');
+  assert.equal(after.length, before);
+  const p = propose(fresh(), { itemId: 'fw-onboarding-papercut', to: 'precedent', rationale: 'x', by: 'practitioner', asOf }).proposals[0];
+  assert.match(p.warnings.join(' '), /Rights are unknown\. Work that follows it may not be free to use what it shows\./);
+});
+
 test('a proposal cannot cite evidence that is not in the record, and warnings follow the case made, not the target', () => {
   const s = fresh();
   assert.throws(() => propose(s, { itemId: 'fw-onboarding-papercut', to: 'precedent', rationale: 'x', evidenceIds: ['e-nope'], by: 'practitioner', asOf }), /No evidence with the id "e-nope"/);
@@ -973,12 +1005,20 @@ test('a proposal cannot cite evidence that is not in the record, and warnings fo
   assert.match(p.warnings.join(' '), /Reused 4 times/);
 });
 
-test('material that was only found is not given any standing but the archive', () => {
+test('saying what a found piece is lets its standing be proposed, and changes nothing else', () => {
   let s = fresh();
   const found = s.brand.items.find(i => i.pipeline === 'discovered');
-  s = propose(s, { itemId: found.id, to: 'operational', rationale: 'x', by: 'practitioner', asOf });
-  assert.match(s.proposals[0].warnings.join(' '), /Only found/);
-  assert.throws(() => decide(s, s.proposals[0].id, { by: s.brand.authority[powerFor(found)][0], outcome: 'adopt', asOf }), /has only been found/);
+  assert.throws(() => describeItem(s, found.id, { what: '  ', by: 'practitioner', asOf }), /Say what it is: what was made, when, and for whom/);
+  const before = { standing: found.standing, approval: found.approval?.status };
+  s = describeItem(s, found.id, { what: 'Photographs from the 2019 family shoot, made for the launch site.', by: 'practitioner', asOf });
+  const now = s.brand.items.find(i => i.id === found.id);
+  assert.deepEqual([now.pipeline, now.described.by, now.described.what, now.standing, now.approval?.status], ['extracted', 'practitioner', 'Photographs from the 2019 family shoot, made for the launch site.', before.standing, before.approval]);
+  assert.throws(() => describeItem(s, found.id, { what: 'again', by: 'practitioner', asOf }), /has already been described/);
+  s = propose(s, { itemId: found.id, to: 'operational', rationale: 'It is what the team works from', by: 'practitioner', asOf });
+  assert.equal(s.proposals.length, 1);
+  // Saying what it is does not check it: canon still needs the decider's own check.
+  const canon = propose(s, { itemId: found.id, to: 'canon', rationale: 'x', by: 'practitioner', asOf });
+  assert.match(canon.proposals.at(-1).warnings.join(' '), /Not yet checked against its source/);
 });
 
 test('an answer on reuse gives every reason, and a clearance with no channels named is a clearance', () => {
@@ -988,7 +1028,7 @@ test('an answer on reuse gives every reason, and a clearance with no channels na
   assert.match(hero.reasons.reusable.join(' '), /Carries a claim that is no longer true: "Screen-free bedtime"\..*Not licensed for owned web/);
   // A reference document cleared for internal and agency use says so, and is not called licensed for media it was never meant for.
   const guide = assessStanding(s.brand.items.find(i => i.id === 'fw-guidelines-v3'), { asOf, channels: ['owned-web'] }, s.brand);
-  assert.match(guide.reasons.reusable.join(' '), /Not licensed for owned web\. Cleared for internal, agency only\./);
+  assert.match(guide.reasons.reusable.join(' '), /It can be worked from, not published\. Cleared for internal, agency only\./);
   const open = assessStanding({ ...s.brand.items.find(i => i.id === 'fw-guidelines-v3'), rights: { status: 'cleared', channels: [] } }, { asOf, channels: ['owned-web'] }, s.brand);
   assert.equal(open.reusable, true);
   assert.match(open.reasons.reusable.join(' '), /Cleared, with no channel limits recorded/);
