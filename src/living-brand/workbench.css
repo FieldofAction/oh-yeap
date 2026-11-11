@@ -80,6 +80,7 @@ p:last-child { margin-bottom: 0; }
 .lb-study { color: var(--lb-muted); font-size: var(--lb-t-support); }
 .lb-home { text-decoration: underline; text-underline-offset: .2em; font-size: var(--lb-t-support); }
 .lb-home-plain { text-decoration: none; font-weight: 600; }
+@media (pointer: coarse) { a.lb-home { display: inline-flex; align-items: center; min-height: 44px; } }
 .lb-controls { display: flex; flex-wrap: wrap; gap: var(--lb-2) var(--lb-5); align-items: center; }
 .lb-basis { margin: 0; padding: var(--lb-3) var(--lb-gutter); background: var(--lb-surface); border-bottom: 1px solid var(--lb-line); max-width: none; font-size: var(--lb-t-support); }
 .lb-basis p { margin: 0; max-width: 60rem; }
@@ -161,6 +162,10 @@ h4 { font-family: var(--lb-sans); font-weight: 600; font-size: var(--lb-t-body);
 /* An entry that opens. Closed, it is its own sentence and, where someone has
    to act, who. Open, it is the one filled thing in its list. */
 .lb-findings > li.lb-row { padding: 0; }
+/* A heading is the line above its list. */
+.lb-section :is(h2, h3) + .lb-findings { border-top: 0; }
+/* Where focus is sent after an action, the thing it lands on clears the bars that stay at the top. */
+.lb-row > details > summary, .lb [tabindex="-1"] { scroll-margin-top: calc(var(--lb-top-h, 3.6rem) + 5rem); scroll-margin-bottom: 6rem; }
 .lb-row > details > summary {
   display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 15rem) 1rem; align-items: baseline; gap: var(--lb-1) var(--lb-5);
   padding: var(--lb-4) var(--lb-2) var(--lb-4) 0; min-height: 44px; cursor: pointer; list-style: none; margin: 0;
@@ -208,6 +213,7 @@ details[open] > summary { margin-bottom: var(--lb-2); }
 }
 @media (pointer: coarse) { .lb-cite { min-height: 44px; } .lb-cites { gap: 0 var(--lb-4); } }
 .lb-cite:hover { text-decoration-color: var(--lb-fg); }
+strong > .lb-cite { font-size: inherit; font-weight: inherit; }
 .lb-cite.is-missing { color: var(--lb-no); text-decoration: line-through; }
 
 .lb-table { width: 100%; border-collapse: collapse; font-size: var(--lb-t-support); }
@@ -239,7 +245,7 @@ details[open] > summary { margin-bottom: var(--lb-2); }
 .lb-search span { color: var(--lb-muted); font-size: var(--lb-t-support); }
 .lb-grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr)); gap: var(--lb-6) var(--lb-5); }
 .lb-card { display: grid; gap: var(--lb-1); width: 100%; text-align: left; background: none; border: 0; padding: 0; cursor: pointer; }
-.lb-card:hover .lb-plate { outline: 2px solid var(--lb-fg); outline-offset: 2px; }
+.lb-card:hover .lb-plate, .lb-card.is-open .lb-plate { outline: 2px solid var(--lb-fg); outline-offset: 2px; }
 .lb-card-title { font-weight: 600; margin-top: var(--lb-2); }
 .lb-card-ctx { color: var(--lb-muted); font-size: var(--lb-t-support); }
 .lb-plate { width: 100%; aspect-ratio: 400 / 260; border-radius: var(--lb-radius-s); display: block; }
@@ -285,8 +291,9 @@ details[open] > summary { margin-bottom: var(--lb-2); }
   padding: var(--lb-3) var(--lb-4); border-radius: var(--lb-radius); background: var(--lb-fg); color: var(--lb-bg);
   box-shadow: 0 8px 28px rgb(0 0 0 / .22);
 }
-/* Placed away from the control just used: at the top when the action was in the lower half. */
-.lb-notice.is-top { bottom: auto; top: calc(var(--lb-top-h, 4rem) + .5rem); }
+/* Placed away from the control just used: when the action was in the lower half it sits over the bar at the top, which nobody is reading. */
+.lb-notice.is-top { bottom: auto; top: var(--lb-2); }
+@media (pointer: coarse) { .lb-notice button { min-height: 44px; } }
 /* A notice never takes a tap meant for what is under it; only its own button does. */
 .lb-notice { pointer-events: none; }
 .lb-notice button { pointer-events: auto; background: none; border: 0; text-decoration: underline; text-underline-offset: .2em; cursor: pointer; color: inherit; min-height: 32px; }
@@ -305,22 +312,21 @@ details[open] > summary { margin-bottom: var(--lb-2); }
 .lb-carry td:first-child { color: var(--lb-muted); }
 .lb-tension-group + .lb-tension-group { margin-top: var(--lb-6); }
 .lb-tension-group > h3 { margin: 0 0 var(--lb-3); }
+.lb-tension-group.is-mine .lb-row-title { font-weight: 600; }
+
 
 code { font-family: ui-monospace, Menlo, monospace; font-size: .875rem; }
 
 @media (max-width: 47.5em) {
-  /* Below the stage strip, which sits under the header at this width. */
-  .lb-notice.is-top { top: calc(var(--lb-top-h, 3.6rem) + 4rem); }
   .lb-shell { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .lb-stages {
     position: sticky; top: var(--lb-top-h, 3.6rem); z-index: 4; margin: 0 calc(-1 * var(--lb-gutter)); padding: var(--lb-2) var(--lb-gutter);
     flex-direction: row; overflow-x: auto; background: var(--lb-bg);
     border-bottom: 1px solid var(--lb-line); scrollbar-width: none;
-    /* The strip runs off the right edge: the fade says there is more, and the padding lets the last stage clear it. */
-    -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent);
   }
   .lb-stages::-webkit-scrollbar { display: none; }
-  .lb-stages::after { content: ""; flex: 0 0 2.5rem; }
+  /* The strip runs off the right edge. A fade in the page colour stays at that edge to say there is more, and is the room the last stage needs to clear it. */
+  .lb-stages::after { content: ""; flex: 0 0 2.5rem; position: sticky; right: calc(-1 * var(--lb-gutter)); align-self: stretch; margin-right: calc(-1 * var(--lb-gutter)); background: linear-gradient(90deg, transparent, var(--lb-bg) 75%); pointer-events: none; }
   .lb-stages button { white-space: nowrap; border-radius: 999px; padding: .5rem .9rem; }
   .lb-main { padding-top: var(--lb-6); padding-bottom: 12rem; }
   .lb-section { margin-top: var(--lb-7); }
@@ -339,6 +345,7 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .875rem; }
 /* Parts added with the rebalanced stages ------------------------------------ */
 .lb-lead { max-width: var(--lb-measure); margin: 0 0 var(--lb-2); }
 .lb-next { margin-top: var(--lb-7); }
+article:has(.lb-form .lb-primary) > .lb-next .lb-primary { background: var(--lb-bg); color: var(--lb-fg); border-color: var(--lb-field); }
 
 /* A section whose heading opens it. */
 .lb-closed > summary { list-style: none; display: grid; grid-template-columns: minmax(0, 1fr) 1rem; align-items: center; gap: var(--lb-4); cursor: pointer; margin: 0; min-height: 44px; padding-right: var(--lb-2); }
@@ -362,11 +369,17 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .875rem; }
 .lb-chips button { background: none; border: 1px solid var(--lb-field); border-radius: 999px; padding: .55rem 1rem; min-height: 44px; cursor: pointer; }
 .lb-chips button:hover { border-color: var(--lb-fg); }
 .lb-chips button[aria-pressed="true"] { background: var(--lb-surface-2); border-color: var(--lb-fg); font-weight: 600; }
-@media (forced-colors: active) { .lb-chips button[aria-pressed="true"] { background: Highlight; color: HighlightText; forced-color-adjust: none; } }
+@media (forced-colors: active) { .lb-chips button[aria-pressed="true"], .lb-stages button.is-on { background: Highlight; color: HighlightText; forced-color-adjust: none; } }
 
 /* One piece: a small picture beside its name, so what it may do comes on the first screen. */
 .lb-piece { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: var(--lb-2) var(--lb-5); align-items: center; margin: var(--lb-2) 0 var(--lb-5); clear: both; }
 .lb-piece .lb-figure { display: contents; }
+.lb-drawer { container-type: inline-size; }
+@container (max-width: 17rem) {
+  .lb-piece { grid-template-columns: minmax(0, 1fr); }
+  .lb-piece .lb-plate { max-width: 6.5rem; }
+  .lb-piece h2 { grid-column: 1; grid-row: 2; overflow-wrap: break-word; }
+}
 .lb-piece .lb-plate { grid-column: 1; grid-row: 1; }
 .lb-piece h2 { grid-column: 2; grid-row: 1; margin: 0; min-width: 0; overflow-wrap: anywhere; }
 .lb-drawer h3 { margin-top: var(--lb-6); padding-top: var(--lb-4); border-top: 1px solid var(--lb-line); }
@@ -421,5 +434,5 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .875rem; }
 [aria-invalid="true"] { border-color: var(--lb-no) !important; }
 .lb-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /* In dark the drawn stand-ins are held back, so they are not the brightest thing on the page. */
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lb-plate { filter: brightness(.78); } }
-:root[data-theme="dark"] .lb-plate { filter: brightness(.78); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lb-plate { filter: brightness(.62); } }
+:root[data-theme="dark"] .lb-plate { filter: brightness(.62); }
