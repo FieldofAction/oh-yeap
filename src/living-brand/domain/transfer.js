@@ -31,7 +31,7 @@ export function buildContextPackage(state, { partner, assignment, channels = [],
     if (item.released && item.released !== 'public') reasons.push(item.released === 'unreleased' ? 'Unreleased' : 'Internal');
     if (!st.authorized) reasons.push(...st.reasons.authorized);
     if (!st.reusable && item.kind !== 'Guidelines') reasons.push(...st.reasons.reusable);
-    if (reasons.length) withheld.push({ id: item.id, title: item.title, reasons });
+    if (reasons.length) withheld.push({ id: item.id, title: item.title, reasons: [...new Set(reasons.map(r => String(r).replace(/[.]+$/, '')))] });
     else included.push({ id: item.id, title: item.title, standing: item.standing, rights: item.rights, fingerprint: fingerprint(item) });
   }
   const rules = rulesInForce(effectiveRules(state.brand), asOf)

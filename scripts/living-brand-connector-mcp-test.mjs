@@ -57,6 +57,9 @@ for (const mode of [undefined, 'auto']) {
       const proposal = await client.callTool({ name: 'propose_standing', arguments: { engagement_id: 'eng-fernway', item_id: 'fw-onboarding-papercut', to: 'canon', rationale: 'Used everywhere' } });
       assert.match(text(proposal), /Nothing has changed/);
       const refused = await client.callTool({ name: 'decide_proposal', arguments: { engagement_id: 'eng-fernway', proposal_id: proposal.structuredContent.id, outcome: 'adopt' } });
+      // A refusal is an answer: a client that shows only the structured half still sees it.
+      assert.equal(refused.structuredContent.refused, true);
+      assert.equal(refused.structuredContent.account, refused.content[0].text);
       assert.equal(refused.isError, true);
       assert.match(text(refused), /^Refused: The practitioner cannot change the standing/);
       const ended = await client.callTool({ name: 'open_engagement', arguments: { engagement_id: 'eng-brightloop' } });

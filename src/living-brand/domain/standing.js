@@ -48,7 +48,7 @@ export function longDate(d) {
 }
 // "on 11 November 2026", "in July 2020", "in 2020": the preposition follows how much of the date is known.
 export const onDate = d => (/^\d{4}-\d{2}-\d{2}$/.test(String(d || '')) ? `on ${longDate(d)}` : /^\d{4}/.test(String(d || '')) ? `in ${longDate(d)}` : `on ${longDate(d)}`);
-const nameOf = (brand, id) => brand?.people?.[id]?.name || id || 'someone unrecorded';
+const nameOf = (brand, id, me) => (me && id === me ? 'you' : brand?.people?.[id]?.name || id || 'someone unrecorded');
 const times = n => `${n} time${n === 1 ? '' : 's'}`;
 
 export const pipelineRank = stage => PIPELINE.indexOf(stage);
@@ -129,14 +129,14 @@ export function assessStanding(item, purpose = {}, brand = null) {
   if (authorized) {
     reasons.authorized.push(status === 'published'
       ? `Published by ${item.approval.by || 'the company'}${item.approval.date ? ` ${onDate(item.approval.date)}` : ''}. No internal approval record seen.`
-      : `Approved by ${nameOf(brand, item.approval.by)} ${onDate(item.approval.date)}.`);
+      : `Approved by ${nameOf(brand, item.approval.by, purpose.me)} ${onDate(item.approval.date)}.`);
   }
   // A study is an outsider's reading. Publication is not an authorization
   // given to its author, and checking a record against its source changes
   // what the author knows, not what the company has allowed.
   if (study) {
     authorized = false;
-    reasons.authorized = [`${brand.name} has authorized nothing for this study.${status === 'published' && item.approval?.date ? ` It published this ${onDate(item.approval.date)}.` : ''}`];
+    reasons.authorized = [`${brand.name} has authorized nothing for this study.`];
   }
 
   // Reusable: rights are known, and cover the intended channels for the intended dates.
@@ -149,9 +149,7 @@ export function assessStanding(item, purpose = {}, brand = null) {
     const fact = (brand?.facts || []).find(f => f.id === c.contradictedBy);
     return fact?.date && asOf && fact.date <= asOf;
   });
-  if (untrue.length) {
-    reasons.reusable.push(...untrue.map(c => `Carries a claim that is no longer true: "${String(c.statement).replace(/[.]+$/, '')}".`));
-  } else if (rights.status === 'own') {
+  if (rights.status === 'own') {
     // The brand's own rules and values: nothing in it is anyone else's to license.
     reusable = true; reasons.reusable.push(rights.note || 'The brand\'s own rules and values. Nothing in it is licensed from anyone else.');
   } else if (rights.status === 'cleared' || rights.status === 'restricted') {
@@ -160,17 +158,25 @@ export function assessStanding(item, purpose = {}, brand = null) {
     const lapsesDuring = rights.until && purpose.until && purpose.until > rights.until;
     const scope = (rights.channels || []).includes('all') ? 'every channel' : (rights.channels || []).map(human).join(', ') || 'no channel';
     if (expired) reasons.reusable.push(`Licence ended ${longDate(rights.until)}.`);
-    else if (missing.length) reasons.reusable.push(`Not licensed for ${missing.map(human).join(', ')}.`);
+    // Cleared with no channel named is a clearance without channel limits.
+    else if (rights.status === 'cleared' && !(rights.channels || []).length) { reusable = true; reasons.reusable.push(study ? 'A public licence covers it.' : 'Cleared, with no channel limits recorded.'); }
+    else if (missing.length) reasons.reusable.push(`Not licensed for ${missing.map(human).join(', ')}. ${rights.status === 'cleared' ? 'Cleared' : 'Licensed'} for ${scope} only.`);
     else if (lapsesDuring) reasons.reusable.push(`Licence ends ${longDate(rights.until)}, before the work would finish.`);
     else if (rights.status === 'restricted' && !(rights.channels || []).length) reasons.reusable.push('Its use is restricted, and no permitted use is recorded.');
     else if (!wanted.length && rights.status === 'restricted') reasons.reusable.push(`No channel named for this use. Licensed for ${scope} only.`);
-    else { reusable = true; reasons.reusable.push(wanted.length ? `Licensed for ${wanted.map(human).join(', ')}.` : `Rights cleared for ${scope}.`); }
+    else { reusable = true; reasons.reusable.push(study ? 'A public licence covers it.' : wanted.length ? `Licensed for ${wanted.map(human).join(', ')}.` : `Rights cleared for ${scope}.`); }
     // What the licence does and does not cover is said either way.
     if (rights.note) reasons.reusable.push(rights.note);
   } else if (rights.status === 'expired') {
     reasons.reusable.push('Rights expired.');
   } else {
     reasons.reusable.push((rights.status && rights.status !== 'unknown' ? `Rights recorded as "${rights.status}", which is not a status this record recognises.` : 'Rights unknown.') + (rights.note ? ` ${rights.note}` : ''));
+  }
+
+  // Whatever the licence says, material carrying a claim that is no longer true is not reused as it stands. Both are said.
+  if (untrue.length) {
+    reusable = false;
+    reasons.reusable.unshift(...untrue.map(c => `Carries a claim that is no longer true: "${String(c.statement).replace(/[.]+$/, '')}".`));
   }
 
   // Authoritative: canon, in force. Reuse and popularity do not count.

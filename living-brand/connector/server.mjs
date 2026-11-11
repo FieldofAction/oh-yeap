@@ -70,7 +70,9 @@ serveStdio(() => {
         // both: as the text, and first among the structured fields.
         return { content: [{ type: 'text', text: result.text }], structuredContent: { account: result.text, ...(result.data || {}) } };
       } catch (error) {
-        return { content: [{ type: 'text', text: failure(error) }], isError: true };
+        // A refusal is an answer, and a client that shows only the structured half should see it.
+        const text = failure(error);
+        return { content: [{ type: 'text', text }], structuredContent: { account: text, refused: true }, isError: true };
       }
     });
   }

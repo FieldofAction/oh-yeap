@@ -111,7 +111,8 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
       out.push(study ? {
         id: `t-stale-${c.id}`, kind: 'Statement set beside a later report', severity: 'repair',
         title: `Set beside a later report: ${said}`,
-        detail: `${note.includes(fact.statement.slice(0, 60)) ? '' : `${fact.statement} `}${note}${own}`.trim(),
+        // Where the study has written the pairing out, that is the whole entry: the note carries the report and its limits.
+        detail: `${note || fact.statement}${own}`.trim(),
         sources: [...new Set([...(c.usedIn || []), fact.source].filter(Boolean))], owners: [], power: 'claims',
       } : {
         id: `t-stale-${c.id}`, kind: 'Stale claim', severity: 'repair',
@@ -169,7 +170,7 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
       const flagged = outcome && (e.attribution === 'not-established' || (e.type === 'observed' && e.basis === 'reported' && /no control|same weeks/i.test(e.statement)));
       if (flagged) {
         out.push({ id: `t-impact-${e.id}`, kind: 'Attribution not established', severity: 'investigate',
-          title: `${item.title}: a result is reported, and nothing recorded ties it to this work`,
+          title: `${item.title}: ${String(e.attributionNote || '').trim().replace(/[.]+$/, '') || 'a result is reported, and nothing recorded ties it to this work'}`,
           detail: `${e.statement}${e.note ? ` ${e.note}` : ''}`, sources: [...new Set([item.id, e.source].filter(Boolean))] });
       }
     }
@@ -181,8 +182,9 @@ export function findTensions(brand, { asOf, workTypes = [], channels = [] }) {
       title: `${item.title}: found, not understood`, detail: `${item.text || ''} Purpose, audience and rights are unknown.`.trim(), sources: [item.id] });
   }
 
-  // Decisions nobody has been named to make, kept as one visible gap.
-  const unnamed = unnamedPowers(brand).map(power => POWERS[power]);
+  // Decisions nobody has been named to make, kept as one visible gap. A study
+  // says once, where it describes itself, that it cannot know who decides.
+  const unnamed = study ? [] : unnamedPowers(brand).map(power => POWERS[power]);
   if (unnamed.length) {
     out.push({ id: 't-authority-unnamed', kind: 'No one named to decide', severity: 'decide',
       title: `No one is named to decide ${unnamed.join(', ')} at ${brand.name}`,
@@ -290,7 +292,7 @@ export function carryForward(brand, engagement, { asOf }) {
     } else if (fn.includes('recognition')) {
       // Recognition is only worth carrying if the thing may be used: sanctioned, and licensed for this plan.
       verdict = st.authorized && st.reusable ? 'preserve' : 'investigate';
-      why = `Recognition carries over to people who have seen it before${evidence.length ? `: ${evidence.map(e => e.statement).join(' ')}` : '.'}${st.authorized ? '' : ` It is not authorized: ${st.reasons.authorized.join(' ')}`}${st.reusable ? '' : ` Rights block it for this plan: ${st.reasons.reusable.join(' ')}`}`;
+      why = `Recognition carries over to people who have seen it before${evidence.length ? `: ${evidence.map(e => e.statement).join(' ')}` : '.'}${st.authorized ? '' : ` It is not authorized: ${st.reasons.authorized.join(' ')}`}${st.reusable ? '' : ` It cannot be reused for this plan as it stands: ${st.reasons.reusable.join(' ')}`}`;
     } else {
       verdict = 'adapt'; why = 'Context changed; transfer needs an argument.';
     }
@@ -353,7 +355,7 @@ export function orientation(brand, engagement, { asOf, answers = [] }) {
   // What the record cannot answer yet. Kept visible rather than filled in.
   const answered = new Set((answers || []).map(a => a.question));
   const unknowns = (brand.unknowns || []).filter(u => !answered.has(u));
-  const gaps = unnamedPowers(brand);
-  if (gaps.length) unknowns.push(`Who decides ${gaps.map(p => POWERS[p]).join(', ')}.`);
+  const gaps = isPublicStudy(brand) ? [] : unnamedPowers(brand);
+  if (gaps.length) unknowns.push(`Who decides ${gaps.map(p => POWERS[p]).join(', ').replace(/, ([^,]*)$/, ' and $1')}?`);
   return { intent: brand.intent, canon, stages, strengths, tensions, attention, unknowns, owners: names(brand, brand.intent?.owner ? [brand.intent.owner] : []) };
 }

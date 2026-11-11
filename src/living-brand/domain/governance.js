@@ -85,6 +85,8 @@ export function propose(state, { itemId, to, rationale, evidenceIds = [], by, sc
   if (s.proposals.some(p => p.itemId === itemId && p.to === to && p.status === 'open')) throw new Error(`An open proposal already asks for ${item.title} to become ${STANDING_CLASSES[to].name.toLowerCase()}.`);
   const allEvidence = s.brand.items.flatMap(i => (i.evidence || []).map(e => ({ ...e, on: i.id, origin: i.provenance?.origin })));
   const cited = allEvidence.filter(e => (evidenceIds || []).includes(e.id));
+  const unknown = (evidenceIds || []).filter(id => !allEvidence.some(e => e.id === id));
+  if (unknown.length) throw new Error(`No evidence with the id ${unknown.map(id => `"${id}"`).join(', ')} is in this record.`);
   const warnings = [];
   // Evidence bears on a piece of material only if it was recorded on it, comes
   // from it, or sits on material the record relates to it. What a brief
@@ -97,9 +99,15 @@ export function propose(state, { itemId, to, rationale, evidenceIds = [], by, sc
   const independent = own.filter(e => e.origin !== 'generated' && e.basis !== 'reuse' && e.type !== 'intended');
   // Anything that would have the material consulted or obeyed is a promotion.
   const promotion = ['canon', 'precedent', 'contextual'].includes(to);
-  if (promotion && to !== 'canon') {
+  if (to !== 'archive' && to !== 'canon') {
     if (item.pipeline === 'discovered') warnings.push('Only found. Nobody has recorded what it is.');
     if (item.approval?.status === 'rejected') warnings.push(`It was rejected${item.approval.date ? ` ${onDate(item.approval.date)}` : ''}.`);
+  }
+  // What the reviewer needs to see about the case made is the same whatever is being asked for.
+  if (promotion && to !== 'canon') {
+    if (cited.length && !own.length && !related.length) warnings.push('The evidence cited was recorded on other material and does not bear on this.');
+    if (related.length) warnings.push(`Some of the evidence cited was recorded on related material (${[...new Set(related.map(e => s.brand.items.find(i => i.id === e.on)?.title || e.on))].join(', ')}), not on this piece.`);
+    if (item.reuse?.length) warnings.push(`Reused ${item.reuse.length} time${item.reuse.length === 1 ? '' : 's'}. Frequency is a reason to review, not a reason to adopt.`);
   }
   if (to === 'canon') {
     if (cited.length && !own.length && !related.length) warnings.push('The evidence cited was recorded on other material and does not bear on this.');
@@ -124,7 +132,10 @@ export function propose(state, { itemId, to, rationale, evidenceIds = [], by, sc
 }
 
 // The rules a piece of material states, which adopting it as canon would put in force.
-export const rulesStatedBy = (brand, itemId) => (brand.rules || []).filter(r => r.source === itemId && !r.standing);
+// Every rule the material states that is not already canon, whether it carries
+// a standing of its own or takes the material's.
+export const rulesStatedBy = (brand, itemId) => (brand.rules || []).filter(r => r.source === itemId && !['canon', 'retired', 'archive'].includes(r.standing));
+export const kindsOfWork = brand => [...new Set((brand.items || []).map(i => i.workType).filter(Boolean))].sort();
 
 // Only the brand's named authority can adopt, reject or revise.
 // Turning a proposal down, or sending it back, needs a reason in the decider's
@@ -147,22 +158,30 @@ export function decide(state, proposalId, { by, outcome, note, scope, covers, ho
   if (outcome !== 'adopt' && !note) throw new Error(outcome === 'reject' ? 'Say why it is turned down.' : 'Say what needs to change.');
   covers = [...new Set((Array.isArray(covers) ? covers : []).map(oneLine).filter(Boolean))];
   if (covers.includes('all')) covers = ['all'];
-  // The scope is what the decider says it covers. Kinds of work, where given, are what the record can apply.
-  scope = oneLine(scope) || (covers.length ? (covers[0] === 'all' ? 'All work' : covers.join(', ')) : oneLine(p.scope));
   checked = oneLine(checked);
   const toCanon = outcome === 'adopt' && p.to === 'canon';
-  if (outcome === 'adopt' && ['canon', 'precedent', 'contextual'].includes(p.to)) {
-    if (item.pipeline === 'discovered') throw new Error(`${item.title} has only been found. Nobody has recorded what it is, so it cannot be given that standing yet.`);
-    if (item.approval?.status === 'rejected') throw new Error(`${item.title} was rejected. It cannot be given that standing while that stands.`);
-  }
+  if (outcome === 'adopt' && p.to !== 'archive' && item.pipeline === 'discovered') throw new Error(`${item.title} has only been found. Nobody has recorded what it is, so it cannot be given that standing yet.`);
+  if (outcome === 'adopt' && ['canon', 'precedent', 'contextual'].includes(p.to) && item.approval?.status === 'rejected') throw new Error(`${item.title} was rejected. It cannot be given that standing while that stands.`);
+  // Canon binds the kinds of work its decider names, and nothing else. They
+  // are named with the decision: a scope a proposal arrived with is the
+  // proposer's suggestion, never the decider's word. What they say in their
+  // own words is kept beside it as a note.
+  const stated = toCanon ? rulesStatedBy(s.brand, item.id) : [];
   if (toCanon) {
+    const known = kindsOfWork(s.brand);
+    if (!covers.length) throw new Error(known.length ? `Say which kinds of work this canon covers: ${known.join(', ')}, or all of it.` : 'Say which kinds of work this canon covers. This record names no kinds of work, so the only choice is all of it.');
+    const strange = covers.filter(k => k !== 'all' && !known.includes(k));
+    if (strange.length) throw new Error(`"${strange[0]}" is not a kind of work in ${s.brand.name}'s material. ${known.length ? `The kinds are: ${known.join(', ')}.` : 'It names none, so the only choice is all of it.'}`);
+    const notStated = (Array.isArray(holdBack) ? holdBack : []).filter(id => !stated.some(r => r.id === id));
+    if (notStated.length) throw new Error(`"${notStated[0]}" is not a rule ${item.title} states.`);
     if (pipelineRank(item.pipeline) < pipelineRank('verified') && !checked) throw new Error(`${item.title} has not been checked against its source. Say what you checked it against.`);
-    if (!scope) throw new Error('Say what this canon covers.');
   }
-  const stated = toCanon ? (s.brand.rules || []).filter(r => r.source === item.id && !r.standing) : [];
+  const named = covers.length ? (covers[0] === 'all' ? 'All work' : covers.join(', ')) : '';
+  const words = oneLine(scope);
+  scope = toCanon ? [named, words].filter(Boolean).join('. ') : (words || oneLine(p.scope));
   const held = stated.filter(r => (Array.isArray(holdBack) ? holdBack : []).includes(r.id));
   const decision = { id: nextId(s, 'd', asOf), proposalId, itemId: item.id, outcome, by, note, date: asOf, from: item.standing, to: outcome === 'adopt' ? p.to : item.standing, evidenceIds: p.evidenceIds, scope,
-    ...(toCanon && covers.length ? { covers } : {}), ...(toCanon && checked ? { checked } : {}), ...(held.length ? { heldBack: held.map(r => r.id) } : {}) };
+    ...(toCanon && covers.length ? { covers } : {}), ...(toCanon && words ? { scopeNote: words } : {}), ...(toCanon && checked ? { checked } : {}), ...(held.length ? { heldBack: held.map(r => r.id) } : {}) };
   p.status = outcome === 'adopt' ? 'adopted' : outcome === 'reject' ? 'rejected' : 'revise';
   p.decided = { by, date: asOf, note };
   if (outcome === 'adopt') {
@@ -182,7 +201,11 @@ export function decide(state, proposalId, { by, outcome, note, scope, covers, ho
     item.standing = p.to;
     item.standingRecord = { by, date: effectiveFrom || asOf, scope, decisionId: decision.id, evidenceIds: p.evidenceIds, rationale: p.rationale, basis: 'decision', ...(toCanon && covers.length ? { covers } : {}) };
     // A rule held back keeps the standing it had as written, and says who held it back.
-    for (const r of held) { r.standing = 'operational'; r.heldBack = { by, date: asOf, decisionId: decision.id }; }
+    // A rule adopted with its material takes the material's standing from here on.
+    for (const r of stated) {
+      if (held.includes(r)) { r.standing = r.standing || 'operational'; r.heldBack = { by, date: asOf, decisionId: decision.id }; }
+      else if (r.standing) { r.writtenAs = r.standing; delete r.standing; }
+    }
     if (p.to !== 'archive') delete item.retired;
     closeStale(s, item, decision.id, asOf);
   }
@@ -406,6 +429,7 @@ export function answerChoice(state, choiceId, { by, outcome, note, asOf }) {
   const found = state.choices.find(c => c.id === choiceId);
   if (!found) throw new Error('No such choice.');
   if (!found.needs) throw new Error('That choice is not waiting for anyone.');
+  if (found.status === 'withdrawn') throw new Error('That choice was withdrawn by the person who recorded it.');
   if (found.status !== 'awaiting decision') throw new Error('That choice has already been answered.');
   if (!canDecide(state.brand, by, found.needs)) {
     const who = deciders(state.brand, found.needs).map(p => p.name);

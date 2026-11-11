@@ -56,8 +56,8 @@ Automated, on every build:
 
 | Suite | Tests |
 |---|---|
-| Rules (`scripts/living-brand-test.mjs`) | 69 |
-| Connector (`scripts/living-brand-connector-test.mjs`) | 25 |
+| Rules (`scripts/living-brand-test.mjs`) | 73 |
+| Connector (`scripts/living-brand-connector-test.mjs`) | 27 |
 | Connector over the protocol, both protocol versions (`npm run living-brand:connector:test`) | 5 |
 | Page text audit, three states of the page at two widths in both themes | 12 scenarios |
 
@@ -86,6 +86,17 @@ repository and had to prove a finding by running it:
    no harness had: the client handed the assistant only the structured half
    of each result, which left out most of the account. The account now
    travels in both halves.
+
+6. **A third round**, in which four agents were told to assume nothing was
+   fixed until they had seen it fixed. 65 earlier findings held as fixed, 26
+   did not or only partly, and 24 were new. Two were serious. On the public
+   page, adopting material whose rules already carried a standing of their own
+   showed no rule list and no preview. Through the connector, an assistant
+   could adopt canon without the decider saying what it covered. Verdicts: the
+   study was "fair enough to show to one other person in confidence"; the
+   founder's page was "not yet, but it is close"; the public page and the
+   connector were not ready. Both serious findings are fixed and pinned by
+   tests; what was left open is under Known gaps.
 
 The findings that changed the product most:
 
@@ -117,7 +128,15 @@ The findings that changed the product most:
   own judgment. A suggestion is now a starting point with the reason left
   empty.
 - The study was drafted by a model whose maker is a defendant in litigation
-  the study records. The study now says so where it describes itself.
+  the study records. The study now says so where it describes itself, and
+  again on the record of that litigation.
+- The connector let an assistant mark material as checked without saying who
+  had looked. It now has to say whether the practitioner or the assistant
+  checked it, and the skill says to ask first.
+- A canon's scope could be inherited from the proposal. Only the decider's
+  own answer counts now, through the connector and on the page.
+- Drawers in the study said the company "published this" on dates the record
+  only had from press reports. They no longer do.
 
 ## What is real, simulated or missing
 

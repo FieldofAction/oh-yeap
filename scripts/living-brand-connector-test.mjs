@@ -92,11 +92,13 @@ test('the connector decides only as its own practitioner, and only where they ar
   const mine = call('propose_standing', { engagement_id: 'eng-moonhouse', item_id: 'mh-mark', to: 'canon', rationale: 'It is the mark', evidence_ids: ['mh-e1'] });
   assert.match(mine.data.id, /^moonhouse-p-/, 'a proposal id says whose record it is in');
   assert.notEqual(mine.data.id, p.data.id);
-  assert.throws(() => call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: mine.data.id, outcome: 'adopt' }), /Say what this canon covers/);
+  assert.throws(() => call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: mine.data.id, outcome: 'adopt', scope: 'Every use of the mark' }), /Say which kinds of work this canon covers/, 'words alone, or a scope the proposal carried, name no kind of work');
+  assert.throws(() => call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: mine.data.id, outcome: 'adopt', covers: ['Nonsense'] }), /is not a kind of work in Moonhouse's material/);
+  assert.throws(() => call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: mine.data.id, outcome: 'adopt', covers: ['all'], hold_back_rule_ids: ['r-nope'] }), /is not a rule .* states/);
   assert.throws(() => call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: mine.data.id, outcome: 'reject' }), /Say why it is turned down/);
   const adopted = call('decide_proposal', { engagement_id: 'eng-moonhouse', proposal_id: mine.data.id, outcome: 'adopt', scope: 'Every use of the mark', covers: ['all'] });
   assert.deepEqual(adopted.data.covers, ['all']);
-  assert.match(adopted.text, /Adopted.*it was experiment, and that is kept[\s\S]*It covers: Every use of the mark\. It is approved by Founder Person/);
+  assert.match(adopted.text, /Adopted.*it was experiment, and that is kept[\s\S]*Its rules bind: all work\. In their words: Every use of the mark\. It is approved by Founder Person/);
   assert.match(call('open_engagement', { engagement_id: 'eng-moonhouse' }).text, /You are named for: visual standing/);
   assert.match(call('open_engagement', { engagement_id: 'eng-fernway' }).text, /You are not named to decide anything in this engagement/);
   assert.match(call('get_item', { engagement_id: 'eng-moonhouse', item_id: 'mh-mark' }).text, /Before: Experiment until 2026-11-11/);
@@ -117,7 +119,10 @@ test('reuse and intake never raise standing', () => {
   assert.throws(() => call('add_source_note', { engagement_id: 'eng-fernway', title: 'x', found_in: 'Drive', standing: 'precedent' }), /Anything more is proposed and decided/);
   const note = call('add_source_note', { engagement_id: 'eng-fernway', title: 'Spring header', found_in: 'Drive, Lifecycle', text: 'Email header', pipeline: 'extracted' });
   assert.match(note.text, /extracted, learning archive, rights unknown, not approved/);
-  assert.match(call('verify_item', { engagement_id: 'eng-fernway', item_id: note.data.id, how: 'Opened the file with the lifecycle lead' }).text, /still not approved/);
+  assert.throws(() => call('verify_item', { engagement_id: 'eng-fernway', item_id: note.data.id, how: 'Opened the file' }), /Say who made the check/);
+  const checked = call('verify_item', { engagement_id: 'eng-fernway', item_id: note.data.id, how: 'Opened the file and compared it line by line', checked_by: 'assistant' });
+  assert.match(checked.text, /is now verified, checked by an assistant session: .* It is not approved/);
+  assert.equal(checked.data.checkedBy, 'an assistant session', 'a check the assistant made is never recorded as the practitioner\'s');
   const st = call('search_material', { engagement_id: 'eng-fernway', query: 'spring header' }).data.results[0];
   assert.deepEqual([st.authorized, st.reusable, st.authoritative], [false, false, false]);
 });
@@ -379,10 +384,45 @@ test('answers and choices are recorded as the practitioner\'s, and a choice is a
   assert.match(a.text, /Answer recorded by the practitioner/);
   const seen = call('get_interpretation', { engagement_id: 'eng-fernway' }).text;
   assert.match(seen, /Choices on record:\n- fernway-c-[^\n]*Invent Reactivation offer\. Waiting for Tom Ekwueme\./);
-  assert.match(seen, /Answers on record:\n- Will the company test a reactivation offer[^\n]*Tom said before, on a held-out group\./);
+  assert.match(seen, /Answers on record:\n- fernway-a-[^:]*: Will the company test a reactivation offer[^\n]*Tom said before, on a held-out group\./);
 
   call('import_packet', { json: JSON.stringify(rival()) });
   const own = call('record_choice', { engagement_id: 'eng-moonhouse', subject: 'Keep the mark', verdict: 'preserve', rationale: 'It is ours', needs: 'standing.visual' });
   assert.match(own.text, /Visual standing is theirs to decide here, so recording it decided it/);
   assert.equal(own.data.status, 'accepted');
+});
+
+// --- Found by running the connector end to end a third time, and pinned here ---
+
+test('a study reads as a study in both halves of a result, and a refusal has both halves', () => {
+  const { call } = fresh();
+  call('import_packet', { json: JSON.stringify(study()) });
+  const opened = call('open_engagement', { engagement_id: 'eng-tidewater' });
+  assert.match(opened.text, /Nothing can be decided, approved, adopted or shared in a study/);
+  assert.match(opened.text, /Who decides at Tidewater is not known to this study/);
+  assert.ok(!/Canon in force|not been adopted as canon yet|You are n/.test(opened.text));
+  const found = call('search_material', { engagement_id: 'eng-tidewater' });
+  assert.ok(found.data.results.every(r => r.readAs && r.standing === undefined), 'no bare class in the fields a client might render');
+  const item = call('get_item', { engagement_id: 'eng-tidewater', item_id: 'tw-mark' });
+  assert.equal(item.data.item.standing, undefined);
+  assert.equal(item.data.item.approval, undefined);
+  assert.match(item.data.item.note, /Not Tidewater's own classification, approval or decision/);
+  assert.match(item.text, /From an independent study of public sources\. Not Tidewater's own record\./);
+  assert.match(item.text, /Only Tidewater can decide its standing\. Nothing here can\./);
+  const note = call('propose_standing', { engagement_id: 'eng-tidewater', item_id: 'tw-mark', to: 'precedent', rationale: 'x' });
+  assert.equal(note.data.to, undefined);
+  assert.ok(!/Adopting it would/.test(note.text));
+});
+
+test('rules are listed with ids before a decision, and a choice is tied only to an entry that exists', () => {
+  const { call } = fresh();
+  const guide = call('get_item', { engagement_id: 'eng-fernway', item_id: 'fw-pm-playbook-2025' });
+  assert.match(guide.text, /Rules it states:\n- \[r-lead-with-screen\] Lifecycle and launch work leads with the product screen\. \(operational material\)/);
+  assert.throws(() => call('record_choice', { engagement_id: 'eng-fernway', subject: 'x', verdict: 'repair', rationale: 'y', about: 't-does-not-exist' }), /No entry "t-does-not-exist"/);
+  const tied = call('record_choice', { engagement_id: 'eng-fernway', subject: 'The screens rule', verdict: 'investigate', rationale: 'Two rules cannot both hold', about: 't-conflict-hero.screens' });
+  assert.match(tied.text, /tied to the entry t-conflict-hero\.screens/);
+  assert.match(call('get_interpretation', { engagement_id: 'eng-fernway' }).text, /\[t-conflict-hero\.screens\][^\n]*\n {2}- Choice on record about this: Investigate\. Two rules cannot both hold/);
+  const pkg = call('issue_context_package', { engagement_id: 'eng-fernway', partner_name: 'Agent', assignment: 'Landing page', channels: ['owned-web'], work_types: ['Customer campaign'], expires: '2026-12-31' });
+  assert.ok(!/no longer true: "Ad-free, always"[^\n]*no longer true: "Ad-free, always"/.test(pkg.text), 'a reason is given once');
+  assert.match(call('export_engagement_package', { engagement_id: 'eng-fernway' }).text, /1 choice, /);
 });
