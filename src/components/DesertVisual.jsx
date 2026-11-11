@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { studioGenerate } from "../lib/studio-generate";
+import { useSignalSession, sessionOutput, sessionMarkdown, downloadText, slug } from "../lib/signal-session";
 import "../styles/workbench.css";
 import "../styles/workshop-tools.css";
 
@@ -78,11 +79,10 @@ const FIELD_LABELS = {
 };
 
 export default function DesertVisual({ navigateTo, asu }) {
-  // A signal carried in from the Workbench names this crossing, and what was
-  // written here goes back onto it when the field lets you cross.
-  const [carried] = useState(() => asu?.get_carried?.() || null);
-  const [crossingId] = useState(() => `desert:${Date.now()}`);
-  useEffect(() => { asu?.clear_carried?.(); }, [asu]);
+  // A signal carried in from the Workbench names this crossing. What was
+  // written here goes back onto it only if banked.
+  const session = useSignalSession(asu, "desert", "Desert");
+  const { carried } = session;
   const [entered, setEntered] = useState(false);
   const [card, setCard] = useState({
     fieldCondition: "", centralRelationship: "", tensionHeld: "",
@@ -175,23 +175,23 @@ export default function DesertVisual({ navigateTo, asu }) {
     scheduleAssessment();
   }, [scheduleAssessment]);
 
+  const crossingFields = () => QUESTIONS.map((q) => ({ label: FIELD_LABELS[q.id], value: cardRef.current[q.id] }));
+  const crossingTitle = carried?.text || "Desert crossing";
+  const bankCrossing = () => session.bank({
+    title: crossingTitle,
+    output: sessionOutput({ title: crossingTitle, fields: crossingFields(), extra: { mode: "desert" } }),
+  });
+  const downloadCrossing = () => downloadText(
+    `desert-${slug(crossingTitle, "crossing")}.md`,
+    sessionMarkdown({ title: crossingTitle, tool: "Desert", fields: crossingFields() }),
+  );
+  // Crossing leaves the field: back to the Workbench if a signal came in, or
+  // to the gate. Nothing is written unless it was banked.
   const handleCross = useCallback(() => {
-    if (carried?.signalId) {
-      const fields = QUESTIONS
-        .filter((q) => cardRef.current[q.id]?.trim())
-        .map((q) => ({ label: FIELD_LABELS[q.id], value: cardRef.current[q.id].trim() }));
-      asu?.attach_reading?.({
-        signalId: carried.signalId,
-        key: crossingId,
-        moduleKey: "desert",
-        label: carried.text,
-        output: { kind: "orientation", summary: `${fields.length} of 7 answered`, detail: { mode: "desert", fields } },
-      });
-      navigateTo?.("studio");
-      return;
-    }
+    if (carried?.signalId) { navigateTo?.("studio"); return; }
+    session.reset();
     setEntered(false);
-  }, [asu, carried, crossingId, navigateTo]);
+  }, [carried, navigateTo, session]);
 
   const narrow = typeof window !== "undefined" && window.innerWidth < 600;
 
@@ -410,7 +410,12 @@ export default function DesertVisual({ navigateTo, asu }) {
       {/* Threshold */}
       {fieldState.threshold && (
         <div className="dv-threshold">
-          <button type="button" className="dv-button" onClick={handleCross}>Cross</button>
+          <div className="dv-threshold-actions">
+            <button type="button" className="dv-button" onClick={handleCross}>Cross</button>
+            <button type="button" className="dv-link" onClick={bankCrossing}>{session.bankedTo ? "Bank it again" : "Bank this crossing"}</button>
+            <button type="button" className="dv-link" onClick={downloadCrossing}>Download as Markdown</button>
+          </div>
+          {session.bankedTo ? <p className="dv-banked" role="status">Banked on the Workbench, under "{session.bankedTo}".</p> : null}
         </div>
       )}
 

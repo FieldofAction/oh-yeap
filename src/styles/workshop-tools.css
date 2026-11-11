@@ -191,3 +191,9 @@
   .tl-slider label { grid-column: 1 / -1; }
   .tl-indent { padding-left: 0; }
 }
+
+/* Desert: bank and download sit beside Cross, on its own paper. */
+.dv-threshold-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; column-gap: 24px; row-gap: 4px; }
+.dv-link { font: inherit; font-size: 17px; color: var(--dv-ink); background: transparent; border: 0; padding: 0; min-height: 44px; text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.dv-link:focus-visible { outline: 2px solid var(--dv-ink); outline-offset: 3px; }
+.dv-banked { margin: 8px 0 0; font-size: 17px; line-height: 1.45; color: var(--dv-soft); text-align: center; }

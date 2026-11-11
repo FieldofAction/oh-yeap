@@ -1,6 +1,8 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import useASUStore from "../store/useASUStore";
 import { LAWS, PAIR_MECHANICS } from "../data/field-laws";
+import { useSignalSession, downloadText, slug } from "../lib/signal-session";
+import SessionActions from "./SessionActions";
 import "../styles/workbench.css";
 import "../styles/workshop-tools.css";
 
@@ -151,7 +153,6 @@ function MechanicsGrid({ combined }) {
 /* ── Main Component ── */
 
 const dateStamp = (ts) => new Date(ts).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
-const newSessionId = () => `console:${Date.now()}:${Math.random().toString(36).slice(2, 8)}`;
 
 export default function FieldConsole({ navigateTo, asu: sharedAsu }) {
   // Writes must go through the app's store instance: a second instance would
@@ -160,10 +161,8 @@ export default function FieldConsole({ navigateTo, asu: sharedAsu }) {
   const asu = sharedAsu || ownAsu;
   // A signal carried in from the Workbench becomes the situation, and a banked
   // session goes back onto it.
-  const [carried] = useState(() => asu.get_carried?.() || null);
-  const [sessionId, setSessionId] = useState(newSessionId);
-  const [bankedTo, setBankedTo] = useState(null);
-  const [signalId, setSignalId] = useState(carried?.signalId || null);
+  const session = useSignalSession(asu, "console", "the Console");
+  const { carried, bankedTo } = session;
   const [synthError, setSynthError] = useState(null);
   const [copied, setCopied] = useState(false);
   const [active, setActive] = useState(new Set());
@@ -176,8 +175,6 @@ export default function FieldConsole({ navigateTo, asu: sharedAsu }) {
   const [detecting, setDetecting] = useState(false);
   const [showKey, setShowKey] = useState(false);
   const textRef = useRef(null);
-
-  useEffect(() => { asu.clear_carried?.(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const handler = (e) => {
@@ -242,7 +239,7 @@ export default function FieldConsole({ navigateTo, asu: sharedAsu }) {
     setLoading(true);
     setSynthesis(null);
     setSynthError(null);
-    setBankedTo(null);
+    session.clearBanked();
     const activeLaws = LAWS.filter(l => active.has(l.id));
     const detectedOnlyLaws = LAWS.filter(l => detected.has(l.id) && !active.has(l.id));
     const allLaws = LAWS.filter(l => combined.has(l.id));
@@ -279,9 +276,7 @@ export default function FieldConsole({ navigateTo, asu: sharedAsu }) {
     setSynthesis(null);
     setDetectionNote(null);
     setSynthError(null);
-    setBankedTo(null);
-    setSignalId(null);
-    setSessionId(newSessionId());
+    session.reset();
   };
 
   const combined = new Set([...active, ...detected]);
@@ -307,17 +302,7 @@ export default function FieldConsole({ navigateTo, asu: sharedAsu }) {
     `## Synthesis\n\n${synthesis}\n`,
   ].filter(l => l !== null).join("\n");
 
-  const downloadSession = () => {
-    const b = new Blob([sessionMarkdown()], { type: "text/markdown" });
-    const u = URL.createObjectURL(b);
-    const a = document.createElement("a");
-    a.href = u;
-    a.download = `console-${sessionTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "session"}.md`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(u);
-  };
+  const downloadSession = () => downloadText(`console-${slug(sessionTitle)}.md`, sessionMarkdown());
   const copySynthesis = async () => {
     try {
       await navigator.clipboard?.writeText?.(synthesis);
@@ -331,37 +316,22 @@ export default function FieldConsole({ navigateTo, asu: sharedAsu }) {
   // Banking puts the session on the Workbench: onto the signal it was carried
   // in with, or onto a new held signal named for this moment. From there Grace
   // and the lenses can read it alongside everything else on that signal.
-  const bankSession = () => {
-    let target = signalId;
-    let targetText = carried?.signalId === signalId ? carried?.text : null;
-    if (!target) {
-      const held = asu.hold_signal(sessionTitle, { source: "the Console" });
-      if (!held) return;
-      target = held.id;
-      targetText = held.text;
-      setSignalId(held.id);
-    }
-    asu.attach_reading({
-      signalId: target,
-      key: sessionId,
-      moduleKey: "console",
-      label: sessionTitle,
-      output: {
-        kind: "console",
-        summary: sessionTitle,
-        detail: {
-          name: situationName.trim(),
-          situation: situation.trim(),
-          activeLaws: combinedLaws.map(l => ({ id: l.id, name: l.name, reading: `${active.has(l.id) ? "Engaged" : "Detected"}. ${l.axiom}.` })),
-          activeIds: [...active],
-          detectedIds: [...detected],
-          tensions: pairsNow.map(p => ({ pair: `${p.name}: ${p.a.name} and ${p.b.name}` })),
-          synthesis,
-        },
+  const bankSession = () => session.bank({
+    title: sessionTitle,
+    output: {
+      kind: "console",
+      summary: sessionTitle,
+      detail: {
+        name: situationName.trim(),
+        situation: situation.trim(),
+        activeLaws: combinedLaws.map(l => ({ id: l.id, name: l.name, reading: `${active.has(l.id) ? "Engaged" : "Detected"}. ${l.axiom}.` })),
+        activeIds: [...active],
+        detectedIds: [...detected],
+        tensions: pairsNow.map(p => ({ pair: `${p.name}: ${p.a.name} and ${p.b.name}` })),
+        synthesis,
       },
-    });
-    setBankedTo(targetText || sessionTitle);
-  };
+    },
+  });
 
   const banked = (asu.get_flow_lane?.() || []).filter(it => it.payload?.steps?.[0]?.moduleKey === "console" && it.payload.steps[0].output?.detail?.synthesis);
   const openBanked = (item) => {
@@ -373,9 +343,7 @@ export default function FieldConsole({ navigateTo, asu: sharedAsu }) {
     setSynthesis(d.synthesis);
     setDetectionNote(null);
     setSynthError(null);
-    setSignalId(item.signalId || null);
-    setSessionId(item.key || newSessionId());
-    setBankedTo(null);
+    session.adopt({ signalId: item.signalId, key: item.key });
     window.scrollTo?.({ top: 0 });
   };
 
@@ -489,17 +457,9 @@ export default function FieldConsole({ navigateTo, asu: sharedAsu }) {
             <p className="wb-body wb-measure">
               {engagedNames.length ? `Engaged: ${engagedNames.join(", ")}.` : ""}{engagedNames.length && detectedOnly.length ? " " : ""}{detectedOnly.length ? `Detected: ${detectedOnly.join(", ")}.` : ""}
             </p>
-            <div className="wb-actions">
-              <button type="button" className="wb-button" onClick={bankSession}>{bankedTo ? "Bank it again" : "Bank this session"}</button>
-              <button type="button" className="wb-link" onClick={downloadSession}>Download as Markdown</button>
+            <SessionActions onBank={bankSession} onDownload={downloadSession} bankedTo={bankedTo} navigateTo={navigateTo}>
               <button type="button" className="wb-link" onClick={copySynthesis}>{copied ? "Copied" : "Copy the synthesis"}</button>
-            </div>
-            {bankedTo ? (
-              <div className="wb-actions" role="status">
-                <p className="wb-body">Banked on the Workbench, under "{bankedTo}".</p>
-                <button type="button" className="wb-link" onClick={() => navigateTo?.("studio")}>Open the Workbench</button>
-              </div>
-            ) : null}
+            </SessionActions>
           </div>
         ) : null}
 
