@@ -1,5 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { studioGenerate } from "../lib/studio-generate";
+import { useSignalSession, sessionOutput } from "../lib/signal-session";
+import SessionActions from "./SessionActions";
 import "../styles/workbench.css";
 import "../styles/workshop-tools.css";
 
@@ -248,16 +250,13 @@ const MODE_LABELS = { manual: "Manual", "assisted-hybrid": "Assisted", desert: "
 const dateLabel = (iso) => new Date(iso).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" });
 const answeredCount = (card) => QUESTIONS.filter((q) => card[q.id]?.trim()).length;
 
-// What goes back onto a held signal when an orientation is finished.
+// What goes onto a held signal when an orientation is banked.
 function orientationReading(orientation) {
-  const fields = QUESTIONS
-    .filter((q) => orientation.card[q.id]?.trim())
-    .map((q) => ({ label: FIELD_LABELS[q.id], value: orientation.card[q.id].trim() }));
-  return {
-    kind: "orientation",
-    summary: `${fields.length} of 7 answered`,
-    detail: { mode: orientation.mode, fields },
-  };
+  return sessionOutput({
+    title: orientation.project || "Untitled",
+    fields: QUESTIONS.map((q) => ({ label: FIELD_LABELS[q.id], value: orientation.card[q.id] })),
+    extra: { mode: orientation.mode },
+  });
 }
 
 function QuestionField({ q, value, onChange }) {
@@ -289,7 +288,7 @@ function QuestionField({ q, value, onChange }) {
   );
 }
 
-function SummaryView({ orientation, onBack, onExportJSON, onExportMD }) {
+function SummaryView({ orientation, onBack, onExportJSON, onExportMD, onBank, bankedTo, navigateTo }) {
   const c = orientation.card;
   return (
     <div className="wb-tool-body">
@@ -310,10 +309,9 @@ function SummaryView({ orientation, onBack, onExportJSON, onExportMD }) {
         ))}
       </dl>
 
-      <div className="wb-actions">
+      <SessionActions onBank={onBank} onDownload={onExportMD} bankedTo={bankedTo} navigateTo={navigateTo}>
         <button type="button" className="wb-link" onClick={onExportJSON}>Download as JSON</button>
-        <button type="button" className="wb-link" onClick={onExportMD}>Download as Markdown</button>
-      </div>
+      </SessionActions>
     </div>
   );
 }
@@ -732,9 +730,10 @@ function DesertMode({ onComplete, projectName: initialProject }) {
 /* ── Main component ── */
 
 export default function BreakgroundCard({ navigateTo, asu }) {
-  // A signal carried in from the Workbench names the field, and the finished
-  // orientation goes back onto it as a reading.
-  const [carried] = useState(() => asu?.get_carried?.() || null);
+  // A signal carried in from the Workbench names the field. The finished
+  // orientation goes back onto it only if banked.
+  const session = useSignalSession(asu, "breakground", "Breakground");
+  const { carried, clearBanked } = session;
   const [orientations, setOrientations] = useState(loadOrientations);
   const [current, setCurrent] = useState(null);
   const [viewMode, setViewMode] = useState("card"); // "card" | "summary" | "library" | "hybrid" | "desert"
@@ -742,18 +741,15 @@ export default function BreakgroundCard({ navigateTo, asu }) {
   const [engagementMode, setEngagementMode] = useState("manual"); // "manual" | "hybrid" | "desert"
   const signalId = carried?.signalId || null;
 
-  useEffect(() => { asu?.clear_carried?.(); }, [asu]);
-
-  const sendBack = useCallback((o) => {
-    if (!o?.signalId) return;
-    asu?.attach_reading?.({
-      signalId: o.signalId,
+  const bankOrientation = (o) => {
+    if (!o || answeredCount(o.card) === 0) return;
+    session.bank({
+      title: o.project || "Untitled",
       key: `breakground:${o.id}`,
-      moduleKey: "breakground",
-      label: o.project || "",
+      signalId: o.signalId,
       output: orientationReading(o),
     });
-  }, [asu]);
+  };
 
   useEffect(() => {
     saveOrientations(orientations);
@@ -817,9 +813,8 @@ export default function BreakgroundCard({ navigateTo, asu }) {
       if (exists) return prev.map((o) => (o.id === completed.id ? completed : o));
       return [completed, ...prev];
     });
-    sendBack(completed);
     setViewMode("summary");
-  }, [current, sendBack]);
+  }, [current]);
 
   const handleHybridComplete = useCallback((card, conversationLog) => {
     const o = {
@@ -836,9 +831,8 @@ export default function BreakgroundCard({ navigateTo, asu }) {
     };
     setCurrent(o);
     setOrientations((prev) => [o, ...prev]);
-    sendBack(o);
     setViewMode("summary");
-  }, [projectName, signalId, sendBack]);
+  }, [projectName, signalId]);
 
   const handleDesertComplete = useCallback((card) => {
     const o = {
@@ -855,14 +849,14 @@ export default function BreakgroundCard({ navigateTo, asu }) {
     };
     setCurrent(o);
     setOrientations((prev) => [o, ...prev]);
-    sendBack(o);
     setViewMode("summary");
-  }, [projectName, signalId, sendBack]);
+  }, [projectName, signalId]);
 
   const loadOrientation = useCallback((o) => {
+    clearBanked();
     setCurrent(o);
     setViewMode("card");
-  }, []);
+  }, [clearBanked]);
 
   const deleteOrientation = useCallback((id) => {
     setOrientations((prev) => prev.filter((o) => o.id !== id));
@@ -978,6 +972,9 @@ export default function BreakgroundCard({ navigateTo, asu }) {
           onBack={() => setViewMode(current.mode === "assisted-hybrid" || current.mode === "desert" ? "library" : "card")}
           onExportJSON={() => exportJSON(current)}
           onExportMD={() => exportMarkdown(current)}
+          onBank={() => bankOrientation(current)}
+          bankedTo={session.bankedTo}
+          navigateTo={navigateTo}
         />
       )}
 

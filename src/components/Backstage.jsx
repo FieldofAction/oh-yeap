@@ -1,8 +1,10 @@
-import React, { useState, useRef, useMemo, useCallback } from "react";
-import { AGENTS, CORE_CYCLE } from "../data/agents";
+import React, { useState, useRef, useMemo, useCallback, useEffect } from "react";
+import { AGENTS, CORE_CYCLE, AGENT_ROLES, AGENT_RINGS } from "../data/agents";
 import { THEMES } from "../data/themes";
 import { PILLARS } from "../data/playbook-data";
 import { uid } from "../data/seed";
+import { useSignalSession, sessionOutput } from "../lib/signal-session";
+import SessionActions from "./SessionActions";
 import "../styles/workbench.css";
 import "../styles/workshop-tools.css";
 
@@ -68,7 +70,7 @@ function PillarDiagnostic() {
         {PILLARS.map(p => (
           <div key={p.key} className="tl-slider">
             <label htmlFor={`bs-diag-${p.key}`} className="wb-name">{p.label}</label>
-            <input id={`bs-diag-${p.key}`} type="range" className="tl-range" min="0" max="100" value={vals[p.key]} onChange={e => set(p.key, e.target.value)} />
+            <input id={`bs-diag-${p.key}`} type="range" className="tl-range" style={{ "--p": vals[p.key] }} min="0" max="100" value={vals[p.key]} onChange={e => set(p.key, e.target.value)} />
             <output htmlFor={`bs-diag-${p.key}`} className="wb-body">{vals[p.key]}</output>
           </div>
         ))}
@@ -352,6 +354,16 @@ RULES: Build layer by layer. No redundancy. Prefer clarity over volume. Stop if 
     const n = asu.add_idea(t, d, tg); setAid(n.id);
   }, [asu]);
 
+  // A signal carried in from the Workbench becomes the idea being run, and a
+  // banked run goes back onto it.
+  const session = useSignalSession(asu, "backstage", "Backstage");
+  useEffect(() => {
+    const text = session.carried?.text;
+    if (!text) return;
+    const existing = ideas.find(i => i.title === text);
+    if (existing) setAid(existing.id); else addIdea(text, "", []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const callAgent = useCallback(async (agent, data, seqCtx) => {
     const liveAsu = asuRef.current;
     const pbCtx = liveAsu.build_agent_context();
@@ -476,13 +488,25 @@ Respond with ONLY the synthesis text, no preamble.`;
     document.body.removeChild(a);
     URL.revokeObjectURL(u);
   };
+  const sessionTitle = idea?.title || "Backstage run";
+  const bankSession = () => session.bank({
+    title: session.carried?.text || sessionTitle,
+    key: `backstage:${session.carried?.signalId || "own"}:${idea?.id}`,
+    output: sessionOutput({
+      title: sessionTitle,
+      fields: [
+        { label: "Idea", value: [idea?.title, idea?.desc].filter(Boolean).join(". ") },
+        ...lastRun.selection.map((ak) => ({ label: AGENTS.find(a => a.key === ak)?.name || ak, value: lastRun.outputs[ak]?.expansion })),
+      ],
+      synthesis: bsSynthesis && !bsSynthesis.startsWith("Synthesis unavailable") ? bsSynthesis : "",
+    }),
+  });
   const aom = asu.get_art_of_model();
   const aomAnswered = Object.values(aom.responses[aom.activeVersion] || {}).filter(v => v?.trim()).length;
   const shapedBy = [
     (pbProject.name || pbEmotion) ? `Playbook${pbProject.name ? ` (${pbProject.name})` : ""}${pbEmotion ? `, ${pbEmotion}` : ""}, ${asu.get_dominant_pillar().label} leading` : null,
     aomAnswered > 0 ? `Art of Model${aom.synthesis[aom.activeVersion] ? ", with its synthesis" : ""}` : null,
   ].filter(Boolean);
-  const sequenceNames = pipeMode === "free" ? [] : (activePipe.sequence || []).map(k => AGENTS.find(a => a.key === k)?.name).filter(Boolean);
   const STATUS_WORDS = { live: "Live", wip: "In progress", draft: "Draft", seed: "Seed", archived: "Archived" };
 
   return (
@@ -519,17 +543,43 @@ Respond with ONLY the synthesis text, no preamble.`;
           </div>
 
           {pipeMode === "free" ? (
-            <div className="wb-block">
-              <p className="wb-name">Agents</p>
-              <div className="tl-chips">
-                {AGENTS.map(a => (
-                  <button key={a.key} type="button" className="tl-chip" aria-pressed={!!am[a.key]} onClick={() => asu.set_agent_mask({ ...am, [a.key]: !am[a.key] })}>{a.name}</button>
-                ))}
-              </div>
+            <div className="tl-roster">
+              {AGENT_RINGS.map(r => {
+                const members = AGENTS.filter(a => a.ring === r.ring);
+                const allOn = members.every(a => am[a.key]);
+                return (
+                  <fieldset key={r.ring} className={`tl-ring${members.length > 4 ? " tl-ring-wide" : ""}`}>
+                    <legend className="tl-ring-head">
+                      <span className="wb-name">{r.name}</span>
+                      <span className="wb-body">{r.line}</span>
+                    </legend>
+                    <div className="tl-ring-agents">
+                      {members.map(a => (
+                        <label key={a.key} className="tl-agent">
+                          <input type="checkbox" checked={!!am[a.key]} onChange={() => asu.set_agent_mask({ ...am, [a.key]: !am[a.key] })} />
+                          <span className="tl-agent-name">{a.name}</span>
+                          <span className="tl-agent-role">{AGENT_ROLES[a.key]}</span>
+                        </label>
+                      ))}
+                    </div>
+                    <button type="button" className="wb-link tl-ring-all" onClick={() => asu.set_agent_mask({ ...am, ...Object.fromEntries(members.map(a => [a.key, !allOn])) })}>
+                      {allOn ? `Leave out the ${r.name.toLowerCase()}` : `Use all of the ${r.name.toLowerCase()}`}
+                    </button>
+                  </fieldset>
+                );
+              })}
             </div>
           ) : (
             <div className="wb-block">
-              <p className="wb-body wb-measure">The sequence sets the agents: {sequenceNames.join(", then ")}.</p>
+              <p className="wb-body wb-measure">The sequence sets the agents and the order they speak in.</p>
+              <ol className="tl-roster tl-order">
+                {(activePipe.sequence || []).map(k => AGENTS.find(a => a.key === k)).filter(Boolean).map(a => (
+                  <li key={a.key} className="tl-agent">
+                    <span className="tl-agent-name">{a.name}</span>
+                    <span className="tl-agent-role">{AGENT_ROLES[a.key]}</span>
+                  </li>
+                ))}
+              </ol>
               <div className="wb-actions">
                 <button type="button" className="wb-link" aria-expanded={showPrompt} onClick={() => { setShowPrompt(p => !p); setPromptCopied(false) }}>{showPrompt ? "Hide the prompt" : "Show the prompt"}</button>
                 <button type="button" className="wb-link" onClick={() => { navigator.clipboard?.writeText(SEQ_PROMPTS[pipeMode]); setPromptCopied(true); setTimeout(() => setPromptCopied(false), 2000) }}>{promptCopied ? "Copied" : "Copy the prompt"}</button>
@@ -592,10 +642,9 @@ Respond with ONLY the synthesis text, no preamble.`;
                 </>
               ) : null}
             </div>
-            <div className="wb-actions">
+            <SessionActions onBank={bankSession} onDownload={downloadMarkdown} bankedTo={session.bankedTo} navigateTo={navigateTo}>
               <button type="button" className="wb-link" onClick={() => navigator.clipboard?.writeText(mkMd(idea, lastRun))}>Copy the run as Markdown</button>
-              <button type="button" className="wb-link" onClick={downloadMarkdown}>Download the run as Markdown</button>
-            </div>
+            </SessionActions>
           </div>
         ) : null}
 
