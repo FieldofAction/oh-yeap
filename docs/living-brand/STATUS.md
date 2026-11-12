@@ -36,8 +36,8 @@ agency lead with two competing clients.
 owner said the information needed rebalancing. It takes one thing from each
 of four references:
 
-- International Typographic Style: the site's two grotesques, two weights
-  and five sizes, flush left; from laptop width a section's heading hangs in
+- International Typographic Style: one grotesque, two weights and five
+  sizes, flush left; from laptop width a section's heading hangs in
   a narrow column beside its content.
 - Apple's Human Interface Guidelines: text in rows, a row kept short with
   its detail one step away, a sheet for one piece. Read at source.
@@ -48,6 +48,18 @@ of four references:
 - Apple's pages: one idea to a section. From memory; apple.com and Wikipedia
   could not be reached, so this and the International Style are not quoted
   from a source.
+
+The house look was then set on the principles of Lexington Themes, read at
+lexingtonthemes.com (its own site, theme pages and documentation; its live
+theme demos could not be reached): a warm grey chrome around one off-white
+rounded sheet, with things told apart by tone; one typeface, the site's
+Hanken Grotesk, in weights 400 and 500 at compact sizes; ink for what a
+thing is and a warm grey for what follows; 8px-corner controls with only the
+one action that matters filled in ink. Enter became a first screen: the
+brand and engagement as headline, its purpose, the step to Orient beside
+them, and the material to start from as captioned pictures. Lexington's grey
+text was darkened to meet 4.5 to 1, a dark theme was added, and its badges,
+breadcrumbs, slash descriptors and arrows were not taken.
 
 What that means on the page: an entry is a ruled row that is its own
 sentence when closed and opens in place; entries are read under who has to
@@ -65,8 +77,8 @@ arrow on a link.
 
 On the fictional brand the longest stage, Interpret, went from 6.0 screens
 to 2.8 on a laptop and from 9.7 to 3.8 on a phone, with no information
-removed. Investigate and Transfer are slightly longer on a laptop than they
-were (3.5 screens against 3.2, and 1.4 against 1.2).
+removed. Investigate and Transfer are about as long on a laptop as they were
+(3.2 screens against 3.2, and 1.3 against 1.2).
 
 **The connector** (`living-brand/`). A local MCP server with 27 tools, a
 skill that tells an assistant how to run an engagement, and a plugin manifest
@@ -187,6 +199,17 @@ repository and had to prove a finding by running it:
     These last fixes were checked by the automated suites and scripted
     browser runs, not by a further independent round.
 
+12. **The Lexington look, reviewed**: one reviewer held it to Lexington at
+    source and to the house rule, another checked access. Every text colour
+    met contrast in both themes. They found: a grey panel the same tone as
+    the chrome, so the first screen read grey, white, grey; a sentence under
+    the pictures that failed the deletion test; a selected filter filled in
+    ink like the one primary action; quiet buttons with no edge; a current
+    stage marked below 3 to 1; each picture announced twice; and one section
+    that scrolled sideways with text enlarged on a phone. All were fixed and
+    checked by the automated suites and scripted browser runs, not by a
+    further independent round.
+
 The findings that changed the product most:
 
 - The picture standing in for a brand's mark was a ring with a cross through
@@ -301,8 +324,6 @@ The findings that changed the product most:
 - Rows show a small drawn mark to say they open. It is not a text arrow on a
   link, which the house rule forbids, but it is the nearest thing on the page
   to one.
-- Headings and text are set in two type families, the site's own. The
-  International Style would use one.
 - On Orient and Interpret the headline and the paragraph under it take about
   half of the first screen on a laptop and more on a phone. The first entry
   that waits is still on the first screen.
