@@ -75,7 +75,7 @@
 
 * { box-sizing: border-box; }
 html, body { margin: 0; background: var(--lb-chrome); color: var(--lb-fg); }
-body { font-family: var(--lb-sans); font-size: var(--lb-t-body); font-weight: 400; line-height: 1.6; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+body { font-family: var(--lb-sans); font-size: var(--lb-t-body); font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 strong, b, th { font-weight: var(--lb-w-strong); }
 button, input, select, textarea { font: inherit; color: inherit; }
 a { color: inherit; }
@@ -110,17 +110,18 @@ p:last-child { margin-bottom: 0; }
 .lb-form textarea { min-height: 5rem; }
 .lb-viewer select { max-width: min(70vw, 22rem); }
 /* The switches in the bar are quiet controls at interface size. A phone keeps 16px, so a tap does not zoom the page. */
-@media (pointer: fine) { .lb-top .lb-viewer select { font-size: var(--lb-t-support); min-height: 40px; padding: .4rem .65rem; border-color: var(--lb-surface-2); } }
+@media (pointer: fine) { .lb-top .lb-viewer select { font-size: var(--lb-t-support); min-height: 40px; padding: .4rem .65rem; } }
 
-.lb-shell { display: grid; grid-template-columns: var(--lb-rail) minmax(0, 1fr); gap: var(--lb-5); padding: 0 var(--lb-2) var(--lb-2) var(--lb-gutter); max-width: 96rem; margin: 0 auto; }
-.lb-stages { position: sticky; top: calc(var(--lb-top-h, 3.6rem) + var(--lb-4)); align-self: start; display: flex; flex-direction: column; gap: 2px; margin-top: var(--lb-5); font-size: var(--lb-t-support); max-height: calc(100vh - var(--lb-top-h, 3.6rem) - var(--lb-6)); overflow-y: auto; }
+.lb-shell { display: grid; grid-template-columns: var(--lb-rail) minmax(0, 1fr); gap: var(--lb-5); padding: 0 var(--lb-gutter) var(--lb-2); max-width: 96rem; margin: 0 auto; }
+.lb-stages { position: sticky; top: calc(var(--lb-top-h, 3.6rem) + var(--lb-4)); align-self: start; display: flex; flex-direction: column; gap: 2px; margin-top: var(--lb-5); padding: 4px; font-size: var(--lb-t-support); max-height: calc(100vh - var(--lb-top-h, 3.6rem) - var(--lb-6)); overflow-y: auto; }
 .lb-stages button {
   text-align: left; background: none; border: 0; padding: .5rem .75rem; min-height: 40px; border-radius: var(--lb-radius-s); cursor: pointer; color: var(--lb-muted);
 }
 @media (hover: hover) { .lb-stages button:hover { color: var(--lb-fg); } }
 @media (pointer: coarse) { .lb-stages button { min-height: 44px; } }
 .lb-stages button { border: 1px solid transparent; }
-.lb-stages button.is-on { background: var(--lb-surface-2); color: var(--lb-fg); font-weight: var(--lb-w-strong); }
+/* The current stage is a sheet-coloured pill with a boundary that measures 3 to 1 on the chrome. */
+.lb-stages button.is-on { background: var(--lb-bg); border-color: var(--lb-field); color: var(--lb-fg); font-weight: var(--lb-w-strong); }
 
 /* The work sits on one sheet, set in from the chrome around it. */
 .lb-main { background: var(--lb-bg); border-radius: var(--lb-radius); padding: var(--lb-7) clamp(var(--lb-5), 4vw, var(--lb-8)) var(--lb-9); min-width: 0; min-height: calc(100vh - var(--lb-top-h, 3.6rem) - var(--lb-2)); container-type: inline-size; }
@@ -245,30 +246,28 @@ strong > .lb-cite { font-size: inherit; font-weight: inherit; }
 /* Actions: one filled button in a view; the rest are quiet. */
 .lb-actions { display: flex; flex-wrap: wrap; gap: var(--lb-2); margin-top: var(--lb-4); align-items: center; }
 .lb-actions button, .lb-link {
-  background: var(--lb-surface); border: 1px solid var(--lb-surface); border-radius: var(--lb-radius-s); padding: .5rem 1rem; min-height: 44px; cursor: pointer; font-weight: var(--lb-w-strong); font-size: var(--lb-t-support);
+  background: var(--lb-bg); border: 1px solid var(--lb-field); border-radius: var(--lb-radius-s); padding: .5rem 1rem; min-height: 40px; line-height: 1.43; cursor: pointer; font-weight: var(--lb-w-strong); font-size: var(--lb-t-support);
 }
-.lb-actions button:hover, .lb-link:hover { background: var(--lb-surface-2); border-color: var(--lb-surface-2); }
-/* On a grey surface a quiet control takes the sheet's colour, so it still reads as a control. */
-:is(.lb-row > details[open], .lb-drawer .lb-form, .lb-hero, .lb-nest-box) :is(.lb-actions button, .lb-link):not(.lb-primary) { background: var(--lb-bg); border-color: var(--lb-bg); }
-:is(.lb-row > details[open], .lb-drawer .lb-form, .lb-hero, .lb-nest-box) :is(.lb-actions button, .lb-link):not(.lb-primary):hover { border-color: var(--lb-field); }
+.lb-actions button:hover, .lb-link:hover { background: var(--lb-surface); border-color: var(--lb-fg); }
+@media (pointer: coarse) { .lb-actions button, .lb-link { min-height: 44px; } }
 .lb-actions .lb-primary { background: var(--lb-accent); color: var(--lb-on-accent); border-color: var(--lb-accent); }
 .lb-actions .lb-primary:hover { opacity: .88; }
 .lb-link { padding: .3rem .75rem; min-height: 36px; }
 
 /* Where the engagement sits ------------------------------------------------ */
-.lb-nest { display: grid; gap: var(--lb-4); grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); }
+.lb-nest { display: grid; gap: var(--lb-4); grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr)); }
 .lb-nest-box { border-radius: var(--lb-radius); padding: var(--lb-5); background: var(--lb-surface); }
 .lb-nest-box h3 { margin-top: 0; }
 .lb-nest-box p { margin: var(--lb-1) 0 0; color: var(--lb-muted); font-size: var(--lb-t-support); }
-.lb-nest-row { display: grid; gap: var(--lb-3); margin-top: var(--lb-4); grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); }
+.lb-nest-row { display: grid; gap: var(--lb-3); margin-top: var(--lb-4); grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr)); }
 .lb-nest-row .lb-nest-box { background: var(--lb-bg); padding: var(--lb-4); }
 .lb-nest-co { box-shadow: inset 0 0 0 1px var(--lb-fg); background: var(--lb-bg); }
 
 /* The work ------------------------------------------------------------------ */
 .lb-search { display: grid; gap: var(--lb-2); margin: 0 0 var(--lb-5); max-width: 30rem; }
 .lb-search span { color: var(--lb-muted); font-size: var(--lb-t-support); }
-.lb-grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(12.5rem, 1fr)); gap: var(--lb-6) var(--lb-5); }
-.lb-card { display: grid; gap: var(--lb-1); width: 100%; text-align: left; background: none; border: 0; padding: 0; cursor: pointer; }
+.lb-grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); gap: var(--lb-6) var(--lb-5); }
+.lb-card { display: grid; gap: var(--lb-1); width: 100%; text-align: left; background: none; border: 1px solid transparent; padding: 0; cursor: pointer; }
 .lb-card:hover .lb-plate, .lb-card.is-open .lb-plate { outline: 2px solid var(--lb-fg); outline-offset: 2px; }
 .lb-card-title { font-weight: var(--lb-w-strong); margin-top: var(--lb-2); }
 .lb-card-ctx { color: var(--lb-muted); font-size: var(--lb-t-support); }
@@ -351,6 +350,8 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .875rem; }
     border-bottom: 1px solid var(--lb-line); scrollbar-width: none;
   }
   .lb-stages::-webkit-scrollbar { display: none; }
+  /* A stage reached by keyboard is scrolled clear of the fade. */
+  .lb-stages { scroll-padding-inline: var(--lb-gutter) 3.5rem; }
   /* The strip runs off the right edge. A fade in the page colour stays at that edge to say there is more, and is the room the last stage needs to clear it. */
   .lb-stages::after { content: ""; flex: 0 0 2.5rem; position: sticky; right: calc(-1 * var(--lb-gutter)); align-self: stretch; margin-right: calc(-1 * var(--lb-gutter)); background: linear-gradient(90deg, transparent, var(--lb-chrome) 75%); pointer-events: none; }
   .lb-stages button { white-space: nowrap; padding: .5rem .9rem; }
@@ -377,7 +378,7 @@ code { font-family: ui-monospace, Menlo, monospace; font-size: .875rem; }
 /* Parts added with the rebalanced stages ------------------------------------ */
 .lb-lead { max-width: var(--lb-measure); margin: 0 0 var(--lb-2); }
 .lb-next { margin-top: var(--lb-7); }
-article:has(.lb-form .lb-primary) .lb-next .lb-primary { background: var(--lb-surface); color: var(--lb-fg); border-color: var(--lb-surface); }
+article:has(.lb-form .lb-primary) .lb-next .lb-primary { background: var(--lb-bg); color: var(--lb-fg); border-color: var(--lb-field); }
 
 /* A section whose heading opens it. */
 .lb-closed > summary { list-style: none; display: grid; grid-template-columns: minmax(0, 1fr) 1rem; align-items: center; gap: var(--lb-4); cursor: pointer; margin: 0; min-height: 44px; padding-right: var(--lb-2); }
@@ -398,9 +399,10 @@ article:has(.lb-form .lb-primary) .lb-next .lb-primary { background: var(--lb-su
 .lb-find { display: grid; gap: var(--lb-4); margin: 0 0 var(--lb-5); }
 .lb-find .lb-search { margin: 0; }
 .lb-chips { display: flex; flex-wrap: wrap; gap: var(--lb-2); }
-.lb-chips button { background: var(--lb-surface); border: 1px solid var(--lb-surface); border-radius: var(--lb-radius-s); padding: .5rem .9rem; min-height: 44px; cursor: pointer; color: var(--lb-muted); font-size: var(--lb-t-support); }
+.lb-chips button { background: var(--lb-bg); border: 1px solid var(--lb-field); border-radius: var(--lb-radius-s); padding: .5rem .9rem; min-height: 44px; cursor: pointer; color: var(--lb-muted); font-size: var(--lb-t-support); }
 .lb-chips button:hover { color: var(--lb-fg); }
-.lb-chips button[aria-pressed="true"] { background: var(--lb-fg); border-color: var(--lb-fg); color: var(--lb-bg); font-weight: var(--lb-w-strong); }
+/* Selected is ink text on a filled pill with an ink edge, as the current stage is; a filled ink button stays the one action that matters. */
+.lb-chips button[aria-pressed="true"] { background: var(--lb-surface-2); border-color: var(--lb-fg); color: var(--lb-fg); font-weight: var(--lb-w-strong); }
 @media (forced-colors: active) { .lb-chips button[aria-pressed="true"], .lb-stages button.is-on { background: Highlight; color: HighlightText; forced-color-adjust: none; } }
 
 /* One piece: a small picture beside its name, so what it may do comes on the first screen. */
@@ -460,8 +462,8 @@ article:has(.lb-form .lb-primary) .lb-next .lb-primary { background: var(--lb-su
 [aria-invalid="true"] { border-color: var(--lb-no) !important; }
 .lb-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 /* In dark the drawn stand-ins are held back, so they are not the brightest thing on the page. */
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lb-plate { filter: brightness(.62); } }
-:root[data-theme="dark"] .lb-plate { filter: brightness(.62); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lb-plate { filter: brightness(.85); } }
+:root[data-theme="dark"] .lb-plate { filter: brightness(.85); }
 
 /* In a very narrow sheet (a phone with text enlarged) the picture goes above the name, so the name keeps whole words. */
 .lb-drawer { container-type: inline-size; }
@@ -473,7 +475,8 @@ article:has(.lb-form .lb-primary) .lb-next .lb-primary { background: var(--lb-su
 
 /* The first screen: what this is, in a headline and a sentence, with the one action beside it,
    and the material to start from carrying the rest. */
-.lb-hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--lb-6); background: var(--lb-surface); border-radius: var(--lb-radius); padding: var(--lb-6); }
+/* It sits straight on the sheet: two grounds, the chrome and the sheet, and no third. */
+.lb-hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--lb-6); padding: 0 0 var(--lb-3); }
 .lb-hero h1 { max-width: 18ch; }
 .lb-hero .lb-deck { margin-top: var(--lb-3); max-width: 32rem; }
 .lb-hero .lb-actions { margin-top: var(--lb-5); }
@@ -481,16 +484,15 @@ article:has(.lb-form .lb-primary) .lb-next .lb-primary { background: var(--lb-su
 .lb-hero-work ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: var(--lb-4) var(--lb-3); }
 .lb-hero-work .lb-card { gap: var(--lb-2); }
 .lb-hero-work .lb-card-title { margin-top: 0; font-weight: 400; }
-.lb-hero-work .lb-hero-note { margin: var(--lb-3) 0 0; color: var(--lb-muted); font-size: var(--lb-t-support); }
 @container (min-width: 46rem) {
-  .lb-hero { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; column-gap: var(--lb-7); padding: var(--lb-7) var(--lb-6) var(--lb-6) var(--lb-7); }
+  .lb-hero { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; column-gap: var(--lb-7); }
   .lb-hero-work ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   /* Five or six pieces sit in three columns, so the first screen keeps its action in view. */
   .lb-hero-work.is-many ul { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 /* On a phone the first screen sits straight on the page, as the rest of it does. */
 @media (max-width: 47.5em) {
-  .lb-hero { background: none; padding: 0; border-radius: 0; gap: var(--lb-5); }
+  .lb-hero { gap: var(--lb-5); }
   .lb-hero-work ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .lb-hero-work .lb-card { display: grid; grid-template-columns: minmax(0, 1fr); padding: 0; }
   .lb-hero-work .lb-card .lb-plate { grid-row: auto; }

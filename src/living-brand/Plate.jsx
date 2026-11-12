@@ -22,7 +22,8 @@ const hills = (c, n, seed) => Array.from({ length: n }, (_, k) => {
   return <path key={k} d={d} fill={c[Math.min(k + 1, c.length - 2)]} opacity={0.96} />;
 });
 
-export default function Plate({ item, large = false }) {
+// Where a caption already names the piece, the picture is hidden from screen readers so the name is not said twice.
+export default function Plate({ item, large = false, captioned = false }) {
   const v = item.visual || {};
   const c = (Array.isArray(v.palette) && v.palette.length === 5) ? v.palette : (TONES[v.tone] || TONES.paper);
   const accent = v.accent || '#c9735a';
@@ -146,7 +147,7 @@ export default function Plate({ item, large = false }) {
       </>);
   }
   return (
-    <svg className={large ? 'lb-plate lb-plate-large' : 'lb-plate'} viewBox="0 0 400 260" role="img" aria-label={`Drawn stand-in for ${item.title}`} preserveAspectRatio="xMidYMid slice">
+    <svg className={large ? 'lb-plate lb-plate-large' : 'lb-plate'} viewBox="0 0 400 260" {...(captioned ? { 'aria-hidden': true } : { role: 'img', 'aria-label': `Drawn stand-in for ${item.title}` })} preserveAspectRatio="xMidYMid slice">
       {body}
     </svg>
   );

@@ -466,7 +466,8 @@ function Enter({ catalog, asOf, state, brand, items, act, actor, openId, setOpen
     <article>
       <header className="lb-hero">
         <div className="lb-hero-text">
-          <h1>{/[.?!]$/.test(title) ? title : `${title}.`}</h1>
+          {/* The first screen says whose brand this is. */}
+          <h1>{title.toLowerCase().includes(String(brand.name).toLowerCase()) ? title : `${brand.name}: ${title}`}</h1>
           <p className="lb-deck">{e.purpose}</p>
           <NextStep stage="enter" go={go} />
         </div>
@@ -476,12 +477,11 @@ function Enter({ catalog, asOf, state, brand, items, act, actor, openId, setOpen
             <ul>{materials.map(id => (
               <li key={id}>
                 <button className={openId === id ? 'lb-card is-open' : 'lb-card'} onClick={() => setOpenId(id)}>
-                  <Plate item={items[id]} />
+                  <Plate item={items[id]} captioned />
                   <span className="lb-card-title">{items[id].title}</span>
                 </button>
               </li>
             ))}</ul>
-            <p className="lb-hero-note">The pictures are drawn stand-ins, not the work.</p>
           </div>
         )}
       </header>
@@ -722,7 +722,7 @@ function Investigate({ asOf, state, brand, openId, setOpenId, go, stance }) {
         {results.map(({ item, standing }) => (
           <li key={item.id}>
             <button className={openId === item.id ? 'lb-card is-open' : 'lb-card'} onClick={() => setOpenId(item.id)}>
-              <Plate item={item} />
+              <Plate item={item} captioned />
               <span className="lb-card-title">{item.title}</span>
               <span className="lb-card-ctx">{[item.workType, item.period?.from?.slice(0, 4)].filter(Boolean).join(', ')}</span>
               {standing.asked && <span className="lb-card-ctx">{standing.reasons.relevant[0]}</span>}
