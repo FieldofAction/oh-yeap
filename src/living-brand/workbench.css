@@ -1,226 +1,500 @@
-/* Living Brand workbench. Text follows CLAUDE.md: headline, body, and
- * functional text only. No small uppercase, no mono labels, no arrows. */
+/* Living Brand workbench.
+ *
+ * Text follows CLAUDE.md: headline, body, and functional text only. No small
+ * uppercase, no mono labels, no arrows.
+ *
+ * The house look follows Lexington Themes, read at lexingtonthemes.com:
+ * - A quiet warm ground. The chrome (header and stage list) sits on a warm
+ *   grey; the work sits on one sheet in an off-white, rounded, set in from the
+ *   edge, with no shadow. Things are told apart by tone, not by lines.
+ * - One neutral grotesque in two weights, 400 and 500, at compact sizes:
+ *   14px for the interface, 16px for reading, nothing shouted. Headings are
+ *   set close, with negative tracking.
+ * - Two tones of ink. Ink says what a thing is; a warm grey carries what
+ *   follows it. The current item in a list is ink on a filled pill; the rest
+ *   are grey.
+ * - Small rounded controls, 8px corners. The one action that matters is
+ *   filled in ink; the others sit on the grey.
+ * - A first screen that says what this is in a headline and a sentence, puts
+ *   the one action beside it, and lets the work carry the rest.
+ * Lexington's muted grey is darkened here to meet 4.5 to 1, and its grounds
+ * are given a dark theme it does not have. Nothing the house rule forbids was
+ * taken: no badges, no breadcrumb, no slash descriptor lines, no arrows.
+ *
+ * Kept from the earlier references: section headings hang in a column beside
+ * their content (International Typographic Style, which Lexington's theme
+ * pages also do); text in rows with the detail one step away and 44px targets
+ * on a phone (Human Interface Guidelines); an 8px spacing grid and one
+ * prominent action in a view (Material Design).
+ */
 :root {
-  --lb-bg: #f5f1ea;
-  --lb-surface: #fffdf8;
-  --lb-fg: #23201b;
-  --lb-muted: #625a4e;
-  --lb-line: #ddd4c4;
-  --lb-field: #8a8172;
-  --lb-accent: #9c4a31;
-  --lb-yes: #2f6a4f;
-  --lb-no: #9a3b2b;
-  --lb-wait: #8a6514;
-  --lb-serif: 'Newsreader', Georgia, serif;
-  --lb-sans: 'Hanken Grotesk', system-ui, sans-serif;
+  --lb-chrome: #eceae6;
+  --lb-bg: #f8f7f4;
+  --lb-surface: #eceae6;
+  --lb-surface-2: #dedcd7;
+  --lb-fg: #1a1815;
+  --lb-muted: #66635e;
+  --lb-line: #dedcd7;
+  --lb-field: #83807b;
+  --lb-accent: #1a1815;
+  --lb-on-accent: #f8f7f4;
+  --lb-yes: #1c7046;
+  --lb-no: #b93227;
+  --lb-wait: #8a5d06;
+  --lb-sans: 'Hanken Grotesk', 'Helvetica Neue', system-ui, sans-serif;
+  --lb-display: var(--lb-sans);
+  /* An 8px grid, with 4px for the smallest steps. */
+  --lb-1: .25rem; --lb-2: .5rem; --lb-3: .75rem; --lb-4: 1rem; --lb-5: 1.5rem; --lb-6: 2rem; --lb-7: 3rem; --lb-8: 4rem; --lb-9: 6rem;
+  /* Five sizes of text. Nothing on the page is smaller than the support size. */
+  --lb-t-display: clamp(1.875rem, 1.6rem + 1vw, 2.25rem);
+  --lb-t-title: clamp(1.25rem, 1.15rem + .4vw, 1.5rem);
+  --lb-t-deck: clamp(1.125rem, 1.05rem + .3vw, 1.25rem);
+  --lb-t-body: 1rem;
+  --lb-t-support: .875rem;
+  --lb-w-strong: 500;
+  --lb-radius: 16px;
+  --lb-radius-s: 8px;
+  --lb-gutter: clamp(1rem, 3vw, 2.5rem);
+  --lb-rail: min(12rem, 18vw);
+  --lb-hang: 13rem;
+  --lb-hang-gap: 2.5rem;
+  /* Running text is held to about 65 characters. */
+  --lb-measure: 36rem;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --lb-bg: #16140f; --lb-surface: #1f1c16; --lb-fg: #eee7da; --lb-muted: #b2a892; --lb-line: #3a352b; --lb-field: #857b66;
-    --lb-accent: #e08a68; --lb-yes: #7cc4a0; --lb-no: #ef8d79; --lb-wait: #e2bb62; color-scheme: dark;
+    --lb-chrome: #0b0a08; --lb-bg: #151311; --lb-surface: #201e1b; --lb-surface-2: #2c2a26; --lb-fg: #efeeeb; --lb-muted: #a7a49f; --lb-line: #33302d; --lb-field: #74716c;
+    --lb-accent: #efeeeb; --lb-on-accent: #151311; --lb-yes: #6fd3a0; --lb-no: #ff9483; --lb-wait: #e6bd5a; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --lb-bg: #16140f; --lb-surface: #1f1c16; --lb-fg: #eee7da; --lb-muted: #b2a892; --lb-line: #3a352b; --lb-field: #857b66;
-  --lb-accent: #e08a68; --lb-yes: #7cc4a0; --lb-no: #ef8d79; --lb-wait: #e2bb62; color-scheme: dark;
+  --lb-chrome: #0b0a08; --lb-bg: #151311; --lb-surface: #201e1b; --lb-surface-2: #2c2a26; --lb-fg: #efeeeb; --lb-muted: #a7a49f; --lb-line: #33302d; --lb-field: #74716c;
+  --lb-accent: #efeeeb; --lb-on-accent: #151311; --lb-yes: #6fd3a0; --lb-no: #ff9483; --lb-wait: #e6bd5a; color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; background: var(--lb-bg); color: var(--lb-fg); }
-body { font-family: var(--lb-sans); font-size: 1rem; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+html, body { margin: 0; background: var(--lb-chrome); color: var(--lb-fg); }
+body { font-family: var(--lb-sans); font-size: var(--lb-t-body); font-weight: 400; line-height: 1.5; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+strong, b, th { font-weight: var(--lb-w-strong); }
 button, input, select, textarea { font: inherit; color: inherit; }
 a { color: inherit; }
+:focus-visible { outline: 2px solid var(--lb-fg); outline-offset: 2px; border-radius: 4px; }
+p { margin: 0 0 var(--lb-3); }
+p:last-child { margin-bottom: 0; }
 
+/* Frame ------------------------------------------------------------------ */
 .lb { min-height: 100vh; }
 .lb-top {
-  display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;
-  padding: .875rem clamp(1rem, 3vw, 2rem); border-bottom: 1px solid var(--lb-line); background: var(--lb-bg);
+  display: flex; justify-content: space-between; align-items: center; gap: var(--lb-2) var(--lb-4); flex-wrap: wrap;
+  padding: var(--lb-2) var(--lb-gutter);
+  background: var(--lb-chrome);
   position: sticky; top: 0; z-index: 5;
 }
-.lb-brandline { display: flex; flex-wrap: wrap; align-items: baseline; gap: .125rem 1rem; }
-.lb-study { color: var(--lb-muted); font-size: .9375rem; }
-.lb-home { text-decoration: underline; text-underline-offset: .2em; font-size: .9375rem; }
-.lb-home-plain { text-decoration: none; font-weight: 600; }
-.lb-controls { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; align-items: center; }
-.lb-basis { margin: 0; padding: .75rem clamp(1rem, 3vw, 2rem); background: var(--lb-surface); border-bottom: 1px solid var(--lb-line); max-width: none; }
+.lb-brandline { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--lb-1) var(--lb-4); }
+.lb-study { color: var(--lb-muted); font-size: var(--lb-t-support); }
+.lb-home { text-decoration: underline; text-underline-offset: .2em; font-size: var(--lb-t-support); }
+.lb-home-plain { text-decoration: none; font-weight: var(--lb-w-strong); }
+@media (pointer: coarse) { a.lb-home { display: inline-flex; align-items: center; min-height: 44px; } }
+.lb-controls { display: flex; flex-wrap: wrap; gap: var(--lb-2) var(--lb-5); align-items: center; }
+.lb-basis { margin: 0 var(--lb-2) var(--lb-2); padding: var(--lb-3) var(--lb-gutter); background: var(--lb-bg); border-radius: var(--lb-radius); max-width: none; font-size: var(--lb-t-support); }
 .lb-basis p { margin: 0; max-width: 60rem; }
-.lb-basis .lb-actions { margin-top: .5rem; }
-.lb-basis .lb-section { margin-top: 1rem; }
-.lb-viewer { display: flex; align-items: center; gap: .5rem; font-size: .9375rem; color: var(--lb-muted); }
+.lb-basis .lb-actions { margin-top: var(--lb-2); }
+.lb-basis .lb-section { margin-top: var(--lb-4); }
+.lb-viewer { display: flex; align-items: center; gap: var(--lb-2); font-size: var(--lb-t-support); color: var(--lb-muted); }
 .lb-viewer select, .lb-form select, .lb-form input, .lb-form textarea, .lb-search input {
-  background: var(--lb-surface); border: 1px solid var(--lb-field); border-radius: 6px; padding: .45rem .6rem; color: var(--lb-fg);
+  background: var(--lb-bg); border: 1px solid var(--lb-field); font-size: var(--lb-t-body); border-radius: var(--lb-radius-s); padding: .55rem .75rem; color: var(--lb-fg); min-height: 44px; min-width: 0; max-width: 100%;
 }
+.lb-form :is(input:not([type=checkbox]), select, textarea), .lb-search input { width: 100%; }
+::placeholder { color: var(--lb-muted); opacity: 1; }
+.lb-form textarea { min-height: 5rem; }
 .lb-viewer select { max-width: min(70vw, 22rem); }
+/* The switches in the bar are quiet controls at interface size. A phone keeps 16px, so a tap does not zoom the page. */
+@media (pointer: fine) { .lb-top .lb-viewer select { font-size: var(--lb-t-support); min-height: 40px; padding: .4rem .65rem; } }
 
-/* What an action did is said where it can be seen: over the page and over an open drawer. */
-.lb-notice {
-  position: fixed; left: 50%; bottom: max(1rem, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 40;
-  width: min(44rem, calc(100vw - 2rem)); max-height: 60vh; overflow-y: auto;
-  display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;
-  padding: .75rem 1rem; border-radius: 8px; background: var(--lb-surface); border: 1px solid var(--lb-fg);
-  box-shadow: 0 6px 24px rgb(0 0 0 / .18);
-}
-/* Placed away from the control just used: at the top when the action was in the lower half. */
-.lb-notice.is-top { bottom: auto; top: calc(var(--lb-top-h, 4rem) + .5rem); }
-/* A notice never takes a tap meant for what is under it; only its own button does. */
-.lb-notice { pointer-events: none; }
-.lb-notice button { pointer-events: auto; }
-.lb-notice p { margin: 0; overflow-wrap: anywhere; }
-.lb-notice-refused { border-color: var(--lb-no); }
-.lb-notice-refused p { color: var(--lb-no); }
-.lb-notice button { background: none; border: 0; text-decoration: underline; cursor: pointer; }
-
-.lb-shell { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: clamp(1rem, 3vw, 3rem); padding: 0 clamp(1rem, 3vw, 2rem); }
-.lb-stages { position: sticky; top: calc(var(--lb-top-h, 3.6rem) + .65rem); align-self: start; display: flex; flex-direction: column; gap: .125rem; padding-top: 2.5rem; }
+.lb-shell { display: grid; grid-template-columns: var(--lb-rail) minmax(0, 1fr); gap: var(--lb-5); padding: 0 var(--lb-gutter) var(--lb-2); max-width: 96rem; margin: 0 auto; }
+.lb-stages { position: sticky; top: calc(var(--lb-top-h, 3.6rem) + var(--lb-4)); align-self: start; display: flex; flex-direction: column; gap: 2px; margin-top: var(--lb-5); padding: 4px; font-size: var(--lb-t-support); max-height: calc(100vh - var(--lb-top-h, 3.6rem) - var(--lb-6)); overflow-y: auto; }
 .lb-stages button {
-  text-align: left; background: none; border: 0; padding: .4rem .6rem; border-radius: 6px; cursor: pointer; font-size: 1rem; color: var(--lb-muted);
+  text-align: left; background: none; border: 0; padding: .5rem .75rem; min-height: 40px; border-radius: var(--lb-radius-s); cursor: pointer; color: var(--lb-muted);
 }
-.lb-stages button:hover { color: var(--lb-fg); }
-.lb-stages button.is-on { background: var(--lb-surface); color: var(--lb-fg); box-shadow: inset 2px 0 0 var(--lb-accent); }
+@media (hover: hover) { .lb-stages button:hover { color: var(--lb-fg); } }
+@media (pointer: coarse) { .lb-stages button { min-height: 44px; } }
+.lb-stages button { border: 1px solid transparent; }
+/* The current stage is a sheet-coloured pill with a boundary that measures 3 to 1 on the chrome. */
+.lb-stages button.is-on { background: var(--lb-bg); border-color: var(--lb-field); color: var(--lb-fg); font-weight: var(--lb-w-strong); }
 
-.lb-main { max-width: 60rem; padding: 2.5rem 0 5rem; min-width: 0; }
-.lb-solo { margin: 0 auto; padding-left: clamp(1rem, 3vw, 2rem); padding-right: clamp(1rem, 3vw, 2rem); }
+/* The work sits on one sheet, set in from the chrome around it. */
+.lb-main { background: var(--lb-bg); border-radius: var(--lb-radius); padding: var(--lb-7) clamp(var(--lb-5), 4vw, var(--lb-8)) var(--lb-9); min-width: 0; min-height: calc(100vh - var(--lb-top-h, 3.6rem) - var(--lb-2)); container-type: inline-size; }
+.lb-main > article, .lb-main > * > article { max-width: 68rem; }
+.lb-solo { margin: 0 var(--lb-2) var(--lb-2); }
 
-h1, h2, h3, h4 { font-family: var(--lb-serif); font-weight: 500; letter-spacing: -.015em; margin: 0; }
-h1 { font-size: clamp(2rem, 1.4rem + 2.6vw, 3.25rem); line-height: 1.08; max-width: 22ch; }
-h2 { font-size: clamp(1.375rem, 1.2rem + .6vw, 1.75rem); line-height: 1.2; margin-bottom: 1rem; }
-h3 { font-size: 1.1875rem; line-height: 1.3; margin: 1.25rem 0 .5rem; }
-h4 { font-family: var(--lb-sans); font-weight: 600; font-size: 1rem; letter-spacing: 0; margin: .75rem 0 .25rem; }
-.lb-deck { font-family: var(--lb-serif); font-size: clamp(1.1875rem, 1.05rem + .5vw, 1.4375rem); line-height: 1.45; max-width: 40rem; margin: 1rem 0 0; color: var(--lb-fg); }
-.lb-body { max-width: 42rem; color: var(--lb-fg); }
-.lb-meta { color: var(--lb-muted); font-size: .9375rem; }
-.lb-missing { color: var(--lb-muted); font-style: italic; margin: .25rem 0; }
+/* Type -------------------------------------------------------------------- */
+h1, h2, h3, h4 { font-family: var(--lb-display); margin: 0; text-wrap: balance; }
+h1 { font-size: var(--lb-t-display); font-weight: var(--lb-w-strong); line-height: 1.12; letter-spacing: -.025em; max-width: 24ch; }
+h1:focus { outline: none; }
+h2 { font-size: var(--lb-t-title); font-weight: var(--lb-w-strong); line-height: 1.25; letter-spacing: -.02em; margin-bottom: var(--lb-4); }
+h3 { font-family: var(--lb-sans); font-size: var(--lb-t-body); font-weight: var(--lb-w-strong); line-height: 1.35; margin: var(--lb-5) 0 var(--lb-2); }
+h4 { font-family: var(--lb-sans); font-weight: var(--lb-w-strong); font-size: var(--lb-t-body); margin: var(--lb-3) 0 var(--lb-1); }
+.lb-deck { font-size: var(--lb-t-deck); line-height: 1.5; letter-spacing: -.01em; max-width: var(--lb-measure); margin: var(--lb-4) 0 0; color: var(--lb-muted); text-wrap: pretty; }
+.lb-body { max-width: var(--lb-measure); color: var(--lb-fg); }
+.lb-meta { color: var(--lb-muted); font-size: var(--lb-t-support); }
+.lb-missing { color: var(--lb-muted); margin: var(--lb-1) 0; }
 
-.lb-section { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--lb-line); }
-.lb-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 2rem; }
+/* Sections ---------------------------------------------------------------- */
+.lb-section { margin-top: var(--lb-7); padding-top: var(--lb-5); border-top: 1px solid var(--lb-line); }
+.lb-section > :is(p, dl) { max-width: var(--lb-measure); }
+.lb-section > :is(ul, ol, table, details, div, form) { max-width: 44rem; }
+.lb-section > :is(.lb-grid, .lb-table, .lb-nest, .lb-timeline, .lb-wide) { max-width: none; }
+/* One interval between the parts of a section, whatever they are. */
+.lb-section > :not(h2) + :not(h2) { margin-top: var(--lb-4); }
+.lb-two { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: var(--lb-7); }
+.lb-two > div { max-width: none; }
 .lb-two > div > h2:first-child, .lb-two > div > h3:first-child { margin-top: 0; }
 
-.lb-facts { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: .375rem 1rem; margin: 0; }
+/* From the width of a small laptop the heading of a section hangs in its own
+   column and stays in view while its content scrolls: the left edge of the
+   page reads as an outline. */
+@container (min-width: 46rem) {
+  article > .lb-section:not(.lb-two):not(.lb-closed) { display: grid; grid-template-columns: var(--lb-hang) minmax(0, 1fr); column-gap: var(--lb-hang-gap); align-items: start; }
+  article > .lb-section:not(.lb-two):not(.lb-closed) > h2 { grid-column: 1; grid-row: 1 / span 60; position: sticky; top: calc(var(--lb-top-h, 3.6rem) + var(--lb-5)); margin: 0; }
+  article > .lb-section:not(.lb-two):not(.lb-closed) > :not(h2) { grid-column: 2; min-width: 0; }
+  article > .lb-deck, article > .lb-next { margin-left: calc(var(--lb-hang) + var(--lb-hang-gap)); }
+  article > .lb-closed > .lb-closed-body { margin-left: calc(var(--lb-hang) + var(--lb-hang-gap)); }
+}
+
+/* Lists of entries --------------------------------------------------------- */
+.lb-facts { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: var(--lb-2) var(--lb-4); margin: 0; }
 .lb-fact { display: contents; }
 .lb-facts dt { color: var(--lb-muted); }
 .lb-facts dd { margin: 0; overflow-wrap: anywhere; }
 
-.lb-list { padding-left: 1.1rem; margin: .25rem 0; }
+.lb-list { padding-left: 1.1rem; margin: var(--lb-1) 0; }
 .lb-list li { margin: .3rem 0; overflow-wrap: anywhere; }
-.lb-findings { list-style: none; padding: 0; margin: 0; display: grid; gap: 1rem; }
-.lb-findings > li { background: var(--lb-surface); border: 1px solid var(--lb-line); border-radius: 10px; padding: 1rem 1.125rem; overflow-wrap: anywhere; min-width: 0; }
-.lb-findings .lb-form { margin-top: 1rem; }
-.lb-named { margin-right: .75rem; white-space: nowrap; }
-details > summary { cursor: pointer; }
-details[open] > summary { margin-bottom: .5rem; }
-.lb-section > details { margin-top: .5rem; max-width: 42rem; }
-.lb-figure { margin: 0 0 1rem; }
-.lb-figure .lb-plate-large { margin-bottom: .25rem; }
-.lb-findings p { margin: 0 0 .5rem; }
-.lb-warnings { margin: .5rem 0 0; padding-left: 1.1rem; color: var(--lb-wait); }
-.lb-warnings-common { margin: 0 0 1rem; }
 
-.lb-cites { display: inline-flex; flex-wrap: wrap; gap: .375rem; vertical-align: middle; }
-.lb-cite {
-  background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-decoration-color: var(--lb-accent);
-  text-underline-offset: .2em; color: var(--lb-fg); font-size: .9375rem; text-align: left;
+/* Entries are ruled rows on the page, not boxes. A rule above the first and
+   between each; nothing is filled until it is opened or needs a decision. */
+.lb-findings { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--lb-line); }
+.lb-findings > li { padding: var(--lb-4) 0; border-bottom: 1px solid var(--lb-line); overflow-wrap: anywhere; min-width: 0; }
+.lb-findings .lb-form { margin-top: var(--lb-4); }
+.lb-findings p { margin: 0 0 var(--lb-2); }
+.lb-findings p:last-child { margin-bottom: 0; }
+.lb-findings > li > .lb-cites { margin-top: var(--lb-2); }
+
+/* An entry that opens. Closed, it is its own sentence and, where someone has
+   to act, who. Open, it is the one filled thing in its list. */
+.lb-findings > li.lb-row { padding: 0; }
+/* A heading is the line above its list. */
+.lb-section :is(h2, h3) + .lb-findings { border-top: 0; }
+/* Where focus is sent after an action, the thing it lands on clears the bars that stay at the top. */
+.lb :is(button, a, input, select, textarea, summary, [tabindex="-1"]) { scroll-margin-top: calc(var(--lb-top-h, 3.6rem) + 5rem); scroll-margin-bottom: 6rem; }
+.lb-drawer :is(button, a, input, select, textarea, summary, [tabindex="-1"]) { scroll-margin-top: 4rem; }
+.lb-row > details > summary {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 15rem) 1rem; align-items: baseline; gap: var(--lb-1) var(--lb-5);
+  padding: var(--lb-4) var(--lb-2) var(--lb-4) 0; min-height: 44px; cursor: pointer; list-style: none; margin: 0;
 }
-.lb-cites .lb-cite + .lb-cite::before { content: ""; }
+.lb-row > details > summary::-webkit-details-marker { display: none; }
+.lb-row > details > summary::after {
+  content: ""; grid-column: 3; grid-row: 1; width: .55rem; height: .55rem; border-right: 2px solid var(--lb-fg); border-bottom: 2px solid var(--lb-fg);
+  transform: rotate(45deg); justify-self: center; align-self: start; margin-top: .35rem; transition: transform .15s ease;
+}
+.lb-row > details[open] > summary::after { transform: rotate(-135deg); margin-top: .65rem; }
+@media (hover: hover) { .lb-row > details:not([open]) > summary:hover { background: color-mix(in srgb, var(--lb-fg) 5%, transparent); } }
+.lb-row-title { grid-column: 1; }
+/* With no one to name, the sentence takes the whole line. */
+.lb-row > details > summary > .lb-row-title:last-child { grid-column: 1 / 3; }
+.lb-row-who { color: var(--lb-muted); grid-column: 2; }
+.lb-row-who.is-mine { color: var(--lb-fg); font-weight: var(--lb-w-strong); }
+.lb-row > details[open] { background: var(--lb-surface); border: 1px solid transparent; border-radius: var(--lb-radius); margin: var(--lb-2) calc(-1 * var(--lb-4)); padding: 0 var(--lb-4); }
+.lb-row > details[open] > summary .lb-row-title { font-weight: var(--lb-w-strong); }
+.lb-findings > li.lb-row:has(> details[open]) { border-bottom-color: transparent; }
+.lb-row-body { padding: 0 0 var(--lb-5); display: grid; gap: var(--lb-3); max-width: var(--lb-measure); }
+.lb-row-body > * { margin: 0; }
+.lb-row-body .lb-actions { margin-top: var(--lb-1); }
+@media (prefers-reduced-motion: reduce) { .lb-row > details > summary::after { transition: none; } }
+
+/* A decision that is the reader's to make is the only bordered thing on the
+   page, and it is never closed: what it rests on stays above its buttons. */
+.lb-findings > li.lb-decision { border: 1.5px solid var(--lb-fg); border-radius: var(--lb-radius); padding: var(--lb-5); margin: var(--lb-4) 0; display: grid; gap: var(--lb-3); }
+.lb-findings > li.lb-decision > * { margin: 0; }
+.lb-findings > li.lb-decision + li { border-top: 1px solid var(--lb-line); }
+
+.lb-named { margin-right: var(--lb-3); display: inline-block; }
+details > summary { cursor: pointer; }
+details[open] > summary { margin-bottom: var(--lb-2); }
+.lb-more > summary { color: var(--lb-fg); text-decoration: underline; text-underline-offset: .2em; padding: var(--lb-2) 0; min-height: 44px; display: flex; align-items: center; list-style: none; }
+.lb-more > summary::-webkit-details-marker { display: none; }
+.lb-figure { margin: 0 0 var(--lb-4); }
+.lb-figure .lb-plate-large { margin-bottom: var(--lb-1); }
+.lb-warnings { margin: var(--lb-2) 0 0; padding-left: 1.1rem; color: var(--lb-wait); }
+.lb-warnings-common { margin: 0 0 var(--lb-4); }
+
+.lb-cites { display: flex; flex-wrap: wrap; gap: var(--lb-1) var(--lb-3); }
+.lb-cite {
+  background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-decoration-color: var(--lb-field);
+  text-underline-offset: .2em; color: var(--lb-fg); font-size: var(--lb-t-support); text-align: left; min-height: 28px;
+}
+@media (pointer: coarse) { .lb-cite { min-height: 44px; } .lb-cites { gap: 0 var(--lb-4); } }
+.lb-cite:hover { text-decoration-color: var(--lb-fg); }
+strong > .lb-cite { font-size: inherit; font-weight: inherit; }
 .lb-cite.is-missing { color: var(--lb-no); text-decoration: line-through; }
 
-.lb-table { width: 100%; border-collapse: collapse; font-size: .9375rem; display: block; overflow-x: auto; }
-.lb-table th { text-align: left; font-weight: 600; color: var(--lb-muted); border-bottom: 1px solid var(--lb-line); padding: .5rem .75rem .5rem 0; }
-.lb-table td { border-bottom: 1px solid var(--lb-line); padding: .6rem .75rem .6rem 0; vertical-align: top; }
+.lb-table { width: 100%; border-collapse: collapse; font-size: var(--lb-t-support); }
+.lb-table th { text-align: left; font-weight: var(--lb-w-strong); border-bottom: 1px solid var(--lb-fg); padding: var(--lb-2) var(--lb-4) var(--lb-2) 0; }
+.lb-table td { border-bottom: 1px solid var(--lb-line); padding: var(--lb-3) var(--lb-4) var(--lb-3) 0; vertical-align: top; }
+.lb-table :is(th, td) { overflow-wrap: anywhere; }
 
-.lb-actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1rem; align-items: center; }
+/* Actions: one filled button in a view; the rest are quiet. */
+.lb-actions { display: flex; flex-wrap: wrap; gap: var(--lb-2); margin-top: var(--lb-4); align-items: center; }
 .lb-actions button, .lb-link {
-  background: var(--lb-surface); border: 1px solid var(--lb-field); border-radius: 6px; padding: .5rem .875rem; cursor: pointer;
+  background: var(--lb-bg); border: 1px solid var(--lb-field); border-radius: var(--lb-radius-s); padding: .5rem 1rem; min-height: 40px; line-height: 1.43; cursor: pointer; font-weight: var(--lb-w-strong); font-size: var(--lb-t-support);
 }
-.lb-actions .lb-primary { background: var(--lb-fg); color: var(--lb-bg); border-color: var(--lb-fg); }
-.lb-link { padding: .3rem .6rem; }
+.lb-actions button:hover, .lb-link:hover { background: var(--lb-surface); border-color: var(--lb-fg); }
+@media (pointer: coarse) { .lb-actions button, .lb-link { min-height: 44px; } }
+.lb-actions .lb-primary { background: var(--lb-accent); color: var(--lb-on-accent); border-color: var(--lb-accent); }
+.lb-actions .lb-primary:hover { opacity: .88; }
+.lb-link { padding: .3rem .75rem; min-height: 36px; }
 
-.lb-nest { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); }
-.lb-nest-box { border: 1px solid var(--lb-line); border-radius: 12px; padding: 1rem; background: var(--lb-surface); }
+/* Where the engagement sits ------------------------------------------------ */
+.lb-nest { display: grid; gap: var(--lb-4); grid-template-columns: repeat(auto-fit, minmax(min(17rem, 100%), 1fr)); }
+.lb-nest-box { border-radius: var(--lb-radius); padding: var(--lb-5); background: var(--lb-surface); }
 .lb-nest-box h3 { margin-top: 0; }
-.lb-nest-box p { margin: .25rem 0 0; color: var(--lb-muted); }
-.lb-nest-row { display: grid; gap: .75rem; margin-top: 1rem; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); }
-.lb-nest-row .lb-nest-box { background: var(--lb-bg); }
-.lb-nest-bench { border-style: dashed; }
-.lb-nest-co { border-color: var(--lb-accent); }
+.lb-nest-box p { margin: var(--lb-1) 0 0; color: var(--lb-muted); font-size: var(--lb-t-support); }
+.lb-nest-row { display: grid; gap: var(--lb-3); margin-top: var(--lb-4); grid-template-columns: repeat(auto-fit, minmax(min(11rem, 100%), 1fr)); }
+.lb-nest-row .lb-nest-box { background: var(--lb-bg); padding: var(--lb-4); }
+.lb-nest-co { box-shadow: inset 0 0 0 1px var(--lb-fg); background: var(--lb-bg); }
 
+/* The work ------------------------------------------------------------------ */
+.lb-search { display: grid; gap: var(--lb-2); margin: 0 0 var(--lb-5); max-width: 30rem; }
+.lb-search span { color: var(--lb-muted); font-size: var(--lb-t-support); }
+.lb-grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); gap: var(--lb-6) var(--lb-5); }
+.lb-card { display: grid; gap: var(--lb-1); width: 100%; text-align: left; background: none; border: 1px solid transparent; padding: 0; cursor: pointer; }
+.lb-card:hover .lb-plate, .lb-card.is-open .lb-plate { outline: 2px solid var(--lb-fg); outline-offset: 2px; }
+.lb-card-title { font-weight: var(--lb-w-strong); margin-top: var(--lb-2); }
+.lb-card-ctx { color: var(--lb-muted); font-size: var(--lb-t-support); }
+.lb-plate { width: 100%; aspect-ratio: 400 / 260; border-radius: var(--lb-radius-s); display: block; }
+.lb-card-title, .lb-card-ctx { font-size: var(--lb-t-support); }
+.lb-plate-large { border-radius: var(--lb-radius); margin-bottom: var(--lb-4); }
 
-.lb-search { display: grid; gap: .375rem; margin: 2rem 0 1.5rem; max-width: 30rem; }
-.lb-search span { color: var(--lb-muted); }
-.lb-grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1.25rem; }
-.lb-card {
-  display: grid; gap: .375rem; width: 100%; text-align: left; background: none; border: 0; padding: 0; cursor: pointer;
-}
-.lb-card:hover .lb-plate { outline: 2px solid var(--lb-accent); outline-offset: 2px; }
-.lb-card-title { font-weight: 600; }
-.lb-card-ctx { color: var(--lb-muted); font-size: .9375rem; }
-.lb-plate { width: 100%; aspect-ratio: 400 / 260; border-radius: 8px; display: block; }
-.lb-plate-large { border-radius: 10px; margin-bottom: 1rem; }
-
-.lb-answers { display: flex; flex-wrap: wrap; gap: .25rem .75rem; font-size: .875rem; }
+/* The three answers --------------------------------------------------------- */
+.lb-answers { display: flex; flex-wrap: wrap; gap: var(--lb-1) var(--lb-3); font-size: var(--lb-t-support); }
 .lb-answers .is-yes { color: var(--lb-yes); }
 .lb-answers .is-no { color: var(--lb-no); }
-.lb-answers-full { display: grid; gap: .5rem; margin: 0; }
-.lb-answers-full > div { border-left: 3px solid var(--lb-line); padding-left: .75rem; }
-.lb-answers-full .is-yes { border-color: var(--lb-yes); }
-.lb-answers-full .is-no { border-color: var(--lb-no); }
-.lb-answers-full dt { font-weight: 600; }
-.lb-answers-full dd { margin: 0; color: var(--lb-muted); }
+.lb-answers-full { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: var(--lb-2); margin: 0; }
+.lb-answers-full > div { background: var(--lb-surface); border-radius: var(--lb-radius-s); padding: var(--lb-3) var(--lb-4); }
+.lb-answers-full dt { font-weight: var(--lb-w-strong); }
+.lb-answers-full .is-yes dt { color: var(--lb-yes); }
+.lb-answers-full .is-no dt { color: var(--lb-no); }
+.lb-answers-full dd { margin: var(--lb-1) 0 0; color: var(--lb-muted); font-size: var(--lb-t-support); }
 
-.lb-drawer-wrap { position: fixed; inset: 0; background: rgb(0 0 0 / .35); z-index: 20; display: flex; justify-content: flex-end; }
+/* One piece, in a sheet ----------------------------------------------------- */
+.lb-drawer-wrap { position: fixed; inset: 0; background: rgb(0 0 0 / .4); z-index: 20; display: flex; justify-content: flex-end; }
 .lb-drawer {
   /* Room below the last control, so a notice at the foot of the screen never sits on it. */
-  width: min(40rem, 100%); height: 100%; overflow-y: auto; background: var(--lb-bg); padding: 1.25rem clamp(1rem, 3vw, 2rem) 14rem;
-  border-left: 1px solid var(--lb-line);
+  width: min(42rem, 100%); height: 100%; overflow-y: auto; overflow-x: hidden; background: var(--lb-bg); padding: var(--lb-5) var(--lb-gutter) 14rem; border-radius: var(--lb-radius) 0 0 var(--lb-radius);
+  box-shadow: -1px 0 0 var(--lb-line);
 }
-.lb-drawer > h2 { margin-top: .5rem; }
-.lb-close { float: right; position: sticky; top: .5rem; z-index: 2; background: var(--lb-bg); border: 1px solid var(--lb-field); border-radius: 6px; padding: .3rem .7rem; cursor: pointer; margin-bottom: .75rem; }
+.lb-drawer > h3 { margin-top: var(--lb-6); padding-top: var(--lb-4); border-top: 1px solid var(--lb-line); }
+.lb-close { float: right; position: sticky; top: var(--lb-2); z-index: 2; background: var(--lb-bg); border: 0; padding: .5rem .25rem; min-height: 44px; cursor: pointer; margin: 0 0 var(--lb-3) var(--lb-3); text-decoration: underline; text-underline-offset: .2em; }
 .lb-ev ul { margin: 0; padding-left: 1.1rem; }
 
-.lb-form { display: grid; gap: .75rem; margin-top: 2rem; }
-.lb-form label { display: grid; gap: .25rem; }
-.lb-form fieldset { border: 1px solid var(--lb-line); border-radius: 8px; padding: .75rem; display: grid; gap: .5rem; }
-.lb-form legend { padding: 0 .25rem; }
-.lb-form .lb-check { display: flex; gap: .5rem; align-items: flex-start; font-size: .9375rem; }
-
+/* Forms ---------------------------------------------------------------------- */
+.lb-form { display: grid; gap: var(--lb-4); margin-top: var(--lb-6); }
+.lb-form label { display: grid; gap: var(--lb-1); }
+.lb-form fieldset { border: 0; border-radius: var(--lb-radius-s); padding: var(--lb-4); display: grid; gap: var(--lb-2); background: var(--lb-surface); margin: 0; }
+.lb-row details[open] .lb-form fieldset { background: var(--lb-bg); }
+.lb-form legend { padding: 0; font-weight: var(--lb-w-strong); float: left; width: 100%; margin-bottom: var(--lb-2); }
+.lb-form .lb-check { display: flex; gap: var(--lb-3); align-items: flex-start; min-height: 44px; padding: .55rem 0; clear: both; }
+.lb-form .lb-check input { min-height: 0; width: 1.15rem; height: 1.15rem; margin-top: .2rem; flex: none; accent-color: var(--lb-fg); }
 .lb-inline { max-width: 26rem; }
-.lb-timeline { list-style: none; padding: 0; margin: 0; display: grid; gap: .875rem; }
-.lb-timeline li { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: 1rem; padding-bottom: .875rem; border-bottom: 1px solid var(--lb-line); }
+
+/* What an action did is said where it can be seen: over the page and over an open drawer. */
+.lb-notice {
+  position: fixed; left: 50%; bottom: max(1rem, env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 40;
+  width: min(52rem, calc(100vw - 2rem)); max-height: 60vh; overflow-y: auto;
+  display: flex; justify-content: space-between; align-items: center; gap: var(--lb-4);
+  padding: var(--lb-2) var(--lb-4); border-radius: var(--lb-radius); background: var(--lb-fg); color: var(--lb-bg);
+  box-shadow: 0 8px 28px rgb(0 0 0 / .22);
+}
+/* Over the bar at the top, which nobody is reading. With a piece's sheet open it stays at the foot, in the room the sheet leaves. */
+.lb-notice.is-top { bottom: auto; top: var(--lb-1); }
+@media (pointer: coarse) { .lb-notice button { min-height: 44px; } }
+/* A notice never takes a tap meant for what is under it; only its own button does. */
+.lb-notice { pointer-events: none; }
+.lb-notice button { pointer-events: auto; background: none; border: 0; text-decoration: underline; text-underline-offset: .2em; cursor: pointer; color: inherit; min-height: 32px; }
+.lb-notice p { margin: 0; overflow-wrap: anywhere; }
+.lb-notice button:focus-visible { outline-color: var(--lb-bg); }
+.lb-notice-refused { box-shadow: 0 8px 28px rgb(0 0 0 / .22), inset 4px 0 0 var(--lb-no); }
+
+/* What happened, and what carries forward ----------------------------------- */
+.lb-timeline { list-style: none; padding: 0; margin: 0; display: grid; }
+.lb-timeline li { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: var(--lb-4); padding: var(--lb-3) 0; border-bottom: 1px solid var(--lb-line); }
 .lb-timeline time { color: var(--lb-muted); font-variant-numeric: tabular-nums; }
-.lb-timeline p { margin: 0 0 .25rem; }
-.lb-timeline .lb-cite { margin-right: .75rem; }
-.lb-export { width: 100%; font-family: ui-monospace, Menlo, monospace; font-size: .8125rem; background: var(--lb-surface); color: var(--lb-fg); border: 1px solid var(--lb-line); border-radius: 8px; padding: .75rem; }
-.lb-drawer a, .lb-main a { color: inherit; text-decoration-color: var(--lb-accent); text-underline-offset: .2em; }
+.lb-timeline p { margin: 0 0 var(--lb-1); }
+.lb-timeline .lb-cite { margin-right: var(--lb-3); }
+.lb-export { width: 100%; font-family: ui-monospace, Menlo, monospace; font-size: .875rem; background: var(--lb-surface); color: var(--lb-fg); border: 0; border-radius: var(--lb-radius-s); padding: var(--lb-3); }
+.lb-drawer a, .lb-main a { color: inherit; text-decoration-color: var(--lb-field); text-underline-offset: .2em; }
 .lb-carry td:first-child { color: var(--lb-muted); }
-.lb-carry-rows { list-style: none; padding: 0; margin: 1.5rem 0; display: grid; gap: 1rem; }
-.lb-carry-rows li { display: grid; grid-template-columns: 9rem minmax(0, 1fr); gap: 1rem; align-items: start; border-left: 3px solid var(--lb-line); padding-left: 1rem; }
-.lb-carry-rows h3 { margin-top: 0; }
-.lb-carry-rows p { margin: 0; }
-.lb-carry-plate { background: none; border: 0; padding: 0; cursor: pointer; }
-.lb-verdict-preserve { border-color: var(--lb-yes) !important; }
-.lb-verdict-reverse, .lb-verdict-retire { border-color: var(--lb-no) !important; }
-.lb-verdict-investigate, .lb-verdict-adapt { border-color: var(--lb-wait) !important; }
-.lb-hyp { background: var(--lb-surface); border: 1px solid var(--lb-line); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
-.lb-hyp h3 { margin-top: 0; }
-.lb-tension-group + .lb-tension-group { margin-top: 1.5rem; }
+.lb-tension-group + .lb-tension-group { margin-top: var(--lb-6); }
+.lb-tension-group > h3 { margin: 0 0 var(--lb-3); }
+.lb-tension-group.is-mine .lb-row-title { font-weight: var(--lb-w-strong); }
+
 
 code { font-family: ui-monospace, Menlo, monospace; font-size: .875rem; }
 
-@media (max-width: 760px) {
-  /* Below the stage strip, which sits under the header at this width. */
-  .lb-notice.is-top { top: calc(var(--lb-top-h, 3.6rem) + 3.5rem); }
+@media (max-width: 47.5em) {
+  .lb-notice { font-size: var(--lb-t-support); padding: var(--lb-1) var(--lb-3); gap: var(--lb-3); }
   .lb-shell { grid-template-columns: minmax(0, 1fr); gap: 0; }
-  .lb-stages { position: sticky; top: var(--lb-top-h, 3.6rem); z-index: 4; margin: 0 calc(-1 * clamp(1rem, 3vw, 2rem)); padding-left: clamp(1rem, 3vw, 2rem) !important; padding-right: clamp(1rem, 3vw, 2rem) !important; flex-direction: row; overflow-x: auto; padding: .5rem 0; background: var(--lb-bg); border-bottom: 1px solid var(--lb-line); }
-  .lb-stages button { white-space: nowrap; }
-  /* The strip runs off the right edge: the fade says there is more, and the padding lets the last stage clear it. */
-  .lb-stages { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent); }
-  .lb-stages::after { content: ""; flex: 0 0 2.5rem; }
-  .lb-main { padding-bottom: 12rem; }
-  .lb-stages button.is-on { box-shadow: inset 0 -2px 0 var(--lb-accent); }
-  .lb-main { padding-top: 1.5rem; }
-  .lb-carry-rows li { grid-template-columns: 5.5rem minmax(0, 1fr); }
-  .lb-timeline li { grid-template-columns: minmax(0, 1fr); gap: .125rem; }
-  .lb-facts { grid-template-columns: minmax(0, 1fr); }
-  .lb-facts dd { margin-bottom: .5rem; }
+  .lb-stages {
+    position: sticky; top: var(--lb-top-h, 3.6rem); z-index: 4; margin: 0 calc(-1 * var(--lb-gutter)); padding: var(--lb-2) var(--lb-gutter);
+    flex-direction: row; overflow-x: auto; background: var(--lb-chrome);
+    border-bottom: 1px solid var(--lb-line); scrollbar-width: none;
+  }
+  .lb-stages::-webkit-scrollbar { display: none; }
+  /* A stage reached by keyboard is scrolled clear of the fade. */
+  .lb-stages { scroll-padding-inline: var(--lb-gutter) 3.5rem; }
+  /* The strip runs off the right edge. A fade in the page colour stays at that edge to say there is more, and is the room the last stage needs to clear it. */
+  .lb-stages::after { content: ""; flex: 0 0 2.5rem; position: sticky; right: calc(-1 * var(--lb-gutter)); align-self: stretch; margin-right: calc(-1 * var(--lb-gutter)); background: linear-gradient(90deg, transparent, var(--lb-chrome) 75%); pointer-events: none; }
+  .lb-stages button { white-space: nowrap; padding: .5rem .9rem; }
+  /* On a phone the sheet is the page: no corners, no inset. */
+  .lb-shell { padding: 0; }
+  .lb-shell > .lb-stages { margin: 0; }
+  .lb-main { border-radius: 0; padding: var(--lb-6) var(--lb-gutter) 12rem; min-height: 0; }
+  .lb-solo { margin: 0; }
+  .lb-basis { margin: 0; border-radius: 0; }
+  .lb-drawer { border-radius: 0; }
+  .lb-section { margin-top: var(--lb-7); }
+  .lb-row > details > summary { grid-template-columns: minmax(0, 1fr) 1rem; }
+  .lb-row > details > summary::after { grid-column: 2; grid-row: 1; }
+  .lb-row > details > summary > .lb-row-title, .lb-row > details > summary > .lb-row-title:last-child { grid-column: 1; grid-row: 1; }
+  .lb-row-who { grid-column: 1; grid-row: 2; }
+  .lb-row > details[open] { margin-left: calc(-1 * var(--lb-3)); margin-right: calc(-1 * var(--lb-3)); padding: 0 var(--lb-3); }
+  .lb-findings > li.lb-decision { padding: var(--lb-4); }
+  .lb-timeline li { grid-template-columns: minmax(0, 1fr); gap: var(--lb-1); }
+  .lb-facts { grid-template-columns: min(6.25rem, 30vw) minmax(0, 1fr); gap: var(--lb-2) var(--lb-3); }
+  .lb-facts dt { overflow-wrap: anywhere; }
+  .lb-answers-full { grid-template-columns: minmax(0, 1fr); }
 }
-.lb-section > details:has(.lb-timeline) { max-width: none; }
+
+/* Parts added with the rebalanced stages ------------------------------------ */
+.lb-lead { max-width: var(--lb-measure); margin: 0 0 var(--lb-2); }
+.lb-next { margin-top: var(--lb-7); }
+article:has(.lb-form .lb-primary) .lb-next .lb-primary { background: var(--lb-bg); color: var(--lb-fg); border-color: var(--lb-field); }
+
+/* A section whose heading opens it. */
+.lb-closed > summary { list-style: none; display: grid; grid-template-columns: minmax(0, 1fr) 1rem; align-items: center; gap: var(--lb-4); cursor: pointer; margin: 0; min-height: 44px; padding-right: var(--lb-2); }
+.lb-closed > summary::-webkit-details-marker { display: none; }
+.lb-closed > summary h2 { margin: 0; }
+.lb-closed > summary::after {
+  content: ""; width: .6rem; height: .6rem; border-right: 1.5px solid var(--lb-fg); border-bottom: 1.5px solid var(--lb-fg);
+  transform: rotate(45deg); justify-self: center; margin-top: -.3rem; transition: transform .15s ease;
+}
+.lb-closed[open] > summary::after { transform: rotate(-135deg); margin-top: .3rem; }
+.lb-closed > summary:hover h2 { text-decoration: underline; text-underline-offset: .15em; text-decoration-thickness: 1.5px; }
+.lb-closed-body { padding-top: var(--lb-5); display: grid; gap: var(--lb-4); }
+.lb-closed-body > * { margin: 0; min-width: 0; }
+.lb-closed + .lb-closed { margin-top: var(--lb-5); }
+@media (prefers-reduced-motion: reduce) { .lb-closed > summary::after { transition: none; } }
+
+/* Search, and the classes present as a filter. A pressed chip is filled. */
+.lb-find { display: grid; gap: var(--lb-4); margin: 0 0 var(--lb-5); }
+.lb-find .lb-search { margin: 0; }
+.lb-chips { display: flex; flex-wrap: wrap; gap: var(--lb-2); }
+.lb-chips button { background: var(--lb-bg); border: 1px solid var(--lb-field); border-radius: var(--lb-radius-s); padding: .5rem .9rem; min-height: 44px; cursor: pointer; color: var(--lb-muted); font-size: var(--lb-t-support); }
+.lb-chips button:hover { color: var(--lb-fg); }
+/* Selected is ink text on a filled pill with an ink edge, as the current stage is; a filled ink button stays the one action that matters. */
+.lb-chips button[aria-pressed="true"] { background: var(--lb-surface-2); border-color: var(--lb-fg); color: var(--lb-fg); font-weight: var(--lb-w-strong); }
+@media (forced-colors: active) { .lb-chips button[aria-pressed="true"], .lb-stages button.is-on { background: Highlight; color: HighlightText; forced-color-adjust: none; } }
+
+/* One piece: a small picture beside its name, so what it may do comes on the first screen. */
+.lb-piece { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: var(--lb-2) var(--lb-5); align-items: center; margin: var(--lb-2) 0 var(--lb-5); clear: both; }
+.lb-piece .lb-figure { display: contents; }
+.lb-piece .lb-plate { grid-column: 1; grid-row: 1; }
+.lb-piece h2 { grid-column: 2; grid-row: 1; margin: 0; min-width: 0; overflow-wrap: anywhere; }
+.lb-drawer h3 { margin-top: var(--lb-6); padding-top: var(--lb-4); border-top: 1px solid var(--lb-line); }
+.lb-drawer .lb-form h3, .lb-drawer .lb-ev h4 { border: 0; padding: 0; margin-top: 0; }
+.lb-drawer .lb-form { margin-top: var(--lb-5); background: var(--lb-surface); border-radius: var(--lb-radius); padding: var(--lb-5); }
+.lb-drawer .lb-form .lb-form { padding: 0; margin-top: var(--lb-3); }
+.lb-drawer .lb-form fieldset { background: var(--lb-bg); }
+
+@media (max-width: 47.5em) {
+  /* A table wider than a phrase per column is read one row at a time, each cell under its heading. */
+  .lb-table-stack { display: block; }
+  .lb-table-stack thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .lb-table-stack tbody, .lb-table-stack tr { display: block; }
+  .lb-table-stack tr { padding: var(--lb-3) 0; border-bottom: 1px solid var(--lb-line); }
+  .lb-table-stack td { display: block; border: 0; padding: 0 0 var(--lb-1); }
+  .lb-table-stack td:first-child { font-weight: var(--lb-w-strong); }
+  .lb-table-stack td[data-th]::before { content: attr(data-th) ": "; color: var(--lb-muted); }
+  /* Pieces are read as rows on a phone: the picture is small and the name comes first. */
+  .lb-grid { grid-template-columns: minmax(0, 1fr); gap: 0; border-top: 1px solid var(--lb-line); }
+  .lb-grid > li { border-bottom: 1px solid var(--lb-line); }
+  .lb-card { grid-template-columns: min(5rem, 20vw) minmax(0, 1fr); column-gap: var(--lb-4); padding: var(--lb-3) 0; align-content: center; }
+  .lb-card .lb-plate { grid-column: 1; grid-row: 1 / span 4; align-self: center; }
+  .lb-card > :not(.lb-plate) { grid-column: 2; }
+  .lb-card-title { margin-top: 0; }
+  .lb-piece { grid-template-columns: min(4.5rem, 20vw) minmax(0, 1fr); }
+  /* One row: where you are, and the switch, which keeps its whole name. A study's line takes a row of its own. */
+  .lb-top { padding: var(--lb-2) var(--lb-gutter); flex-wrap: wrap; gap: var(--lb-1) var(--lb-3); }
+  .lb-home { white-space: nowrap; }
+  .lb-brandline { display: contents; }
+  .lb-home { order: 1; flex: none; }
+  .lb-controls { order: 2; flex: 1 1 12rem; min-width: 0; justify-content: flex-end; gap: var(--lb-2); }
+  .lb-study { order: 3; flex: 1 1 100%; }
+  .lb-viewer { min-width: 0; flex: 1 1 auto; justify-content: flex-end; }
+  .lb-viewer > span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .lb-viewer select { min-width: 0; width: 100%; max-width: 17rem; padding: .4rem .5rem; }
+  .lb-deck { font-size: var(--lb-t-body); }
+  /* The classes run in one line and scroll, so the work starts on the first screen. */
+  .lb-chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 calc(-1 * var(--lb-gutter)); padding: 2px var(--lb-gutter); scrollbar-width: none; }
+  .lb-chips::-webkit-scrollbar { display: none; }
+  .lb-chips button { white-space: nowrap; flex: none; }
+}
+/* Short options sit in columns, so a list of kinds of work is one glance, not a scroll. */
+.lb-options { display: grid; grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr)); gap: var(--lb-1) var(--lb-4); clear: both; }
+
+/* A decision that is the reader's to make is the bordered thing in its list. */
+.lb-row.lb-decides > details[open] { background: none; border: 1.5px solid var(--lb-fg); }
+.lb-row.lb-decides .lb-row-who { color: var(--lb-fg); font-weight: var(--lb-w-strong); }
+.lb-row.lb-decides > details[open] .lb-form fieldset { background: var(--lb-surface); }
+
+/* A refusal is said at the field it is about. */
+.lb-refusal { color: var(--lb-no); margin: 0; }
+[aria-invalid="true"] { border-color: var(--lb-no) !important; }
+.lb-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+/* In dark the drawn stand-ins are held back, so they are not the brightest thing on the page. */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .lb-plate { filter: brightness(.85); } }
+:root[data-theme="dark"] .lb-plate { filter: brightness(.85); }
+
+/* In a very narrow sheet (a phone with text enlarged) the picture goes above the name, so the name keeps whole words. */
+.lb-drawer { container-type: inline-size; }
+@container (max-width: 17rem) {
+  .lb-drawer .lb-piece { grid-template-columns: minmax(0, 1fr); }
+  .lb-drawer .lb-piece .lb-plate { max-width: 6.5rem; }
+  .lb-drawer .lb-piece h2 { grid-column: 1; grid-row: 2; overflow-wrap: break-word; }
+}
+
+/* The first screen: what this is, in a headline and a sentence, with the one action beside it,
+   and the material to start from carrying the rest. */
+/* It sits straight on the sheet: two grounds, the chrome and the sheet, and no third. */
+.lb-hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--lb-6); padding: 0 0 var(--lb-3); }
+.lb-hero h1 { max-width: 18ch; }
+.lb-hero .lb-deck { margin-top: var(--lb-3); max-width: 32rem; }
+.lb-hero .lb-actions { margin-top: var(--lb-5); }
+.lb-hero-work h2 { font-size: var(--lb-t-body); letter-spacing: 0; margin: 0 0 var(--lb-3); }
+.lb-hero-work ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: var(--lb-4) var(--lb-3); }
+.lb-hero-work .lb-card { gap: var(--lb-2); }
+.lb-hero-work .lb-card-title { margin-top: 0; font-weight: 400; }
+@container (min-width: 46rem) {
+  .lb-hero { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); align-items: start; column-gap: var(--lb-7); }
+  .lb-hero-work ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Five or six pieces sit in three columns, so the first screen keeps its action in view. */
+  .lb-hero-work.is-many ul { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+/* On a phone the first screen sits straight on the page, as the rest of it does. */
+@media (max-width: 47.5em) {
+  .lb-hero { gap: var(--lb-5); }
+  .lb-hero-work ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .lb-hero-work .lb-card { display: grid; grid-template-columns: minmax(0, 1fr); padding: 0; }
+  .lb-hero-work .lb-card .lb-plate { grid-row: auto; }
+  .lb-hero-work .lb-card > :not(.lb-plate) { grid-column: 1; }
+}

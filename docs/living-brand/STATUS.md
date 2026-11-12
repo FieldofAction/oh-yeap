@@ -32,6 +32,54 @@ fictional brand, Fernway, and lets a visitor try each seat: the contract
 creative director, the people named to decide, an outside partner and an
 agency lead with two competing clients.
 
+**How the page is laid out.** The page was rebuilt for reading after its
+owner said the information needed rebalancing. It takes one thing from each
+of four references:
+
+- International Typographic Style: one grotesque, two weights and five
+  sizes, flush left; from laptop width a section's heading hangs in
+  a narrow column beside its content.
+- Apple's Human Interface Guidelines: text in rows, a row kept short with
+  its detail one step away, a sheet for one piece. Read at source.
+- Material Design: an 8px spacing grid, tone in place of borders, one
+  prominent action in a view. Read from Google's Android and component
+  documentation; Material's own site could not be reached from where this
+  was built.
+- Apple's pages: one idea to a section. From memory; apple.com and Wikipedia
+  could not be reached, so this and the International Style are not quoted
+  from a source.
+
+The house look was then set on the principles of Lexington Themes, read at
+lexingtonthemes.com (its own site, theme pages and documentation; its live
+theme demos could not be reached): a warm grey chrome around one off-white
+rounded sheet, with things told apart by tone; one typeface, the site's
+Hanken Grotesk, in weights 400 and 500 at compact sizes; ink for what a
+thing is and a warm grey for what follows; 8px-corner controls with only the
+one action that matters filled in ink. Enter became a first screen: the
+brand and engagement as headline, its purpose, the step to Orient beside
+them, and the material to start from as captioned pictures. Lexington's grey
+text was darkened to meet 4.5 to 1, a dark theme was added, and its badges,
+breadcrumbs, slash descriptors and arrows were not taken.
+
+What that means on the page: an entry is a ruled row that is its own
+sentence when closed and opens in place; entries are read under who has to
+act, the reader's own first; a decision that is the reader's to make is the
+one bordered thing, with its notes above its buttons and again above "Adopt
+it"; what is waiting comes first on each stage and reference is closed under
+its heading; a choice is recorded where the reader is; a piece's sheet opens
+on whether it may be used. After an action, focus goes to what it changed or
+back to the button that opened the form, and the notice that confirms it
+sits over the top bar, where nothing is being read; with a piece's sheet
+open it sits at the foot. A refusal is said at the field it is about.
+Nothing the house rule on page text forbids was taken from the references:
+no label above a heading, no small second line, no count as ornament, no
+arrow on a link.
+
+On the fictional brand the longest stage, Interpret, went from 6.0 screens
+to 2.8 on a laptop and from 9.7 to 3.8 on a phone, with no information
+removed. Investigate and Transfer are about as long on a laptop as they were
+(3.2 screens against 3.2, and 1.3 against 1.2).
+
 **The connector** (`living-brand/`). A local MCP server with 27 tools, a
 skill that tells an assistant how to run an engagement, and a plugin manifest
 so both install together. It keeps each client in its own folder on the
@@ -59,7 +107,7 @@ Automated, on every build:
 | Rules (`scripts/living-brand-test.mjs`) | 79 |
 | Connector (`scripts/living-brand-connector-test.mjs`) | 30 |
 | Connector over the protocol, both protocol versions (`npm run living-brand:connector:test`) | 5 |
-| Page text audit, three states of the page at two widths in both themes | 12 scenarios |
+| Page text audit, seven states of the page at two widths in both themes, three with their entries opened and one with a piece's sheet open | 28 scenarios |
 
 Independent rounds, each run by delegated agents that could not edit the
 repository and had to prove a finding by running it:
@@ -115,6 +163,52 @@ repository and had to prove a finding by running it:
    phone width". Seven medium findings in all. They are fixed, and the fixes
    were checked by the automated suites and by scripted browser runs at both
    widths, not by a sixth independent round.
+
+9. **The redesign, reviewed from five seats**: a design critic holding the
+   page to the references it draws on, a first-time reader on a phone, a
+   daily user, the founder's seat on the private page, and access. All five
+   found it shorter and clearer. They also found, and a second pass fixed:
+   hierarchy inside lists was flat (every entry bold); Orient had not been
+   rebalanced; rights sat below an action on a piece's sheet; a person's own
+   seat said nothing was waiting while the record named them four times;
+   focus was lost on every change of stage; and enlarged text crushed the
+   reading column.
+
+10. **The second pass, re-checked**: three reviewers re-ran all 51 findings
+    of the five-seat review against the page as it then stood. 19 no longer
+    occurred, 25 occurred in part, 5 still occurred and 2 were not re-run.
+    They reported 15 new findings, none high. Most were about the moment
+    after an action: focus fell to the top of the document after a form was
+    cancelled or submitted; the notice covered the heading or the row just
+    changed; a person's own seat still opened on an empty section; an
+    adopted proposal's row did not say what the adoption had done.
+
+11. **The third pass, attacked**: two reviewers were given 27 claims about
+    what the third pass had fixed and asked to make each false, by keyboard
+    and from the founder's and an executive's seats. 21 held. Six broke:
+    with a sheet open, Tab from the notice left the sheet, and the mark on
+    the open piece was hidden under the sheet; a long notice ran past the
+    top bar and over a heading; a notice at the foot could land on the row
+    just adopted; the sheet's header did not restack with text enlarged on a
+    phone; an executive's headline promised a decision the page gave no way
+    to make; and two forms open at once showed two filled buttons. The Tab
+    order, both placements of the notice and the sheet's header were fixed
+    and the headline was reworded, each with a scripted check, along with
+    focus being dropped when a notice was dismissed by keyboard. The hidden
+    mark and the two open forms stand, and are listed under known gaps.
+    These last fixes were checked by the automated suites and scripted
+    browser runs, not by a further independent round.
+
+12. **The Lexington look, reviewed**: one reviewer held it to Lexington at
+    source and to the house rule, another checked access. Every text colour
+    met contrast in both themes. They found: a grey panel the same tone as
+    the chrome, so the first screen read grey, white, grey; a sentence under
+    the pictures that failed the deletion test; a selected filter filled in
+    ink like the one primary action; quiet buttons with no edge; a current
+    stage marked below 3 to 1; each picture announced twice; and one section
+    that scrolled sideways with text enlarged on a phone. All were fixed and
+    checked by the automated suites and scripted browser runs, not by a
+    further independent round.
 
 The findings that changed the product most:
 
@@ -223,16 +317,40 @@ The findings that changed the product most:
   "adopted by": both are true, and they are separate answers.
 - Cards for reference documents read "reusable here: no"; the drawer says
   they can be worked from and not published.
-- Interpret and Choose are still long on a brand with many open entries.
-  Groups past three entries fold, and notes most proposals share are said
-  once, but entries that depart from the same rule still repeat it.
-- A notice can still sit over a field it is asking for until the next tap.
+- A piece's sheet is a modal sheet over the list at every width. The
+  references would have it sit beside the list on a wide screen.
+- Text typed into a form, and which rows are open, are lost when the seat is
+  changed on the fictional brand.
+- Rows show a small drawn mark to say they open. It is not a text arrow on a
+  link, which the house rule forbids, but it is the nearest thing on the page
+  to one.
+- On Orient and Interpret the headline and the paragraph under it take about
+  half of the first screen on a laptop and more on a phone. The first entry
+  that waits is still on the first screen.
+- Inside a list, a group's heading is the size of the text under it, in the
+  heavier weight. The reader's own entries are heavier; nothing else in a
+  list is larger than anything else.
+- A person named for an entry can read it from their own seat. They cannot
+  record a decision about it there: that is done through a proposal or a
+  choice put to them.
+- Accepting a choice that was routed to someone takes one press and asks for
+  no reason. Declining asks for one.
+- Two forms can be open in one stage at once, each with its own filled
+  button.
+- The piece whose sheet is open is marked in the list behind it. On a
+  laptop the sheet covers all but the first column, so the mark is seen only
+  there.
+- On a phone the switch between seats cuts a long name short. The list it
+  opens shows the whole name.
+- With a piece's sheet open, a notice sits at the foot of the screen and can
+  cover a line of the sheet until the next tap.
 - Someone holding the power to name deciders can name themselves for any
   area. The page says so; it does not stop it.
 - After the records behind a private page are rebuilt, answers and choices
   can be brought across. Decisions about material cannot, and are made again.
-- Every drawer repeats that its picture is a stand-in. One reviewer called
-  that redundant; it stays, because the picture once read as a symbol.
+- A piece's sheet no longer repeats that its picture is a stand-in. The
+  stage that lists the pieces says it once, and the picture's own name says
+  it to a screen reader.
 - Every date is a day. Two decisions on the same day are ordered by their
   sequence, not by time.
 - The Soul Mega record was drafted from files in this repository, not from

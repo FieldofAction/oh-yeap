@@ -109,4 +109,4 @@ export const agency = {
 };
 
 // What a visitor should know about this page before trusting anything on it.
-export const note = 'Everything on this page is fictional. The material was entered by hand, the reading was written by a person, no model is called, and nothing is published.';
+export const note = 'The material was entered by hand, the reading was written by a person, no model is called, and nothing is published.';

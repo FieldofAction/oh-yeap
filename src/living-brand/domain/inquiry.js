@@ -270,7 +270,9 @@ export function timeline(brand, { asOf } = {}) {
 // They are shown only with the evidence they cite, never stated as causes, and
 // always routed to whoever decides, if anyone has been named.
 export function organizationalHypotheses(brand, engagement = {}) {
-  const ev = Object.fromEntries(brand.items.flatMap(i => (i.evidence || []).map(e => [e.id, { ...e, item: i.id }])));
+  // Evidence is cited to the piece it came from, where the record names one; otherwise to the piece it is recorded on.
+  const known = new Set(brand.items.map(i => i.id));
+  const ev = Object.fromEntries(brand.items.flatMap(i => (i.evidence || []).map(e => [e.id, { ...e, item: known.has(e.source) ? e.source : i.id }])));
   return (engagement.hypotheses || []).map(h => {
     const evidence = (h.evidenceIds || []).filter(id => ev[id]).map(id => ({ id, statement: ev[id].statement, item: ev[id].item, basis: ev[id].basis }));
     const required = h.requires || [];
