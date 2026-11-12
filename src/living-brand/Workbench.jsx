@@ -371,7 +371,7 @@ function Closed({ title, children }) {
   );
 }
 
-function Enter({ catalog, asOf, state, brand, items, act, actor, setOpenId, go, setNotice, switchTo, reset, stance }) {
+function Enter({ catalog, asOf, state, brand, items, act, actor, openId, setOpenId, go, setNotice, switchTo, reset, stance }) {
   const e = state.engagement;
   const study = stance === 'study';
   const canName = !study && e.grant?.powers?.includes('steward');
@@ -412,7 +412,6 @@ function Enter({ catalog, asOf, state, brand, items, act, actor, setOpenId, go, 
         </dl>
         <p className="lb-body">{e.modeNote || modeLine(e)}</p>
         {catalog.note && <p className="lb-body">{catalog.note}</p>}
-        {e.materials?.length > 0 && (<><h3>Material to start from</h3><Cites ids={e.materials} items={items} setOpenId={setOpenId} /></>)}
       </section>
   );
   const who = (
@@ -459,10 +458,33 @@ function Enter({ catalog, asOf, state, brand, items, act, actor, setOpenId, go, 
         )}
       </section>
   );
+  // The first screen names the engagement, says what it is for, offers the one next step,
+  // and shows the material to start from, each piece opening its sheet.
+  const materials = [...new Set(e.materials || [])].filter(id => items[id]);
+  const title = String(e.project || '').trim();
   return (
     <article>
-      <h1>{e.project}</h1>
-      <p className="lb-deck">{e.purpose}</p>
+      <header className="lb-hero">
+        <div className="lb-hero-text">
+          <h1>{/[.?!]$/.test(title) ? title : `${title}.`}</h1>
+          <p className="lb-deck">{e.purpose}</p>
+          <NextStep stage="enter" go={go} />
+        </div>
+        {materials.length > 0 && (
+          <div className={materials.length > 4 ? 'lb-hero-work is-many' : 'lb-hero-work'}>
+            <h2>Material to start from</h2>
+            <ul>{materials.map(id => (
+              <li key={id}>
+                <button className={openId === id ? 'lb-card is-open' : 'lb-card'} onClick={() => setOpenId(id)}>
+                  <Plate item={items[id]} />
+                  <span className="lb-card-title">{items[id].title}</span>
+                </button>
+              </li>
+            ))}</ul>
+            <p className="lb-hero-note">The pictures are drawn stand-ins, not the work.</p>
+          </div>
+        )}
+      </header>
 
       {/* What is waiting comes first. For someone who decides here that is who decides; for anyone else, what they may do. */}
       {stance === 'owner' ? <>{who}{role}</> : <>{role}{who}</>}
@@ -503,7 +525,6 @@ function Enter({ catalog, asOf, state, brand, items, act, actor, setOpenId, go, 
           </>)}
         </div>
       </Closed>
-      <NextStep stage="enter" go={go} />
     </article>
   );
 }
