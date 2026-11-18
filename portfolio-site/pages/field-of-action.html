@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Field of Action | Daniel Dickson</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-light: #FAFAF8;
+      --text-dark: #1A1A1A;
+      --text-muted: #666666;
+      --text-light-gray: #999999;
+      --border-light: #E8E8E6;
+    }
+
+    html, body {
+      background: var(--bg-light);
+      color: var(--text-dark);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.6;
+    }
+
+    body {
+      font-size: 16px;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Lora', 'Georgia', serif;
+      font-weight: 500;
+      line-height: 1.3;
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-dark);
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      line-height: 1.75;
+    }
+
+    html { scroll-behavior: smooth; }
+    
+    a {
+      color: var(--text-dark);
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+      transition: color 0.3s ease, text-decoration-color 0.3s ease;
+    }
+
+    a:hover {
+      color: var(--text-muted);
+      text-decoration-color: transparent;
+    }
+
+    nav {
+      background: rgba(250, 250, 248, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-light);
+      padding: 1.5rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    nav .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav .logo {
+      font-family: 'Lora', serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: var(--text-dark);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+
+    nav a {
+      font-size: 0.9375rem;
+      text-decoration: none;
+      color: var(--text-dark);
+      transition: color 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      color: var(--text-muted);
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* Refined scale */
+    body { font-size: 15px; }
+    .container { max-width: 620px; }
+    nav { padding: 0.875rem 0; }
+    nav .logo { font-size: 0.9375rem; letter-spacing: -0.01em; }
+    nav ul { gap: 1.5rem; }
+    nav a { font-size: 0.8125rem; }
+
+    /* Case study styles */
+    .wide { max-width: none; padding: 0 2rem; }
+    .ph { background: linear-gradient(135deg, var(--border-light) 0%, #F0EFED 100%); display: flex; align-items: flex-end; padding: 0.5rem 0.625rem; color: var(--text-light-gray); font-size: 0.6875rem; width: 100%; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); overflow: hidden; position: relative; }
+    .ph::after { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.05); opacity: 0; transition: opacity 0.3s ease; }
+    .ph:hover { transform: scale(1.01); }
+    .ph:hover::after { opacity: 1; }
+    .ph.dark { background: linear-gradient(135deg, #2A2A28 0%, #1A1A1A 100%); color: #777; }
+    .ph.warm { background: linear-gradient(135deg, #E9E2D6 0%, #DCD3C3 100%); }
+    .ph.cool { background: linear-gradient(135deg, #DFE3E6 0%, #CFD5DA 100%); }
+    .bleed { width: 100%; aspect-ratio: 16 / 7; min-height: 320px; animation: fadeIn 0.8s ease-out; }
+
+    .cs-intro { display: grid; grid-template-columns: 1fr 340px; gap: 4rem; align-items: start; padding: 4rem 0 5rem; opacity: 0; animation: fadeInUp 0.8s ease-out 0.2s forwards; }
+    .cs-intro .lead-img .ph { aspect-ratio: 4/3; }
+    .cs-intro h1 { font-size: 1.5rem; line-height: 1.15; margin-bottom: 1rem; }
+    .cs-intro h1 span { color: var(--text-light-gray); font-weight: 400; }
+    .credits { margin-bottom: 1.25rem; }
+    .credits p { font-size: 0.8125rem; line-height: 1.45; margin-bottom: 0.25rem; color: var(--text-muted); }
+    .credits b { color: var(--text-dark); font-weight: 600; }
+    .cs-intro .problem p { font-size: 0.875rem; line-height: 1.5; }
+
+    .story { padding: 2rem 0 5rem; display: grid; grid-template-columns: 160px 1fr; gap: 2rem; }
+    .story .label, .section-label { font-family: 'Inter', sans-serif; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light-gray); }
+    .story p { font-family: 'Lora', serif; font-size: 1.875rem; line-height: 1.2; letter-spacing: -0.015em; color: var(--text-dark); max-width: 760px; margin: 0; }
+
+    .gallery { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.5rem; padding-bottom: 5rem; }
+    .gallery .g { display: block; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .gallery .g:hover { transform: translateY(-4px); }
+    .gallery .g .cap { font-size: 0.75rem; color: var(--text-light-gray); margin-top: 0.5rem; }
+
+    .next { border-top: 1px solid var(--border-light); padding: 2.5rem 0 3rem; display: flex; justify-content: space-between; align-items: baseline; }
+    .next a { text-decoration: none; font-size: 0.875rem; transition: transform 0.2s ease; display: inline-block; }
+    .next a:hover { text-decoration: underline; }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 900px) {
+      .cs-intro, .story { grid-template-columns: 1fr; gap: 1.5rem; }
+      .story p { font-size: 1.375rem; }
+      .gallery .g { grid-column: 1 / -1 !important; }
+    }
+    
+    /* Experimental tools */
+    .lab-controls { position: fixed; bottom: 2rem; right: 2rem; background: rgba(250, 250, 248, 0.95); backdrop-filter: blur(12px); border: 1px solid var(--border-light); padding: 1.5rem; z-index: 1000; min-width: 240px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); opacity: 0; animation: fadeInUp 0.6s ease-out 1s forwards; }
+    .lab-controls h4 { font-family: 'Inter', sans-serif; font-size: 0.6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-light-gray); margin-bottom: 1rem; }
+    .control-group { margin-bottom: 1rem; }
+    .control-group:last-child { margin-bottom: 0; }
+    .control-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.375rem; display: block; }
+    .control-slider { width: 100%; margin-bottom: 0.25rem; }
+    .control-value { font-size: 0.6875rem; color: var(--text-light-gray); }
+    .control-toggle { font-family: 'Inter', sans-serif; font-size: 0.75rem; padding: 0.5rem 1rem; background: transparent; border: 1px solid var(--border-light); color: var(--text-muted); cursor: pointer; transition: all 0.2s ease; width: 100%; text-align: left; }
+    .control-toggle:hover { border-color: var(--text-dark); color: var(--text-dark); }
+    .control-toggle.active { background: var(--text-dark); color: var(--bg-light); border-color: var(--text-dark); }
+    .grid-overlay { position: fixed; inset: 0; pointer-events: none; z-index: 999; display: none; }
+    .grid-overlay.active { display: block; }
+    .grid-overlay::before { content: ''; position: absolute; inset: 0; background-image: repeating-linear-gradient(0deg, transparent, transparent 23px, rgba(26, 26, 26, 0.08) 23px, rgba(26, 26, 26, 0.08) 24px), repeating-linear-gradient(90deg, transparent, transparent 23px, rgba(26, 26, 26, 0.08) 23px, rgba(26, 26, 26, 0.08) 24px); }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container wide">
+      <a href="../index.html" class="logo">Daniel Dickson</a>
+      <ul>
+        <li><a href="writing.html">Writing</a></li>
+        <li><a href="cases.html">Cases</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="https://fieldofaction.org">Field of Action</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="ph cool bleed">[Field of Action — practice surface, full bleed]</div>
+
+  <div class="container wide">
+    <div class="cs-intro">
+      <div class="lead-img"><div class="ph cool">[Patio Beach — shared writing space]</div></div>
+      <div>
+        <h1>Field of Action<span> · 2026–Present</span></h1>
+        <div class="credits"><p><b>Role:</b> Founder, Designer, Writer</p><p><b>Scope:</b> Design practice, research, and experimental tools</p></div>
+        <div class="problem"><p>Field of Action is my independent design practice and research workbench. It brings together writing, interactive tools, and experiments in how people notice patterns, develop ideas, and act on them.</p></div>
+      </div>
+    </div>
+
+    <div class="story">
+      <p class="label">The practice</p>
+      <p>I investigate how design influences the relationships between people, tools, and environments. Field of Action gives those questions a place to develop through research, writing, and practical experiments.</p>
+    </div>
+
+    <div class="gallery">
+      <div class="g" style="grid-column: 1 / 8;"><div class="ph warm" style="aspect-ratio:16/9">[Patio Beach]</div><p class="cap">Patio Beach — a shared writing space</p></div>
+      <div class="g" style="grid-column: 9 / 13; margin-top: 6rem;"><div class="ph cool" style="aspect-ratio:4/5">[Share Location]</div><p class="cap">Share Location — publishing with context</p></div>
+    </div>
+
+    <div class="gallery">
+      <div class="g" style="grid-column: 2 / 7;"><div class="ph dark" style="aspect-ratio:1">[Art of Model]</div><p class="cap">Art of Model — a tool for connecting ideas and identifying patterns</p></div>
+      <div class="g" style="grid-column: 8 / 13; margin-top: 4rem;"><div class="ph" style="aspect-ratio:16/10">[Pattern Language]</div><p class="cap">Pattern Language — a collection of conceptual models</p></div>
+    </div>
+
+    <div class="gallery">
+      <div class="g" style="grid-column: 1 / 6;"><div class="ph warm" style="aspect-ratio:3/4">[Workbench]</div><p class="cap">Workbench — tools for synthesis, generation, and reflection</p></div>
+      <div class="g" style="grid-column: 7 / 12; margin-top: 5rem;"><div class="ph cool" style="aspect-ratio:16/9">[Exploration Editor]</div><p class="cap">Exploration Editor — a workspace for developing research</p></div>
+    </div>
+
+    <div class="next">
+      <a href="cases.html">← All cases</a>
+      <span><a href="https://fieldofaction.org" target="_blank">Visit Field of Action →</a></span>
+    </div>
+  </div>
+
+  <!-- Lab Controls -->
+  <div class="lab-controls">
+    <h4>⚡ Lab Mode</h4>
+    <div class="control-group">
+      <button class="control-toggle" id="gridToggle">Show Grid</button>
+    </div>
+    <div class="control-group">
+      <label class="control-label">Gallery Gap</label>
+      <input type="range" class="control-slider" id="gapSlider" min="8" max="48" value="24" step="4">
+      <span class="control-value" id="gapValue">24px</span>
+    </div>
+    <div class="control-group">
+      <label class="control-label">Hover Lift</label>
+      <input type="range" class="control-slider" id="liftSlider" min="0" max="16" value="4" step="2">
+      <span class="control-value" id="liftValue">4px</span>
+    </div>
+    <div class="control-group">
+      <button class="control-toggle" id="randomizeBtn">🎲 Randomize</button>
+    </div>
+  </div>
+
+  <!-- Grid Overlay -->
+  <div class="grid-overlay" id="gridOverlay"></div>
+
+  <script>
+    // Lab Mode: Interactive Controls
+    (function() {
+      const gridToggle = document.getElementById('gridToggle');
+      const gridOverlay = document.getElementById('gridOverlay');
+      const gapSlider = document.getElementById('gapSlider');
+      const gapValue = document.getElementById('gapValue');
+      const liftSlider = document.getElementById('liftSlider');
+      const liftValue = document.getElementById('liftValue');
+      const randomizeBtn = document.getElementById('randomizeBtn');
+      const galleries = document.querySelectorAll('.gallery');
+      
+      // Grid toggle
+      gridToggle.addEventListener('click', () => {
+        gridOverlay.classList.toggle('active');
+        gridToggle.classList.toggle('active');
+        gridToggle.textContent = gridOverlay.classList.contains('active') ? 'Hide Grid' : 'Show Grid';
+      });
+      
+      // Gap slider
+      gapSlider.addEventListener('input', (e) => {
+        const value = e.target.value;
+        gapValue.textContent = value + 'px';
+        galleries.forEach(gallery => {
+          gallery.style.gap = value + 'px';
+        });
+      });
+      
+      // Lift slider
+      liftSlider.addEventListener('input', (e) => {
+        const value = e.target.value;
+        liftValue.textContent = value + 'px';
+        document.documentElement.style.setProperty('--hover-lift', '-' + value + 'px');
+      });
+      
+      // Randomize button
+      randomizeBtn.addEventListener('click', () => {
+        const items = document.querySelectorAll('.gallery .g');
+        items.forEach(item => {
+          const randomRotation = (Math.random() - 0.5) * 3; // ±1.5deg
+          const randomScale = 0.95 + Math.random() * 0.1; // 0.95-1.05
+          item.style.transform = `rotate(${randomRotation}deg) scale(${randomScale})`;
+          item.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+        });
+        
+        // Reset after animation
+        setTimeout(() => {
+          items.forEach(item => {
+            item.style.transform = '';
+          });
+        }, 3000);
+      });
+      
+      // Apply hover lift CSS variable
+      document.documentElement.style.setProperty('--hover-lift', '-4px');
+      const style = document.createElement('style');
+      style.textContent = `.gallery .g:hover { transform: translateY(var(--hover-lift, -4px)); }`;
+      document.head.appendChild(style);
+    })();
+  </script>
+</body>
+</html>
