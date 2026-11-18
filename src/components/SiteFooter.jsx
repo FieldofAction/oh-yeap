@@ -16,7 +16,7 @@ export default function SiteFooter() {
             <Mark />
             <span>Field of Action</span>
           </span>
-          <span>© 2026 Daniel Dickson</span>
+          <span><a href="https://relational-design.org">Relational Design</a> · © 2026 <a href="https://daniel-dickson.org">Daniel Dickson</a></span>
         </div>
       </div>
     </footer>

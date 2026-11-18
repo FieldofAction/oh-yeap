@@ -200,7 +200,7 @@ export default function Canon() {
       </div>
 
       <div className="ph-canon en d2">
-        <p className="ph-canon-p">A practice of designing conditions. Orientation and shared language for work that holds complexity without collapsing it.</p>
+        <p className="ph-canon-p">A practice of designing conditions. Orientation and shared language for work that holds complexity without collapsing it. It now has its own home at <a href="https://relational-design.org">relational-design.org</a>.</p>
         <div className="ph-canon-ax">
           <span className="ph-canon-al">Governing Principle</span>
           <p className="ph-canon-at">Embodied action precedes alignment. You act because alignment has already taken form.</p>
